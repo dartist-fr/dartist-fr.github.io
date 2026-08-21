@@ -1,203 +1,293 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <!-- Adaptation automatique aux écrans de smartphones -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hub de Projets - Damien</title>
-    <style>
-        /* --- 1. Variables de style pour faciliter les modifications --- */
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 30, 49, 0.75);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --accent-color: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub de projets — Lanceur créatif</title>
+  <meta name="description" content="Un hub central qui relie tous mes projets : jeux, portfolio, outils et expériences." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-        /* --- 2. Réinitialisation de base --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    :root {
+      --background: oklch(0.17 0.02 265);
+      --foreground: oklch(0.96 0.008 260);
+      --card: oklch(0.22 0.022 265);
+      --primary: oklch(0.74 0.17 45);
+      --primary-foreground: oklch(0.18 0.02 45);
+      --secondary: oklch(0.27 0.022 265);
+      --muted-foreground: oklch(0.68 0.02 265);
+      --border: oklch(1 0 0 / 8%);
+      --radius: 1rem;
+      color-scheme: dark;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* --- 3. Conteneur principal --- */
-        .hub-container {
-            width: 100%;
-            max-width: 550px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
 
-        /* --- 4. En-tête --- */
-        .avatar {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 10px 20px var(--accent-glow);
-        }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
+    main { position: relative; overflow: hidden; min-height: 100vh; }
 
-        .subtitle {
-            color: var(--text-sub);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
+    .glow {
+      pointer-events: none;
+      position: absolute;
+      top: -10rem;
+      left: 50%;
+      height: 20rem;
+      width: 36rem;
+      transform: translateX(-50%);
+      border-radius: 9999px;
+      background: var(--primary);
+      opacity: 0.1;
+      filter: blur(90px);
+    }
 
-        /* --- 5. Liste des liens vers les projets --- */
-        .project-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+    .container {
+      position: relative;
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
 
-        .project-card {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--card-border);
-            padding: 16px 20px;
-            border-radius: 16px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.25s ease;
-        }
+    /* Header */
+    header { display: flex; flex-direction: column; gap: 1.5rem; }
+    .id-row { display: flex; align-items: center; gap: 1rem; }
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3.5rem;
+      height: 3.5rem;
+      flex-shrink: 0;
+      border-radius: 1rem;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.125rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px -5px oklch(0.74 0.17 45 / 0.2);
+    }
+    .kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--muted-foreground);
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+    .bio { max-width: 28rem; color: var(--muted-foreground); line-height: 1.6; }
+    .handle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+    .dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--primary); }
 
-        .project-card:hover, .project-card:focus {
-            background: rgba(56, 189, 248, 0.08);
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px var(--accent-glow);
-        }
+    /* Section */
+    .section-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .rule { flex: 1; height: 1px; background: var(--border); }
 
-        .project-icon {
-            font-size: 2rem;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
 
-        .project-info {
-            text-align: left;
-            flex-grow: 1;
-        }
+    /* Cards */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    a.card:hover, a.card:focus-visible {
+      transform: translateY(-4px);
+      border-color: oklch(0.74 0.17 45 / 0.4);
+      box-shadow: 0 20px 40px -12px oklch(0.74 0.17 45 / 0.08);
+      outline: none;
+    }
+    .card.disabled { opacity: 0.55; cursor: not-allowed; }
 
-        .project-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      background: var(--secondary);
+      color: var(--primary);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    a.card:hover .icon-box { border-color: oklch(0.74 0.17 45 / 0.4); background: oklch(0.74 0.17 45 / 0.1); }
+    .icon-box svg { width: 1.25rem; height: 1.25rem; }
+    .num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted-foreground); }
 
-        .project-desc {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-        }
+    .card-title-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 1.25rem; }
+    h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
+    .card-desc { margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.6; color: var(--muted-foreground); }
+    .arrow { width: 1rem; height: 1rem; color: var(--muted-foreground); transition: transform 0.2s, color 0.2s; }
+    a.card:hover .arrow { transform: translate(2px, -2px); color: var(--primary); }
 
-        .project-arrow {
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            transition: transform 0.2s ease;
-            margin-left: 10px;
-        }
+    .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted-foreground);
+    }
+    .badge {
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 0.125rem 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+    }
 
-        .project-card:hover .project-arrow {
-            transform: translateX(4px);
-        }
-
-        /* Carte inactive (pour futurs projets) */
-        .project-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .project-card.disabled:hover {
-            transform: none;
-            border-color: var(--card-border);
-            background: rgba(255, 255, 255, 0.03);
-            box-shadow: none;
-        }
-
-        /* --- 6. Ajustement mobile --- */
-        @media (max-width: 480px) {
-            .hub-container {
-                padding: 30px 20px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            .project-card {
-                padding: 14px 16px;
-            }
-        }
-    </style>
+    footer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+    @media (min-width: 640px) {
+      footer { flex-direction: row; align-items: center; justify-content: space-between; }
+      .container { padding: 6rem 1.5rem; gap: 4rem; }
+    }
+  </style>
 </head>
 <body>
+  <main>
+    <div class="glow" aria-hidden="true"></div>
+    <div class="container">
 
-    <main class="hub-container">
-        <!-- Icône de profil / hub -->
-        <div class="avatar">🚀</div>
-        
-        <h1>Damien Acquart</h1>
-        <p class="subtitle">Bienvenue sur mon espace GitHub Pages. Retrouvez ici l'ensemble de mes réalisations et applications.</p>
+      <!-- En-tête -->
+      <header>
+        <div class="id-row">
+          <div class="avatar" aria-hidden="true">DA</div>
+          <div>
+            <span class="kicker">Hub de projets</span>
+            <h1>dartist</h1>
+          </div>
+        </div>
+        <p class="bio">Développeur indépendant qui crée des jeux, des outils et des expériences interactives. Tout ce que je publie est réuni ici.</p>
+        <div class="handle">
+          <span class="dot" aria-hidden="true"></span>
+          <span>@dartist</span>
+        </div>
+      </header>
 
-        <section class="project-list">
-            
-            <!-- Lien vers le dépôt jeux.io -->
-            <a href="https://dartist-fr.github.io/jeux.io/" class="project-card">
-                <div class="project-icon">🎮</div>
-                <div class="project-info">
-                    <div class="project-title">Salle d'Arcade</div>
-                    <div class="project-desc">Plateforme de jeux web (Undercover et plus)</div>
-                </div>
-                <div class="project-arrow">→</div>
-            </a>
+      <!-- Projets -->
+      <section aria-label="Projets">
+        <div class="section-head">
+          <span class="kicker">Tous les projets</span>
+          <span class="rule" aria-hidden="true"></span>
+          <span class="num">4</span>
+        </div>
 
-            <!-- Modèle pour un futur projet (ex. Portfolio, Outil, etc.) -->
-            <div class="project-card disabled">
-                <div class="project-icon">📦</div>
-                <div class="project-info">
-                    <div class="project-title">Prochain projet</div>
-                    <div class="project-desc">En cours de conception</div>
-                </div>
+        <div class="grid">
+          <!-- Salle d'arcade -->
+          <a class="card" href="#">
+            <div class="card-top">
+              <span class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.544-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
+              </span>
+              <span class="num">01</span>
             </div>
+            <div class="card-title-row">
+              <h2>Salle d'arcade</h2>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </div>
+            <p class="card-desc">Une collection de jeux dans le navigateur — modes multijoueurs et plus encore.</p>
+            <div class="card-bottom"><span class="tag">Jeux</span></div>
+          </a>
 
-        </section>
-    </main>
+          <!-- Portfolio -->
+          <a class="card" href="#">
+            <div class="card-top">
+              <span class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M9 12h12"/></svg>
+              </span>
+              <span class="num">02</span>
+            </div>
+            <div class="card-title-row">
+              <h2>Portfolio</h2>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </div>
+            <p class="card-desc">Travaux sélectionnés, études de cas et l'histoire derrière chacun d'eux.</p>
+            <div class="card-bottom"><span class="tag">Vitrine</span></div>
+          </a>
 
+          <!-- Boîte à outils -->
+          <a class="card" href="#">
+            <div class="card-top">
+              <span class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </span>
+              <span class="num">03</span>
+            </div>
+            <div class="card-title-row">
+              <h2>Boîte à outils</h2>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+            </div>
+            <p class="card-desc">Petits utilitaires que j'ai créés pour accélérer mon propre travail.</p>
+            <div class="card-bottom"><span class="tag">Outils</span></div>
+          </a>
+
+          <!-- Le Labo (bientôt) -->
+          <div class="card disabled" aria-disabled="true">
+            <div class="card-top">
+              <span class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>
+              </span>
+              <span class="num">04</span>
+            </div>
+            <div class="card-title-row">
+              <h2>Le Labo</h2>
+            </div>
+            <p class="card-desc">Prototypes et expériences encore en cours de création.</p>
+            <div class="card-bottom">
+              <span class="tag">Expériences</span>
+              <span class="badge">Bientôt</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pied de page -->
+      <footer>
+        <span>© 2026 — Hub de projets</span>
+        <span>Conçu &amp; maintenu par une seule personne</span>
+      </footer>
+
+    </div>
+  </main>
 </body>
 </html>
