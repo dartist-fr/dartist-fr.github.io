@@ -4,294 +4,371 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hub de projets • dartist</title>
-  
-  <!-- Favicon du site -->
-  <link rel="icon" type="image/png" href="favicon.png">
-  
-  <meta name="description" content="Un hub central qui relie tous mes projets : jeux, portfolio, outils et expériences." />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="description" content="Un hub central qui relie tous mes projets : jeux, portfolio, outils et expériences." />
+  <meta name="theme-color" content="#faf9f5">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Applique le thème avant le premier rendu pour éviter le flash de couleur -->
+  <script>
+    (function () {
+      var stored = null;
+      try { stored = localStorage.getItem('theme'); } catch (e) {}
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <style>
     :root {
-      --background: oklch(0.17 0.02 265);
-      --foreground: oklch(0.96 0.008 260);
-      --card: oklch(0.22 0.022 265);
-      --primary: oklch(0.74 0.17 45);
-      --primary-foreground: oklch(0.18 0.02 45);
-      --secondary: oklch(0.27 0.022 265);
-      --muted-foreground: oklch(0.68 0.02 265);
-      --border: oklch(1 0 0 / 8%);
-      --radius: 1rem;
-      color-scheme: dark;
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --ink: #16181d;
+      --ink-soft: #5b5f68;
+      --ink-faint: #9a9c9f;
+      --line: #e3e1da;
+      --accent: #23324a;
+      --accent-soft: #23324a0f;
+      --amber: #b8853c;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #15171c;
+      --surface: #1c1f26;
+      --ink: #f1f0ea;
+      --ink-soft: #a8acb5;
+      --ink-faint: #686c76;
+      --line: #2b2e35;
+      --accent: #8fa8d6;
+      --accent-soft: #8fa8d61a;
+      --amber: #d9a768;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { color-scheme: light dark; }
+
     body {
-      background-color: var(--background);
-      color: var(--foreground);
-      font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
       line-height: 1.5;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-
-    main { position: relative; overflow: hidden; min-height: 100vh; }
-
-    .glow {
-      pointer-events: none;
-      position: absolute;
-      top: -10rem;
-      left: 50%;
-      height: 20rem;
-      width: 36rem;
-      transform: translateX(-50%);
-      border-radius: 9999px;
-      background: var(--primary);
-      opacity: 0.1;
-      filter: blur(90px);
+    @media (prefers-reduced-motion: reduce) {
+      body, .projet, .fleche, .theme-toggle, .theme-toggle svg { transition: none !important; }
     }
 
     .container {
-      position: relative;
-      max-width: 64rem;
+      max-width: 46rem;
       margin: 0 auto;
-      padding: 4rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
+      padding: 6rem 1.75rem 4rem;
     }
 
-    /* Header */
-    header { display: flex; flex-direction: column; gap: 1.5rem; }
-    .id-row { display: flex; align-items: center; gap: 1rem; }
+    /* ---------- header ---------- */
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.25rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-id { display: flex; align-items: flex-start; gap: 1.25rem; }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .theme-toggle svg { width: 1.1rem; height: 1.1rem; }
+    .theme-toggle .icon-moon { display: none; }
+    :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+    :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
     .avatar {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 3.5rem;
-      height: 3.5rem;
+      width: 3rem;
+      height: 3rem;
       flex-shrink: 0;
-      border-radius: 1rem;
-      background: var(--primary);
-      color: var(--primary-foreground);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.125rem;
-      font-weight: 700;
-      box-shadow: 0 10px 25px -5px oklch(0.74 0.17 45 / 0.2);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
     }
+
+    .id-block { flex: 1; }
+
     .kicker {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--muted-foreground);
-    }
-    h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .bio { max-width: 28rem; color: var(--muted-foreground); line-height: 1.6; }
-    .handle {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted-foreground);
-    }
-    .dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--primary); }
-
-    /* Section */
-    .section-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-    .rule { flex: 1; height: 1px; background: var(--border); }
-
-    .grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-    @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
-
-    /* Cards */
-    .card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      border-radius: 1rem;
-      border: 1px solid var(--border);
-      background: var(--card);
-      padding: 1.5rem;
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    a.card:hover, a.card:focus-visible {
-      transform: translateY(-4px);
-      border-color: oklch(0.74 0.17 45 / 0.4);
-      box-shadow: 0 20px 40px -12px oklch(0.74 0.17 45 / 0.08);
-      outline: none;
-    }
-    .card.disabled { opacity: 0.55; cursor: not-allowed; }
-
-    .card-top { display: flex; align-items: flex-start; justify-content: space-between; }
-    .icon-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      border-radius: 0.75rem;
-      border: 1px solid var(--border);
-      background: var(--secondary);
-      color: var(--primary);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    a.card:hover .icon-box { border-color: oklch(0.74 0.17 45 / 0.4); background: oklch(0.74 0.17 45 / 0.1); }
-    .icon-box svg { width: 1.25rem; height: 1.25rem; }
-    .num { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted-foreground); }
-
-    .card-title-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 1.25rem; }
-    h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
-    .card-desc { margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.6; color: var(--muted-foreground); }
-    .arrow { width: 1rem; height: 1rem; color: var(--muted-foreground); transition: transform 0.2s, color 0.2s; }
-    a.card:hover .arrow { transform: translate(2px, -2px); color: var(--primary); }
-
-    .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
-    .tag {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--muted-foreground);
-    }
-    .badge {
-      border: 1px solid var(--border);
-      border-radius: 9999px;
-      padding: 0.125rem 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted-foreground);
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
     }
 
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 1.85rem;
+      letter-spacing: -0.01em;
+      margin: 0.3rem 0 0.85rem;
+    }
+
+    .bio {
+      max-width: 30rem;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    .contact {
+      display: inline-flex;
+      margin-top: 1.1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+    }
+    .contact:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ---------- section ---------- */
+    section { padding-top: 3.5rem; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
+    }
+    .section-count {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+    }
+
+    /* ---------- liste de projets ---------- */
+    .liste { border-top: 1px solid var(--line); }
+
+    .projet {
+      display: grid;
+      grid-template-columns: 2rem 1fr auto;
+      gap: 1.25rem;
+      align-items: start;
+      padding: 1.75rem 0.75rem;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s ease;
+    }
+    a.projet:hover { background: var(--accent-soft); }
+    a.projet:hover .titre-projet { color: var(--accent); }
+    a.projet:hover .fleche { transform: translate(3px, -3px); opacity: 1; }
+
+    .index {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-faint);
+      padding-top: 0.15rem;
+    }
+
+    .corps-projet { min-width: 0; }
+
+    .ligne-titre { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+
+    .titre-projet {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--ink);
+      transition: color 0.15s ease;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
+      border: 1px solid var(--line);
+      padding: 0.15rem 0.5rem;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--amber);
+      border: 1px solid var(--amber);
+      padding: 0.15rem 0.5rem;
+    }
+
+    .desc-projet {
+      margin-top: 0.4rem;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      max-width: 32rem;
+    }
+
+    .fleche {
+      width: 1rem;
+      height: 1rem;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      margin-top: 0.3rem;
+      opacity: 0;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    a.projet:hover .fleche { color: var(--accent); }
+
+    .projet.disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+    .projet.disabled .index,
+    .projet.disabled .titre-projet { color: var(--ink-faint); }
+
+    /* ---------- footer ---------- */
     footer {
+      margin-top: 4.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
-      font-family: 'JetBrains Mono', monospace;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: var(--muted-foreground);
+      color: var(--ink-faint);
     }
+
     @media (min-width: 640px) {
       footer { flex-direction: row; align-items: center; justify-content: space-between; }
-      .container { padding: 6rem 1.5rem; gap: 4rem; }
+    }
+
+    @media (max-width: 480px) {
+      .projet { grid-template-columns: 1.5rem 1fr auto; gap: 0.85rem; padding: 1.5rem 0.25rem; }
+      h1 { font-size: 1.55rem; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <div class="glow" aria-hidden="true"></div>
-    <div class="container">
+  <div class="container">
 
-      <!-- En-tête -->
-      <header>
-        <div class="id-row">
-          <div class="avatar" aria-hidden="true">DA</div>
-          <div>
-            <span class="kicker">Hub de projets</span>
-            <h1>dartist</h1>
+    <header>
+      <div class="header-id">
+        <div class="avatar" aria-hidden="true">DA</div>
+        <div class="id-block">
+          <span class="kicker">Hub de projets</span>
+          <h1>dartist</h1>
+          <p class="bio">Développeur indépendant qui crée des jeux, des outils et des expériences interactives. Tout ce que je publie est réuni ici.</p>
+          <a class="contact" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
+        </div>
+      </div>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Activer le mode sombre">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+    </header>
+
+    <section aria-label="Projets">
+      <div class="section-head">
+        <span class="section-title">Tous les projets</span>
+        <span class="section-count">04</span>
+      </div>
+
+      <div class="liste">
+
+        <a class="projet" href="jeux.io/">
+          <span class="index">01</span>
+          <div class="corps-projet">
+            <div class="ligne-titre">
+              <span class="titre-projet">Salle d'arcade</span>
+              <span class="tag">Jeux</span>
+            </div>
+            <p class="desc-projet">Une collection de jeux dans le navigateur — modes multijoueurs et plus encore.</p>
           </div>
-        </div>
-        <p class="bio">Développeur indépendant qui crée des jeux, des outils et des expériences interactives. Tout ce que je publie est réuni ici.</p>
-        <div class="handle">
-          <span class="dot" aria-hidden="true"></span>
-          <span>@dartist</span>
-        </div>
-      </header>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+        </a>
 
-      <!-- Projets -->
-      <section aria-label="Projets">
-        <div class="section-head">
-          <span class="kicker">Tous les projets</span>
-          <span class="rule" aria-hidden="true"></span>
-          <span class="num">4</span>
-        </div>
+        <a class="projet" href="portfolio/">
+          <span class="index">02</span>
+          <div class="corps-projet">
+            <div class="ligne-titre">
+              <span class="titre-projet">Portfolio</span>
+              <span class="tag">Vitrine</span>
+            </div>
+            <p class="desc-projet">Travaux sélectionnés, études de cas et l'histoire derrière chacun d'eux.</p>
+          </div>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+        </a>
 
-        <div class="grid">
-          <!-- Salle d'arcade -->
-          <a class="card" href="jeux.io/">
-            <div class="card-top">
-              <span class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.544-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
-              </span>
-              <span class="num">01</span>
+        <a class="projet" href="#">
+          <span class="index">03</span>
+          <div class="corps-projet">
+            <div class="ligne-titre">
+              <span class="titre-projet">Boîte à outils</span>
+              <span class="tag">Outils</span>
             </div>
-            <div class="card-title-row">
-              <h2>Salle d'arcade</h2>
-              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-            </div>
-            <p class="card-desc">Une collection de jeux dans le navigateur — modes multijoueurs et plus encore.</p>
-            <div class="card-bottom"><span class="tag">Jeux</span></div>
-          </a>
+            <p class="desc-projet">Petits utilitaires que j'ai créés pour accélérer mon propre travail.</p>
+          </div>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+        </a>
 
-          <!-- Portfolio -->
-          <a class="card" href="portfolio/">
-            <div class="card-top">
-              <span class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M9 12h12"/></svg>
-              </span>
-              <span class="num">02</span>
-            </div>
-            <div class="card-title-row">
-              <h2>Portfolio</h2>
-              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-            </div>
-            <p class="card-desc">Travaux sélectionnés, études de cas et l'histoire derrière chacun d'eux.</p>
-            <div class="card-bottom"><span class="tag">Vitrine</span></div>
-          </a>
-
-          <!-- Boîte à outils -->
-          <a class="card" href="#">
-            <div class="card-top">
-              <span class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              </span>
-              <span class="num">03</span>
-            </div>
-            <div class="card-title-row">
-              <h2>Boîte à outils</h2>
-              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-            </div>
-            <p class="card-desc">Petits utilitaires que j'ai créés pour accélérer mon propre travail.</p>
-            <div class="card-bottom"><span class="tag">Outils</span></div>
-          </a>
-
-          <!-- Le Labo (bientôt) -->
-          <div class="card disabled" aria-disabled="true">
-            <div class="card-top">
-              <span class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>
-              </span>
-              <span class="num">04</span>
-            </div>
-            <div class="card-title-row">
-              <h2>Le Labo</h2>
-            </div>
-            <p class="card-desc">Prototypes et expériences encore en cours de création.</p>
-            <div class="card-bottom">
-              <span class="tag">Expériences</span>
+        <div class="projet disabled" aria-disabled="true">
+          <span class="index">04</span>
+          <div class="corps-projet">
+            <div class="ligne-titre">
+              <span class="titre-projet">Le Labo</span>
               <span class="badge">Bientôt</span>
             </div>
+            <p class="desc-projet">Prototypes et expériences encore en cours de création.</p>
           </div>
         </div>
-      </section>
 
-      <!-- Pied de page -->
-      <footer>
-        <span>© 2026 — Hub de projets</span>
-        <span>Pour toutes questions → flawz.ad@gmail.com</span>
-      </footer>
+      </div>
+    </section>
 
-    </div>
-  </main>
+    <footer>
+      <span>© 2026 — Hub de projets</span>
+      <span>Pour toutes questions → flawz.ad@gmail.com</span>
+    </footer>
+
+  </div>
 </body>
 </html>
