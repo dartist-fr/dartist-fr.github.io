@@ -116,11 +116,13 @@
       flex-shrink: 0;
       border: 1px solid var(--line);
       background: var(--surface);
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--ink-soft);
-      letter-spacing: 0.02em;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .id-block { flex: 1; }
@@ -292,7 +294,9 @@
 
     <header>
       <div class="header-id">
-        <div class="avatar" aria-hidden="true">DA</div>
+        <div class="avatar">
+          <img src="pdp.jpeg" alt="">
+        </div>
         <div class="id-block">
           <span class="kicker">Hub de projets</span>
           <h1>dartist</h1>
@@ -371,7 +375,6 @@
 
   </div>
 
-  <!-- SCRIPT POUR GÉRER LE CLIC SUR LE BOUTON DE THÈME -->
   <script>
     document.getElementById('theme-toggle').addEventListener('click', function() {
       var currentTheme = document.documentElement.getAttribute('data-theme');
