@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Applique le thème avant le premier rendu pour éviter le flash de couleur -->
   <script>
     (function () {
       var stored = null;
@@ -52,9 +51,7 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { color-scheme: light dark; }
-
     body {
       background-color: var(--bg);
       color: var(--ink);
@@ -65,221 +62,62 @@
       transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      body, .projet, .fleche, .theme-toggle, .theme-toggle svg { transition: none !important; }
-    }
+    .container { max-width: 46rem; margin: 0 auto; padding: 6rem 1.75rem 4rem; }
 
-    .container {
-      max-width: 46rem;
-      margin: 0 auto;
-      padding: 6rem 1.75rem 4rem;
-    }
-
-    /* ---------- header ---------- */
     header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 1.25rem;
-      padding-bottom: 3.5rem;
-      border-bottom: 1px solid var(--line);
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 1.25rem; padding-bottom: 3.5rem; border-bottom: 1px solid var(--line);
     }
-
     .header-id { display: flex; align-items: flex-start; gap: 1.25rem; }
 
     .theme-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      flex-shrink: 0;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      color: var(--ink-soft);
-      cursor: pointer;
-      transition: border-color 0.15s ease, color 0.15s ease;
+      display: flex; align-items: center; justify-content: center;
+      width: 2.5rem; height: 2.5rem; flex-shrink: 0;
+      border: 1px solid var(--line); background: var(--surface);
+      color: var(--ink-soft); cursor: pointer;
     }
-    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .theme-toggle svg { width: 1.1rem; height: 1.1rem; }
     .theme-toggle .icon-moon { display: none; }
     :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
     :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
     .avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 3rem;
-      height: 3rem;
-      flex-shrink: 0;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      width: 3rem; height: 3rem; flex-shrink: 0;
+      border: 1px solid var(--line); background: var(--surface); overflow: hidden;
     }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
     .id-block { flex: 1; }
+    .kicker { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-faint); }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: 1.85rem; margin: 0.3rem 0 0.85rem; }
+    .bio { max-width: 30rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.65; }
+    .contact { display: inline-flex; margin-top: 1.1rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); }
 
-    .kicker {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--ink-faint);
-    }
-
-    h1 {
-      font-family: var(--font-display);
-      font-weight: 500;
-      font-size: 1.85rem;
-      letter-spacing: -0.01em;
-      margin: 0.3rem 0 0.85rem;
-    }
-
-    .bio {
-      max-width: 30rem;
-      color: var(--ink-soft);
-      font-size: 0.95rem;
-      line-height: 1.65;
-    }
-
-    .contact {
-      display: inline-flex;
-      margin-top: 1.1rem;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 1px solid var(--ink);
-    }
-    .contact:hover { color: var(--accent); border-color: var(--accent); }
-
-    /* ---------- section ---------- */
     section { padding-top: 3.5rem; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+    .section-title, .section-count { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--ink-faint); }
 
-    .section-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-    }
-    .section-title {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--ink-faint);
-    }
-    .section-count {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--ink-faint);
-    }
-
-    /* ---------- liste de projets ---------- */
     .liste { border-top: 1px solid var(--line); }
-
     .projet {
-      display: grid;
-      grid-template-columns: 2rem 1fr auto;
-      gap: 1.25rem;
-      align-items: start;
-      padding: 1.75rem 0.75rem;
-      border-bottom: 1px solid var(--line);
-      text-decoration: none;
-      color: inherit;
-      transition: background 0.15s ease;
+      display: grid; grid-template-columns: 2rem 1fr auto; gap: 1.25rem;
+      align-items: start; padding: 1.75rem 0.75rem; border-bottom: 1px solid var(--line);
+      text-decoration: none; color: inherit; transition: background 0.15s ease;
     }
     a.projet:hover { background: var(--accent-soft); }
     a.projet:hover .titre-projet { color: var(--accent); }
     a.projet:hover .fleche { transform: translate(3px, -3px); opacity: 1; }
 
-    .index {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--ink-faint);
-      padding-top: 0.15rem;
-    }
-
+    .index { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); padding-top: 0.15rem; }
     .corps-projet { min-width: 0; }
-
     .ligne-titre { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .titre-projet { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; color: var(--ink); }
+    .tag { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; border: 1px solid var(--line); padding: 0.15rem 0.5rem; color: var(--ink-faint); }
+    .desc-projet { margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+    .fleche { width: 1rem; height: 1rem; color: var(--ink-faint); flex-shrink: 0; margin-top: 0.3rem; opacity: 0; transition: transform 0.15s ease, opacity 0.15s ease; }
 
-    .titre-projet {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 500;
-      color: var(--ink);
-      transition: color 0.15s ease;
-    }
-
-    .tag {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--ink-faint);
-      border: 1px solid var(--line);
-      padding: 0.15rem 0.5rem;
-    }
-
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--amber);
-      border: 1px solid var(--amber);
-      padding: 0.15rem 0.5rem;
-    }
-
-    .desc-projet {
-      margin-top: 0.4rem;
-      font-size: 0.9rem;
-      color: var(--ink-soft);
-      line-height: 1.55;
-      max-width: 32rem;
-    }
-
-    .fleche {
-      width: 1rem;
-      height: 1rem;
-      color: var(--ink-faint);
-      flex-shrink: 0;
-      margin-top: 0.3rem;
-      opacity: 0;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-    a.projet:hover .fleche { color: var(--accent); }
-
-    /* ---------- footer ---------- */
-    footer {
-      margin-top: 4.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--ink-faint);
-    }
-
-    @media (min-width: 640px) {
-      footer { flex-direction: row; align-items: center; justify-content: space-between; }
-    }
-
-    @media (max-width: 480px) {
-      .projet { grid-template-columns: 1.5rem 1fr auto; gap: 0.85rem; padding: 1.5rem 0.25rem; }
-      h1 { font-size: 1.55rem; }
-    }
+    footer { margin-top: 4.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint); }
+    @media (min-width: 640px) { footer { flex-direction: row; justify-content: space-between; } }
   </style>
 </head>
 <body>
@@ -287,19 +125,17 @@
 
     <header>
       <div class="header-id">
-        <div class="avatar">
-          <img src="pdp.jpeg" alt="">
-        </div>
+        <div class="avatar"><img src="pdp.jpeg" alt=""></div>
         <div class="id-block">
           <span class="kicker">Hub de projets</span>
           <h1>dartist</h1>
-          <p class="bio">Développeur indépendant qui crée des jeux, des outils et des expériences interactives. Tout ce que je publie est réuni ici.</p>
+          <p class="bio">Développeur indépendant qui crée des jeux, des outils et des expériences interactives.</p>
           <a class="contact" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
         </div>
       </div>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Activer le mode sombre">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Activer le mode sombre">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
       </button>
     </header>
 
@@ -310,56 +146,42 @@
       </div>
 
       <div class="liste">
-
         <a class="projet" href="jeux.io/">
           <span class="index">01</span>
           <div class="corps-projet">
-            <div class="ligne-titre">
-              <span class="titre-projet">Salle d'arcade</span>
-              <span class="tag">Jeux</span>
-            </div>
+            <div class="ligne-titre"><span class="titre-projet">Salle d'arcade</span><span class="tag">Jeux</span></div>
             <p class="desc-projet">Une collection de jeux dans le navigateur pour vos soirées.</p>
           </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
 
         <a class="projet" href="portfolio/">
           <span class="index">02</span>
           <div class="corps-projet">
-            <div class="ligne-titre">
-              <span class="titre-projet">Portfolio</span>
-              <span class="tag">Vitrine</span>
-            </div>
-            <p class="desc-projet">Mon portfolio des mes photos.</p>
+            <div class="ligne-titre"><span class="titre-projet">Portfolio</span><span class="tag">Vitrine</span></div>
+            <p class="desc-projet">Mon portfolio de photos.</p>
           </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
 
         <a class="projet" href="#">
           <span class="index">03</span>
           <div class="corps-projet">
-            <div class="ligne-titre">
-              <span class="titre-projet">Boîte à outils</span>
-              <span class="tag">Outils</span>
-            </div>
-            <p class="desc-projet">Petits utilitaires que j'ai créés pour accélérer mon propre travail.</p>
+            <div class="ligne-titre"><span class="titre-projet">Boîte à outils</span><span class="tag">Outils</span></div>
+            <p class="desc-projet">Petits utilitaires pour accélérer le travail.</p>
           </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
 
-        <!-- Le Labo protégé par mot de passe -->
-        <a class="projet" href="#" onclick="accederLabo(event)">
+        <!-- Lien corrigé pointant vers le dossier labo/ -->
+        <a class="projet" href="labo/" onclick="accederLabo(event)">
           <span class="index">04</span>
           <div class="corps-projet">
-            <div class="ligne-titre">
-              <span class="titre-projet">Le Labo</span>
-              <span class="tag">Privé</span>
-            </div>
+            <div class="ligne-titre"><span class="titre-projet">Le Labo</span><span class="badge" style="font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); padding:0.15rem 0.5rem;">Privé</span></div>
             <p class="desc-projet">Prototypes et expériences protégés par mot de passe.</p>
           </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
-
       </div>
     </section>
 
@@ -367,29 +189,21 @@
       <span>© 2026 — Hub de projets</span>
       <span>Pour toutes questions → flawz.ad@gmail.com</span>
     </footer>
-
   </div>
 
   <script>
-    // Gestion du thème clair/sombre
     document.getElementById('theme-toggle').addEventListener('click', function() {
       var currentTheme = document.documentElement.getAttribute('data-theme');
       var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
       document.documentElement.setAttribute('data-theme', newTheme);
-      try {
-        localStorage.setItem('theme', newTheme);
-      } catch (e) {}
+      try { localStorage.setItem('theme', newTheme); } catch (e) {}
     });
 
-    // Fonction de protection par mot de passe pour Le Labo
     function accederLabo(event) {
-      event.preventDefault(); // Empêche le lien de s'ouvrir directement
+      event.preventDefault();
       var password = prompt("🔒 Accès restreint au Labo\nVeuillez saisir le mot de passe :");
-      
       if (password === "2800") {
-        // Redirige vers la page du labo (assure-toi d'avoir nommé ton fichier labo.html à la racine, ou ajuste le lien)
-        window.location.href = "labo/"; 
+        window.location.href = "labo/"; // Redirige vers le dossier labo
       } else if (password !== null) {
         alert("❌ Mot de passe incorrect.");
       }
