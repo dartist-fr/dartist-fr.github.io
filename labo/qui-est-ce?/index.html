@@ -1,1 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Qui est-ce ? — Salle d'Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(255, 46, 136, 0.10);
+            --border-color: rgba(255, 46, 136, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #ff2e88;
+            --accent-glow: rgba(255, 46, 136, 0.25);
+            --neon-cyan: #22e6ff;
+            --neon-yellow: #ffe14d;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.15rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 700px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(255, 46, 136, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+        .container {
+            max-width: 700px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 24px 20px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,46,136,0.25);
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.1rem; line-height: 1.4; text-align: center;
+            color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.9), 3px 3px 0 #4a0d2b;
+            margin-bottom: 10px;
+        }
+
+        .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 18px; }
+
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 20px; margin-bottom: 16px; text-align: center; }
+        
+        .secret-reveal-card {
+            background: #07040f; border: 2px solid var(--neon-yellow);
+            padding: 20px; margin: 15px 0; text-align: center;
+            font-family: var(--font-display); font-size: 1rem; color: var(--neon-yellow);
+            text-shadow: 0 0 8px rgba(255,225,77,0.6);
+        }
+
+        .grid-persos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .carte-perso {
+            background: #07040f;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .carte-perso:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .carte-perso.elimine {
+            opacity: 0.3;
+            filter: grayscale(1);
+            border-color: #444;
+        }
+
+        .carte-perso img {
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-bottom: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .carte-perso span {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-main);
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            padding: 12px; font-family: var(--font-display); font-size: 0.6rem;
+            cursor: pointer; border: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+            line-height: 1.4; text-align: center; margin-top: 12px;
+        }
+        .btn-primary { background: var(--accent); color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.5); }
+        .btn-ghost { background: rgba(255,46,136,0.1); border: 2px solid var(--accent); color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        const LISTE_PERSONNAGES = [
+            { nom: "Mateo", image: "mateo.jpeg" },
+            { nom: "Vincent", image: "vincent.jpeg" },
+            { nom: "Tiphany", image: "tiphany.jpeg" },
+            { nom: "Erina", image: "erina.jpeg" },
+            { nom: "Scander", image: "oussama.jpeg" },
+            { nom: "Joris", image: "joris.jpeg" },
+            { nom: "Chahir", image: "chahir.jpeg" },
+            { nom: "Yassine", image: "yassine.jpeg" },
+            { nom: "Robin", image: "robin.jpeg" },
+            { nom: "Romain", image: "romain.jpeg" },
+            { nom: "Alicia", image: "alicia.jpeg" },
+            { nom: "Aurélia", image: "aurelia.jpeg" },
+            { nom: "Clémentine", image: "clementine.jpeg" },
+            { nom: "Andrea", image: "andrea.jpeg" },
+            { nom: "Maxime", image: "maxime.jpeg" },
+            { nom: "Elsa", image: "elsa.jpeg" },
+            { nom: "Antoine", image: "antoine.jpeg" },
+            { nom: "Noémie", image: "noemie.jpeg" },
+            { nom: "Enzo", image: "enzo monaco.jpeg" },
+            { nom: "Fatal", image: "fatal.jpeg" },
+            { nom: "Quentin", image: "quentin.jpeg" },
+            { nom: "Yanis", image: "yanis.jpeg" },
+            { nom: "Laure", image: "laure.jpeg" },
+            { nom: "Laure G", image: "laure g.jpeg" }
+        ];
+
+        let state = {
+            screen: "setup",
+            personnages: [],
+            personnageMystere: null
+        };
+
+        function preparerNouvellePartie() {
+            // Initialisation de la liste des personnages
+            state.personnages = LISTE_PERSONNAGES.map(p => ({
+                nom: p.nom,
+                image: p.image,
+                elimine: false
+            }));
+
+            // Tirage au sort du personnage mystère
+            let indexAleatoire = Math.floor(Math.random() * state.personnages.length);
+            state.personnageMystere = state.personnages[indexAleatoire];
+
+            // Écran intermédiaire pour afficher le secret avant le plateau
+            state.screen = "secret_reveal";
+            render();
+        }
+
+        function lancerGrille() {
+            state.screen = "jeu";
+            render();
+        }
+
+        function toggleEliminer(index) {
+            state.personnages[index].elimine = !state.personnages[index].elimine;
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "setup") {
+                app.innerHTML = `
+                    <h1>QUI EST-CE ?</h1>
+                    <p class="phase-subtitle">Édition spéciale Soirée</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); line-height:1.5; margin-bottom:15px;">
+                            Un personnage mystère va être tiré au sort. Assurez-vous que la personne qui choisit ne regarde pas l'écran !
+                        </p>
+                        <button class="btn btn-primary" onclick="preparerNouvellePartie()">Tirer au sort le secret ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "secret_reveal") {
+                app.innerHTML = `
+                    <h1>Chut, c'est secret !</h1>
+                    <p class="phase-subtitle">Passez le téléphone à l'arbitre ou au joueur</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Le personnage à faire deviner est :</p>
+                        <div class="secret-reveal-card">
+                            🎯 ${state.personnageMystere.nom}
+                        </div>
+                        <p style="font-size:0.95rem; color:var(--text-sub); margin-top:15px;">
+                            Une fois que c'est mémorisé, masquez l'écran et affichez la grille de jeu pour les autres joueurs.
+                        </p>
+                        <button class="btn btn-primary" onclick="lancerGrille()">Afficher la grille de jeu ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "jeu") {
+                let cartesHtml = state.personnages.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
+                        <img src="${p.image}" alt="${p.nom}" onerror="this.src='https://via.placeholder.com/90x75/140a26/ff2e88?text=${p.nom}'">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                app.innerHTML = `
+                    <h1>QUI EST-CE ?</h1>
+                    <p class="phase-subtitle">Clique sur une carte pour l'éliminer</p>
+                    
+                    <div class="grid-persos">
+                        ${cartesHtml}
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-top:16px;">
+                        <button class="btn btn-ghost" onclick="preparerNouvellePartie()">Recommencer (Nouveau tirage) ⟳</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Plein écran
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
