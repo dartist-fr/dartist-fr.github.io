@@ -388,7 +388,8 @@
       var password = prompt("🔒 Accès restreint au Labo\nVeuillez saisir le mot de passe :");
       
       if (password === "2800") {
-        window.location.href = "labo/"; // Remplace "labo/" par le lien vers ton dossier/page du Labo
+        // Redirige vers la page du labo (assure-toi d'avoir nommé ton fichier labo.html à la racine, ou ajuste le lien)
+        window.location.href = "labo.html"; 
       } else if (password !== null) {
         alert("❌ Mot de passe incorrect.");
       }
