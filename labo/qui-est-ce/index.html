@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qui est-ce ? — Salle d'Arcade</title>
+    <title>Qui est-ce ? (Mode Duel) — Salle d'Arcade</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -16,9 +16,8 @@
             --text-main: #f3e9ff;
             --text-sub: #9d8bc4;
             --accent: #ff2e88;
-            --accent-glow: rgba(255, 46, 136, 0.25);
-            --neon-cyan: #22e6ff;
             --neon-yellow: #ffe14d;
+            --neon-cyan: #22e6ff;
             --font-display: 'Press Start 2P', monospace;
             --font-body: 'VT323', monospace;
         }
@@ -47,7 +46,7 @@
             z-index: 100; mix-blend-mode: multiply;
         }
 
-        .top-bar { max-width: 700px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .top-bar { max-width: 1100px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
         .btn-back, .btn-fs {
             display: inline-flex; align-items: center; gap: 8px;
             font-family: var(--font-display); font-size: 0.5rem;
@@ -58,7 +57,7 @@
         }
 
         .container {
-            max-width: 700px; margin: 0 auto;
+            max-width: 1100px; margin: 0 auto;
             background: var(--card-bg); border: 2px solid var(--accent);
             padding: 24px 20px;
             box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,46,136,0.25);
@@ -73,31 +72,57 @@
 
         .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 18px; }
 
-        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 20px; margin-bottom: 16px; text-align: center; }
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 20px; margin-bottom: 16px; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
         
         .secret-reveal-card {
             background: #07040f; border: 2px solid var(--neon-yellow);
-            padding: 20px; margin: 15px 0; text-align: center;
-            font-family: var(--font-display); font-size: 1rem; color: var(--neon-yellow);
+            padding: 15px; margin: 15px 0; text-align: center;
+            font-family: var(--font-display); font-size: 0.9rem; color: var(--neon-yellow);
             text-shadow: 0 0 8px rgba(255,225,77,0.6);
+        }
+
+        .duel-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .duel-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .joueur-column {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .joueur-title {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            text-align: center;
+            margin-bottom: 12px;
+            text-shadow: 0 0 6px rgba(34,230,255,0.5);
         }
 
         .grid-persos {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            gap: 8px;
         }
 
         .carte-perso {
             background: #07040f;
             border: 2px solid var(--border-color);
             border-radius: 4px;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
             cursor: pointer;
             transition: all 0.15s ease;
-            position: relative;
             user-select: none;
         }
 
@@ -114,16 +139,16 @@
 
         .carte-perso img {
             width: 100%;
-            height: 75px;
+            height: 60px;
             object-fit: cover;
             border-radius: 2px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             border: 1px solid var(--border-color);
         }
 
         .carte-perso span {
             font-family: var(--font-body);
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-main);
             display: block;
             white-space: nowrap;
@@ -180,34 +205,33 @@
 
         let state = {
             screen: "setup",
-            personnages: [],
-            personnageMystere: null
+            personnagesJ1: [],
+            personnagesJ2: [],
+            mystereJ1: null,
+            mystereJ2: null
         };
 
-        function preparerNouvellePartie() {
-            // Initialisation de la liste des personnages
-            state.personnages = LISTE_PERSONNAGES.map(p => ({
-                nom: p.nom,
-                image: p.image,
-                elimine: false
-            }));
+        function preparerDuel() {
+            state.personnagesJ1 = LISTE_PERSONNAGES.map(p => ({ nom: p.nom, image: p.image, elimine: false }));
+            state.personnagesJ2 = LISTE_PERSONNAGES.map(p => ({ nom: p.nom, image: p.image, elimine: false }));
 
-            // Tirage au sort du personnage mystère
-            let indexAleatoire = Math.floor(Math.random() * state.personnages.length);
-            state.personnageMystere = state.personnages[indexAleatoire];
+            let indexJ1 = Math.floor(Math.random() * state.personnagesJ1.length);
+            let indexJ2 = Math.floor(Math.random() * state.personnagesJ2.length);
 
-            // Écran intermédiaire pour afficher le secret avant le plateau
-            state.screen = "secret_reveal";
+            state.mystereJ1 = state.personnagesJ1[indexJ1];
+            state.mystereJ2 = state.personnagesJ2[indexJ2];
+
+            // On commence par l'écran d'attente/passe-plat pour le Joueur 1
+            state.screen = "transit_j1";
             render();
         }
 
-        function lancerGrille() {
-            state.screen = "jeu";
-            render();
-        }
-
-        function toggleEliminer(index) {
-            state.personnages[index].elimine = !state.personnages[index].elimine;
+        function toggleEliminer(joueur, index) {
+            if (joueur === 1) {
+                state.personnagesJ1[index].elimine = !state.personnagesJ1[index].elimine;
+            } else {
+                state.personnagesJ2[index].elimine = !state.personnagesJ2[index].elimine;
+            }
             render();
         }
 
@@ -216,50 +240,108 @@
 
             if (state.screen === "setup") {
                 app.innerHTML = `
-                    <h1>QUI EST-CE ?</h1>
-                    <p class="phase-subtitle">Édition spéciale Soirée</p>
+                    <h1>QUI EST-CE ? (MODE DUEL)</h1>
+                    <p class="phase-subtitle">Affrontement à deux joueurs</p>
                     <div class="panel">
                         <p style="font-size:1.1rem; color:var(--text-sub); line-height:1.5; margin-bottom:15px;">
-                            Un personnage mystère va être tiré au sort. Assurez-vous que la personne qui choisit ne regarde pas l'écran !
+                            Chaque joueur va recevoir un personnage mystère secret chacun son tour de façon sécurisée.
                         </p>
-                        <button class="btn btn-primary" onclick="preparerNouvellePartie()">Tirer au sort le secret ›</button>
+                        <button class="btn btn-primary" onclick="preparerDuel()">Lancer le Duel ›</button>
                     </div>
                 `;
             }
-            else if (state.screen === "secret_reveal") {
+            // Étape 1 : Demande au Joueur 1 de prendre l'appareil
+            else if (state.screen === "transit_j1") {
                 app.innerHTML = `
-                    <h1>Chut, c'est secret !</h1>
-                    <p class="phase-subtitle">Passez le téléphone à l'arbitre ou au joueur</p>
+                    <h1>Tour du Joueur 1</h1>
+                    <p class="phase-subtitle">Sécurité du secret</p>
                     <div class="panel">
-                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Le personnage à faire deviner est :</p>
-                        <div class="secret-reveal-card">
-                            🎯 ${state.personnageMystere.nom}
-                        </div>
-                        <p style="font-size:0.95rem; color:var(--text-sub); margin-top:15px;">
-                            Une fois que c'est mémorisé, masquez l'écran et affichez la grille de jeu pour les autres joueurs.
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
+                            Passez le téléphone au <strong>Joueur 1</strong>. Le Joueur 2 ne doit pas regarder !
                         </p>
-                        <button class="btn btn-primary" onclick="lancerGrille()">Afficher la grille de jeu ›</button>
+                        <button class="btn btn-primary" onclick="state.screen='secret_j1'; render();">Afficher mon secret (Joueur 1) ›</button>
                     </div>
                 `;
             }
-            else if (state.screen === "jeu") {
-                let cartesHtml = state.personnages.map((p, index) => `
-                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
-                        <img src="${p.image}" alt="${p.nom}" onerror="this.src='https://via.placeholder.com/90x75/140a26/ff2e88?text=${p.nom}'">
+            // Étape 2 : Affichage du secret du Joueur 1
+            else if (state.screen === "secret_j1") {
+                app.innerHTML = `
+                    <h1>Joueur 1 : Secret</h1>
+                    <p class="phase-subtitle">Mémorisez bien votre cible</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Ton personnage secret à faire deviner est :</p>
+                        <div class="secret-reveal-card">
+                            🎯 ${state.mystereJ1.nom}
+                        </div>
+                        <button class="btn btn-primary" onclick="state.screen='transit_j2'; render();">C'est mémorisé, passer au Joueur 2 ›</button>
+                    </div>
+                `;
+            }
+            // Étape 3 : Écran intermédiaire pour le Joueur 2
+            else if (state.screen === "transit_j2") {
+                app.innerHTML = `
+                    <h1>Tour du Joueur 2</h1>
+                    <p class="phase-subtitle">Sécurité du secret</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
+                            Passez le téléphone au <strong>Joueur 2</strong>. Le Joueur 1 ne doit pas regarder !
+                        </p>
+                        <button class="btn btn-primary" onclick="state.screen='secret_j2'; render();">Afficher mon secret (Joueur 2) ›</button>
+                    </div>
+                `;
+            }
+            // Étape 4 : Affichage du secret du Joueur 2
+            else if (state.screen === "secret_j2") {
+                app.innerHTML = `
+                    <h1>Joueur 2 : Secret</h1>
+                    <p class="phase-subtitle">Mémorisez bien votre cible</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Ton personnage secret à faire deviner est :</p>
+                        <div class="secret-reveal-card">
+                            🎯 ${state.mystereJ2.nom}
+                        </div>
+                        <button class="btn btn-primary" onclick="state.screen='duel_jeu'; render();">C'est mémorisé, lancer le Duel ! ⚔️</button>
+                    </div>
+                `;
+            }
+            // Étape 5 : Le plateau de jeu en duel
+            else if (state.screen === "duel_jeu") {
+                let cartesJ1 = state.personnagesJ1.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(1, ${index})">
+                        <img src="${p.image}" alt="${p.nom}" onerror="this.src='https://via.placeholder.com/75x60/140a26/ff2e88?text=${p.nom}'">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                let cartesJ2 = state.personnagesJ2.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(2, ${index})">
+                        <img src="${p.image}" alt="${p.nom}" onerror="this.src='https://via.placeholder.com/75x60/140a26/ff2e88?text=${p.nom}'">
                         <span>${p.nom}</span>
                     </div>
                 `).join("");
 
                 app.innerHTML = `
-                    <h1>QUI EST-CE ?</h1>
-                    <p class="phase-subtitle">Clique sur une carte pour l'éliminer</p>
+                    <h1>DUEL EN COURS ⚔️</h1>
+                    <p class="phase-subtitle">Chacun gère son tableau d'élimination</p>
                     
-                    <div class="grid-persos">
-                        ${cartesHtml}
+                    <div class="duel-container">
+                        <div class="joueur-column">
+                            <div class="joueur-title">TABLEAU JOUEUR 1</div>
+                            <div class="grid-persos">
+                                ${cartesJ1}
+                            </div>
+                        </div>
+
+                        <div class="joueur-column">
+                            <div class="joueur-title">TABLEAU JOUEUR 2</div>
+                            <div class="grid-persos">
+                                ${cartesJ2}
+                            </div>
+                        </div>
                     </div>
 
-                    <div style="display:flex; gap:10px; margin-top:16px;">
-                        <button class="btn btn-ghost" onclick="preparerNouvellePartie()">Recommencer (Nouveau tirage) ⟳</button>
+                    <div style="margin-top:20px; text-align:center;">
+                        <button class="btn btn-ghost" style="max-width:300px; margin:0 auto;" onclick="preparerDuel()">Recommencer un Duel ⟳</button>
                     </div>
                 `;
             }
