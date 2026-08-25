@@ -102,7 +102,7 @@
     .projet {
       display: grid; grid-template-columns: 2rem 1fr auto; gap: 1.25rem;
       align-items: start; padding: 1.75rem 0.75rem; border-bottom: 1px solid var(--line);
-      text-decoration: none; color: inherit; transition: background 0.15s ease;
+      text-decoration: none; color: inherit; transition: background 0.15s ease; cursor: pointer;
     }
     a.projet:hover { background: var(--accent-soft); }
     a.projet:hover .titre-projet { color: var(--accent); }
@@ -115,6 +115,31 @@
     .tag { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; border: 1px solid var(--line); padding: 0.15rem 0.5rem; color: var(--ink-faint); }
     .desc-projet { margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
     .fleche { width: 1rem; height: 1rem; color: var(--ink-faint); flex-shrink: 0; margin-top: 0.3rem; opacity: 0; transition: transform 0.15s ease, opacity 0.15s ease; }
+
+    /* Style de la boîte modale personnalisée */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.actif { display: flex; }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--line); padding: 2rem;
+      width: 100%; max-width: 24rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--ink); }
+    .modal-desc { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 1.25rem; }
+    .modal-input {
+      width: 100%; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.9rem;
+      background: var(--bg); border: 1px solid var(--line); color: var(--ink); margin-bottom: 1rem;
+    }
+    .modal-input:focus { outline: 1px solid var(--accent); }
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+    .modal-btn {
+      font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;
+      padding: 0.6rem 1rem; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    }
+    .modal-btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+    .modal-error { font-size: 0.75rem; color: #e53e3e; margin-bottom: 0.75rem; display: none; }
 
     footer { margin-top: 4.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint); }
     @media (min-width: 640px) { footer { flex-direction: row; justify-content: space-between; } }
@@ -173,12 +198,12 @@
           <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
 
-        <!-- Lien corrigé pointant vers le dossier labo/ -->
-        <a class="projet" href="labo/" onclick="accederLabo(event)">
+        <!-- Lien déclenchant la modale sécurisée -->
+        <a class="projet" id="btn-labo" href="labo/">
           <span class="index">04</span>
           <div class="corps-projet">
             <div class="ligne-titre"><span class="titre-projet">Le Labo</span><span class="badge" style="font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); padding:0.15rem 0.5rem;">Privé</span></div>
-            <p class="desc-projet">Prototypes et expériences protégés par mot de passe.</p>
+            <p class="desc-projet">Prototypes et expériences protégés.</p>
           </div>
           <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
@@ -191,6 +216,20 @@
     </footer>
   </div>
 
+  <!-- Structure HTML de la modale de mot de passe -->
+  <div class="modal-overlay" id="modal-labo">
+    <div class="modal-box">
+      <h3 class="modal-title">Accès restreint</h3>
+      <p class="modal-desc">Veuillez entrer le mot de passe pour accéder au Labo.</p>
+      <div class="modal-error" id="modal-error">Mot de passe incorrect.</div>
+      <input type="password" id="modal-password" class="modal-input" placeholder="Mot de passe">
+      <div class="modal-actions">
+        <button class="modal-btn" id="modal-cancel">Annuler</button>
+        <button class="modal-btn primary" id="modal-submit">Valider</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.getElementById('theme-toggle').addEventListener('click', function() {
       var currentTheme = document.documentElement.getAttribute('data-theme');
@@ -199,15 +238,48 @@
       try { localStorage.setItem('theme', newTheme); } catch (e) {}
     });
 
-    function accederLabo(event) {
-      event.preventDefault();
-      var password = prompt("🔒 Accès restreint au Labo\nVeuillez saisir le mot de passe :");
-      if (password === "2800") {
-        window.location.href = "labo/"; // Redirige vers le dossier labo
-      } else if (password !== null) {
-        alert("❌ Mot de passe incorrect.");
+    // Gestion de la modale sécurisée pour Le Labo
+    const btnLabo = document.getElementById('btn-labo');
+    const modalLabo = document.getElementById('modal-labo');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalSubmit = document.getElementById('modal-submit');
+    const modalPassword = document.getElementById('modal-password');
+    const modalError = document.getElementById('modal-error');
+
+    btnLabo.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Vérifie si l'utilisateur est déjà authentifié pour cette session
+      if (sessionStorage.getItem('labo_auth') === 'true') {
+        window.location.href = "labo/";
+      } else {
+        modalLabo.classList.add('actif');
+        modalPassword.focus();
+      }
+    });
+
+    modalCancel.addEventListener('click', function() {
+      modalLabo.classList.remove('actif');
+      modalPassword.value = '';
+      modalError.style.display = 'none';
+    });
+
+    function validerMdp() {
+      if (modalPassword.value === "2800") {
+        sessionStorage.setItem('labo_auth', 'true');
+        window.location.href = "labo/";
+      } else {
+        modalError.style.display = 'block';
+        modalPassword.value = '';
+        modalPassword.focus();
       }
     }
+
+    modalSubmit.addEventListener('click', validerMdp);
+    modalPassword.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        validerMdp();
+      }
+    });
   </script>
 </body>
 </html>
