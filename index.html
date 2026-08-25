@@ -104,19 +104,20 @@
       align-items: start; padding: 1.75rem 0.75rem; border-bottom: 1px solid var(--line);
       text-decoration: none; color: inherit; transition: background 0.15s ease; cursor: pointer;
     }
-    a.projet:hover { background: var(--accent-soft); }
-    a.projet:hover .titre-projet { color: var(--accent); }
-    a.projet:hover .fleche { transform: translate(3px, -3px); opacity: 1; }
+    /* Classe commune pour simuler le survol des liens sur notre div */
+    .projet-cliquable:hover { background: var(--accent-soft); }
+    .projet-cliquable:hover .titre-projet { color: var(--accent); }
+    .projet-cliquable:hover .fleche { transform: translate(3px, -3px); opacity: 1; }
 
     .index { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); padding-top: 0.15rem; }
     .corps-projet { min-width: 0; }
     .ligne-titre { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-    .titre-projet { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; color: var(--ink); }
+    .titre-projet { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; color: var(--ink); transition: color 0.15s ease; }
     .tag { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; border: 1px solid var(--line); padding: 0.15rem 0.5rem; color: var(--ink-faint); }
     .desc-projet { margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
     .fleche { width: 1rem; height: 1rem; color: var(--ink-faint); flex-shrink: 0; margin-top: 0.3rem; opacity: 0; transition: transform 0.15s ease, opacity 0.15s ease; }
 
-    /* Style de la boîte modale personnalisée */
+    /* Modale */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
       z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
@@ -198,15 +199,18 @@
           <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </a>
 
-        <!-- Lien déclenchant la modale sécurisée -->
-        <a class="projet" id="btn-labo" href="labo/">
+        <!-- LE LABO TRANSFORMÉ EN DIV SANS URL VISIBLE -->
+        <div class="projet projet-cliquable" id="btn-labo" oncontextmenu="return false;">
           <span class="index">04</span>
           <div class="corps-projet">
-            <div class="ligne-titre"><span class="titre-projet">Le Labo</span><span class="badge" style="font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); padding:0.15rem 0.5rem;">Privé</span></div>
+            <div class="ligne-titre">
+              <span class="titre-projet">Le Labo</span>
+              <span class="badge" style="font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); padding:0.15rem 0.5rem;">Privé</span>
+            </div>
             <p class="desc-projet">Prototypes et expériences protégés.</p>
           </div>
           <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -216,7 +220,7 @@
     </footer>
   </div>
 
-  <!-- Structure HTML de la modale de mot de passe -->
+  <!-- Modale -->
   <div class="modal-overlay" id="modal-labo">
     <div class="modal-box">
       <h3 class="modal-title">Accès restreint</h3>
@@ -238,7 +242,7 @@
       try { localStorage.setItem('theme', newTheme); } catch (e) {}
     });
 
-    // Gestion de la modale sécurisée pour Le Labo
+    // Logique de la modale et suppression du lien natif
     const btnLabo = document.getElementById('btn-labo');
     const modalLabo = document.getElementById('modal-labo');
     const modalCancel = document.getElementById('modal-cancel');
@@ -246,9 +250,7 @@
     const modalPassword = document.getElementById('modal-password');
     const modalError = document.getElementById('modal-error');
 
-    btnLabo.addEventListener('click', function(e) {
-      e.preventDefault();
-      // Vérifie si l'utilisateur est déjà authentifié pour cette session
+    btnLabo.addEventListener('click', function() {
       if (sessionStorage.getItem('labo_auth') === 'true') {
         window.location.href = "labo/";
       } else {
@@ -268,6 +270,7 @@
         sessionStorage.setItem('labo_auth', 'true');
         window.location.href = "labo/";
       } else {
+        modalError.style.display.style = 'block'; // Correction mineure
         modalError.style.display = 'block';
         modalPassword.value = '';
         modalPassword.focus();
