@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Le Pendu — Salle d'Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(34, 230, 255, 0.10);
+            --border-color: rgba(34, 230, 255, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #22e6ff;
+            --neon-pink: #ff2e88;
+            --neon-green: #4dffa6;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(34, 230, 255, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 600px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(34, 230, 255, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(34, 230, 255, 0.35);
+        }
+
+        .container {
+            max-width: 600px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 24px 20px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(34,230,255,0.25);
+            position: relative; z-index: 10;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.1rem; line-height: 1.4;
+            color: var(--accent); text-shadow: 0 0 8px rgba(34,230,255,0.9), 3px 3px 0 #0d3b4a;
+            margin-bottom: 8px;
+        }
+
+        .phase-subtitle { font-size: 1.15rem; color: var(--text-sub); margin-bottom: 20px; }
+
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 18px; margin-bottom: 16px; text-align: center; }
+
+        .pendu-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        svg {
+            width: 130px;
+            height: 130px;
+        }
+        .pendu-part {
+            stroke: var(--neon-pink);
+            stroke-width: 4;
+            stroke-linecap: round;
+            fill: none;
+            transition: opacity 0.3s ease;
+        }
+        .structure {
+            stroke: var(--text-sub);
+            stroke-width: 4;
+        }
+
+        .input-custom {
+            width: 100%;
+            padding: 12px;
+            font-family: var(--font-body);
+            font-size: 1.3rem;
+            background: #07040f;
+            border: 2px solid var(--border-color);
+            color: #fff;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .input-custom:focus { border-color: var(--accent); }
+
+        /* Conteneur propre pour les lettres du mot */
+        .mot-cache {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 14px;
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed var(--border-color);
+            text-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+        .lettre-slot {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 28px;
+            height: 35px;
+            border-bottom: 4px solid var(--accent);
+            padding-bottom: 2px;
+        }
+
+        /* Clavier virtuel */
+        .clavier {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .clavier { grid-template-columns: repeat(6, 1fr); }
+        }
+
+        .btn-lettre {
+            background: #07040f;
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .btn-lettre:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: rgba(34, 230, 255, 0.1);
+        }
+
+        .btn-lettre:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+            border-color: #333;
+            background: #030207;
+        }
+
+        .message-fin {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            margin: 15px 0;
+            padding: 12px;
+            border: 2px solid;
+        }
+        .message-fin.victoire { color: var(--neon-green); border-color: var(--neon-green); background: rgba(77,255,166,0.05); }
+        .message-fin.defaite { color: var(--neon-pink); border-color: var(--neon-pink); background: rgba(255,46,136,0.05); }
+
+        .btn-action {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 14px; font-family: var(--font-display); font-size: 0.6rem;
+            background: var(--accent); color: #000; border: none; cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.6); margin-top: 10px; font-weight: bold;
+        }
+        .btn-secondary { background: rgba(34, 230, 255, 0.1); border: 2px solid var(--accent); color: var(--text-main); margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        const LISTE_MOTS = [
+            "ARCADE", "PIXEL", "MANETTE", "CONSOLE", "JOYSTICK", "JEU", "CLAVIER", 
+            "ECRAN", "SCORE", "NIVEAU", "VICTOIRE", "BONUS", "PISTE", "COURSE", 
+            "FUTUR", "VIRAGE", "CASQUE", "CAMERA", "PHOTO", "STUDIO", "STADE", 
+            "EQUIPE", "MATCH", "TERRAIN", "ARBITRE", "TENNIS", "BALLON", "CHAMPION"
+        ];
+
+        let state = {
+            screen: "setup",
+            motSecret: "",
+            lettresTrouvees: [],
+            erreurs: 0,
+            maxErreurs: 6,
+            partieFinie: false,
+            gagne: false
+        };
+
+        function lancerAleatoire() {
+            let index = Math.floor(Math.random() * LISTE_MOTS.length);
+            initialiserPartie(LISTE_MOTS[index]);
+        }
+
+        function validerMotPersonnalise() {
+            let input = document.getElementById("custom-word-input");
+            let mot = input.value.trim().toUpperCase();
+            
+            let regex = /^[A-ZÉÈÀÊÂÎÔÛÇ]+$/;
+            if (!mot || !regex.test(mot)) {
+                alert("Entre un mot valide (lettres uniquement, sans espaces).");
+                return;
+            }
+            initialiserPartie(mot);
+        }
+
+        function initialiserPartie(mot) {
+            state.motSecret = mot;
+            state.lettresTrouvees = [];
+            state.erreurs = 0;
+            state.partieFinie = false;
+            state.gagne = false;
+            state.screen = "jeu";
+            render();
+        }
+
+        function choisirLettre(lettre) {
+            if (state.partieFinie || state.lettresTrouvees.includes(lettre)) return;
+
+            state.lettresTrouvees.push(lettre);
+
+            if (!state.motSecret.includes(lettre)) {
+                state.erreurs++;
+                if (state.erreurs >= state.maxErreurs) {
+                    state.partieFinie = true;
+                    state.gagne = false;
+                }
+            } else {
+                let victoire = state.motSecret.split('').every(l => state.lettresTrouvees.includes(l));
+                if (victoire) {
+                    state.partieFinie = true;
+                    state.gagne = true;
+                }
+            }
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "setup") {
+                app.innerHTML = `
+                    <h1>LE PENDU</h1>
+                    <p class="phase-subtitle">Choisis ton mode de jeu</p>
+                    <div class="panel">
+                        <button class="btn-action" onclick="lancerAleatoire()">Mot Aléatoire 🎲</button>
+                        <button class="btn-action btn-secondary" onclick="state.screen='custom_input'; render();">Choisir un mot secret ✍️</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "custom_input") {
+                app.innerHTML = `
+                    <h1>MOT SECRET</h1>
+                    <p class="phase-subtitle">Un joueur tape le mot, l'autre devine</p>
+                    <div class="panel">
+                        <input type="password" id="custom-word-input" class="input-custom" placeholder="Ex: ARCADE" autocomplete="off">
+                        <button class="btn-action" onclick="validerMotPersonnalise()">Valider le mot ›</button>
+                        <button class="btn-action btn-secondary" onclick="state.screen='setup'; render();">Retour</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "jeu") {
+                let p1 = state.erreurs >= 1 ? "opacity: 1" : "opacity: 0";
+                let p2 = state.erreurs >= 2 ? "opacity: 1" : "opacity: 0";
+                let p3 = state.erreurs >= 3 ? "opacity: 1" : "opacity: 0";
+                let p4 = state.erreurs >= 4 ? "opacity: 1" : "opacity: 0";
+                let p5 = state.erreurs >= 5 ? "opacity: 1" : "opacity: 0";
+                let p6 = state.erreurs >= 6 ? "opacity: 1" : "opacity: 0";
+
+                // On affiche la lettre si elle est trouvée, sinon un espace vide (le souligné CSS fait office de tiret propre)
+                let affichageMot = state.motSecret.split('').map(lettre => {
+                    let charAffiche = state.lettresTrouvees.includes(lettre) ? lettre : "&nbsp;";
+                    return `<span class="lettre-slot">${charAffiche}</span>`;
+                }).join("");
+
+                const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                let clavierHtml = alphabet.split('').map(lettre => {
+                    let dejaClique = state.lettresTrouvees.includes(lettre);
+                    return `<button class="btn-lettre" ${dejaClique || state.partieFinie ? 'disabled' : ''} onclick="choisirLettre('${lettre}')">${lettre}</button>`;
+                }).join("");
+
+                let messageFinHtml = "";
+                if (state.partieFinie) {
+                    if (state.gagne) {
+                        messageFinHtml = `<div class="message-fin victoire">VICTOIRE ! Mot trouvé 🎉</div>`;
+                    } else {
+                        messageFinHtml = `<div class="message-fin defaite">DÉFAITE... Le mot était : ${state.motSecret}</div>`;
+                    }
+                }
+
+                app.innerHTML = `
+                    <h1>LE PENDU</h1>
+                    <p class="phase-subtitle">Erreurs : ${state.erreurs} / ${state.maxErreurs}</p>
+                    
+                    <div class="pendu-container">
+                        <svg viewBox="0 0 120 130">
+                            <line x1="10" y1="120" x2="90" y2="120" class="structure" />
+                            <line x1="30" y1="120" x2="30" y2="10" class="structure" />
+                            <line x1="30" y1="10" x2="80" y2="10" class="structure" />
+                            <line x1="80" y1="10" x2="80" y2="30" class="structure" />
+                            
+                            <circle cx="80" cy="42" r="10" class="pendu-part" style="${p1}" />
+                            <line x1="80" y1="52" x2="80" y2="85" class="pendu-part" style="${p2}" />
+                            <line x1="80" y1="62" x2="65" y2="75" class="pendu-part" style="${p3}" />
+                            <line x1="80" y1="62" x2="95" y2="75" class="pendu-part" style="${p4}" />
+                            <line x1="80" y1="85" x2="65" y2="105" class="pendu-part" style="${p5}" />
+                            <line x1="80" y1="85" x2="95" y2="105" class="pendu-part" style="${p6}" />
+                        </svg>
+                    </div>
+
+                    <div class="mot-cache">
+                        ${affichageMot}
+                    </div>
+
+                    ${messageFinHtml}
+
+                    <div class="clavier">
+                        ${clavierHtml}
+                    </div>
+
+                    ${state.partieFinie ? `<button class="btn-action" onclick="state.screen='setup'; render();">Menu Principal ⟳</button>` : ''}
+                `;
+            }
+        }
+
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
