@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Time's Up — Salle d'Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(245, 158, 11, 0.10);
+            --border-color: rgba(245, 158, 11, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #f59e0b;
+            --neon-pink: #ff2e88;
+            --neon-green: #4dffa6;
+            --neon-cyan: #22e6ff;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 560px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(245, 158, 11, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(245, 158, 11, 0.35);
+        }
+
+        .container {
+            max-width: 560px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 26px 22px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(245,158,11,0.25);
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.1rem; line-height: 1.5; text-align: center;
+            color: var(--accent); text-shadow: 0 0 8px rgba(245,158,11,0.9), 3px 3px 0 #4a2e0d;
+            margin-bottom: 10px;
+        }
+
+        .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 18px; }
+
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 18px; margin-bottom: 16px; text-align: center; }
+        
+        .timer-box {
+            font-family: var(--font-display); font-size: 1.4rem; color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(255,46,136,0.6); margin-bottom: 15px; text-align: center;
+        }
+
+        .mode-badge {
+            display: inline-block; font-family: var(--font-display); font-size: 0.55rem;
+            padding: 6px 10px; margin-bottom: 12px; background: rgba(34, 230, 255, 0.15);
+            color: var(--neon-cyan); border: 1px solid var(--neon-cyan); text-transform: uppercase;
+        }
+
+        .mot-a-trouver {
+            font-family: var(--font-display); font-size: 1.25rem; color: #fff;
+            background: #07040f; border: 2px solid var(--accent); padding: 16px;
+            margin-bottom: 15px; text-shadow: 0 0 8px rgba(245,158,11,0.8);
+            word-break: break-word; text-align: center;
+        }
+
+        .interdits-box {
+            text-align: left; background: rgba(255, 46, 136, 0.05);
+            border: 2px dashed var(--neon-pink); padding: 14px; margin-bottom: 20px;
+        }
+        .interdits-box h3 {
+            font-family: var(--font-display); font-size: 0.55rem; color: var(--neon-pink);
+            margin-bottom: 8px; text-transform: uppercase;
+        }
+        .interdits-list {
+            font-size: 1.15rem; color: var(--text-main); line-height: 1.4;
+        }
+
+        .grid-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+
+        .grid-options {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+        }
+
+        .btn {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            padding: 14px; font-family: var(--font-display); font-size: 0.6rem;
+            cursor: pointer; border: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+            line-height: 1.4; text-align: center;
+        }
+        .btn-success { background: var(--neon-green); color: #000; text-shadow: 0 0 4px rgba(255,255,255,0.4); }
+        .btn-danger { background: var(--neon-pink); color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-cyan { background: var(--neon-cyan); color: #000; }
+        .btn-time { background: rgba(245, 158, 11, 0.15); border: 2px solid var(--accent); color: var(--text-main); font-size: 0.7rem; }
+        .btn-time.selected { background: var(--accent); color: #000; font-weight: bold; }
+
+        .score-final {
+            font-family: var(--font-display); font-size: 1.6rem; color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(77,255,166,0.6); margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        // Base de données complète avec des mots et leurs listes de mots interdits 100% sur-mesure
+        const BASE_MOTS = [
+            { mot: "Tour Eiffel", interdits: ["Paris", "France", "Fer", "Monument", "Dame"] },
+            { mot: "Chocolat", interdits: ["Cacao", "Sucre", "Noir", "Lait", "Tablette"] },
+            { mot: "Football", interdits: ["Ballon", "Pied", "Match", "Stade", "But"] },
+            { mot: "Ordinateur", interdits: ["PC", "Écran", "Clavier", "Souris", "Internet"] },
+            { mot: "Vacances", interdits: ["Été", "Plage", "Soleil", "Repos", "Voyage"] },
+            { mot: "Pomme", interdits: ["Fruit", "Rouge", "Verger", "Cidre", "Arbre"] },
+            { mot: "Cinéma", interdits: ["Film", "Pop-corn", "Salle", "Écran", "Acteur"] },
+            { mot: "Voiture", interdits: ["Rouler", "Volant", "Route", "Moteur", "Permis"] },
+            { mot: "Montagne", interdits: ["Ski", "Neige", "Sommet", "Altitude", "Randonnée"] },
+            { mot: "Aspirateur", interdits: ["Poussière", "Sol", "Nettoyer", "Ménage", "Aspirer"] },
+            { mot: "Vélo", interdits: ["Pédale", "Guidon", "Roues", "Chaîne", "Bicyclette"] },
+            { mot: "Bibliothèque", interdits: ["Livres", "Silence", "Lecture", "Emprunter", "Étagère"] },
+            { mot: "Château", interdits: ["Roi", "Princesse", "Moyen Âge", "Forteresse", "Donjon"] },
+            { mot: "Dentifrice", interdits: ["Brosse", "Dents", "Bain", "Menthe", "Sourire"] },
+            { mot: "Éléphant", interdits: ["Trompe", "Gris", "Afrique", "Grand", "Défenses"] },
+            { mot: "Fromage", interdits: ["Lait", "Vache", "Français", "Camembert", "Repas"] },
+            { mot: "Guitare", interdits: ["Musique", "Cordes", "Rock", "Bois", "Concert"] },
+            { mot: "Hôpital", interdits: ["Médecin", "Malade", "Soins", "Urgences", "Infirmière"] },
+            { mot: "Internet", interdits: ["Web", "Réseau", "Connexion", "Google", "Navigateur"] },
+            { mot: "Jardin", interdits: ["Plantes", "Fleurs", "Terre", "Pelouse", "Arroser"] },
+            { mot: "Kangourou", interdits: ["Australie", "Poche", "Sauter", "Animal", "Boxe"] },
+            { mot: "Lune", interdits: ["Nuit", "Espace", "Terre", "Satellite", "Astre"] },
+            { mot: "Miroir", interdits: ["Glace", "Reflet", "Regarder", "Mur", "Salle de bain"] },
+            { mot: "Nuage", interdits: ["Ciel", "Pluie", "Blanc", "Orage", "Météo"] },
+            { mot: "Océan", interdits: ["Mer", "Eau", "Bleu", "Vagues", "Poisson"] },
+            { mot: "Pirate", interdits: ["Bateau", "Trésor", "Mer", "Jambe", "Perroquet"] },
+            { mot: "Requin", interdits: ["Mer", "Dents", "Nager", "Aileron", "Poisson"] },
+            { mot: "Sapin", interdits: ["Noël", "Arbre", "Vert", "Boules", "Forêt"] },
+            { mot: "Volcan", interdits: ["Lave", "Feu", "Éruption", "Montagne", "Magma"] },
+            { mot: "Café", interdits: ["Matin", "Boisson", "Noir", "Tasse", "Chaud"] },
+            { mot: "Pizza", interdits: ["Italie", "Fromage", "Pâte", "Four", "Part"] },
+            { mot: "Smartphone", interdits: ["Téléphone", "Appel", "Portable", "Écran", "Tactile"] },
+            { mot: "Stylo", interdits: ["Écrire", "Encre", "Feuille", "Papier", "Bille"] },
+            { mot: "Casque", interdits: ["Oreilles", "Musique", "Audio", "Tête", "Écouteurs"] },
+            { mot: "Basketball", interdits: ["Panier", "Ballon", "Rebond", "Terrain", "Main"] },
+            { mot: "Tennis", interdits: ["Raquette", "Balle", "Filet", "Court", "Jaune"] },
+            { mot: "Piscine", interdits: ["Nager", "Eau", "Bain", "Bleu", "Chlore"] },
+            { mot: "Avion", interdits: ["Voler", "Ciel", "Pilote", "Aéroport", "Ailes"] },
+            { mot: "Couteau", interdits: ["Couper", "Cuisine", "Lame", "Trancher", "Fourchette"] },
+            { mot: "Canapé", interdits: ["Salon", "Assise", "Détente", "Confort", "Meuble"] },
+            { mot: "Frigo", interdits: ["Froid", "Cuisine", "Manger", "Aliments", "Congélateur"] },
+            { mot: "Lunettes", interdits: ["Yeux", "Voir", "Verres", "Nez", "Vue"] },
+            { mot: "Parapluie", interdits: ["Pluie", "Eau", "Temps", "Ouvrir", "Averse"] },
+            { mot: "Savon", interdits: ["Laver", "Douche", "Mousse", "Corps", "Main"] },
+            { mot: "Tapis", interdits: ["Sol", "Salon", "Pieds", "Décoration", "Tisser"] },
+            { mot: "Bouteille", interdits: ["Verre", "Eau", "Boire", "Bouchon", "Plastique"] },
+            { mot: "Lampe", interdits: ["Lumière", "Ampoule", "Éclairer", "Chambre", "Nuit"] },
+            { mot: "Clé", interdits: ["Porte", "Ouvrir", "Serrure", "Fermer", "Trousseau"] },
+            { mot: "Crayon", interdits: ["Dessiner", "Papier", "Mine", "Bois", "Gomme"] },
+            { mot: "Horloge", interdits: ["Temps", "Heure", "Mur", "Aiguilles", "Tic-tac"] },
+            { mot: "Soleil", interdits: ["Chaud", "Jour", "Étoile", "Ciel", "Lumière"] },
+            { mot: "Plage", interdits: ["Sable", "Mer", "Serviette", "Parasol", "Vague"] },
+            { mot: "Chapeau", interdits: ["Tête", "Soleil", "Mode", "Casquette", "Accessoire"] },
+            { mot: "Glace", interdits: ["Froid", "Été", "Cornet", "Parfum", "Fondre"] },
+            { mot: "Camping", interdits: ["Tente", "Nuit", "Nature", "Sac", "Feu"] },
+            { mot: "Fusée", interdits: ["Espace", "Décollage", "Lune", "Vitesse", "Pilote"] },
+            { mot: "Trésor", interdits: ["Or", "Coffre", "Pirate", "Île", "Trouver"] },
+            { mot: "Chevalier", interdits: ["Armure", "Épée", "Château", "Roi", "Combat"] },
+            { mot: "Caisse", interdits: ["Argent", "Magasin", "Payer", "Client", "Supermarché"] },
+            { mot: "Brochette", interdits: ["Barbecue", "Viande", "Pique", "Feu", "Manger"] },
+            { mot: "Soleil", interdits: ["Chaud", "Jour", "Étoile", "Ciel", "Lumière"] },
+            { mot: "Plage", interdits: ["Sable", "Mer", "Serviette", "Parasol", "Vague"] },
+            { mot: "Chapeau", interdits: ["Tête", "Soleil", "Mode", "Casquette", "Accessoire"] },
+            { mot: "Glace", interdits: ["Froid", "Été", "Cornet", "Parfum", "Fondre"] },
+            { mot: "Camping", interdits: ["Tente", "Nuit", "Nature", "Sac", "Feu"] },
+            { mot: "Fusée", interdits: ["Espace", "Décollage", "Lune", "Vitesse", "Pilote"] },
+            { mot: "Trésor", interdits: ["Or", "Coffre", "Pirate", "Île", "Trouver"] },
+            { mot: "Chevalier", interdits: ["Armure", "Épée", "Château", "Roi", "Combat"] },
+            { mot: "Caisse", interdits: ["Argent", "Magasin", "Payer", "Client", "Supermarché"] },
+            { mot: "Brochette", interdits: ["Barbecue", "Viande", "Pique", "Feu", "Manger"] },
+            { mot: "Serviette", interdits: ["Plage", "Bain", "Éponge", "Sécher", "Tissu"] },
+            { mot: "Sable", interdits: ["Plage", "Mer", "Château", "Dune", "Pieds"] },
+            { mot: "Vague", interdits: ["Mer", "Eau", "Océan", "Surf", "Nager"] },
+            { mot: "Coquillage", interdits: ["Plage", "Mer", "Sable", "Bruit", "Ramasser"] },
+            { mot: "Maillot", interdits: ["Bain", "Plage", "Piscine", "Nager", "Vêtement"] },
+            { mot: "Tente", interdits: ["Camping", "Nuit", "Toile", "Piquet", "Dormir"] },
+            { mot: "Feu de camp", interdits: ["Bois", "Flammes", "Nuit", "Camping", "Chaud"] },
+            { mot: "Boussole", interdits: ["Nord", "Sud", "Orienter", "Direction", "Aiguille"] },
+            { mot: "Lampe torche", interdits: ["Lumière", "Piles", "Nuit", "Éclairer", "Sombre"] },
+            { mot: "Forêt", interdits: ["Arbres", "Bois", "Feuilles", "Nature", "Promenade"] },
+            { mot: "Ruisseau", interdits: ["Eau", "Rivière", "Courant", "Pierre", "Poisson"] },
+            { mot: "Casserole", interdits: ["Cuisine", "Feu", "Cuire", "Poignée", "Soupe"] },
+            { mot: "Poêle", interdits: ["Cuisine", "Cuire", "Beurre", "Feu", "Manche"] },
+            { mot: "Fourchette", interdits: ["Manger", "Couverts", "Dents", "Repas", "Couteau"] },
+            { mot: "Cuillère", interdits: ["Soupe", "Manger", "Couverts", "Creux", "Café"] },
+            { mot: "Assiette", interdits: ["Manger", "Table", "Repas", "Ronde", "Creuse"] },
+            { mot: "Verre", interdits: ["Boire", "Eau", "Transparent", "Boisson", "Cassable"] },
+            { mot: "Four", interdits: ["Cuisine", "Chaud", "Cuire", "Porte", "Chaleur"] },
+            { mot: "Évier", interdits: ["Eau", "Vaisselle", "Cuisine", "Robinet", "Lavabo"] },
+            { mot: "Chanson", interdits: ["Musique", "Chanter", "Paroles", "Voix", "Radio"] },
+            { mot: "Concert", interdits: ["Musique", "Public", "Scène", "Chanteur", "Live"] },
+            { mot: "Danse", interdits: ["Bouger", "Musique", "Corps", "Piste", "Rythme"] },
+            { mot: "Microphone", interdits: ["Chanter", "Voix", "Parler", "Scène", "Son"] },
+            { mot: "Batterie", interdits: ["Musique", "Baguettes", "Cymbales", "Rythme", "Instrument"] },
+            { mot: "Piano", interdits: ["Touches", "Noir", "Blanc", "Musique", "Instrument"] },
+            { mot: "Flûte", interdits: ["Musique", "Souffler", "Instrument", "Trous", "Vent"] },
+            { mot: "Partition", interdits: ["Notes", "Musique", "Papier", "Lire", "Musique"] },
+            { mot: "Rythme", interdits: ["Musique", "Tempo", "Battement", "Cadence", "Vitesse"] },
+            { mot: "Étoile", interdits: ["Ciel", "Nuit", "Briller", "Espace", "Lumière"] },
+            { mot: "Astronaute", interdits: ["Espace", "Fusée", "Combinaison", "Lune", "Gravité"] },
+            { mot: "Comète", interdits: ["Espace", "Queue", "Chevelure", "Ciel", "Passer"] },
+            { mot: "Galaxie", interdits: ["Étoiles", "Espace", "Voie lactée", "Univers", "Système"] },
+            { mot: "Gravité", interdits: ["Terre", "Tomber", "Poids", "Attirance", "Physique"] },
+            { mot: "Satellite", interdits: ["Espace", "Orbite", "Terre", "Signal", "Tour"] },
+            { mot: "Orbite", interdits: ["Tourner", "Espace", "Autour", "Planète", "Trajectoire"] },
+            { mot: "Liane", interdits: ["Jungle", "Tarzan", "Suspendre", "Arbre", "Grimper"] },
+            { mot: "Singe", interdits: ["Animal", "Jungle", "Arbre", "Banane", "Gants"] },
+            { mot: "Tigre", interdits: ["Rayures", "Fauve", "Orange", "Noir", "Animal"] },
+            { mot: "Perroquet", interdits: ["Oiseau", "Parler", "Répéter", "Pirate", "Couleurs"] },
+            { mot: "Serpent", interdits: ["Raper", "Reptile", "Venin", "Siffler", "Animal"] },
+            { mot: "Marécage", interdits: ["Boue", "Eau", "Jungle", "Crocodile", "Enfoncer"] },
+            { mot: "Explorateur", interdits: ["Découvrir", "Aventure", "Jungle", "Carte", "Inconnu"] },
+            { mot: "Île", interdits: ["Mer", "Terre", "Entouré", "Océan", "Trésor"] },
+            { mot: "Carte", interdits: ["Papier", "的方向", "Trésor", "Guider", "Trouver"] },
+            { mot: "Sabre", interdits: ["Épée", "Pirate", "Lame", "Arme", "Couper"] },
+            { mot: "Bandeau", interdits: ["Tête", "Pirate", "Yeux", "Tissu", "Accessoire"] },
+            { mot: "Coffre", interdits: ["Trésor", "Fermer", "Or", "Cadenas", "Bois"] },
+            { mot: "Capitaine", interdits: ["Bateau", "Chef", "Pirate", "Navire", "Commandant"] },
+            { mot: "Pont-levis", interdits: ["Château", "Porte", "Douves", "Monter", "Entrer"] },
+            { mot: "Donjon", interdits: ["Château", "Tour", "Prison", "Haut", "Moyen Âge"] },
+            { mot: "Princesse", interdits: ["Château", "Roi", "Couronne", "Conte", "Fée"] },
+            { mot: "Chevalier", interdits: ["Armure", "Épée", "Château", "Cheval", "Combattre"] },
+            { mot: "Armure", interdits: ["Fer", "Chevalier", "Protéger", "Corps", "Métal"] },
+            { mot: "Épée", interdits: ["Arme", "Lame", "Chevalier", "Coup", "Trancher"] },
+            { mot: "Bouclier", interdits: ["Protéger", "Coup", "Main", "Défense", "Arme"] },
+            { mot: "Roi", interdits: ["Reine", "Couronne", "Château", "Trône", "Pouvoir"] },
+            { mot: "Reine", interdits: ["Roi", "Couronne", "Femme", "Trône", "Palais"] },
+            { mot: "Caddie", interdits: ["Supermarché", "Roulettes", "Courses", "Pousser", "Panier"] },
+            { mot: "Client", interdits: ["Acheter", "Magasin", "Personne", "Magasin", "Vente"] },
+            { mot: "Rayon", interdits: ["Magasin", "Allée", "Produits", "Étagère", "Supermarché"] },
+            { mot: "Facture", interdits: ["Payer", "Papier", "Montant", "Argent", "Achat"] },
+            { mot: "Panier", interdits: ["Courses", "Main", "Supermarché", "Porter", "Petits"] },
+            { mot: "Produit", interdits: ["Article", "Acheter", "Magasin", "Vendre", "Objet"] },
+            { mot: "Prix", interdits: ["Argent", "Coûter", "euros", "Étiquette", "Valeur"] },
+            { mot: "Monnaie", interdits: ["Argent", "Pièces", "Rendre", "Achat", "Espèces"] },
+            { mot: "Merguez", interdits: ["Barbecue", "Rouge", "Piquante", "Viande", "Griller"] },
+            { mot: "Grille", interdits: ["Barbecue", "Viande", "Feu", "Cuisson", "Métal"] },
+            { mot: "Charbon", interdits: ["Barbecue", "Noir", "Feu", "Ardents", "Allumer"] },
+            { mot: "Salade", interdits: ["Feuilles", "Vert", "Manger", "Accompagnement", "Légume"] }
+        ];
+
+        let state = {
+            screen: "setup",
+            modeJeu: "parole",
+            dureeSelectionnee: 60,
+            score: 0,
+            tempsRestant: 60,
+            motsMelanges: [],
+            indexMotActuel: 0,
+            timerInterval: null
+        };
+
+        function configurerMode(mode) {
+            state.modeJeu = mode;
+            render();
+        }
+
+        function configurerDuree(secondes) {
+            state.dureeSelectionnee = secondes;
+            render();
+        }
+
+        function melangerTableau(tableau) {
+            let arr = [...tableau];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function demarrerPartie() {
+            state.score = 0;
+            state.tempsRestant = state.dureeSelectionnee;
+            state.motsMelanges = melangerTableau(BASE_MOTS);
+            state.indexMotActuel = 0;
+            state.screen = "jeu";
+            render();
+
+            if (state.timerInterval) clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                state.tempsRestant--;
+                if (state.tempsRestant <= 0) {
+                    clearInterval(state.timerInterval);
+                    state.screen = "fin";
+                }
+                render();
+            }, 1000);
+        }
+
+        function validerMot() {
+            state.score++;
+            state.indexMotActuel++;
+            render();
+        }
+
+        function passerMot() {
+            state.indexMotActuel++;
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "setup") {
+                app.innerHTML = `
+                    <h1>TIME'S UP</h1>
+                    <p class="phase-subtitle">Paramètres de la partie</p>
+                    
+                    <div class="panel" style="margin-bottom:12px;">
+                        <p style="font-size:0.95rem; color:var(--text-sub); margin-bottom:8px; text-transform:uppercase; font-family:var(--font-display);">1. Mode de jeu</p>
+                        <div class="grid-options">
+                            <button class="btn ${state.modeJeu === 'parole' ? 'btn-primary' : 'btn-time'}" onclick="configurerMode('parole')">💬 Parler</button>
+                            <button class="btn ${state.modeJeu === 'mime' ? 'btn-cyan' : 'btn-time'}" onclick="configurerMode('mime')">🎭 Mimer</button>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-bottom:15px;">
+                        <p style="font-size:0.95rem; color:var(--text-sub); margin-bottom:8px; text-transform:uppercase; font-family:var(--font-display);">2. Temps du chronomètre</p>
+                        <div class="grid-options">
+                            <button class="btn btn-time ${state.dureeSelectionnee === 30 ? 'selected' : ''}" onclick="configurerDuree(30)">30 sec</button>
+                            <button class="btn btn-time ${state.dureeSelectionnee === 60 ? 'selected' : ''}" onclick="configurerDuree(60)">60 sec</button>
+                            <button class="btn btn-time ${state.dureeSelectionnee === 90 ? 'selected' : ''}" onclick="configurerDuree(90)">90 sec</button>
+                            <button class="btn btn-time ${state.dureeSelectionnee === 120 ? 'selected' : ''}" onclick="configurerDuree(120)">120 sec</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" style="font-size:0.7rem; padding:16px;" onclick="demarrerPartie()">Lancer la partie (${state.dureeSelectionnee}s) ›</button>
+                `;
+            }
+            else if (state.screen === "jeu") {
+                let current = state.motsMelanges[state.indexMotActuel % state.motsMelanges.length];
+
+                let contenuModeHtml = "";
+                if (state.modeJeu === "parole") {
+                    let interditsHtml = current.interdits.map(interdit => `• ${interdit}`).join("<br>");
+                    contenuModeHtml = `
+                        <div class="mode-badge">Mode : Parole</div>
+                        <div class="interdits-box">
+                            <h3>Mots Interdits :</h3>
+                            <div class="interdits-list">${interditsHtml}</div>
+                        </div>
+                    `;
+                } else {
+                    contenuModeHtml = `
+                        <div class="mode-badge" style="background: rgba(34,230,255,0.15); color:var(--neon-cyan); border-color:var(--neon-cyan);">Mode : Mime uniquement</div>
+                        <div class="interdits-box" style="border-color:var(--neon-cyan); background:rgba(34,230,255,0.05);">
+                            <h3>Règle :</h3>
+                            <div class="interdits-list" style="color:var(--neon-cyan);">Mimez le mot sans parler ni faire aucun bruit !</div>
+                        </div>
+                    `;
+                }
+
+                app.innerHTML = `
+                    <div class="timer-box">⏱️ ${state.tempsRestant} SECONDES</div>
+                    
+                    <div class="mot-a-trouver">
+                        ${current.mot}
+                    </div>
+
+                    ${contenuModeHtml}
+
+                    <div class="grid-actions">
+                        <button class="btn btn-danger" onclick="passerMot()">Passer ⏭️</button>
+                        <button class="btn btn-success" onclick="validerMot()">Trouvé ! ✓</button>
+                    </div>
+
+                    <div style="text-align:center; margin-top:15px; font-size:1.1rem; color:var(--text-sub);">
+                        Score actuel : <strong style="color:var(--accent);">${state.score}</strong>
+                    </div>
+                `;
+            }
+            else if (state.screen === "fin") {
+                if (state.timerInterval) clearInterval(state.timerInterval);
+
+                app.innerHTML = `
+                    <h1>FIN DU TEMPS !</h1>
+                    <p class="phase-subtitle">Le chronomètre est écoulé</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub);">Score final de l'équipe :</p>
+                        <div class="score-final">${state.score} Points</div>
+                        <button class="btn btn-primary" onclick="state.screen='setup'; render();">Changer les paramètres / Rejouer ⟳</button>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = 'PLEIN ÉCRAN';
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
