@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Test de Réflexe — Salle d'Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(77, 255, 166, 0.10);
+            --border-color: rgba(77, 255, 166, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #4dffa6;
+            --neon-pink: #ff2e88;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(77, 255, 166, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 600px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(77, 255, 166, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(77, 255, 166, 0.35);
+        }
+
+        .container {
+            max-width: 600px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 24px 20px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(77,255,166,0.25);
+            position: relative; z-index: 10;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.1rem; line-height: 1.4;
+            color: var(--accent); text-shadow: 0 0 8px rgba(77,255,166,0.9), 3px 3px 0 #0a3b22;
+            margin-bottom: 8px;
+        }
+
+        .phase-subtitle { font-size: 1.15rem; color: var(--text-sub); margin-bottom: 20px; }
+
+        /* Zone de test interactive */
+        .zone-clic {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #07040f;
+            border: 3px solid var(--border-color);
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 20px;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .zone-clic.attente { background: rgba(255, 46, 136, 0.15); border-color: var(--neon-pink); }
+        .zone-clic.pret { background: rgba(77, 255, 166, 0.2); border-color: var(--accent); }
+
+        .texte-zone {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: #fff;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .btn-action {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 14px; font-family: var(--font-display); font-size: 0.6rem;
+            background: var(--accent); color: #000; border: none; cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.6); font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        let state = {
+            etat: "accueil", // "accueil", "attente", "pret", "resultat", "trop_tost"
+            tempsDebut: 0,
+            tempsReaction: 0,
+            timeoutId: null
+        };
+
+        function demarrerTest() {
+            state.etat = "attente";
+            render();
+
+            // Délai aléatoire entre 1.5 et 4 secondes avant le signal vert
+            let delaiAleatoire = Math.floor(Math.random() * 2500) + 1500;
+
+            state.timeoutId = setTimeout(() => {
+                state.etat = "pret";
+                state.tempsDebut = performance.now();
+                render();
+            }, delaiAleatoire);
+        }
+
+        function gererClic() {
+            if (state.etat === "accueil" || state.etat === "resultat" || state.etat === "trop_tost") {
+                demarrerTest();
+            } 
+            else if (state.etat === "attente") {
+                // Le joueur a cliqué trop tôt !
+                clearTimeout(state.timeoutId);
+                state.etat = "trop_tost";
+                render();
+            } 
+            else if (state.etat === "pret") {
+                // Le joueur a cliqué au bon moment
+                let tempsFin = performance.now();
+                state.tempsReaction = Math.round(tempsFin - state.tempsDebut);
+                state.etat = "resultat";
+                render();
+            }
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            let classeZone = "";
+            let contenuTexte = "";
+
+            if (state.etat === "accueil") {
+                classeZone = "";
+                contenuTexte = `CLIQUE ICI<br><span style="font-size:0.6rem; color:var(--text-sub)">pour lancer le test</span>`;
+            } 
+            else if (state.etat === "attente") {
+                classeZone = "attente";
+                contenuTexte = `ATTENDS LE VERT...<br><span style="font-size:0.6rem; color:var(--neon-pink)">Ne clique pas trop tôt !</span>`;
+            } 
+            else if (state.etat === "pret") {
+                classeZone = "pret";
+                contenuTexte = `CLIQUE MAINTENANT ! ⚡`;
+            } 
+            else if (state.etat === "trop_tost") {
+                classeZone = "";
+                contenuTexte = `TROP TÔT ! ❌<br><span style="font-size:0.6rem; color:var(--text-sub)">Clique pour recommencer</span>`;
+            } 
+            else if (state.etat === "resultat") {
+                classeZone = "";
+                contenuTexte = `TON TEMPS :<br><span style="font-size:1.4rem; color:var(--accent);">${state.tempsReaction} ms</span><br><span style="font-size:0.55rem; color:var(--text-sub)">Clique pour rejouer</span>`;
+            }
+
+            app.innerHTML = `
+                <h1>TEST DE RÉFLEXE</h1>
+                <p class="phase-subtitle">Mesure ta vitesse de réaction</p>
+                
+                <div class="zone-clic ${classeZone}" onclick="gererClic()">
+                    <div class="texte-zone">${contenuTexte}</div>
+                </div>
+
+                <button class="btn-action" onclick="demarrerTest()">Recommencer ⟳</button>
+            `;
+        }
+
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
