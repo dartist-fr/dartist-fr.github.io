@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dartist — Photographe</title>
+  <meta name="description" content="Portfolio photographique de dartist : événements sportifs, portraits en studio, paysages et nature." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500&display=swap');
+
+    :root {
+      --paper: #f4f2ec;
+      --paper-2: #eae7df;
+      --ink: #1a1815;
+      --ink-soft: #6b665c;
+      --line: #d6d2c8;
+      --accent: #b3542f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+    /* --- Top bar --- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .wordmark {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+    .wordmark span { color: var(--accent); }
+    .topnav {
+      display: flex;
+      gap: 26px;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .topnav a { color: var(--ink-soft); text-decoration: none; transition: color 0.2s; }
+    .topnav a:hover { color: var(--ink); }
+
+    /* --- Hero --- */
+    header.hero {
+      padding: 84px 0 64px;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero .eyebrow {
+      font-size: 0.78rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: clamp(2.6rem, 8vw, 5.4rem);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      max-width: 14ch;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero p {
+      margin-top: 26px;
+      max-width: 46ch;
+      color: var(--ink-soft);
+      font-size: 1.05rem;
+    }
+
+    /* --- Section label --- */
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 56px 0 28px;
+    }
+    .section-head h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 500;
+      font-size: 1.6rem;
+      letter-spacing: -0.01em;
+    }
+    .section-head .meta { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+    /* --- Albums grid --- */
+    .albums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px 26px;
+      padding-bottom: 80px;
+    }
+    .album-card { cursor: pointer; background: none; border: none; text-align: left; font: inherit; color: inherit; padding: 0; }
+    .album-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: var(--paper-2);
+    }
+    .album-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s;
+      filter: grayscale(18%);
+    }
+    .album-card:hover .album-frame img { transform: scale(1.05); filter: grayscale(0%); }
+    .album-index {
+      position: absolute;
+      top: 14px; left: 14px;
+      font-family: 'Fraunces', serif;
+      font-size: 0.85rem;
+      color: #fff;
+      mix-blend-mode: difference;
+      letter-spacing: 0.05em;
+    }
+    .album-view {
+      position: absolute;
+      bottom: 14px; right: 14px;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .album-card:hover .album-view { opacity: 1; transform: translateY(0); }
+    .album-info {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      margin-top: 14px;
+    }
+    .album-title { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 500; }
+    .album-count { font-size: 0.82rem; color: var(--ink-soft); white-space: nowrap; }
+
+    /* --- Photo view --- */
+    #photo-view { display: none; padding-bottom: 90px; }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: none;
+      border: none;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 40px 0 0;
+    }
+    .btn-back:hover { color: var(--accent); }
+    .btn-back .arrow { transition: transform 0.2s; }
+    .btn-back:hover .arrow { transform: translateX(-4px); }
+
+    .album-header { margin: 30px 0 34px; border-bottom: 1px solid var(--line); padding-bottom: 24px; }
+    .album-header h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      letter-spacing: -0.02em;
+    }
+    .album-header p { color: var(--ink-soft); margin-top: 8px; font-size: 0.9rem; letter-spacing: 0.04em; }
+
+    .photos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+    .photo-item {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: var(--paper-2);
+      cursor: zoom-in;
+      border: none;
+      padding: 0;
+    }
+    .photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .photo-item:hover img { transform: scale(1.06); }
+
+    /* --- Lightbox --- */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 18, 15, 0.94);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      cursor: zoom-out;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+    .lb-close {
+      position: absolute;
+      top: 22px; right: 26px;
+      color: #f4f2ec;
+      font-size: 1.6rem;
+      background: none; border: none; cursor: pointer;
+      line-height: 1;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 36px 0 60px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+    }
+    footer .fw { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1rem; }
+    footer a { color: var(--ink-soft); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="wordmark">dartist<span>.</span></div>
+      <nav class="topnav">
+        <a href="#travaux">Travaux</a>
+        <a href="#apropos">À propos</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow">Photographe · Depuis 2016</div>
+      <h1>Capturer la <em>lumière</em>, figer l'instant.</h1>
+      <p>Une sélection de séries photographiques — du terrain de sport au studio, jusqu'aux grands espaces silencieux. Choisissez une série pour découvrir les clichés.</p>
+    </header>
+
+    <section id="travaux">
+      <div class="section-head">
+        <h2>Séries</h2>
+        <span class="meta" id="series-count"></span>
+      </div>
+      <main id="albums-view" class="albums-grid"></main>
+    </section>
+
+    <section id="photo-view">
+      <button class="btn-back" onclick="fermerAlbum()"><span class="arrow">‹</span> Toutes les séries</button>
+      <div class="album-header">
+        <h2 id="current-album-title">Titre</h2>
+        <p id="current-album-sub"></p>
+      </div>
+      <div id="photos-container" class="photos-grid"></div>
+    </section>
+
+    <footer id="contact">
+      <span class="fw">dartist</span>
+      <span>Disponible pour commandes &amp; collaborations</span>
+      <a href="mailto:bonjour@dartist.fr">bonjour@dartist.fr</a>
+    </footer>
+  </div>
+
+  <div id="lightbox" onclick="fermerLightbox()">
+    <button class="lb-close" aria-label="Fermer">✕</button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script>
+    const portfolioData = [
+      {
+        titre: "Événements Sportifs",
+        sujet: "Reportage · Mouvement",
+        cover: "/images/sport-1.png",
+        photos: ["/images/sport-1.png", "/images/sport-2.png", "/images/sport-3.png"]
+      },
+      {
+        titre: "Portraits en Studio",
+        sujet: "Lumière maîtrisée · Intimité",
+        cover: "/images/portrait-1.png",
+        photos: ["/images/portrait-1.png", "/images/portrait-2.png"]
+      },
+      {
+        titre: "Paysages & Nature",
+        sujet: "Grand format · Silence",
+        cover: "/images/paysage-1.png",
+        photos: ["/images/paysage-1.png", "/images/paysage-2.png", "/images/paysage-3.png"]
+      }
+    ];
+
+    const albumsView = document.getElementById("albums-view");
+    const photoView = document.getElementById("photo-view");
+    const travaux = document.getElementById("travaux");
+    const photosContainer = document.getElementById("photos-container");
+    const currentAlbumTitle = document.getElementById("current-album-title");
+    const currentAlbumSub = document.getElementById("current-album-sub");
+    const seriesCount = document.getElementById("series-count");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+
+    function afficherAlbums() {
+      albumsView.innerHTML = "";
+      seriesCount.textContent = String(portfolioData.length).padStart(2, "0") + " séries";
+
+      portfolioData.forEach((album, index) => {
+        const card = document.createElement("button");
+        card.className = "album-card";
+        card.onclick = () => ouvrirAlbum(index);
+        card.innerHTML = `
+          <div class="album-frame">
+            <span class="album-index">${String(index + 1).padStart(2, "0")}</span>
+            <img src="${album.cover}" alt="Série : ${album.titre}" loading="lazy" />
+            <span class="album-view">Voir la série</span>
+          </div>
+          <div class="album-info">
+            <span class="album-title">${album.titre}</span>
+            <span class="album-count">${album.photos.length} clichés</span>
+          </div>
+        `;
+        albumsView.appendChild(card);
+      });
+    }
+
+    function ouvrirAlbum(index) {
+      const album = portfolioData[index];
+      currentAlbumTitle.textContent = album.titre;
+      currentAlbumSub.textContent = album.sujet + " — " + album.photos.length + " clichés";
+      photosContainer.innerHTML = "";
+
+      album.photos.forEach((photo, i) => {
+        const item = document.createElement("button");
+        item.className = "photo-item";
+        item.onclick = () => ouvrirLightbox(photo, album.titre + " — cliché " + (i + 1));
+        item.innerHTML = `<img src="${photo}" alt="${album.titre} — cliché ${i + 1}" loading="lazy" />`;
+        photosContainer.appendChild(item);
+      });
+
+      travaux.style.display = "none";
+      photoView.style.display = "block";
+      window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    }
+
+    function fermerAlbum() {
+      photoView.style.display = "none";
+      travaux.style.display = "block";
+    }
+
+    function ouvrirLightbox(src, alt) {
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function fermerLightbox() {
+      lightbox.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") fermerLightbox(); });
+
+    afficherAlbums();
+  </script>
+</body>
+</html>
