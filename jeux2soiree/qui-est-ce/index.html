@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    <title>Qui est-ce ? (Modes de jeu)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(255, 46, 136, 0.10);
+            --border-color: rgba(255, 46, 136, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #ff2e88;
+            --neon-yellow: #ffe14d;
+            --neon-cyan: #22e6ff;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.15rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 1100px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(255, 46, 136, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+        .container {
+            max-width: 1100px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 24px 20px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,46,136,0.25);
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.1rem; line-height: 1.4; text-align: center;
+            color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.9), 3px 3px 0 #4a0d2b;
+            margin-bottom: 10px;
+        }
+
+        .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 18px; }
+
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 20px; margin-bottom: 16px; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+        
+        .secret-reveal-card {
+            background: #07040f; border: 2px solid var(--neon-yellow);
+            padding: 15px; margin: 15px 0; text-align: center;
+            font-family: var(--font-display); font-size: 0.9rem; color: var(--neon-yellow);
+            text-shadow: 0 0 8px rgba(255,225,77,0.6);
+        }
+
+        .duel-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .duel-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .joueur-column {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .joueur-title {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            text-align: center;
+            margin-bottom: 12px;
+            text-shadow: 0 0 6px rgba(34,230,255,0.5);
+        }
+
+        .grid-persos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            gap: 8px;
+        }
+
+        .carte-perso {
+            background: #07040f;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .carte-perso:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .carte-perso.elimine {
+            opacity: 0.3;
+            filter: grayscale(1);
+            border-color: #444;
+        }
+
+        .carte-perso img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 2px;
+            margin-bottom: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .carte-perso span {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            padding: 12px; font-family: var(--font-display); font-size: 0.6rem;
+            cursor: pointer; border: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+            line-height: 1.4; text-align: center; margin-top: 12px;
+        }
+        .btn-primary { background: var(--accent); color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.5); }
+        .btn-ghost { background: rgba(255,46,136,0.1); border: 2px solid var(--accent); color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        const PERSONNAGES = [
+            { nom: "Emmanuel Macron", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQ1zb_Z3FCmJwmEWSc-b7jqT8ERj3wWkFY1v-al0SDGsP8zHlRnoVSrX1MswvWc2fWd1h_YkT75vtAUvQzuzBlM2N867Ws&s=19" },
+            { nom: "Jean-Luc Mélenchon", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-IkBJhWqAbtr4P7loj3Fsoe1Q4O6ih-OSKucoKn3G7_SLZGyJ_2sKAjLiXSlZV0sZIDxBiUWmBFlFACty_sojxmcAIk6hXxF4_tCsRf0U&s=10" },
+            { nom: "Marine Le Pen", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqNKxrKH8Y_hgr9SlSicfI_65f4X4D8fMQsR2_ICPPmhu5rKuekEAJ3-RGkD5bFNwKwZjkaE5FzBs2M5hx-rk0vruuAXWm-4290Q12yVs2&s=10" },
+            { nom: "Éric Zemmour", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShQm_vQS94B8qHnFHHeWKXTGQ5BbOVi5ZJXIB7Sv247uob57ayqmCF-ebrFxu_jl_Xyeont4ufe7KcJ08zQU0qoV9d-wM&s=10" },
+            { nom: "Nicolas Sarkozy", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcToAXQncEDKnq6HBiyDyBfdg3iqgO22FyAoUQ60kjtsJ0IxuBmLRXQshhBNgtTvcVt_q6s-_Og1mHsfKhZoJ1tlG4MiJu1G&s=19" },
+            { nom: "Jacques Chirac", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhLv1TGXjdE5c54kA2hl3aiwACOIKnQoKcd22AHjGIKYtGp22r3veuCvQEupCKDKaYVLmMdy2_hBGMIgsA1IusDoYR6Ow&s=10" },
+            { nom: "François Hollande", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcT5WvOWtYswEEzp2zsQugRACAN4aiDqWgX760LG8AjzwKgPzOtdWb5LHTSg1UxL_jZoXWIRv4vLxZmYk293fEFsbcFtFfc&s=19" },
+            { nom: "Gérard Depardieu", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbN6BXOxItdO5qngzSk0i9TtHRP27apjFFc3GJWf1DPNMXSQv7FBre0qiqBIHF-IIXMksO0NJFRPral4N0u-iJNkFc9-MARZvSIafmq5UpfA&s=10" },
+            { nom: "Cyril Hanouna", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ-GMEv1uA9AxnkGfD26Ew8kolZiG67JoTiDY2cTnkyj1UGY1DiHnCdyHz3UouVo3Xb-VXyFaHDnBSdo8VIS1ovLGQl7c&s=10" },
+            { nom: "Balkany", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFax0rte650ewMC3Eh9B86_fyzfrCSzoGeE2neCaZNzINsYxmkRRKZqnHmJA74kuIfZV8F61OVLzpCMJsqjhvOHFISa1BG&s=10" },
+            { nom: "Johnny Hallyday", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkQN1qLR37QoYTmvWkqXbWc07QaEdc3RjWTrwcs1mdVD0wXWw8vRfnf47JBoQHEGHL8jmuFqU1PJlJYXYtCZl-LNtjBMGe&s=10" },
+            { nom: "Dieudonné", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJaq6ANN9xJF4dhV93ls8lFhITSCjDqQss88VOkysBcL-2YgThW3Y-j2-tiMNWTEFiEQG0hzFyAXNHQ9ANUeVzN4TLstQ&s=10" },
+            { nom: "Kylian Mbappé", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRTr6IiDkcTx_WRMolOBYyby-3JESLPRB-DQB2jd3oxBHlZbbjZgQRiqZtppDh6HTURn8NJWWr7H_IWKo7nKoQXh3nEjELPYYrEdhuTLtWS40lbF7kfLpmQN9qvkRcvEbXuWtwcofiCQiQ&s=19" },
+            { nom: "Stéphane Plaza", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRczCK1k_55zoYHRBDcayp_T3OKsh_VhE7p5A0TQOC4zbCg6g1yS0fBSsSrqwMcCFqYWMsWRjYEmWO27E2w2dqtULpEvc8&s=10" },
+            { nom: "Jean-Marie Bigard", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvntFqYgeJyIoQMVmJ9i6YlwyzLj00fv9oJGYyt3aP0CmDgjza9UhUwDaGNQDxQWv4lAPCxKViK-N-XJ-ICLS8JJGbSZA&s=10" },
+            { nom: "Léon Marchand", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVoZcZZ-4ccFS5M4gQkdV742JZtuufO40WcoGl16yAnpiKeQeWm28Ea0bSAbF9tAy5syTFSbQhcZhn0kfCRBERdTfDeILYo6aaBxaq0pIR5w&s=10" },
+            { nom: "Booba", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTec55buZptjYDQTFJNvaIuL5SSOW6yW6QU-lLHxbOCxmceMcREjK7e9eCmJzvd2RYRk8KBh78dPWSXWo2eRAg3txykp3A&s=10" },
+            { nom: "Gims", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1K_7nUv_Ejn7T0MW9jrjqzw49ydVtfj9Vo72GvAvzfHdC0eS_22vxL2_36MCwMBD8HeNcsZNyH2M6QntY25WpGdp-Xm-HphlmYnr8ZfUm&s=10" },
+            { nom: "Jul", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnpF6_BCcnxISS8n7SZ6zSrZWXO6_KarZFHygpDCnRCFQMxKvnNe8FCze97CAHObJYwSH5fePslAmbhAwKnFARqBnw5xLjppcrLLLedYMU&s=10" },
+            { nom: "Vincent Bolloré", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmdwXxx10zGI91oc3F--cvAxC1px3makbgJp9zEOpucA&s=10" },
+            { nom: "Joseph Staline", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgB2VYZ4jGfH9BXJa5vQm1VB2Si0K73WRRy4yhnzG31ywE16UMNlUAkrMH6edAXzrcQnbvptE8rD7w8RVsW3DDwlWDjcI&s=10" },
+            { nom: "Adolf Hitler", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRg3x_f6W3t2ZoSCmnkeqlYP392TCMGpq4sTMaQsmrRPr482P4IsOXHyY6b79n2yA0V8wyW2CRNCWSLlN5303aopD1tSek&s=19" },
+            { nom: "Kim Jong-un", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFIvh6YWhuGeMHcHXpi1Q_ifCOOwq6LBazMuGNAtNRKaQgifZY8qkvJKJ44t7AbufY1zZVv0mUhEB4GlDG4nQ-0XQn4-u2F9_qR0ydsoYz&s=10" },
+            { nom: "Vladimir Poutine", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU5QyiZueyJUtXq6cL_v830DDI-Pplz_CHukFnRFVc1iBT5gaKH2PkqAb7JxqzC4garFI2IXqJl9m8PNJe9x8ceUGTWqEL_n9bXp8kkyqq&s=10" }
+        ];
+
+        let state = {
+            screen: "setup", // "setup", "transit_j1", "secret_j1", "transit_j2", "secret_j2", "duel_jeu", "solo_jeu"
+            mode: 2,         // 1 = Un seul tableau, 2 = Deux tableaux collés (Duel)
+            personnagesSolo: [],
+            mystereSolo: null,
+            personnagesJ1: [],
+            personnagesJ2: [],
+            mystereJ1: null,
+            mystereJ2: null
+        };
+
+        function choisirMode(modeChoisi) {
+            state.mode = modeChoisi;
+            if (modeChoisi === 1) {
+                // Mode Solo : Un seul tableau
+                state.personnagesSolo = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+                let randomIndex = Math.floor(Math.random() * state.personnagesSolo.length);
+                state.mystereSolo = state.personnagesSolo[randomIndex];
+                state.screen = "solo_jeu";
+            } else {
+                // Mode Duel : Deux tableaux collés
+                preparerDuel();
+            }
+            render();
+        }
+
+        function preparerDuel() {
+            state.personnagesJ1 = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+            state.personnagesJ2 = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+
+            let indexJ1 = Math.floor(Math.random() * state.personnagesJ1.length);
+            let indexJ2 = Math.floor(Math.random() * state.personnagesJ2.length);
+
+            state.mystereJ1 = state.personnagesJ1[indexJ1];
+            state.mystereJ2 = state.personnagesJ2[indexJ2];
+
+            state.screen = "transit_j1";
+            render();
+        }
+
+        function toggleEliminer(joueur, index) {
+            if (state.mode === 1) {
+                state.personnagesSolo[index].elimine = !state.personnagesSolo[index].elimine;
+            } else {
+                if (joueur === 1) {
+                    state.personnagesJ1[index].elimine = !state.personnagesJ1[index].elimine;
+                } else {
+                    state.personnagesJ2[index].elimine = !state.personnagesJ2[index].elimine;
+                }
+            }
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "setup") {
+                app.innerHTML = `
+                    <h1>QUI EST-CE ? (FRANCE EDITION)</h1>
+                    <p class="phase-subtitle">Choisissez votre mode de jeu</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); line-height:1.5; margin-bottom:20px;">
+                            Sélectionnez le type de partie que vous souhaitez lancer :
+                        </p>
+                        <button class="btn btn-primary" style="margin-bottom:10px;" onclick="choisirMode(1)">1. Un seul tableau (Solo / Hasard) ›</button>
+                        <button class="btn btn-ghost" onclick="choisirMode(2)">2. Deux tableaux collés (Duel) ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "solo_jeu") {
+                let cartesSolo = state.personnagesSolo.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(1, ${index})">
+                        <img src="${p.img}" alt="${p.nom}">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                app.innerHTML = `
+                    <h1>MODE SOLO 🎯</h1>
+                    <p class="phase-subtitle">Un personnage secret a été tiré au sort</p>
+                    
+                    <div class="panel" style="margin-bottom:20px;">
+                        <p style="font-size:1rem; color:var(--text-sub); margin-bottom:5px;">Le personnage mystère à deviner :</p>
+                        <div class="secret-reveal-card" style="margin:5px 0 0 0;">
+                            🎯 ${state.mystereSolo.nom}
+                        </div>
+                    </div>
+
+                    <div class="joueur-column" style="max-width:800px; margin:0 auto;">
+                        <div class="joueur-title">VOTRE GRILLE DE JEU</div>
+                        <div class="grid-persos">
+                            ${cartesSolo}
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; text-align:center;">
+                        <button class="btn btn-ghost" style="max-width:300px; margin:0 auto;" onclick="state.screen='setup'; render();">‹ Changer de mode</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "transit_j1") {
+                app.innerHTML = `
+                    <h1>Tour du Joueur 1</h1>
+                    <p class="phase-subtitle">Sécurité du secret</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
+                            Passez l'appareil au <strong>Joueur 1</strong>. Le Joueur 2 ne doit pas regarder !
+                        </p>
+                        <button class="btn btn-primary" onclick="state.screen='secret_j1'; render();">Afficher mon secret (Joueur 1) ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "secret_j1") {
+                app.innerHTML = `
+                    <h1>Joueur 1 : Secret</h1>
+                    <p class="phase-subtitle">Votre cible assignée</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Le personnage que ton adversaire doit deviner est :</p>
+                        <div class="secret-reveal-card">
+                            🎯 ${state.mystereJ1.nom}
+                        </div>
+                        <button class="btn btn-primary" onclick="state.screen='transit_j2'; render();">C'est mémorisé, passer au Joueur 2 ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "transit_j2") {
+                app.innerHTML = `
+                    <h1>Tour du Joueur 2</h1>
+                    <p class="phase-subtitle">Sécurité du secret</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
+                            Passez l'appareil au <strong>Joueur 2</strong>. Le Joueur 1 ne doit pas regarder !
+                        </p>
+                        <button class="btn btn-primary" onclick="state.screen='secret_j2'; render();">Afficher mon secret (Joueur 2) ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "secret_j2") {
+                app.innerHTML = `
+                    <h1>Joueur 2 : Secret</h1>
+                    <p class="phase-subtitle">Votre cible assignée</p>
+                    <div class="panel">
+                        <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Le personnage que ton adversaire doit deviner est :</p>
+                        <div class="secret-reveal-card">
+                            🎯 ${state.mystereJ2.nom}
+                        </div>
+                        <button class="btn btn-primary" onclick="state.screen='duel_jeu'; render();">C'est mémorisé, lancer le Duel ! ⚔️</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "duel_jeu") {
+                let cartesJ1 = state.personnagesJ1.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(1, ${index})">
+                        <img src="${p.img}" alt="${p.nom}">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                let cartesJ2 = state.personnagesJ2.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(2, ${index})">
+                        <img src="${p.img}" alt="${p.nom}">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                app.innerHTML = `
+                    <h1>DUEL EN COURS ⚔️</h1>
+                    <p class="phase-subtitle">Chacun gère sa grille d'élimination</p>
+                    
+                    <div class="duel-container">
+                        <div class="joueur-column">
+                            <div class="joueur-title">GRILLE JOUEUR 1</div>
+                            <div class="grid-persos">
+                                ${cartesJ1}
+                            </div>
+                        </div>
+
+                        <div class="joueur-column">
+                            <div class="joueur-title">GRILLE JOUEUR 2</div>
+                            <div class="grid-persos">
+                                ${cartesJ2}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                        <button class="btn btn-ghost" style="max-width:250px;" onclick="preparerDuel()">Recommencer ⟳</button>
+                        <button class="btn btn-ghost" style="max-width:250px;" onclick="state.screen='setup'; render();">Changer de mode ‹</button>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
