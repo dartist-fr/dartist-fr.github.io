@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salle d'Arcade</title>
+    <!-- MODIFICATION ICI : Nom du site mis en valeur dans l'onglet du navigateur -->
+    <title>jeux2soiree — Salle d'Arcade</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    <style> 
+    <style>  
         :root {
             --bg-body: #0b0616;
             --bg-panel: #140a26;
@@ -58,7 +59,6 @@
         }
         .credits { font-family: var(--font-display); font-size: 0.6rem; color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255, 225, 77, 0.6); }
         
-        /* STYLE AJOUTÉ POUR AGRANDIR L'INFINI */
         .credits-infinity {
             font-size: 1.1rem; 
         }
@@ -73,6 +73,19 @@
         }
 
         header { text-align: center; margin: 10px auto 30px; max-width: 780px; }
+        
+        /* STYLE MIS EN VALEUR POUR LE NOM DU SITE */
+        .brand-name {
+            display: block;
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 3vw, 1.4rem);
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px rgba(34, 230, 255, 0.8), 2px 2px 0 #004d61;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            text-transform: lowercase;
+        }
+
         h1 {
             font-family: var(--font-display); font-size: clamp(1.4rem, 5vw, 3rem); line-height: 1.3; letter-spacing: 2px;
             color: var(--neon-pink); text-shadow: 0 0 8px rgba(255, 46, 136, 0.9), 4px 4px 0 #4a0d2b;
@@ -239,7 +252,6 @@
     <div class="top-bar">
         <a href="../" class="btn-back">&lsaquo; HUB</a>
         <div class="top-right">
-            <!-- MODIFICATION ICI : Ajout du span class="credits-infinity" -->
             <span class="credits">CREDITS: <span class="credits-infinity">&infin;</span></span>
             <button type="button" id="btn-fullscreen" class="btn-fs">
                 <span class="fs-label">PLEIN ÉCRAN</span>
@@ -248,6 +260,8 @@
     </div>
 
     <header>
+        <!-- MODIFICATION ICI : Le nom "jeux2soiree" est mis en valeur au-dessus du titre principal -->
+        <span class="brand-name">jeux2soiree</span>
         <h1>Salle d'Arcade</h1>
         <p class="description">Choisis ta borne, attrape le joystick et lance la partie.</p>
         <span class="blink">&#9654; INSERT COIN</span>
@@ -354,7 +368,7 @@
     <button id="btn-haut" onclick="retourHaut()" title="Retour en haut">▲</button>
 
     <footer>
-        <span>&copy; SALLE D'ARCADE — HIGH SCORE 999999</span>
+        <span>&copy; jeux2soiree — HIGH SCORE 999999</span>
         <span>Pour toutes questions → <a href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a></span>
     </footer>
 
