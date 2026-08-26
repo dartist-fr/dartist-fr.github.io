@@ -1,0 +1,8 @@
+{
+  "name": "Salle d'Arcade",
+  "short_name": "Arcade",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "background_color": "#0b0616",
+  "theme_color": "#ff2e88"
+}

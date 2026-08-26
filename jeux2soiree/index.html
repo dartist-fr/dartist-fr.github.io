@@ -1,1 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salle d'Arcade</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style> 
+        :root {
+            --bg-body: #0b0616;
+            --bg-panel: #140a26;
+            --grid-line: rgba(124, 58, 237, 0.12);
+            --text-main: #f3e9ff;
+            --text-muted: #9d8bc4;
+            --neon-pink: #ff2e88;
+            --neon-cyan: #22e6ff;
+            --neon-yellow: #ffe14d;
+            --neon-green: #4dffa6;
+            --neon-orange: #f59e0b;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        html { background: var(--bg-body); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-body);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(34, 230, 255, 0.12) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px 12px 60px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0.18) 3px, rgba(0, 0, 0, 0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 1100px; margin: 0 auto 32px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: var(--font-display); font-size: 0.6rem; color: var(--neon-cyan);
+            text-decoration: none; padding: 12px 18px; border: 2px solid var(--neon-cyan);
+            background: rgba(34, 230, 255, 0.06); box-shadow: 0 0 0 2px var(--bg-body), 4px 4px 0 rgba(34, 230, 255, 0.35);
+        }
+        .credits { font-family: var(--font-display); font-size: 0.6rem; color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255, 225, 77, 0.6); }
+        
+        /* STYLE AJOUTÉ POUR AGRANDIR L'INFINI */
+        .credits-infinity {
+            font-size: 1.1rem; 
+        }
+
+        .top-right { display: flex; align-items: center; gap: 16px; }
+
+        .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.6rem; color: var(--neon-pink);
+            cursor: pointer; padding: 12px 16px; border: 2px solid var(--neon-pink);
+            background: rgba(255, 46, 136, 0.06); box-shadow: 0 0 0 2px var(--bg-body), 4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+        header { text-align: center; margin: 10px auto 30px; max-width: 780px; }
+        h1 {
+            font-family: var(--font-display); font-size: clamp(1.4rem, 5vw, 3rem); line-height: 1.3; letter-spacing: 2px;
+            color: var(--neon-pink); text-shadow: 0 0 8px rgba(255, 46, 136, 0.9), 4px 4px 0 #4a0d2b;
+        }
+
+        .blink {
+            display: inline-block; margin-top: 22px; font-family: var(--font-display); font-size: 0.72rem;
+            color: var(--neon-green); text-shadow: 0 0 10px rgba(77, 255, 166, 0.7); animation: blink 1s steps(1) infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .description { color: var(--text-muted); font-size: 1.35rem; margin-top: 18px; }
+
+        .sommaire {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: var(--bg-panel);
+            border: 2px dashed var(--neon-cyan);
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(34, 230, 255, 0.15);
+        }
+        .sommaire-titre {
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            color: var(--neon-cyan);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .sommaire-liens {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .sommaire-liens a {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 8px 12px;
+            background: rgba(34, 230, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            transition: all 0.2s;
+        }
+        .sommaire-liens a:hover {
+            background: var(--neon-cyan);
+            color: #000;
+        }
+
+        .section-titre {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(77, 255, 166, 0.6);
+            margin: 40px auto 20px;
+            max-width: 1100px;
+            border-left: 4px solid var(--neon-green);
+            padding-left: 12px;
+            text-transform: uppercase;
+            scroll-margin-top: 30px;
+        }
+
+        .grid-jeux {
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px; 
+            max-width: 1100px; 
+            margin: 0 auto;
+        }
+
+        .carte-jeu {
+            --glow: var(--neon-cyan);
+            position: relative; background: var(--bg-panel); border: 2px solid var(--glow);
+            padding: 18px 12px 14px; text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            box-shadow: 0 0 0 3px var(--bg-body), 5px 5px 0 rgba(0,0,0,0.5);
+            transition: transform 0.15s steps(3), box-shadow 0.15s;
+        }
+        .carte-jeu::before {
+            content: attr(data-tag); position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+            font-family: var(--font-display); font-size: 0.4rem; padding: 3px 8px; background: var(--glow); color: #000;
+        }
+        .carte-jeu:hover { transform: translate(-2px, -4px); box-shadow: 0 0 0 3px var(--bg-body), 8px 10px 0 rgba(0,0,0,0.6), 0 0 20px var(--glow); }
+
+        .carte-jeu.pink    { --glow: var(--neon-pink); }
+        .carte-jeu.cyan    { --glow: var(--neon-cyan); }
+        .carte-jeu.yellow  { --glow: var(--neon-yellow); }
+        .carte-jeu.orange  { --glow: var(--neon-orange); }
+        .carte-jeu.green   { --glow: var(--neon-green); }
+
+        .icone {
+            font-size: 2.2rem; width: 60px; height: 60px; display: grid; place-items: center;
+            margin-bottom: 12px; border: 2px solid var(--glow); background: rgba(0,0,0,0.35);
+            filter: drop-shadow(0 0 6px var(--glow));
+        }
+
+        .titre-jeu { font-family: var(--font-display); font-size: 0.75rem; color: #fff; text-shadow: 0 0 6px var(--glow); margin-bottom: 8px; }
+        .info-jeu { font-size: 1rem; color: var(--text-muted); line-height: 1.25; flex-grow: 1; margin-bottom: 16px; }
+
+        .btn-jouer {
+            font-family: var(--font-display); font-size: 0.5rem; color: #000; background: var(--glow);
+            padding: 8px 14px; box-shadow: 2px 2px 0 rgba(0,0,0,0.6);
+        }
+
+        #btn-haut {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--neon-pink);
+            color: #fff;
+            border: 2px solid #fff;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 46, 136, 0.6), 4px 4px 0 rgba(0,0,0,0.8);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        #btn-haut.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        #btn-haut:hover { transform: translateY(-3px); }
+
+        footer {
+            max-width: 1100px;
+            margin: 54px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(124, 58, 237, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            text-align: center;
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        footer a { color: var(--neon-cyan); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (min-width: 640px) {
+            footer { flex-direction: row; justify-content: space-between; }
+            .grid-jeux { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+            .carte-jeu { padding: 30px 26px 26px; }
+            .icone { font-size: 3.4rem; width: 92px; height: 92px; margin-bottom: 20px; }
+            .titre-jeu { font-size: 0.95rem; margin-bottom: 14px; }
+            .info-jeu { font-size: 1.2rem; margin-bottom: 24px; }
+            .btn-jouer { font-size: 0.62rem; padding: 12px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <div class="top-right">
+            <!-- MODIFICATION ICI : Ajout du span class="credits-infinity" -->
+            <span class="credits">CREDITS: <span class="credits-infinity">&infin;</span></span>
+            <button type="button" id="btn-fullscreen" class="btn-fs">
+                <span class="fs-label">PLEIN ÉCRAN</span>
+            </button>
+        </div>
+    </div>
+
+    <header>
+        <h1>Salle d'Arcade</h1>
+        <p class="description">Choisis ta borne, attrape le joystick et lance la partie.</p>
+        <span class="blink">&#9654; INSERT COIN</span>
+    </header>
+
+    <nav class="sommaire">
+        <div class="sommaire-titre">Sommaire des Bornes</div>
+        <div class="sommaire-liens">
+            <a href="#multijoueurs">🕹️ Multijoueurs</a>
+            <a href="#solo">⚡ Borne Solo</a>
+        </div>
+    </nav>
+
+    <h2 id="multijoueurs" class="section-titre">🕹️ Jeux Multijoueurs & Ambiance</h2>
+    <main class="grid-jeux">
+        <a href="tu-preferes/" class="carte-jeu yellow" data-tag="HARDCORE">
+            <div class="icone">⚖️</div>
+            <div class="titre-jeu">Tu Préfères ?</div>
+            <div class="info-jeu">Dilemmes cornéliens, modes soft, normal et hardcore sans filtre !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="times-up/" class="carte-jeu yellow" data-tag="PARTY">
+            <div class="icone">⏱️</div>
+            <div class="titre-jeu">Time's Up</div>
+            <div class="info-jeu">Fais deviner un maximum de mots en mode Parole ou Mime avant la fin du chrono !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="loup-garou/" class="carte-jeu yellow" data-tag="PARTY">
+            <div class="icone">🐺</div>
+            <div class="titre-jeu">Loup-Garou</div>
+            <div class="info-jeu">Jeu de déduction et de rôles secrets pour le village.</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="undercover/" class="carte-jeu pink" data-tag="PARTY">
+            <div class="icone">🕵️</div>
+            <div class="titre-jeu">Undercover</div>
+            <div class="info-jeu">Jeu d'ambiance et de mots secrets. Démasque l'intrus !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="qui-est-ce/" class="carte-jeu pink" data-tag="HUMOUR NOIR">
+            <div class="icone">💀</div>
+            <div class="titre-jeu">Qui est-ce ?</div>
+            <div class="info-jeu">Édition personnalités connues et humour noir pour éliminer les suspects.</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="le-killer/" class="carte-jeu pink" data-tag="SOIRÉE">
+            <div class="icone">🎯</div>
+            <div class="titre-jeu">Le Killer</div>
+            <div class="info-jeu">Accomplis ta mission secrète pendant toute la soirée !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="insider/" class="carte-jeu cyan" data-tag="PARTY">
+            <div class="icone">🤫</div>
+            <div class="titre-jeu">Insider</div>
+            <div class="info-jeu">Trouve le mot secret tout en démasquant l'espion caché.</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="frequence/" class="carte-jeu cyan" data-tag="ÉQUIPE">
+            <div class="icone">📡</div>
+            <div class="titre-jeu">Fréquence</div>
+            <div class="info-jeu">Lis dans les pensées de ton équipe en plaçant le curseur sur la bonne jauge !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="le-bobard/" class="carte-jeu orange" data-tag="PARTY">
+            <div class="icone">🤥</div>
+            <div class="titre-jeu">Le Bobard</div>
+            <div class="info-jeu">Invente de fausses réponses pour piéger tes amis !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="morpion/" class="carte-jeu cyan" data-tag="2 JOUEURS">
+            <div class="icone">❌</div>
+            <div class="titre-jeu">Morpion</div>
+            <div class="info-jeu">Affronte un ami sur le même écran. Trois alignés et c'est gagné !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
+        <a href="pendu/" class="carte-jeu cyan" data-tag="2 JOUEURS">
+            <div class="icone">🪢</div>
+            <div class="titre-jeu">Le Pendu</div>
+            <div class="info-jeu">Fais deviner ton propre mot secret à ton adversaire lettre par lettre.</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+    </main>
+
+    <h2 id="solo" class="section-titre">⚡ Borne Solo (Tests & Entraînement)</h2>
+    <main class="grid-jeux">
+        <a href="reflexe/" class="carte-jeu green" data-tag="SOLO">
+            <div class="icone">⚡</div>
+            <div class="titre-jeu">Test de Réflexe</div>
+            <div class="info-jeu">Teste ta vitesse de réaction au milliseconde près dès que l'écran passe au vert !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+    </main>
+
+    <button id="btn-haut" onclick="retourHaut()" title="Retour en haut">▲</button>
+
+    <footer>
+        <span>&copy; SALLE D'ARCADE — HIGH SCORE 999999</span>
+        <span>Pour toutes questions → <a href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a></span>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('btn-fullscreen');
+        const label = btn.querySelector('.fs-label');
+        btn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                label.textContent = 'QUITTER';
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                label.textContent = 'PLEIN ÉCRAN';
+            }
+        });
+
+        const btnHaut = document.getElementById('btn-haut');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                btnHaut.classList.add('visible');
+            } else {
+                btnHaut.classList.remove('visible');
+            }
+        });
+
+        function retourHaut() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
