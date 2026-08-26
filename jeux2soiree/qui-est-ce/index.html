@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>Qui est-ce ? (Modes de jeu)</title>
+    <title>Qui est-ce ? (Édition Personnalisée) — Salle d'Arcade</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -177,7 +177,8 @@
     <main class="container" id="app"></main>
 
     <script>
-        const PERSONNAGES = [
+        // Grande liste de personnages (tu pourras en ajouter jusqu'à 100 ou plus ici)
+        const LISTE_COMPLETE_PERSONNAGES = [
             { nom: "Emmanuel Macron", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQ1zb_Z3FCmJwmEWSc-b7jqT8ERj3wWkFY1v-al0SDGsP8zHlRnoVSrX1MswvWc2fWd1h_YkT75vtAUvQzuzBlM2N867Ws&s=19" },
             { nom: "Jean-Luc Mélenchon", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-IkBJhWqAbtr4P7loj3Fsoe1Q4O6ih-OSKucoKn3G7_SLZGyJ_2sKAjLiXSlZV0sZIDxBiUWmBFlFACty_sojxmcAIk6hXxF4_tCsRf0U&s=10" },
             { nom: "Marine Le Pen", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqNKxrKH8Y_hgr9SlSicfI_65f4X4D8fMQsR2_ICPPmhu5rKuekEAJ3-RGkD5bFNwKwZjkaE5FzBs2M5hx-rk0vruuAXWm-4290Q12yVs2&s=10" },
@@ -201,7 +202,21 @@
             { nom: "Joseph Staline", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgB2VYZ4jGfH9BXJa5vQm1VB2Si0K73WRRy4yhnzG31ywE16UMNlUAkrMH6edAXzrcQnbvptE8rD7w8RVsW3DDwlWDjcI&s=10" },
             { nom: "Adolf Hitler", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRg3x_f6W3t2ZoSCmnkeqlYP392TCMGpq4sTMaQsmrRPr482P4IsOXHyY6b79n2yA0V8wyW2CRNCWSLlN5303aopD1tSek&s=19" },
             { nom: "Kim Jong-un", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFIvh6YWhuGeMHcHXpi1Q_ifCOOwq6LBazMuGNAtNRKaQgifZY8qkvJKJ44t7AbufY1zZVv0mUhEB4GlDG4nQ-0XQn4-u2F9_qR0ydsoYz&s=10" },
-            { nom: "Vladimir Poutine", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU5QyiZueyJUtXq6cL_v830DDI-Pplz_CHukFnRFVc1iBT5gaKH2PkqAb7JxqzC4garFI2IXqJl9m8PNJe9x8ceUGTWqEL_n9bXp8kkyqq&s=10" }
+            { nom: "Vladimir Poutine", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU5QyiZueyJUtXq6cL_v830DDI-Pplz_CHukFnRFVc1iBT5gaKH2PkqAb7JxqzC4garFI2IXqJl9m8PNJe9x8ceUGTWqEL_n9bXp8kkyqq&s=10" },
+            { nom: "Patrick Sébastien", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlI3JoXPiI59c94gNgIycV-BIUGEAFa1AlPlUX1wG6UcGIGmxj_Q1Y7RZlc28Ch8pSSJ0zHH7xp1WcvYkaeIb2Gh6u1CQS9NVweLayEpwW&s=10" },
+            { nom: "Tibo InShape", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzQsiKGowlFmw4XFHaWwo5VCxiSCasO-7fhRPRiZ59jTORtw_pqF9iFQa4Cr336LlbUbx6h2hcyXbuyfqbAQ6OLong0dfLVvs7651V4pLkvw&s=10" },
+            { nom: "Philippe Etchebest", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ90QyqEE4PdT05DwQugJ3sCmLl16gC9WexpU2_MVwOFr_ZyjRqpg001_ifReGx2BzoGTd6E3dsebJZClHTnplD5XMwQIGfDtK4X1ry9bJe&s=10" },
+            { nom: "Mimie Mathy", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTWXCkNAwJ4S-N7Ruu1tE-0ogksNN1C_XtxLrwHxYbq2Fd85Ht8JpcEEoubqAmGmP7ymFSiOfjFrFyMoR0qlNeDN9-m36MXuyhOzJQGe3f2Q&s=10" },
+            { nom: "Mia Khalifa", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDrYFfGC9iKwLx1OFj9qDGl8B6J3o0rgI2yBlzYGt_EQ&s=10" },
+            { nom: "Sarah Fraisou", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa0Iy94jpPoZOySqIMXJuMk2YSTNRm7AXhveNzm64vF-gb82X3f19tr6X4Q4WYyKXZHr_btHDx2cNNsGhMF4EW0B14g3Zs-qTCEaTZR5ox&s=10" },
+            { nom: "Afida Turner", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFmt4PG9WrWoPgMHY81ZvDHOA0LXUHwh1CHnF2zt7523e_RcS-UAwp2eq4YAsvW3JB-S6IgJKl26HAMexYYaV89w95EaJN0m5cI7bkVqsd&s=10" },
+            { nom: "Kim Kardashian", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy2ZcP-mK829S3V01z3NTLiF0fs886ta422zLrQ48zVxzTibxRZ4eALUmSyayh0Lxb9kQ-Mz2oUbLYbESg7O7iq-Rb8JHmIJcHs8TW6zKlzg&s=10" },
+            { nom: "Lena Situations", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnO5EMxXrMyKBNj7w996bNEnlvu3yPxPGS7URDsUlPSanftsV0LqFfPczcjUl4abFy47iM7I4Bwynh3BpLRH4nP8a2EGReUYus2wAKsclW&s=10" },
+            { nom: "Jean-Claude Van Damme", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaA2bjuR0fEJanQNcfuKEJM17_x_kaPYIR4yY0ybSy_w-dyjUbfBroFkgOy1K3WsEPZqcipc04mLtS0E-mPkTCZDVlVoNh2czLk6LSoP1gLw&s=10" },
+            { nom: "MrBeast", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDurc1tnaOpmQRto8Bok8VRK3rrI0WVDt4LFVIO2wubsgJHAjPbm1i9w-iuT4njbr_YEZOKWL4eNh7dEYDTIdtkhljV8WjdZzoveey6odPtQ&s=10" },
+            { nom: "Erling Haaland", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd__8JPLda71PoK2GquIaKPFuhxJ7QZ9vlBC61B-SOHjiJbPKLx7Fz7rguIFxbVuNDhV_nWDYd848avplRxEiR1YLHC_kALXly2bs33cHE&s=10" },
+             { nom: "Ed Sheeran", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTET9KC466xm7XcNjpo1aWOc4ioPVlI-66muDagx8jQj8ceOCOoEElVsj-6GbYd4TaxC-xQG-IG3tfqFFq9UpofdwvkZEFoY3Uil2EimKG7Ig&s=10" },
+            
         ];
 
         let state = {
@@ -215,11 +230,17 @@
             mystereJ2: null
         };
 
+        // Fonction magique pour piocher 24 personnages au hasard parmi la grande liste
+        function selectionner24Aleatoires() {
+            let copieMelangee = [...LISTE_COMPLETE_PERSONNAGES].sort(() => 0.5 - Math.random());
+            return copieMelangee.slice(0, 24).map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+        }
+
         function choisirMode(modeChoisi) {
             state.mode = modeChoisi;
             if (modeChoisi === 1) {
-                // Mode Solo : Un seul tableau
-                state.personnagesSolo = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+                // Mode Solo : Un seul tableau avec 24 personnages aléatoires
+                state.personnagesSolo = selectionner24Aleatoires();
                 let randomIndex = Math.floor(Math.random() * state.personnagesSolo.length);
                 state.mystereSolo = state.personnagesSolo[randomIndex];
                 state.screen = "solo_jeu";
@@ -231,8 +252,11 @@
         }
 
         function preparerDuel() {
-            state.personnagesJ1 = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
-            state.personnagesJ2 = PERSONNAGES.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+            // On attribue la même grille aléatoire de 24 personnages aux deux joueurs pour que ce soit équitable
+            let grilleCommune = selectionner24Aleatoires();
+
+            state.personnagesJ1 = grilleCommune.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+            state.personnagesJ2 = grilleCommune.map(p => ({ nom: p.nom, img: p.img, elimine: false }));
 
             let indexJ1 = Math.floor(Math.random() * state.personnagesJ1.length);
             let indexJ2 = Math.floor(Math.random() * state.personnagesJ2.length);
@@ -283,7 +307,7 @@
 
                 app.innerHTML = `
                     <h1>MODE SOLO 🎯</h1>
-                    <p class="phase-subtitle">Un personnage secret a été tiré au sort</p>
+                    <p class="phase-subtitle">24 personnages tirés au sort parmi la collection</p>
                     
                     <div class="panel" style="margin-bottom:20px;">
                         <p style="font-size:1rem; color:var(--text-sub); margin-bottom:5px;">Le personnage mystère à deviner :</p>
@@ -371,7 +395,7 @@
 
                 app.innerHTML = `
                     <h1>DUEL EN COURS ⚔️</h1>
-                    <p class="phase-subtitle">Chacun gère sa grille d'élimination</p>
+                    <p class="phase-subtitle">Chacun gère sa grille d'élimination (24 personnages aléatoires)</p>
                     
                     <div class="duel-container">
                         <div class="joueur-column">
