@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0616">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Undercover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+  :root {
+    --bg-color: #0b0616;
+    --card-bg: #140a26;
+    --grid-line: rgba(255, 46, 136, 0.10);
+    --border-color: rgba(255, 46, 136, 0.35);
+    --text-main: #f3e9ff;
+    --text-sub: #9d8bc4;
+    --accent: #ff2e88;
+    --neon-yellow: #ffe14d;
+    --neon-cyan: #22e6ff;
+    --font-display: 'Press Start 2P', monospace;
+    --font-body: 'VT323', monospace;
+  }
+  :root[data-theme="light"] {
+    --bg-color: #cdbf9c;
+    --card-bg: #e6dcc0;
+    --grid-line: rgba(0, 0, 0, 0.03);
+    --border-color: rgba(179, 165, 120, 0.8);
+    --text-main: #241f17;
+    --text-sub: #6a5f45;
+    --accent: #9e2a24;
+    --neon-yellow: #556021;
+    --neon-cyan: #225588;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg-color); }
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%);
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+    position: relative;
+    font-size: 1.25rem;
+  }
+
+  body::after {
+    content: "";
+    position: fixed; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+    z-index: 100; mix-blend-mode: multiply;
+  }
+
+  #app { max-width: 600px; margin: 0 auto; position: relative; z-index: 10; }
+
+  header {
+    background: var(--card-bg);
+    border: 2px solid var(--accent);
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 0 4px var(--bg-color), 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px rgba(255,46,136,0.2);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  h1 { font-family: var(--font-display); font-size: 0.9rem; color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.8); margin: 0; }
+  .subtitle { font-size: 1rem; color: var(--text-sub); margin-top: 4px; }
+  .headerbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+  
+  .themebtn {
+    font-family: var(--font-display); font-size: 0.5rem;
+    background: rgba(255, 46, 136, 0.08); border: 2px solid var(--accent);
+    color: var(--accent); padding: 8px 10px; cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  }
+
+  .panel {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 0 4px var(--bg-color), 6px 6px 0 rgba(0,0,0,0.6);
+  }
+  .panel h2 {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    margin-bottom: 14px;
+    text-shadow: 0 0 6px rgba(34,230,255,0.4);
+  }
+
+  input[type=text], select {
+    width: 100%; background: var(--bg-color); border: 2px solid var(--border-color);
+    color: var(--text-main); padding: 10px; font-size: 1.25rem; font-family: var(--font-body);
+    outline: none; margin-bottom: 10px;
+  }
+  input[type=text]:focus, select:focus { border-color: var(--accent); }
+
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; font-family: var(--font-display); font-size: 0.65rem;
+    cursor: pointer; border: none; box-shadow: 4px 4px 0 rgba(0,0,0,0.7);
+    text-transform: uppercase; text-align: center; margin-top: 10px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.5); }
+  .btn-ghost { background: transparent; border: 2px solid var(--accent); color: var(--text-main); }
+  .btn-small { width: auto; padding: 8px 12px; font-size: 0.5rem; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.3); border: 1px dashed var(--border-color);
+    padding: 6px 10px; font-size: 1.2rem;
+  }
+  .chip button { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; }
+
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button {
+    width: 32px; height: 32px; background: var(--bg-color);
+    border: 2px solid var(--border-color); color: var(--text-main);
+    font-family: var(--font-display); font-size: 0.8rem; cursor: pointer;
+  }
+  .stepper .val { width: 30px; text-align: center; font-size: 1.4rem; }
+
+  .stamp {
+    display: inline-block; border: 3px double var(--accent); color: var(--accent);
+    padding: 10px 20px; font-family: var(--font-display); font-size: 0.8rem;
+    text-transform: uppercase; transform: rotate(-2deg); text-shadow: 0 0 6px rgba(255,46,136,0.6);
+  }
+  .stamp.olive { border-color: var(--neon-cyan); color: var(--neon-cyan); text-shadow: 0 0 6px rgba(34,230,255,0.6); }
+  .stamp.neutral { border-color: var(--text-sub); color: var(--text-sub); }
+  .stamp.small { font-size: 0.55rem; padding: 6px 12px; }
+
+  .wordbig { font-family: var(--font-display); font-size: 1.6rem; color: var(--neon-yellow); text-shadow: 0 0 8px rgba(255,225,77,0.7); margin-top: 10px; }
+  .center { text-align: center; }
+  .dim { color: var(--text-sub); }
+  .warn { color: #ff5555; font-size: 1rem; margin-top: 6px; }
+  .codebox { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.2em; color: var(--neon-yellow); text-align: center; padding: 15px; background: var(--bg-color); border: 2px dashed var(--border-color); margin: 10px 0; }
+  .linkbtn { background: none; border: none; color: var(--text-sub); font-size: 1.1rem; cursor: pointer; text-decoration: underline; display: block; margin: 10px auto; font-family: var(--font-body); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+var BUILTIN_PAIRS = [
+  // --- NOURRITURE (40) ---
+  { theme:"Nourriture", difficulty:"facile", civil:"Pizza", undercover:"Burger" },
+  { theme:"Nourriture", difficulty:"facile", civil:"Chocolat", undercover:"Bonbon" },
+  { theme:"Nourriture", difficulty:"facile", civil:"Frite", undercover:"Chips" },
+  { theme:"Nourriture", difficulty:"facile", civil:"Pomme", undercover:"Poire" },
+  { theme:"Nourriture", difficulty:"facile", civil:"Pain", undercover:"Biscotte" },
+  { theme:"Nourriture", difficulty:"facile", civil:"Gâteau", undercover:"Tarte" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Croissant", undercover:"Baguette" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Fromage", undercover:"Yaourt" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Pâtes", undercover:"Riz" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Ketchup", undercover:"Mayonnaise" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Beurre", undercover:"Margarine" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Saucisson", undercover:"Jambon" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Lasagne", undercover:"Moussaka" },
+  { theme:"Nourriture", difficulty:"moyen", civil:"Chili con carne", undercover:"Fajitas" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Tarte", undercover:"Quiche" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Crêpe", undercover:"Gaufre" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Moutarde", undercover:"Wasabi" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Raclette", undercover:"Fondue" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Confiture", undercover:"Miel" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Mandarine", undercover:"Clémentine" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Pêche", undercover:"Nectarine" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Marron", undercover:"Châtaigne" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Brie", undercover:"Camembert" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Éclair", undercover:"Religieuse" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Muffin", undercover:"Cupcake" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Sorbet", undercover:"Glace" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Caquelon", undercover:"Marmite" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Béchamel", undercover:"Vinaigrette" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Safran", undercover:"Curcuma" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Meringue", undercover:"Macaron" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Couscous", undercover:"Tajine" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Ail", undercover:"Oignon" },
+  { theme:"Nourriture", difficulty:"difficile", civil:"Sucre", undercover:"Édulcorant" },
+
+  // --- BOISSONS (18) ---
+  { theme:"Boissons", difficulty:"facile", civil:"Café", undercover:"Thé" },
+  { theme:"Boissons", difficulty:"facile", civil:"Eau", undercover:"Jus d'orange" },
+  { theme:"Boissons", difficulty:"facile", civil:"Chocolat chaud", undercover:"Cappuccino" },
+  { theme:"Boissons", difficulty:"moyen", civil:"Vin", undercover:"Champagne" },
+  { theme:"Boissons", difficulty:"moyen", civil:"Smoothie", undercover:"Milkshake" },
+  { theme:"Boissons", difficulty:"moyen", civil:"Bière", undercover:"Panaché" },
+  { theme:"Boissons", difficulty:"moyen", civil:"Sirop", undercover:"Limonade" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Cidre", undercover:"Poiré" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Eau pétillante", undercover:"Eau plate" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Thé vert", undercover:"Thé noir" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Vin rouge", undercover:"Vin blanc" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Whisky", undercover:"Bourbon" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Tisane", undercover:"Infusion" },
+  { theme:"Boissons", difficulty:"difficile", civil:"Kéfir", undercover:"Kombucha" },
+
+  // --- ANIMAUX (30) ---
+  { theme:"Animaux", difficulty:"facile", civil:"Chien", undercover:"Chat" },
+  { theme:"Animaux", difficulty:"facile", civil:"Lion", undercover:"Tigre" },
+  { theme:"Animaux", difficulty:"facile", civil:"Cheval", undercover:"Âne" },
+  { theme:"Animaux", difficulty:"facile", civil:"Vache", undercover:"Chèvre" },
+  { theme:"Animaux", difficulty:"moyen", civil:"Aigle", undercover:"Faucon" },
+  { theme:"Animaux", difficulty:"moyen", civil:"Dauphin", undercover:"Requin" },
+  { theme:"Animaux", difficulty:"moyen", civil:"Abeille", undercover:"Guêpe" },
+  { theme:"Animaux", difficulty:"moyen", civil:"Loup", undercover:"Renard" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Corbeau", undercover:"Corneille" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Alpaga", undercover:"Lama" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Crapaud", undercover:"Grenouille" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Chameau", undercover:"Dromadaire" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Poulpe", undercover:"Calmar" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Pingouin", undercover:"Manchot" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Chouette", undercover:"Hibou" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Alligator", undercover:"Crocodile" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Léopard", undercover:"Guépard" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Mouette", undercover:"Goéland" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Lièvre", undercover:"Lapin" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Orignal", undercover:"Wapiti" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Morses", undercover:"Caribou" },
+  { theme:"Animaux", difficulty:"difficile", civil:"Otarie", undercover:"Phoque" },
+
+  // --- ANATOMIE & CORPS (Nouveau - 10) ---
+  { theme:"Anatomie", difficulty:"moyen", civil:"Cœur", undercover:"Poumon" },
+  { theme:"Anatomie", difficulty:"moyen", civil:"Œil", undercover:"Oreille" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Artère", undercover:"Veine" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Tendon", undercover:"Ligament" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Squelette", undercover:"Os" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Poignet", undercover:"Cheville" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Genou", undercover:"Coude" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Pharynx", undercover:"Larynx" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Crâne", undercover:"Cerveau" },
+  { theme:"Anatomie", difficulty:"difficile", civil:"Molaire", undercover:"Incisive" },
+
+  // --- NATURE & CLIMAT (Nouveau - 15) ---
+  { theme:"Nature", difficulty:"facile", civil:"Pluie", undercover:"Neige" },
+  { theme:"Nature", difficulty:"moyen", civil:"Rivière", undercover:"Lac" },
+  { theme:"Nature", difficulty:"moyen", civil:"Étoile", undercover:"Planète" },
+  { theme:"Nature", difficulty:"difficile", civil:"Stalactite", undercover:"Stalagmite" },
+  { theme:"Nature", difficulty:"difficile", civil:"Tornade", undercover:"Ouragan" },
+  { theme:"Nature", difficulty:"difficile", civil:"Magma", undercover:"Lave" },
+  { theme:"Nature", difficulty:"difficile", civil:"Océan", undercover:"Mer" },
+  { theme:"Nature", difficulty:"difficile", civil:"Fleuve", undercover:"Rivière" },
+  { theme:"Nature", difficulty:"difficile", civil:"Colline", undercover:"Montagne" },
+  { theme:"Nature", difficulty:"difficile", civil:"Grotte", undercover:"Caverne" },
+  { theme:"Nature", difficulty:"difficile", civil:"Marais", undercover:"Marécage" },
+  { theme:"Nature", difficulty:"difficile", civil:"Brume", undercover:"Brouillard" },
+  { theme:"Nature", difficulty:"difficile", civil:"Météore", undercover:"Astéroïde" },
+  { theme:"Nature", difficulty:"difficile", civil:"Avalanche", undercover:"Blizzard" },
+  { theme:"Nature", difficulty:"difficile", civil:"Baie", undercover:"Golfe" },
+
+  // --- SPORT (20) ---
+  { theme:"Sport", difficulty:"facile", civil:"Football", undercover:"Basketball" },
+  { theme:"Sport", difficulty:"facile", civil:"Course", undercover:"Marche" },
+  { theme:"Sport", difficulty:"moyen", civil:"Tennis", undercover:"Badminton" },
+  { theme:"Sport", difficulty:"moyen", civil:"Rugby", undercover:"Football américain" },
+  { theme:"Sport", difficulty:"moyen", civil:"Ski", undercover:"Snowboard" },
+  { theme:"Sport", difficulty:"difficile", civil:"Escalade", undercover:"Alpinisme" },
+  { theme:"Sport", difficulty:"difficile", civil:"Judo", undercover:"Karaté" },
+  { theme:"Sport", difficulty:"difficile", civil:"Surf", undercover:"Planche à voile" },
+  { theme:"Sport", difficulty:"difficile", civil:"Kayak", undercover:"Canoë" },
+  { theme:"Sport", difficulty:"difficile", civil:"Paddock", undercover:"Stand" },
+  { theme:"Sport", difficulty:"difficile", civil:"Monoplace", undercover:"Karting" },
+  { theme:"Sport", difficulty:"difficile", civil:"Marathon", undercover:"Triathlon" },
+  { theme:"Sport", difficulty:"difficile", civil:"Haltérophilie", undercover:"Musculation" },
+  { theme:"Sport", difficulty:"difficile", civil:"Biathlon", undercover:"Décathlon" },
+
+  // --- OBJETS & MAISON (30) ---
+  { theme:"Objets", difficulty:"facile", civil:"Téléphone", undercover:"Ordinateur" },
+  { theme:"Objets", difficulty:"facile", civil:"Montre", undercover:"Horloge" },
+  { theme:"Objets", difficulty:"moyen", civil:"Stylo", undercover:"Crayon" },
+  { theme:"Objets", difficulty:"moyen", civil:"Valise", undercover:"Sac à dos" },
+  { theme:"Objets", difficulty:"moyen", civil:"Lunettes", undercover:"Lentilles" },
+  { theme:"Objets", difficulty:"difficile", civil:"Fourchette", undercover:"Cuillère" },
+  { theme:"Objets", difficulty:"difficile", civil:"Bougie", undercover:"Lampe" },
+  { theme:"Objets", difficulty:"difficile", civil:"Clé USB", undercover:"Disque dur" },
+  { theme:"Objets", difficulty:"difficile", civil:"Rideau", undercover:"Store" },
+  { theme:"Objets", difficulty:"difficile", civil:"Volet", undercover:"Persienne" },
+  { theme:"Objets", difficulty:"difficile", civil:"Couette", undercover:"Couverture" },
+  { theme:"Objets", difficulty:"difficile", civil:"Canapé", undercover:"Divan" },
+  { theme:"Objets", difficulty:"difficile", civil:"Tabouret", undercover:"Pouf" },
+  { theme:"Objets", difficulty:"difficile", civil:"Poêle", undercover:"Marmite" },
+  { theme:"Objets", difficulty:"difficile", civil:"Louche", undercover:"Spatule" },
+  { theme:"Objets", difficulty:"difficile", civil:"Balai", undercover:"Aspirateur" },
+  { theme:"Objets", difficulty:"difficile", civil:"Boussole", undercover:"GPS" },
+  { theme:"Objets", difficulty:"difficile", civil:"Thermomètre", undercover:"Baromètre" },
+  { theme:"Objets", difficulty:"difficile", civil:"Micro-ondes", undercover:"Four" },
+  { theme:"Objets", difficulty:"difficile", civil:"Oreiller", undercover:"Traversin" },
+
+  // --- LIEUX & GÉOGRAPHIE (18) ---
+  { theme:"Lieux", difficulty:"facile", civil:"Plage", undercover:"Montagne" },
+  { theme:"Lieux", difficulty:"facile", civil:"Hôtel", undercover:"Camping" },
+  { theme:"Lieux", difficulty:"moyen", civil:"Stade", undercover:"Gymnase" },
+  { theme:"Lieux", difficulty:"moyen", civil:"Musée", undercover:"Galerie d'art" },
+  { theme:"Lieux", difficulty:"moyen", civil:"Supermarché", undercover:"Marché" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Aéroport", undercover:"Gare" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Chalet", undercover:"Cabane" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Zoo", undercover:"Aquarium" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Désert", undercover:"Savane" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Métropole", undercover:"Capitale" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Continent", undercover:"Péninsule" },
+  { theme:"Lieux", difficulty:"difficile", civil:"Détroit", undercover:"Isthme" },
+
+  // --- TRANSPORT (16) ---
+  { theme:"Transport", difficulty:"facile", civil:"Voiture", undercover:"Vélo" },
+  { theme:"Transport", difficulty:"facile", civil:"Avion", undercover:"Train" },
+  { theme:"Transport", difficulty:"moyen", civil:"Trottinette", undercover:"Skateboard" },
+  { theme:"Transport", difficulty:"moyen", civil:"Moto", undercover:"Scooter" },
+  { theme:"Transport", difficulty:"difficile", civil:"Métro", undercover:"RER" },
+  { theme:"Transport", difficulty:"difficile", civil:"Voilier", undercover:"Catamaran" },
+  { theme:"Transport", difficulty:"difficile", civil:"Hélicoptère", undercover:"Drone" },
+  { theme:"Transport", difficulty:"difficile", civil:"Funiculaire", undercover:"Téléphérique" },
+  { theme:"Transport", difficulty:"difficile", civil:"Montgolfière", undercover:"Dirigeable" },
+  { theme:"Transport", difficulty:"difficile", civil:"Ferry", undercover:"Croisière" },
+  { theme:"Transport", difficulty:"difficile", civil:"Tramway", undercover:"Trolleybus" },
+
+  // --- DIVERTISSEMENT, JEUX & CULTURE (30) ---
+  { theme:"Divertissement", difficulty:"facile", civil:"Cinéma", undercover:"Théâtre" },
+  { theme:"Divertissement", difficulty:"facile", civil:"Concert", undercover:"Festival" },
+  { theme:"Divertissement", difficulty:"moyen", civil:"Jeu vidéo", undercover:"Jeu de société" },
+  { theme:"Divertissement", difficulty:"moyen", civil:"Roman", undercover:"Bande dessinée" },
+  { theme:"Divertissement", difficulty:"difficile", civil:"Podcast", undercover:"Radio" },
+  { theme:"Divertissement", difficulty:"difficile", civil:"Stand-up", undercover:"Improvisation" },
+  { theme:"Divertissement", difficulty:"difficile", civil:"Opéra", undercover:"Comédie musicale" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Joy-Con", undercover:"Manette" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Sanctuaire", undercover:"Donjon" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Naufragé", undercover:"Survivant" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Radeau", undercover:"Bateau" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Cartouche", undercover:"Disque" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Quête", undercover:"Mission" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Monopoly", undercover:"La Bonne Paye" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Échecs", undercover:"Dames" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Croupier", undercover:"Maître du jeu" },
+  { theme:"Jeux", difficulty:"difficile", civil:"Plateau", undercover:"Tuiles" },
+
+  // --- CONCEPTS & ABSTRAITS (Nouveau - 15) ---
+  { theme:"Concepts", difficulty:"moyen", civil:"Joie", undercover:"Bonheur" },
+  { theme:"Concepts", difficulty:"moyen", civil:"Rire", undercover:"Sourire" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Éthique", undercover:"Morale" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Empathie", undercover:"Sympathie" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Rêve", undercover:"Songe" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Mensonge", undercover:"Trahison" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Illusion", undercover:"Mirage" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Mythe", undercover:"Légende" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Peur", undercover:"Angoisse" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Tristesse", undercover:"Mélancolie" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Paradoxe", undercover:"Contradiction" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Hasard", undercover:"Destin" },
+  { theme:"Concepts", difficulty:"difficile", civil:"Talent", undercover:"Génie" },
+
+  // --- TECHNOLOGIE AVANCÉE (10) ---
+  { theme:"Technologie", difficulty:"difficile", civil:"Focale", undercover:"Ouverture" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Obturateur", undercover:"Diaphragme" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Retouche AI", undercover:"Montage" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Stabilisateur", undercover:"Trépied" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Capteur", undercover:"Lentille" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Fibre optique", undercover:"ADSL" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Serveur", undercover:"Cloud" },
+  { theme:"Technologie", difficulty:"difficile", civil:"Algorithme", undercover:"Code source" },
+
+  // --- VÊTEMENTS & MODE (12) ---
+  { theme:"Vêtements", difficulty:"facile", civil:"Pantalon", undercover:"Short" },
+  { theme:"Vêtements", difficulty:"moyen", civil:"Chaussures", undercover:"Baskets" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Bonnet", undercover:"Casquette" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Costume", undercover:"Smoking" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Veste", undercover:"Blouson" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Manteau", undercover:"Doudoune" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Baskets", undercover:"Sneakers" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Cravate", undercover:"Nœud papillon" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Ceinture", undercover:"Bretelles" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Chaussettes", undercover:"Mi-bas" },
+  { theme:"Vêtements", difficulty:"difficile", civil:"Écharpe", undercover:"Foulard" },
+
+  // --- ESPIONNAGE & ENQUÊTE (10) ---
+  { theme:"Espionnage", difficulty:"facile", civil:"Espion", undercover:"Détective" },
+  { theme:"Espionnage", difficulty:"moyen", civil:"Empreinte", undercover:"ADN" },
+  { theme:"Espionnage", difficulty:"moyen", civil:"Menottes", undercover:"Corde" },
+  { theme:"Espionnage", difficulty:"difficile", civil:"Alibi", undercover:"Témoignage" },
+  { theme:"Espionnage", difficulty:"difficile", civil:"Poison", undercover:"Somnifère" },
+  { theme:"Espionnage", difficulty:"difficile", civil:"Interrogatoire", undercover:"Audition" },
+  { theme:"Espionnage", difficulty:"difficile", civil:"Preuve", undercover:"Indice" },
+  { theme:"Espionnage", difficulty:"difficile", civil:"Suspect", undercover:"Coupable" }
+];
+
+var ROLE_LABEL = { civil:"Civil", undercover:"Undercover", white:"Mr. White" };
+
+var peer = null;
+var conn = null;
+var connections = [];
+var isHost = false;
+var myName = "";
+var roomCode = "";
+
+var state = {
+  gameMode: null,
+  screen: "mode_select",
+  playerNames:["Joueur 1","Joueur 2","Joueur 3","Joueur 4"],
+  numUndercover:1, numWhite:0,
+  theme:"Aléatoire", difficulty:"Aléatoire",
+  isGameMaster:false, customCivil:"", customUndercover:"",
+  blindMode:false,
+  library:[],
+  players:[], wordPair:null,
+  revealIndex:0, revealed:false,
+  round:1, clueOrder:[], clueTurn:0,
+  eliminations:[], selectedVote:null, justEliminated:null,
+  winner:null,
+  themeMode:"dark"
+};
+
+function selectMode(mode) {
+    state.gameMode = mode;
+    if(mode === "local") {
+        state.screen = "setup";
+        render();
+    } else {
+        state.screen = "net_host_or_join";
+        render();
+    }
+}
+
+function generateRoomCode() {
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    var code = "";
+    for(var i=0; i<4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+    return code;
+}
+
+function startHosting() {
+    var nameInput = document.getElementById("pseudoHost");
+    if(!nameInput || !nameInput.value.trim()) { alert("Entre ton pseudo d'hôte !"); return; }
+    
+    myName = nameInput.value.trim();
+    isHost = true;
+    roomCode = generateRoomCode();
+    
+    state.playerNames = [myName];
+
+    if(peer) peer.destroy();
+    peer = new Peer(roomCode);
+
+    peer.on('open', function(id) {
+        state.screen = "setup";
+        render();
+    });
+
+    peer.on('connection', function(c) {
+        connections.push(c);
+        c.on('data', function(data) {
+            if(data.type === "JOIN") {
+                if(!state.playerNames.includes(data.name)) {
+                    state.playerNames.push(data.name);
+                }
+                broadcastState();
+                render();
+            }
+        });
+    });
+}
+
+function broadcastState() {
+    connections.forEach(function(c) {
+        c.send({ type: "STATE_UPDATE", data: state });
+    });
+}
+
+function joinRoomForm() {
+    isHost = false;
+    state.screen = "join_form";
+    render();
+}
+
+function connectToRoom() {
+    var nameInput = document.getElementById("pseudoJoin");
+    var codeInput = document.getElementById("roomCodeInput");
+    if(!nameInput.value.trim() || !codeInput.value.trim()) { alert("Remplis tous les champs !"); return; }
+    
+    myName = nameInput.value.trim();
+    roomCode = codeInput.value.trim().toUpperCase();
+
+    if(peer) peer.destroy();
+    peer = new Peer();
+
+    peer.on('open', function(id) {
+        conn = peer.connect(roomCode);
+
+        conn.on('open', function() {
+            conn.send({ type: "JOIN", name: myName });
+            state.screen = "waiting_room";
+            render();
+        });
+
+        conn.on('data', function(data) {
+            if(data.type === "STATE_UPDATE") {
+                state = data.data;
+                render();
+            }
+        });
+    });
+}
+
+function loadStorage(){
+  state.library = BUILTIN_PAIRS.map(function(p,i){ return { id:"b"+i, theme:p.theme, difficulty:p.difficulty, civil:p.civil, undercover:p.undercover }; });
+  try{ var tm = localStorage.getItem("undercover_theme"); if(tm==="light"||tm==="dark") state.themeMode = tm; }catch(e){}
+  applyTheme();
+}
+function applyTheme(){ document.documentElement.setAttribute("data-theme", state.themeMode); }
+function toggleTheme(){
+  state.themeMode = state.themeMode==="dark" ? "light" : "dark";
+  try{ localStorage.setItem("undercover_theme", state.themeMode); }catch(e){}
+  applyTheme();
+  render();
+}
+function toggleFullscreen(){
+  var isFs = document.fullscreenElement || document.webkitFullscreenElement;
+  if(!isFs){
+    var el = document.documentElement;
+    if(el.requestFullscreen) el.requestFullscreen();
+  } else {
+    if(document.exitFullscreen) document.exitFullscreen();
+  }
+}
+document.addEventListener("fullscreenchange", function(){ render(); });
+
+function addPlayer(){
+  if(state.gameMode === "network") return;
+  var input = document.getElementById("nameInput");
+  var name = input.value.trim();
+  if(!name) return;
+  state.playerNames.push(name);
+  render();
+}
+
+function removePlayer(idx){ 
+  if(state.gameMode === "network") return;
+  state.playerNames.splice(idx,1); 
+  render(); 
+}
+
+function changeUndercover(delta){
+  if(state.gameMode === "network" && !isHost) return;
+  state.numUndercover = Math.max(0, Math.min(3, state.numUndercover+delta)); 
+  if(state.gameMode === "network") broadcastState(); 
+  render();
+}
+
+function changeWhite(delta){
+  if(state.gameMode === "network" && !isHost) return;
+  state.numWhite = Math.max(0, Math.min(2, state.numWhite+delta)); 
+  if(state.gameMode === "network") broadcastState(); 
+  render();
+}
+
+function setTheme(v){ 
+  if(state.gameMode === "network" && !isHost) return;
+  state.theme=v; 
+  if(state.gameMode === "network") broadcastState();
+}
+
+function setDifficulty(v){ 
+  if(state.gameMode === "network" && !isHost) return;
+  state.difficulty=v; 
+  if(state.gameMode === "network") broadcastState();
+}
+
+function toggleGameMaster(){ 
+  if(state.gameMode === "network" && !isHost) return;
+  state.isGameMaster = !state.isGameMaster; 
+  if(state.gameMode === "network") broadcastState();
+  render(); 
+}
+
+function toggleBlindMode(){ 
+  if(state.gameMode === "network" && !isHost) return;
+  state.blindMode = !state.blindMode; 
+  if(state.gameMode === "network") broadcastState();
+  render(); 
+}
+
+function allPairs(){ return state.library; }
+function themesList(){
+  var set = {}; allPairs().forEach(function(p){ set[p.theme]=true; });
+  return ["Aléatoire"].concat(Object.keys(set).sort());
+}
+
+/* En Mode Meneur d'enquête + réseau, l'hôte connaît déjà les deux mots :
+   il ne doit jamais recevoir de rôle et ne compte pas comme joueur. */
+function playingNames(){
+  var names = Array.from(new Set(state.playerNames));
+  if(state.isGameMaster && state.gameMode === "network"){
+    names = names.filter(function(n){ return n.toLowerCase() !== myName.toLowerCase(); });
+  }
+  return names;
+}
+function isExcludedGameMaster(){
+  return state.isGameMaster && state.gameMode === "network" && isHost;
+}
+
+function startGame(){
+  if(state.gameMode === "network" && !isHost) return;
+
+  var pair = null;
+  if(state.isGameMaster){
+    var gmCiv = document.getElementById("gmCivil");
+    var gmUnd = document.getElementById("gmUndercover");
+    if(gmCiv) state.customCivil = gmCiv.value.trim();
+    if(gmUnd) state.customUndercover = gmUnd.value.trim();
+    if(!state.customCivil || !state.customUndercover){ alert("Veuillez renseigner les deux mots."); return; }
+    pair = { theme:"Personnalisé", difficulty:"Custom", civil:state.customCivil, undercover:state.customUndercover };
+  } else {
+    var pool = allPairs();
+    if(state.theme !== "Aléatoire") pool = pool.filter(function(p){return p.theme===state.theme;});
+    if(state.difficulty !== "Aléatoire") pool = pool.filter(function(p){return p.difficulty===state.difficulty;});
+    if(pool.length===0) pool = allPairs();
+    pair = pool[Math.floor(Math.random()*pool.length)];
+  }
+
+  var uniqueNames = playingNames();
+
+  var order = shuffle(uniqueNames.map(function(_,i){return i;}));
+  var players = uniqueNames.map(function(name,idx){
+    return { id:idx, name:name, role:"civil", word:pair.civil, alive:true };
+  });
+  order.slice(0,state.numUndercover).forEach(function(idx){ players[idx].role="undercover"; players[idx].word=pair.undercover; });
+  order.slice(state.numUndercover, state.numUndercover+state.numWhite).forEach(function(idx){ players[idx].role="white"; players[idx].word=null; });
+
+  state.players = players;
+  state.wordPair = pair;
+  state.revealIndex = 0;
+  state.revealed = false;
+  state.round = 1;
+  state.eliminations = [];
+  state.winner = null;
+  state.clueOrder = shuffle(players.map(function(p){return p.id;}));
+  state.clueTurn = 0;
+  state.screen = "reveal";
+  
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+function revealCard(){ state.revealed = true; render(); }
+
+function networkProceedToClues(){
+  if(state.gameMode !== "network" || !isHost) return;
+  state.screen = "clues";
+  broadcastState();
+  render();
+}
+
+function nextReveal(){
+  if(state.revealIndex + 1 >= state.players.length){ 
+    state.screen = "clues"; 
+    state.revealIndex = 0;
+    state.revealed = false;
+  } else { 
+    state.revealIndex++; 
+    state.revealed = false; 
+  }
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+function aliveClueOrder(){
+  return state.clueOrder.filter(function(id){
+    var p = state.players.find(function(pl){return pl.id===id;});
+    return p && p.alive;
+  });
+}
+
+function nextClueTurn(){
+  var order = aliveClueOrder();
+  if(state.clueTurn + 1 >= order.length){ 
+    state.screen = "vote"; 
+    state.selectedVote = null; 
+  } else { 
+    state.clueTurn++; 
+  }
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+function selectVote(id){ 
+  state.selectedVote = id; 
+  render(); 
+}
+
+function confirmVote(){
+  if(state.selectedVote == null) return;
+  var target = state.players.find(function(p){return p.id === state.selectedVote;});
+  state.justEliminated = target;
+  target.alive = false;
+  state.eliminations.push({ round: state.round, playerId: target.id, name: target.name, role: target.role });
+  
+  if(target.role === "white"){ 
+    state.screen = "whiteGuess"; 
+  } else { 
+    state.screen = "eliminationReveal"; 
+  }
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+function submitWhiteGuess(){
+  var input = document.getElementById("whiteGuessInput");
+  var guess = (input ? input.value : "").trim();
+  var correct = guess.length > 0 && guess.toLowerCase() === state.wordPair.civil.trim().toLowerCase();
+  var last = state.eliminations[state.eliminations.length - 1];
+  last.whiteGuess = guess; 
+  last.whiteCorrect = correct;
+  
+  if(correct){ 
+    state.winner = "white";
+    state.screen = "end"; 
+  } else { 
+    state.screen = "eliminationReveal"; 
+  }
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+function checkWinCondition(){
+  var alive = state.players.filter(function(p){return p.alive;});
+  var aliveInf = alive.filter(function(p){return p.role !== "civil";}).length;
+  var aliveCiv = alive.filter(function(p){return p.role === "civil";}).length;
+  if(aliveInf === 0) return "civils";
+  if(aliveInf >= aliveCiv) return "infiltrators";
+  return null;
+}
+
+function proceedAfterElimination(){
+  var result = checkWinCondition();
+  if(result){ 
+    state.winner = result;
+    state.screen = "end"; 
+    if(state.gameMode === "network") broadcastState();
+    render(); 
+    return; 
+  }
+  state.round++;
+  var aliveIds = state.players.filter(function(p){return p.alive;}).map(function(p){return p.id;});
+  state.clueOrder = shuffle(aliveIds);
+  state.clueTurn = 0;
+  state.screen = "clues";
+  if(state.gameMode === "network") broadcastState();
+  render();
+}
+
+/* --- Contrôles réservés au maître de jeu (hôte réseau) en fin de partie --- */
+function isGameHost(){
+  // En local (1 téléphone), tout le monde partage le même appareil : pas de restriction.
+  // En réseau, seul celui qui a créé le salon (isHost === true) peut relancer/rentrer au salon.
+  return state.gameMode !== "network" || isHost === true;
+}
+
+function newGameSamePlayers(){ 
+  if(!isGameHost()) return;
+  state.screen = "setup"; 
+  if(state.gameMode === "network") broadcastState();
+  render(); 
+}
+
+function returnToLobby() {
+    if(!isGameHost()) return;
+    state.screen = "setup";
+    if(state.gameMode === "network") broadcastState();
+    render();
+}
+
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function render(){
+  var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  var html = "";
+  html += '<header><div><h1>UNDERCOVER</h1><div class="subtitle">Salle d\'Arcade &middot; Enquête</div></div>';
+  html += '<div class="headerbtns">';
+  html += '<button class="themebtn" onclick="toggleTheme()">'+(state.themeMode==="dark" ? "☀️" : "🌙")+'</button>';
+  html += '<button class="themebtn" onclick="toggleFullscreen()">'+(isFs ? "✕" : "⛶")+'</button>';
+  html += '</div></header>';
+
+  if(state.screen === "mode_select"){
+    html += '<div class="panel center">';
+    html += '<h2>Choix du mode</h2>';
+    html += '<p class="dim" style="margin-bottom:15px;">Comment souhaitez-vous jouer ?</p>';
+    html += '<button class="btn btn-primary" onclick="selectMode(\'local\')">📱 Un seul téléphone</button>';
+    html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="selectMode(\'network\')">🌐 Chacun son téléphone</button>';
+    html += '</div>';
+  }
+  else if(state.screen === "net_host_or_join"){
+    html += '<button class="linkbtn" onclick="state.screen=\'mode_select\'; render();">&#8249; Retour au choix</button>';
+    html += '<div class="panel center"><h2>Mode Réseau</h2>';
+    html += '<p class="dim" style="margin-bottom:10px;">Entre ton pseudo pour créer le salon :</p>';
+    html += '<input type="text" id="pseudoHost" placeholder="Ton pseudo d\'hôte">';
+    html += '<button class="btn btn-primary" onclick="startHosting()">Créer un salon</button>';
+    html += '<button class="btn btn-ghost" style="margin-top:15px;" onclick="joinRoomForm()">Rejoindre un salon existant</button></div>';
+  }
+  else if(state.screen === "join_form"){
+    html += '<div class="panel"><h2>Rejoindre une enquête</h2>';
+    html += '<input type="text" id="pseudoJoin" placeholder="Ton pseudo">';
+    html += '<input type="text" id="roomCodeInput" placeholder="Code du salon (4 lettres)" style="text-transform:uppercase;">';
+    html += '<button class="btn btn-primary" onclick="connectToRoom()">Se connecter</button>';
+    html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="state.screen=\'net_host_or_join\'; render();">Retour</button></div>';
+  }
+  else if(state.screen === "waiting_room"){
+    html += '<div class="panel center"><h2>Salon d\'attente</h2>';
+    html += '<p class="dim">Salon : <strong>'+roomCode+'</strong></p>';
+    html += '<p class="dim" style="margin-top:15px;">En attente que l\'hôte lance la partie...</p></div>';
+  }
+  else if(state.screen === "setup"){
+    if(state.gameMode === "network") {
+      if(isHost) {
+        html += '<div class="panel center"><h2>Code du salon (Hôte)</h2><div class="codebox">'+roomCode+'</div><p class="dim">Partage ce code à tes amis.</p></div>';
+      } else {
+        html += '<div class="panel center"><h2>Salon en cours</h2><p class="dim">Seul l\'hôte peut modifier les paramètres.</p></div>';
+      }
+    } else {
+      html += '<button class="linkbtn" onclick="state.screen=\'mode_select\'; render();">&#8249; Changer de mode</button>';
+    }
+    html += renderSetupBody();
+  }
+  else if(state.screen === "reveal"){ html += renderReveal(); }
+  else if(state.screen === "clues"){ html += renderClues(); }
+  else if(state.screen === "vote"){ html += renderVote(); }
+  else if(state.screen === "whiteGuess"){ html += renderWhiteGuess(); }
+  else if(state.screen === "eliminationReveal"){ html += renderEliminationReveal(); }
+  else if(state.screen === "end"){ html += renderEnd(); }
+
+  document.getElementById("app").innerHTML = html;
+  var ni = document.getElementById("nameInput");
+  if(ni){ ni.addEventListener("keydown", function(e){ if(e.key==="Enter") addPlayer(); }); ni.focus({preventScroll:true}); }
+  var ph = document.getElementById("pseudoHost");
+  if(ph){ ph.addEventListener("keydown", function(e){ if(e.key==="Enter") startHosting(); }); ph.focus({preventScroll:true}); }
+  var wg = document.getElementById("whiteGuessInput");
+  if(wg){ wg.addEventListener("keydown", function(e){ if(e.key==="Enter") submitWhiteGuess(); }); wg.focus({preventScroll:true}); }
+  var pj = document.getElementById("pseudoJoin");
+  if(pj){ pj.addEventListener("keydown", function(e){ if(e.key==="Enter") connectToRoom(); }); pj.focus({preventScroll:true}); }
+}
+
+function renderSetupBody(){
+  var totalConnected = state.playerNames.length;
+  var playing = playingNames();
+  var n = playing.length;
+  var numCivils = n - state.numUndercover - state.numWhite;
+  var tooMany = (state.numUndercover+state.numWhite) >= numCivils || numCivils<1;
+  var canStart = n>=3 && !tooMany;
+
+  var disableControls = (state.gameMode === "network" && !isHost);
+
+  var chips = state.playerNames.map(function(name,idx){
+    var showDelete = (state.gameMode === "local" && totalConnected > 1);
+    var isMeneur = state.isGameMaster && state.gameMode === "network" && name.toLowerCase() === myName.toLowerCase();
+    var label = esc(name) + (isMeneur ? ' <span class="dim" style="font-size:0.95rem;">&middot; Meneur, ne joue pas</span>' : '');
+    return '<div class="chip"><span>'+label+'</span>'+(showDelete ? '<button onclick="removePlayer('+idx+')">&#10005;</button>' : '')+'</div>';
+  }).join("");
+
+  var themes = themesList();
+  var themeOpts = themes.map(function(t){ return '<option value="'+esc(t)+'"'+(t===state.theme?" selected":"")+'>'+esc(t)+'</option>'; }).join("");
+  var diffs = ["Aléatoire","facile","moyen","difficile"];
+  var diffOpts = diffs.map(function(d){ return '<option value="'+d+'"'+(d===state.difficulty?" selected":"")+'>'+d+'</option>'; }).join("");
+
+  var html = "";
+  html += '<div class="panel"><h2>Suspects connectés ('+totalConnected+')</h2><div class="chips">'+chips+'</div>';
+  if(!disableControls && state.gameMode === "local") {
+    html += '<div class="inline2"><input type="text" id="nameInput" placeholder="Nom du suspect"><button class="btn btn-ghost btn-small" onclick="addPlayer()">+</button></div>';
+  }
+  html += '</div>';
+
+  html += '<div class="panel"><h2>Infiltrés</h2>';
+  html += '<div class="row"><span class="dim">Undercover</span><div class="stepper">'+(disableControls?'':'<button onclick="changeUndercover(-1)">&minus;</button>')+'<span class="val mono">'+state.numUndercover+'</span>'+(disableControls?'':'<button onclick="changeUndercover(1)">+</button>')+'</div></div>';
+  html += '<div class="row"><span class="dim">Mr. White</span><div class="stepper">'+(disableControls?'':'<button onclick="changeWhite(-1)">&minus;</button>')+'<span class="val mono">'+state.numWhite+'</span>'+(disableControls?'':'<button onclick="changeWhite(1)">+</button>')+'</div></div>';
+  html += '<div class="dim" style="font-size:1rem;margin-top:8px;">'+numCivils+' civil(s) &middot; '+state.numUndercover+' undercover &middot; '+state.numWhite+' mr. white</div>';
+  if(tooMany) html += '<div class="warn">Trop d\'infiltrés ! Les civils doivent rester majoritaires.</div>';
+  html += '</div>';
+
+  html += '<div class="panel"><h2>Règles & Mots</h2>';
+  html += '<label style="cursor:pointer;display:flex;align-items:center;gap:8px;" class="dim"><input type="checkbox" '+(state.isGameMaster?"checked":"")+' '+(disableControls?'disabled':'')+' onchange="toggleGameMaster()"> Mode Meneur d\'enquête</label>';
+  if(state.isGameMaster){
+    html += '<p class="dim" style="font-size:0.95rem;margin-top:4px;">'+(state.gameMode === "network" ? "L\'hôte connaît les deux mots : il anime la partie mais ne reçoit pas de rôle." : "La personne qui choisit les mots ne doit pas s\'ajouter comme joueur.")+'</p>';
+  }
+  html += '<label style="cursor:pointer;display:flex;align-items:center;gap:8px;margin-top:10px;margin-bottom:10px;" class="dim"><input type="checkbox" '+(state.blindMode?"checked":"")+' '+(disableControls?'disabled':'')+' onchange="toggleBlindMode()"> Mode Identité Secrète</label>';
+
+  if(state.isGameMaster){
+    if(disableControls){
+      html += '<p class="dim" style="margin-top:6px;">Le Meneur d\'enquête choisit les deux mots en privé, ils resteront cachés pour tout le monde ici.</p>';
+    } else {
+      html += '<div class="grid2"><div><span class="dim">Mot Civils</span><input type="text" id="gmCivil" value="'+esc(state.customCivil)+'" placeholder="ex: Soleil" oninput="state.customCivil=this.value"></div><div><span class="dim">Mot Undercovers</span><input type="text" id="gmUndercover" value="'+esc(state.customUndercover)+'" placeholder="ex: Lune" oninput="state.customUndercover=this.value"></div></div>';
+    }
+  } else {
+    html += '<div class="grid2"><div><span class="dim">Dossier</span><select id="themeSel" '+(disableControls?'disabled':'')+' onchange="setTheme(this.value)">'+themeOpts+'</select></div><div><span class="dim">Niveau</span><select id="diffSel" '+(disableControls?'disabled':'')+' onchange="setDifficulty(this.value)">'+diffOpts+'</select></div></div>';
+  }
+  html += '</div>';
+
+  if(!disableControls) {
+    html += '<button class="btn btn-primary" '+(canStart?"":"disabled")+' onclick="startGame()">Ouvrir l\'enquête</button>';
+  } else {
+    html += '<p class="center dim" style="margin-top:15px;">En attente que l\'hôte lance la partie...</p>';
+  }
+  return html;
+}
+
+function renderReveal(){
+  if(state.gameMode === "network") {
+    var html = '<div class="panel center" style="padding:40px 18px;">';
+
+    if(isExcludedGameMaster()){
+      html += '<div class="stamp neutral">MENEUR D\'ENQUÊTE</div>';
+      html += '<p class="dim" style="margin-top:20px;">Tu as choisi les deux mots, tu connais donc déjà tout : tu ne joues pas cette manche, tu animes.</p>';
+    } else {
+      var myRole = state.players.find(function(p){ return p.name.toLowerCase() === myName.toLowerCase(); });
+      if(state.blindMode) {
+          html += '<div class="stamp neutral">IDENTITÉ SECRÈTE</div>';
+          html += '<p class="dim" style="margin-top:20px;">Ton mot codé secret :</p>';
+          html += '<div class="wordbig">'+(myRole ? (myRole.word || "Aucun (Mr. White)") : "Mot secret")+'</div>';
+      } else {
+          var clsNet = myRole && myRole.role==="civil" ? "stamp olive" : "stamp";
+          html += '<div class="'+clsNet+'">'+(myRole ? ROLE_LABEL[myRole.role] : "Infiltré")+'</div>';
+          html += '<p class="dim" style="margin-top:20px;">Ton mot codé secret :</p>';
+          html += '<div class="wordbig">'+(myRole ? (myRole.word || "Aucun (Mr. White)") : "Mot secret")+'</div>';
+      }
+    }
+    html += '</div>';
+
+    if(isHost){
+      html += '<div class="panel center">';
+      html += '<p class="dim" style="margin-bottom:10px;">Une fois que tout le monde a vu son rôle sur son téléphone :</p>';
+      html += '<button class="btn btn-primary" onclick="networkProceedToClues()">Tout le monde est prêt &#8250; Passer aux indices</button>';
+      html += '</div>';
+    } else {
+      html += '<p class="center dim" style="margin-top:15px;">En attente que l\'hôte lance la phase d\'indices...</p>';
+    }
+    return html;
+  }
+
+  var p = state.players[state.revealIndex];
+  var html = '<p class="center dim" style="font-size:1.1rem;">DÉPOSITION '+(state.revealIndex+1)+' / '+state.players.length+'</p>';
+  html += '<div class="panel center" style="padding:30px 18px;">';
+  if(!state.revealed){
+    html += '<p class="dim">Passez l\'appareil à</p><p class="wordbig" style="margin:10px 0;">'+esc(p.name)+'</p>';
+    html += '<button class="btn btn-primary" style="margin-top:15px;" onclick="revealCard()">Ouvrir mon dossier</button>';
+  } else {
+    if(state.blindMode) {
+        html += '<div class="stamp neutral">IDENTITÉ SECRÈTE</div>';
+        html += '<p class="dim" style="margin-top:15px;">Mot secret :</p><p class="wordbig">'+(p.word||"Aucun")+'</p>';
+    } else {
+        var cls = p.role==="civil" ? "stamp olive" : "stamp";
+        html += '<div class="'+cls+'">'+ROLE_LABEL[p.role]+'</div>';
+        html += '<p class="dim" style="margin-top:15px;">Mot secret :</p><p class="wordbig">'+(p.word||"Aucun")+'</p>';
+    }
+    html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="nextReveal()">Joueur suivant &#8250;</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderClues(){
+  var order = aliveClueOrder();
+  var currentId = order[state.clueTurn];
+  var current = state.players.find(function(p){return p.id === currentId;});
+  var html = '<div class="panel center"><h2>Manche '+state.round+'</h2>';
+  html += '<p class="dim">Tour de parole de</p><p class="wordbig">'+esc(current.name)+'</p>';
+  html += '<p class="dim" style="margin-top:10px;font-size:1rem;">Donnez votre indice à l\'oral</p>';
+  if(isGameHost()){
+    html += '<button class="btn btn-primary" style="margin-top:20px;" onclick="nextClueTurn()">Indice suivant &#8250;</button>';
+  } else {
+    html += '<p class="dim" style="margin-top:20px;font-size:1rem;">Observez l\'écran de l\'hôte pour suivre le tour de jeu.</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderVote(){
+  var alive = state.players.filter(function(p){return p.alive;});
+  var html = '<div class="panel center"><h2>Interrogatoire & Vote</h2>';
+  if(isGameHost()){
+    html += '<p class="dim" style="margin-bottom:10px;">Désignez le suspect à éliminer :</p>';
+    alive.forEach(function(p){
+      var sel = state.selectedVote === p.id;
+      html += '<button class="btn '+(sel?'btn-primary':'btn-ghost')+'" style="margin-top:8px;" onclick="selectVote('+p.id+')">'+esc(p.name)+'</button>';
+    });
+    html += '<button class="btn btn-primary" style="margin-top:15px;" '+(state.selectedVote==null?"disabled":"")+' onclick="confirmVote()">Confirmer l\'inculpation</button>';
+  } else {
+    html += '<p class="dim">Discutez à l\'oral et désignez un suspect ensemble.</p>';
+    html += '<p class="dim" style="margin-top:10px;font-size:1rem;">L\'hôte enregistre la décision du groupe.</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderWhiteGuess(){
+  var html = '<div class="panel center"><h2>Mr. White démasqué</h2>';
+  if(isGameHost()){
+    html += '<p class="dim">Dernière chance : devinez le mot des civils !</p>';
+    html += '<input type="text" id="whiteGuessInput" placeholder="Votre déposition">';
+    html += '<button class="btn btn-primary" onclick="submitWhiteGuess()">Valider</button>';
+  } else {
+    html += '<p class="dim">Mr. White tente de deviner le mot des civils à l\'oral...</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderEliminationReveal(){
+  var p = state.justEliminated;
+  var html = '<div class="panel center"><h2>Résultat de l\'inculpation</h2>';
+  html += '<p class="dim">'+esc(p.name)+' était</p><div class="stamp" style="margin:15px 0;">'+ROLE_LABEL[p.role]+'</div>';
+  if(isGameHost()){
+    html += '<button class="btn btn-primary" onclick="proceedAfterElimination()">Poursuivre l\'enquête</button>';
+  } else {
+    html += '<p class="dim" style="margin-top:10px;">En attente que l\'hôte poursuive l\'enquête...</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderEnd(){
+  var label = state.winner==="civils" ? "Les Civils gagnent !" : (state.winner==="white" ? "Mr. White gagne !" : "Les Infiltrés gagnent !");
+  var html = '<div class="panel center"><h2>Fin de l\'affaire</h2><div class="stamp olive" style="margin:20px 0;">'+label+'</div>';
+
+  if(isGameHost()) {
+      if(state.gameMode === "network") html += '<div class="stamp small" style="margin-bottom:16px;">MAÎTRE DE JEU</div>';
+      html += '<button class="btn btn-primary" onclick="newGameSamePlayers()">Recommencer une partie</button>';
+      html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="returnToLobby()">Retour au salon (Garder le groupe)</button>';
+  } else {
+      html += '<p class="dim" style="margin-top:15px;">En attente que l\'hôte relance une partie...</p>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+loadStorage();
+render();
+</script>
+</body>
+</html>
