@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Le Killer — Salle d'Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0713;
+            --card-bg: #16102b;
+            --grid-line: rgba(255, 46, 136, 0.10);
+            --border-color: rgba(255, 46, 136, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #bba9d6;
+            --accent: #ff2e88;
+            --accent-glow: rgba(255, 46, 136, 0.25);
+            --moon: #ffe14d;
+            --red: #ff3b5c;
+            --green: #4dffa6;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% -5%, rgba(255, 46, 136, 0.16) 0%, transparent 42%);
+            background-size: 38px 38px, 38px 38px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.15rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 560px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: var(--accent-glow); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(255, 46, 136, 0.4);
+        }
+
+        .container {
+            max-width: 560px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 26px 22px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,46,136,0.25);
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.15rem; line-height: 1.5; text-align: center;
+            color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.9), 3px 3px 0 #4a0d2b;
+            margin-bottom: 14px;
+        }
+
+        .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 22px; }
+
+        .panel { background: rgba(0,0,0,0.30); border: 2px solid var(--border-color); padding: 16px; margin-bottom: 16px; }
+        .panel h2 { font-family: var(--font-display); font-size: 0.62rem; color: var(--text-sub); margin-bottom: 14px; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .chip {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--accent-glow); border: 1px solid var(--accent);
+            padding: 6px 10px; font-size: 1.1rem;
+        }
+        .chip button { background: none; border: none; color: var(--text-sub); cursor: pointer; font-size: 1rem; font-family: var(--font-body); }
+
+        .inline-input { display: flex; gap: 10px; }
+        input[type="text"], select {
+            flex-grow: 1; background: #070510; border: 2px solid var(--border-color);
+            color: #fff; padding: 11px 12px; font-size: 1.1rem; outline: none; font-family: var(--font-body);
+        }
+        select { cursor: pointer; }
+
+        .btn {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            padding: 14px; font-family: var(--font-display); font-size: 0.66rem;
+            cursor: pointer; border: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+            line-height: 1.5; text-align: center; margin-top: 10px;
+        }
+        .btn-primary { background: var(--accent); color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.5); }
+        .btn-ghost { background: rgba(255,46,136,0.10); border: 2px solid var(--accent); color: var(--text-main); }
+
+        .card-reveal {
+            border: 2px dashed var(--accent); padding: 26px 18px; text-align: center; margin: 18px 0;
+            background: var(--accent-glow); box-shadow: inset 0 0 26px rgba(255,46,136,0.15);
+        }
+        .mission-text {
+            font-family: var(--font-display); font-size: 0.8rem; color: var(--moon);
+            margin: 16px 0; line-height: 1.6; text-shadow: 0 0 8px rgba(255,225,77,0.5);
+        }
+
+        ul.rules-list { margin-left: 20px; color: var(--text-sub); text-align: left; }
+        ul.rules-list li { margin-bottom: 8px; line-height: 1.4; }
+        ul.rules-list strong { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+      // Banques de missions enrichies à 35 missions par niveau de difficulté
+        const missionsParNiveau = {
+            facile: [
+                "Faire dire le mot 'banane' à un joueur sans qu'il s'en aperçoive.",
+                "Obtenir un compliment sur vos chaussures de la part de votre cible.",
+                "Prononcer le mot 'Ananas' au milieu d'une phrase sérieuse.",
+                "Obtenir un 'Merci' de votre cible en lui rendant un service insignifiant.",
+                "Faire bâiller votre cible en bâillant ostensiblement.",
+                "Boire une gorgée d'eau pile au même moment que votre cible.",
+                "Faire dire 'oui' à votre cible en lui posant une question évidente.",
+                "Saluer formellement votre cible en inclinant la tête comme un comte.",
+                "Faire un clin d'œil discret à votre cible et voir si elle réagit.",
+                "Demander à votre cible de goûter un plat ou une boisson.",
+                "Faire dire le mot 'pourquoi' à votre cible.",
+                "Complimenter la coiffure ou un accessoire de votre cible.",
+                "Obtenir un 'Non' catégorique de la part de votre cible.",
+                "Faire un check (ou tape m'cinq) avec votre cible sans raison particulière.",
+                "Utiliser l'expression 'bref' au moins trois fois dans la même phrase.",
+                // --- 20 nouvelles missions faciles ---
+                "Faire sourire votre cible en lui racontant une gentillesse.",
+                "Demander l'heure à votre cible alors qu'elle a son téléphone sous les yeux.",
+                "Dire le mot 'magnifique' en regardant un objet très banal (une chaise, un mur...).",
+                "Offrir un petit bout de serviette en papier ou un objet insignifiant à votre cible.",
+                "Faire répéter votre prénom par votre cible sous prétexte de l'avoir mal entندu.",
+                "Cligner des yeux dix fois d'affilée en fixant votre cible.",
+                "Dire 'Santé !' tout seul avant de boire une gorgée.",
+                "Demander à votre cible si elle sait quel jour on est.",
+                "Taper deux fois doucement sur la table en regardant votre cible.",
+                "Demander à votre cible de vous passer le sel ou une carafe d'eau.",
+                "Souffler sur vos mains comme s'il faisait très froid pendant 5 secondes.",
+                "Faire un grand sourire forcé à votre cible dès qu'elle croise votre regard.",
+                "Dire le mot 'parfait' après chaque phrase prononcée pendant une minute.",
+                "Demander à votre cible si elle aime le chocolat.",
+                "Mettre vos mains sur votre tête pendant 3 secondes l'air préoccupé.",
+                "Siffloter un petit air de musique pendant 5 secondes.",
+                "Demander à votre cible de vous prêter une feuille ou un bout de papier.",
+                "Regarder ostensiblement le plafond pendant que quelqu'un vous parle.",
+                "Dire 'Oh la la' de manière théâtrale pour un tout petit rien.",
+                "Faire un signe de la main amical à votre cible de l'autre bout de la pièce."
+            ],
+            moyen: [
+                "Réussir à cacher une cuillère dans la poche ou la veste de quelqu'un.",
+                "Faire lever les mains en l'air à un joueur en criant 'Attention !'.",
+                "Poser une question sur un film des années 90 à votre cible.",
+                "Convaincre votre cible de vous prêter son stylo ou son téléphone pendant 10 secondes.",
+                "Faire répéter votre cible trois fois d'affilée en faisant exprès de parler doucement.",
+                "Placer le mot 'choucroute' dans une conversation sans aucun rapport.",
+                "Faire rire votre cible en moins de deux minutes avec une blague nulle.",
+                "Toucher l'épaule gauche de votre cible avec votre main droite.",
+                "Glisser un petit bout de papier plié sur la table devant votre cible.",
+                "Faire deviner le titre d'une chanson en la fredonnant à votre cible.",
+                "Faire lever les yeux au ciel à votre cible.",
+                "Obtenir l'heure exacte de la part de votre cible.",
+                "Utiliser le mot 'apocalypse' en parlant de la météo ou de la nourriture.",
+                "Faire asseoir votre cible à une place spécifique en lui cédant la vôtre.",
+                "Croiser les bras en même temps que votre cible pendant plus de 5 secondes.",
+                // --- 20 nouvelles missions moyennes ---
+                "Faire deviner à votre cible une marque de voiture en imitant le bruit du moteur.",
+                "Convaincre votre cible de changer de place sous un prétexte totalement faux.",
+                "Faire un faux compliment à votre cible (ex: 'J'adore ton pull, il pique beaucoup !').",
+                "Dessiner un petit smiley sur un bout de papier et le glisser discrètement près de l'assiette de votre cible.",
+                "Faire lever la main à votre cible en posant une question piège (ex: 'Qui veut un million d'euros ?').",
+                "Utiliser le mot 'stratosphérique' au milieu d'une discussion banale.",
+                "Faire semblant de chercher quelque chose dans vos poches pendant une minute entière.",
+                "Imiter l'accent d'une région française pendant trois phrases consécutives.",
+                "Faire deviner une date historique à votre cible en lui donnant des indices absurdes.",
+                "Demander à votre cible de deviner à quoi vous pensez.",
+                "Faire un clin d'œil à votre cible chaque fois qu'elle prononce le mot 'et'.",
+                "Poser une question philosophique absurde à votre cible (ex: 'Est-ce que les poissons ont conscience de l'eau ?').",
+                "Faire semblant d'avoir un appel important en faisant 'bip bip' avec votre bouche.",
+                "Manger un aliment de manière beaucoup trop dramatique et théâtrale.",
+                "Faire répéter une phrase entière à votre cible en faisant l'oreille cassée.",
+                "Inventer une superstition farfelue et demander à votre cible de la respecter.",
+                "Faire deviner un pays à votre cible en ne citant que des plats de ce pays.",
+                "Raconter un faux souvenir d'enfance complètement délirant en étant très sérieux.",
+                "Faire un geste de chef d'orchestre avec vos mains pendant que votre cible parle.",
+                "Poser votre menton dans vos mains et fixer votre cible en silence pendant 10 secondes."
+            ],
+            difficile: [
+                "Inventer un faux mot et l'utiliser dans une phrase en attendant que votre cible demande la définition.",
+                "Faire deviner une couleur à votre cible en lui montrant un objet.",
+                "Provoquer un silence de 3 secondes dans la discussion en arrêtant de parler net.",
+                "Faire applaudir quelqu'un d'autre en amorçant les applaudissements.",
+                "Dire 'Incroyable' avec beaucoup d'enthousiasme pour un détail banal.",
+                "Faire remarquer à votre cible qu'elle a une tache imaginaire sur son vêtement.",
+                "Demander à votre cible si elle préfère la mer ou la montagne.",
+                "Faire épeler un mot compliqué à votre cible.",
+                "Faire semblant d'éternuer très fort pour surprendre votre cible.",
+                "Placer le prénom d'une personnalité politique ou d'un acteur célèbre dans une phrase.",
+                "Faire rire deux personnes en même temps dans la pièce.",
+                "Demander l'avis de votre cible sur un sujet totalement absurde.",
+                "Faire un discours de 10 secondes pour remercier solennellement d'avoir passé le sel.",
+                "Prononcer le mot 'masterclass' avec un air très sérieux.",
+                "Faire deviner un animal à votre cible en imitant son cri de manière ridicule.",
+                // --- 20 nouvelles missions difficiles ---
+                "Convaincre votre cible de signer un faux contrat imaginé sur un coin de table.",
+                "Faire lever toute la tablée ou le groupe pendant 5 secondes sous un prétexte farfelu.",
+                "Réussir à faire porter un objet insolite (un feutre, un gobelet vide) sur la tête de votre cible pendant 30 secondes.",
+                "Faire un discours de remerciement aux Oscars en pleurant de faux rires devant votre cible.",
+                "Remplacer un mot de vocabulaire courant par un mot inventé et obliger votre cible à deviner lequel.",
+                "Faire deviner le titre d'un film en faisant uniquement des bruitages bizarres.",
+                "Convaincre votre cible que vous avez un pouvoir magique ridicule (ex: deviner si une pièce est pile ou face à 10%).",
+                "Faire répéter à votre cible une phrase en verlan sans qu'elle s'en aperçoive.",
+                "Organiser un faux vote à main levée pour élire la personne la plus suspecte de la pièce.",
+                "Imiter le miaulement d'un chat chaque fois que votre cible prononce la lettre 'A'.",
+                "Faire croire à votre cible qu'un événement incroyable se produit derrière elle (ex: 'Regarde, un OVNI !').",
+                "Réussir à échanger discrètement de place avec quelqu'un sans que votre cible ne s'en rende compte pendant qu'elle a le dos tourné.",
+                "Chuchoter une phrase incompréhensible à l'oreille de votre cible puis repartir sans rien dire.",
+                "Faire réciter l'alphabet à l'envers ou compter jusqu'à 20 en moins de 10 secondes à votre cible.",
+                "Simuler une panne de cerveau totale (regarder le vide) dès que votre cible vous pose une question, puis reprendre normalement.",
+                "Faire deviner une célébrité en ne répondant qu'par 'Oui' ou 'Non' aux questions de votre cible.",
+                "Poser un objet sur la tête de votre cible lorsqu'elle a le dos tourné et tenir 10 secondes.",
+                "Faire un discours dramatique sur la disparition imminente des chaussettes dépareillées.",
+                "Demander à votre cible de valider un 'code secret' (une suite de trois chiffres aléatoires) pour continuer la conversation.",
+                "Réussir à faire porter un vêtement ou un accessoire (une écharpe, un pull) à l'envers à votre cible."
+            ]
+        };
+
+        let state = {
+            screen: "setup",
+            players: ["Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4"],
+            niveauChoisi: "facile", // Niveau par défaut
+            assignments: [],
+            revealIndex: 0,
+            revealed: false
+        };
+
+        function addPlayer() {
+            const input = document.getElementById("playerNameInput");
+            const name = input ? input.value.trim() : "";
+            if (name && !state.players.includes(name)) {
+                state.players.push(name);
+                render();
+                setTimeout(() => document.getElementById("playerNameInput").focus(), 10);
+            }
+        }
+
+        function removePlayer(index) {
+            state.players.splice(index, 1);
+            render();
+        }
+
+        function shuffle(array) {
+            let arr = array.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function demarrerJeu() {
+            if (state.players.length < 3) {
+                alert("Il faut au moins 3 joueurs pour une partie de Killer !");
+                return;
+            }
+
+            // Récupère la difficulté sélectionnée dans le menu déroulant
+            const selectElement = document.getElementById("selectNiveau");
+            if (selectElement) {
+                state.niveauChoisi = selectElement.value;
+            }
+
+            // Récupère la liste des missions du niveau choisi et les mélange
+            let missionsDisponibles = shuffle(missionsParNiveau[state.niveauChoisi]);
+            let joueursMelanges = shuffle(state.players);
+
+            state.assignments = [];
+            for (let i = 0; i < joueursMelanges.length; i++) {
+                let tueur = joueursMelanges[i];
+                let cible = joueursMelanges[(i + 1) % joueursMelanges.length]; // Boucle des cibles
+                let mission = missionsDisponibles[i % missionsDisponibles.length];
+
+                state.assignments.push({
+                    tueur: tueur,
+                    cible: cible,
+                    mission: mission
+                });
+            }
+
+            state.revealIndex = 0;
+            state.revealed = false;
+            state.screen = "reveal";
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "setup") {
+                let chipsHtml = state.players.map((p, i) => `
+                    <div class="chip">
+                        <span>${p}</span>
+                        <button onclick="removePlayer(${i})">✕</button>
+                    </div>
+                `).join("");
+
+                app.innerHTML = `
+                    <h1>LE KILLER</h1>
+                    <p class="phase-subtitle">Missions secrètes</p>
+
+                    <div class="panel">
+                        <h2>Règles du jeu</h2>
+                        <ul class="rules-list">
+                            <li><strong>Objectif :</strong> Remplir ta mission secrète envers ta cible sans te faire griller.</li>
+                            <li><strong>Discrétion :</strong> Tout se déroule pendant toute la durée de la soirée.</li>
+                            <li><strong>Victoire :</strong> Devine les missions des autres et réussis la tienne !</li>
+                        </ul>
+                    </div>
+
+                    <div class="panel">
+                        <h2>Difficulté des missions</h2>
+                        <select id="selectNiveau">
+                            <option value="facile" ${state.niveauChoisi === 'facile' ? 'selected' : ''}>Facile (Discret)</option>
+                            <option value="moyen" ${state.niveauChoisi === 'moyen' ? 'selected' : ''}>Moyen (Stratégique)</option>
+                            <option value="difficile" ${state.niveauChoisi === 'difficile' ? 'selected' : ''}>Difficile (Agent Secret)</option>
+                        </select>
+                    </div>
+
+                    <div class="panel">
+                        <h2>Participants (${state.players.length})</h2>
+                        <div class="chips">${chipsHtml}</div>
+                        <div class="inline-input">
+                            <input type="text" id="playerNameInput" placeholder="Nom du joueur" onkeydown="if(event.key==='Enter') addPlayer()">
+                            <button class="btn btn-ghost" style="width:auto; padding:0 16px; margin-top:0;" onclick="addPlayer()">+</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="demarrerJeu()">Distribuer les missions ›</button>
+                `;
+            } 
+            else if (state.screen === "reveal") {
+                const current = state.assignments[state.revealIndex];
+
+                if (!state.revealed) {
+                    app.innerHTML = `
+                        <h1>Mission Secrète</h1>
+                        <p class="phase-subtitle">Agent ${state.revealIndex + 1} / ${state.assignments.length}</p>
+                        <div class="card-reveal">
+                            <p style="color:var(--text-sub); font-size:1.1rem; margin-bottom:15px;">Passez le téléphone à :</p>
+                            <h2 style="font-size:1.5rem; color:var(--text-main); margin-bottom:20px;">${current.tueur}</h2>
+                            <button class="btn btn-primary" onclick="state.revealed=true; render();">👁️ Voir ma mission</button>
+                        </div>
+                    `;
+                } else {
+                    app.innerHTML = `
+                        <h1>Votre Cible</h1>
+                        <p class="phase-subtitle">${current.tueur}</p>
+                        <div class="card-reveal">
+                            <p style="color:var(--text-sub); font-size:1rem;">Ta cible à éliminer discrètement :</p>
+                            <div style="font-family:var(--font-display); font-size:1.2rem; color:var(--red); margin:12px 0;">🎯 ${current.cible}</div>
+                            <p style="color:var(--text-sub); font-size:1rem; margin-top:15px;">Ta mission :</p>
+                            <div class="mission-text">${current.mission}</div>
+                        </div>
+                        <button class="btn btn-ghost" onclick="
+                            if (state.revealIndex + 1 < state.assignments.length) {
+                                state.revealIndex++; state.revealed = false; render();
+                            } else {
+                                state.screen = 'play'; render();
+                            }
+                        ">Mémorisé — Passer au joueur suivant ›</button>
+                    `;
+                }
+            }
+            else if (state.screen === "play") {
+                app.innerHTML = `
+                    <h1>Enquête en Cours</h1>
+                    <p class="phase-subtitle">La soirée a commencé !</p>
+                    <div class="panel" style="text-align:center; padding: 30px 20px;">
+                        <p style="font-size:1.3rem; margin-bottom:20px; line-height:1.5;">Toutes les missions ont été distribuées. Gardez votre téléphone dans votre poche et observez vos amis...</p>
+                        <button class="btn btn-primary" onclick="state.screen='setup'; render();">Recommencer une partie ⟳</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Gestion du Plein Écran
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
