@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Qui est-ce ? (Mode Duel) — Salle d'Arcade</title>
+    <meta name="referrer" content="no-referrer">
+    <title>Qui est-ce ? (Édition Romain & Bande) — Salle d'Arcade</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -176,7 +177,9 @@
     <main class="container" id="app"></main>
 
     <script>
+        // Liste personnalisée avec Romain et la bande
         const LISTE_PERSONNAGES = [
+            { nom: "Romain", image: "romain.jpeg" },
             { nom: "Mateo", image: "mateo.jpeg" },
             { nom: "Vincent", image: "vincent.jpeg" },
             { nom: "Tiphany", image: "tiphany.jpeg" },
@@ -186,7 +189,6 @@
             { nom: "Chahir", image: "oussama.jpg" },
             { nom: "Yassine", image: "oussama.jpg" },
             { nom: "Robin", image: "robin.jpeg" },
-            { nom: "Romain", image: "romain.jpeg" },
             { nom: "Alicia", image: "alicia.jpeg" },
             { nom: "Aurélia", image: "aurelia.jpeg" },
             { nom: "Clémentine", image: "clementine.jpeg" },
@@ -204,12 +206,30 @@
         ];
 
         let state = {
-            screen: "setup",
+            screen: "setup", // "setup", "solo_jeu", "transit_j1", "secret_j1", "transit_j2", "secret_j2", "duel_jeu"
+            mode: 2,         // 1 = Un seul tableau (Solo), 2 = Deux tableaux collés (Duel)
+            personnagesSolo: [],
+            mystereSolo: null,
             personnagesJ1: [],
             personnagesJ2: [],
             mystereJ1: null,
             mystereJ2: null
         };
+
+        function choisirMode(modeChoisi) {
+            state.mode = modeChoisi;
+            if (modeChoisi === 1) {
+                // Mode Solo : Un seul tableau avec tirage au sort
+                state.personnagesSolo = LISTE_PERSONNAGES.map(p => ({ nom: p.nom, image: p.image, elimine: false }));
+                let randomIndex = Math.floor(Math.random() * state.personnagesSolo.length);
+                state.mystereSolo = state.personnagesSolo[randomIndex];
+                state.screen = "solo_jeu";
+            } else {
+                // Mode Duel : Deux tableaux collés
+                preparerDuel();
+            }
+            render();
+        }
 
         function preparerDuel() {
             state.personnagesJ1 = LISTE_PERSONNAGES.map(p => ({ nom: p.nom, image: p.image, elimine: false }));
@@ -221,16 +241,19 @@
             state.mystereJ1 = state.personnagesJ1[indexJ1];
             state.mystereJ2 = state.personnagesJ2[indexJ2];
 
-            // On commence par l'écran d'attente/passe-plat pour le Joueur 1
             state.screen = "transit_j1";
             render();
         }
 
         function toggleEliminer(joueur, index) {
-            if (joueur === 1) {
-                state.personnagesJ1[index].elimine = !state.personnagesJ1[index].elimine;
+            if (state.mode === 1) {
+                state.personnagesSolo[index].elimine = !state.personnagesSolo[index].elimine;
             } else {
-                state.personnagesJ2[index].elimine = !state.personnagesJ2[index].elimine;
+                if (joueur === 1) {
+                    state.personnagesJ1[index].elimine = !state.personnagesJ1[index].elimine;
+                } else {
+                    state.personnagesJ2[index].elimine = !state.personnagesJ2[index].elimine;
+                }
             }
             render();
         }
@@ -240,34 +263,64 @@
 
             if (state.screen === "setup") {
                 app.innerHTML = `
-                    <h1>QUI EST-CE ? (MODE DUEL)</h1>
-                    <p class="phase-subtitle">Affrontement à deux joueurs</p>
+                    <h1>QUI EST-CE ? (ROMAIN & BANDE)</h1>
+                    <p class="phase-subtitle">Choisissez votre mode de jeu</p>
                     <div class="panel">
-                        <p style="font-size:1.1rem; color:var(--text-sub); line-height:1.5; margin-bottom:15px;">
-                            Chaque joueur va recevoir un personnage mystère secret chacun son tour de façon sécurisée.
+                        <p style="font-size:1.1rem; color:var(--text-sub); line-height:1.5; margin-bottom:20px;">
+                            Sélectionnez le type de partie que vous souhaitez lancer :
                         </p>
-                        <button class="btn btn-primary" onclick="preparerDuel()">Lancer le Duel ›</button>
+                        <button class="btn btn-primary" style="margin-bottom:10px;" onclick="choisirMode(1)">1. Un seul tableau (Solo / Hasard) ›</button>
+                        <button class="btn btn-ghost" onclick="choisirMode(2)">2. Deux tableaux collés (Duel) ›</button>
                     </div>
                 `;
             }
-            // Étape 1 : Demande au Joueur 1 de prendre l'appareil
+            else if (state.screen === "solo_jeu") {
+                let cartesSolo = state.personnagesSolo.map((p, index) => `
+                    <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(1, ${index})">
+                        <img src="${p.image}" alt="${p.nom}" onerror="this.src='https://via.placeholder.com/75x60/140a26/ff2e88?text=${p.nom}'">
+                        <span>${p.nom}</span>
+                    </div>
+                `).join("");
+
+                app.innerHTML = `
+                    <h1>MODE SOLO 🎯</h1>
+                    <p class="phase-subtitle">Un personnage secret a été tiré au sort</p>
+                    
+                    <div class="panel" style="margin-bottom:20px;">
+                        <p style="font-size:1rem; color:var(--text-sub); margin-bottom:5px;">Le personnage mystère à deviner :</p>
+                        <div class="secret-reveal-card" style="margin:5px 0 0 0;">
+                            🎯 ${state.mystereSolo.nom}
+                        </div>
+                    </div>
+
+                    <div class="joueur-column" style="max-width:800px; margin:0 auto;">
+                        <div class="joueur-title">VOTRE GRILLE DE JEU</div>
+                        <div class="grid-persos">
+                            ${cartesSolo}
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; text-align:center;">
+                        <button class="btn btn-ghost" style="max-width:300px; margin:0 auto;" onclick="state.screen='setup'; render();">‹ Changer de mode</button>
+                    </div>
+                `;
+            }
             else if (state.screen === "transit_j1") {
                 app.innerHTML = `
                     <h1>Tour du Joueur 1</h1>
                     <p class="phase-subtitle">Sécurité du secret</p>
                     <div class="panel">
                         <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
-                            Passez le téléphone au <strong>Joueur 1</strong>. Le Joueur 2 ne doit pas regarder !
+                            Passez l'appareil au <strong>Joueur 1</strong>. Le Joueur 2 ne doit pas regarder !
                         </p>
                         <button class="btn btn-primary" onclick="state.screen='secret_j1'; render();">Afficher mon secret (Joueur 1) ›</button>
                     </div>
                 `;
             }
-            // Étape 2 : Affichage du secret du Joueur 1
             else if (state.screen === "secret_j1") {
                 app.innerHTML = `
                     <h1>Joueur 1 : Secret</h1>
-                    <p class="phase-subtitle">Mémorisez bien votre cible</p>
+                    <p class="phase-subtitle">Votre cible assignée</p>
                     <div class="panel">
                         <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Ton personnage secret à faire deviner est :</p>
                         <div class="secret-reveal-card">
@@ -277,24 +330,22 @@
                     </div>
                 `;
             }
-            // Étape 3 : Écran intermédiaire pour le Joueur 2
             else if (state.screen === "transit_j2") {
                 app.innerHTML = `
                     <h1>Tour du Joueur 2</h1>
                     <p class="phase-subtitle">Sécurité du secret</p>
                     <div class="panel">
                         <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:15px;">
-                            Passez le téléphone au <strong>Joueur 2</strong>. Le Joueur 1 ne doit pas regarder !
+                            Passez l'appareil au <strong>Joueur 2</strong>. Le Joueur 1 ne doit pas regarder !
                         </p>
                         <button class="btn btn-primary" onclick="state.screen='secret_j2'; render();">Afficher mon secret (Joueur 2) ›</button>
                     </div>
                 `;
             }
-            // Étape 4 : Affichage du secret du Joueur 2
             else if (state.screen === "secret_j2") {
                 app.innerHTML = `
                     <h1>Joueur 2 : Secret</h1>
-                    <p class="phase-subtitle">Mémorisez bien votre cible</p>
+                    <p class="phase-subtitle">Votre cible assignée</p>
                     <div class="panel">
                         <p style="font-size:1.1rem; color:var(--text-sub); margin-bottom:10px;">Ton personnage secret à faire deviner est :</p>
                         <div class="secret-reveal-card">
@@ -304,7 +355,6 @@
                     </div>
                 `;
             }
-            // Étape 5 : Le plateau de jeu en duel
             else if (state.screen === "duel_jeu") {
                 let cartesJ1 = state.personnagesJ1.map((p, index) => `
                     <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(1, ${index})">
@@ -340,14 +390,14 @@
                         </div>
                     </div>
 
-                    <div style="margin-top:20px; text-align:center;">
-                        <button class="btn btn-ghost" style="max-width:300px; margin:0 auto;" onclick="preparerDuel()">Recommencer un Duel ⟳</button>
+                    <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                        <button class="btn btn-ghost" style="max-width:250px;" onclick="preparerDuel()">Recommencer ⟳</button>
+                        <button class="btn btn-ghost" style="max-width:250px;" onclick="state.screen='setup'; render();">Changer de mode ‹</button>
                     </div>
                 `;
             }
         }
 
-        // Plein écran
         document.getElementById('btn-fullscreen').addEventListener('click', function () {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
