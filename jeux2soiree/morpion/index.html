@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Morpion — Salle d'Arcade</title>
+    <link rel="manifest" href="/jeux.io/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. Variables & Reset --- */
+        :root {
+            --bg-body: #0b0616;
+            --bg-panel: #140a26;
+            --grid-line: rgba(124, 58, 237, 0.12);
+            --text-main: #f3e9ff;
+            --text-muted: #9d8bc4;
+            --neon-pink: #ff2e88;
+            --neon-cyan: #22e6ff;
+            --neon-yellow: #ffe14d;
+            --neon-green: #4dffa6;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+            /* X = cyan, O = rose, cohérent avec le hub */
+            --accent-x: var(--neon-cyan);
+            --accent-o: var(--neon-pink);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { background: var(--bg-body); }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-body);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(34, 230, 255, 0.12) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Effet scanlines CRT global */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0px,
+                rgba(0, 0, 0, 0) 2px,
+                rgba(0, 0, 0, 0.18) 3px,
+                rgba(0, 0, 0, 0.18) 4px
+            );
+            z-index: 100;
+            mix-blend-mode: multiply;
+        }
+
+        /* --- NOUVEAU : Style du bouton Plein Écran --- */
+        .btn-fullscreen {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(11, 6, 22, 0.8);
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            padding: 6px 12px;
+            cursor: pointer;
+            z-index: 200; /* Pour qu'il soit au-dessus de l'effet scanlines */
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .btn-fullscreen:hover {
+            background: rgba(34, 230, 255, 0.2);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        /* --- 2. Conteneur (borne) --- */
+        .game-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-panel);
+            border: 2px solid var(--neon-cyan);
+            padding: 30px 26px 26px;
+            text-align: center;
+            box-shadow: 0 0 0 4px var(--bg-body), 10px 10px 0 rgba(0,0,0,0.55), 0 0 30px rgba(34,230,255,0.25);
+            position: relative;
+        }
+
+        /* --- 3. En-tête --- */
+        h1 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            line-height: 1.4;
+            letter-spacing: 1px;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 8px rgba(255,225,77,0.7), 3px 3px 0 #4a3a05;
+            margin-bottom: 22px;
+            animation: flicker 5s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 92%, 100% { opacity: 1; }
+            93% { opacity: 0.7; }
+            94% { opacity: 1; }
+            96% { opacity: 0.85; }
+        }
+
+        /* --- 4. Tableau des scores --- */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            background: rgba(0,0,0,0.35);
+            border: 2px solid var(--grid-line);
+            padding: 12px 8px;
+            margin-bottom: 22px;
+            font-family: var(--font-display);
+            font-size: 0.5rem;
+            line-height: 1.8;
+        }
+
+        .scoreboard .label { color: var(--text-muted); display: block; margin-bottom: 8px; }
+        .scoreboard .value { font-size: 0.9rem; }
+        .score-x .value { color: var(--accent-x); text-shadow: 0 0 8px var(--accent-x); }
+        .score-o .value { color: var(--accent-o); text-shadow: 0 0 8px var(--accent-o); }
+        .score-tie .value { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
+
+        /* --- 5. Statut / tour --- */
+        .status {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            line-height: 1.6;
+            min-height: 40px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+        }
+        .status strong { text-shadow: 0 0 8px currentColor; }
+
+        /* --- 6. Grille du Morpion --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            background: rgba(0,0,0,0.35);
+            border: 2px solid var(--grid-line);
+            font-family: var(--font-display);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-main);
+            box-shadow: inset 0 0 0 0 transparent;
+            transition: transform 0.1s steps(2), box-shadow 0.15s, border-color 0.15s;
+        }
+
+        .cell:hover:not(.x):not(.o) {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 14px rgba(34,230,255,0.4);
+        }
+        .cell:active { transform: scale(0.94); }
+
+        .cell.x { color: var(--accent-x); border-color: var(--accent-x); text-shadow: 0 0 12px var(--accent-x); }
+        .cell.o { color: var(--accent-o); border-color: var(--accent-o); text-shadow: 0 0 12px var(--accent-o); }
+
+        .cell.winner {
+            background: rgba(77,255,166,0.12);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px var(--neon-green);
+            animation: pulse 0.6s steps(2) infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.06); }
+        }
+
+        /* --- 7. Boutons --- */
+        .btn-restart {
+            width: 100%;
+            font-family: var(--font-display);
+            font-size: 0.66rem;
+            letter-spacing: 1px;
+            color: #000;
+            background: var(--neon-yellow);
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+            transition: transform 0.1s steps(2), box-shadow 0.1s;
+        }
+        .btn-restart:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 rgba(0,0,0,0.6); }
+        .btn-restart:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.6); }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            color: var(--neon-cyan);
+            text-decoration: none;
+            padding: 10px 16px;
+            border: 2px solid var(--neon-cyan);
+            background: rgba(34,230,255,0.06);
+            transition: transform 0.12s steps(2), box-shadow 0.12s;
+        }
+        .back-link:hover, .back-link:focus {
+            transform: translate(-2px,-2px);
+            box-shadow: 4px 4px 0 var(--neon-cyan);
+            outline: none;
+        }
+
+        /* --- 8. Mobile --- */
+        @media (max-width: 480px) {
+            .game-container { padding: 24px 18px; }
+            h1 { font-size: 0.95rem; }
+            .cell { font-size: 1.5rem; }
+            .status { font-size: 0.6rem; }
+            body { background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%; }
+            /* Ajustement du bouton plein écran sur mobile pour ne pas cacher le titre */
+            .btn-fullscreen { font-size: 1rem; top: 10px; right: 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOUVEAU : Le bouton Plein Écran placé tout en haut -->
+    <button id="fullscreenBtn" class="btn-fullscreen">[ ] Plein écran</button>
+
+    <main class="game-container">
+        <h1>Morpion</h1>
+
+        <!-- Tableau des scores -->
+        <div class="scoreboard">
+            <div class="score-x"><span class="label">JOUEUR X</span><span class="value" id="scoreX">0</span></div>
+            <div class="score-tie"><span class="label">NULS</span><span class="value" id="scoreTie">0</span></div>
+            <div class="score-o"><span class="label">JOUEUR O</span><span class="value" id="scoreO">0</span></div>
+        </div>
+
+        <!-- Indicateur de tour ou vainqueur -->
+        <div class="status" id="statusText">Tour du joueur <strong style="color: var(--accent-x); margin-left:6px;">X</strong></div>
+
+        <!-- Grille 3x3 -->
+        <div class="grid" id="grid">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <!-- Bouton Rejouer -->
+        <button class="btn-restart" onclick="restartRound()">Recommencer</button>
+
+        <!-- Retour au menu des jeux -->
+        <div>
+            <a href="../" class="back-link">&lsaquo; RETOUR AU HUB</a>
+        </div>
+    </main>
+
+    <script>
+        // --- NOUVEAU : Logique du mode plein écran ---
+        const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+        fullscreenBtn.addEventListener("click", () => {
+            // Si on n'est PAS en plein écran
+            if (!document.fullscreenElement) {
+                // On demande au document entier de prendre tout l'écran
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.log(`Erreur lors du passage en plein écran: ${err.message}`);
+                });
+                fullscreenBtn.textContent = "[X] Quitter";
+            } else {
+                // Si on y est déjà, on quitte le plein écran
+                document.exitFullscreen();
+                fullscreenBtn.textContent = "[ ] Plein écran";
+            }
+        });
+
+        // Cette sécurité vérifie si l'utilisateur quitte le plein écran avec la touche "Échap"
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) {
+                fullscreenBtn.textContent = "[ ] Plein écran";
+            }
+        });
+
+
+        // --- Variables d'état de la partie ---
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let isGameActive = true;
+        let scores = { X: 0, O: 0, ties: 0 };
+
+        // Liste des combinaisons gagnantes (indices dans le tableau board)
+        const WINNING_CONDITIONS = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Lignes
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colonnes
+            [0, 4, 8], [2, 4, 6]             // Diagonales
+        ];
+
+        // Éléments du DOM
+        const statusText = document.getElementById("statusText");
+        const cells = document.querySelectorAll(".cell");
+
+        // --- Gestion du clic sur une case ---
+        function handleCellClick(e) {
+            const clickedCell = e.currentTarget;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute("data-index"));
+
+            // Vérifie si la case est déjà prise ou si la partie est terminée
+            if (board[clickedCellIndex] !== "" || !isGameActive) {
+                return;
+            }
+
+            // Enregistre le coup joué
+            board[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.classList.add(currentPlayer.toLowerCase());
+
+            checkResult();
+        }
+
+        // --- Vérification du résultat (Victoire, Égalité ou Tour suivant) ---
+        function checkResult() {
+            let roundWon = false;
+            let winningCombo = null;
+
+            for (let i = 0; i < WINNING_CONDITIONS.length; i++) {
+                const [a, b, c] = WINNING_CONDITIONS[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    roundWon = true;
+                    winningCombo = [a, b, c];
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                const color = currentPlayer === "X" ? "var(--accent-x)" : "var(--accent-o)";
+                statusText.innerHTML = `VICTOIRE <strong style="color: ${color}; margin-left:6px;">${currentPlayer}</strong>`;
+                scores[currentPlayer]++;
+                updateScoreboard();
+                isGameActive = false;
+
+                // Mise en surbrillance des cases gagnantes
+                winningCombo.forEach(index => cells[index].classList.add("winner"));
+                return;
+            }
+
+            // Vérification de match nul (plus aucune case vide)
+            if (!board.includes("")) {
+                statusText.innerHTML = `MATCH NUL`;
+                scores.ties++;
+                updateScoreboard();
+                isGameActive = false;
+                return;
+            }
+
+            // Passage au joueur suivant
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            const color = currentPlayer === "X" ? "var(--accent-x)" : "var(--accent-o)";
+            statusText.innerHTML = `Tour du joueur <strong style="color: ${color}; margin-left:6px;">${currentPlayer}</strong>`;
+        }
+
+        // --- Mise à jour de l'affichage des scores ---
+        function updateScoreboard() {
+            document.getElementById("scoreX").textContent = scores.X;
+            document.getElementById("scoreO").textContent = scores.O;
+            document.getElementById("scoreTie").textContent = scores.ties;
+        }
+
+        // --- Réinitialisation d'une manche ---
+        function restartRound() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            isGameActive = true;
+            currentPlayer = "X";
+            statusText.innerHTML = `Tour du joueur <strong style="color: var(--accent-x); margin-left:6px;">X</strong>`;
+
+            cells.forEach(cell => {
+                cell.textContent = "";
+                cell.className = "cell";
+            });
+        }
+
+        // Écouteurs d'événements sur les 9 cases
+        cells.forEach(cell => cell.addEventListener("click", handleCellClick));
+    </script>
+</body>
+</html>
