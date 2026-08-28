@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- MODIFICATION ICI : Nom du site mis en valeur dans l'onglet du navigateur -->
     <title>jeux2soiree</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +20,7 @@
             --neon-yellow: #ffe14d;
             --neon-green: #4dffa6;
             --neon-orange: #f59e0b;
+            --neon-purple: #a855f7;
             --font-display: 'Press Start 2P', monospace;
             --font-body: 'VT323', monospace;
         }
@@ -74,7 +74,6 @@
 
         header { text-align: center; margin: 10px auto 30px; max-width: 780px; }
         
-        /* STYLE MIS EN VALEUR POUR LE NOM DU SITE */
         .brand-name {
             display: block;
             font-family: var(--font-display);
@@ -176,6 +175,7 @@
         .carte-jeu.yellow  { --glow: var(--neon-yellow); }
         .carte-jeu.orange  { --glow: var(--neon-orange); }
         .carte-jeu.green   { --glow: var(--neon-green); }
+        .carte-jeu.purple  { --glow: var(--neon-purple); }
 
         .icone {
             font-size: 2.2rem; width: 60px; height: 60px; display: grid; place-items: center;
@@ -260,7 +260,6 @@
     </div>
 
     <header>
-        <!-- MODIFICATION ICI : Le nom "jeux2soiree" est mis en valeur au-dessus du titre principal -->
         <span class="brand-name">jeux2soiree</span>
         <h1>Salle d'Arcade</h1>
         <p class="description">Choisis ta borne, attrape le joystick et lance la partie.</p>
@@ -277,6 +276,13 @@
 
     <h2 id="multijoueurs" class="section-titre">🕹️ Jeux Multijoueurs & Ambiance</h2>
     <main class="grid-jeux">
+        <a href="devine-tete/" class="carte-jeu purple" data-tag="PARTY">
+            <div class="icone">👑</div>
+            <div class="titre-jeu">Devine Tête</div>
+            <div class="info-jeu">Devine la personnalité sur ton front en posant des questions en 'Oui / Non' !</div>
+            <span class="btn-jouer">Jouer &#9654;</span>
+        </a>
+
         <a href="tu-preferes/" class="carte-jeu yellow" data-tag="HARDCORE">
             <div class="icone">⚖️</div>
             <div class="titre-jeu">Tu Préfères ?</div>
