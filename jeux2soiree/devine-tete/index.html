@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0616">
+    <title>Devine Tête — Édition Vraies Personnalités (Massive)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0616;
+            --card-bg: #140a26;
+            --grid-line: rgba(255, 46, 136, 0.10);
+            --border-color: rgba(255, 46, 136, 0.35);
+            --text-main: #f3e9ff;
+            --text-sub: #9d8bc4;
+            --accent: #ff2e88;
+            --neon-yellow: #ffe14d;
+            --neon-cyan: #22e6ff;
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg-color); }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(255, 46, 136, 0.15) 0%, transparent 55%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 16px 60px;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; inset: 0; pointer-events: none;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
+            z-index: 100; mix-blend-mode: multiply;
+        }
+
+        .top-bar { max-width: 600px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-back, .btn-fs {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--font-display); font-size: 0.5rem;
+            color: var(--accent); text-decoration: none;
+            padding: 10px 14px; border: 2px solid var(--accent);
+            background: rgba(255, 46, 136, 0.06); cursor: pointer;
+            box-shadow: 0 0 0 2px var(--bg-color), 4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+        .container {
+            max-width: 600px; margin: 0 auto;
+            background: var(--card-bg); border: 2px solid var(--accent);
+            padding: 24px 20px;
+            box-shadow: 0 0 0 4px var(--bg-color), 8px 8px 0 rgba(0,0,0,0.6), 0 0 30px rgba(255,46,136,0.25);
+            position: relative; z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display); font-size: 1.0rem; line-height: 1.4; text-align: center;
+            color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.9), 3px 3px 0 #4a0d2b;
+            margin-bottom: 10px;
+        }
+
+        .phase-subtitle { text-align: center; font-size: 1.15rem; color: var(--text-sub); margin-bottom: 18px; }
+
+        .panel { background: rgba(0,0,0,0.35); border: 2px solid var(--border-color); padding: 20px; margin-bottom: 16px; text-align: center; }
+        
+        .secret-card {
+            background: #07040f; border: 3px solid var(--neon-yellow);
+            padding: 25px 15px; margin: 20px 0; text-align: center;
+            font-family: var(--font-display); font-size: 1.2rem; color: var(--neon-yellow);
+            text-shadow: 0 0 10px rgba(255,225,77,0.7);
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .btn {
+            display: flex; align-items: center; justify-content: center; width: 100%;
+            padding: 14px; font-family: var(--font-display); font-size: 0.65rem;
+            cursor: pointer; border: none; box-shadow: 4px 4px 0 rgba(0,0,0,0.7);
+            text-transform: uppercase; text-align: center; margin-top: 12px;
+        }
+        .btn-primary { background: var(--accent); color: #fff; text-shadow: 0 0 6px rgba(0,0,0,0.5); }
+        .btn-ghost { background: transparent; border: 2px solid var(--accent); color: var(--text-main); }
+        
+        .timer {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--neon-cyan);
+            margin: 15px 0;
+            text-shadow: 0 0 8px rgba(34,230,255,0.6);
+        }
+
+        .checkbox-row {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin: 15px 0; font-size: 1.1rem; cursor: pointer; color: var(--text-main);
+        }
+        .checkbox-row input { accent-color: var(--accent); width: 20px; height: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="../" class="btn-back">&lsaquo; HUB</a>
+        <button type="button" id="btn-fullscreen" class="btn-fs">PLEIN ÉCRAN</button>
+    </div>
+
+    <main class="container" id="app"></main>
+
+    <script>
+        const PERSONNALITES = [
+            // Cinéma & Séries (Originaux)
+            "Darth Vader", "Harry Potter", "Jack Sparrow", "Spider-Man", "Batman", 
+            "Yoda", "Homer Simpson", "Gandalf", "Sherlock Holmes", "Iron Man", 
+            "James Bond", "Le Joker", "Dark Vador", "Indiana Jones", "Katniss Everdeen",
+            "Walter White", "Jon Snow", "Barbie", "Ken", "Shrek", "Lara Croft",
+            
+            // Jeux Vidéo (Originaux)
+            "Mario", "Luigi", "Link", "Zelda", "Pikachu", "Sonic", "Kratos", 
+            "Geralt de Riv", "Steve (Minecraft)", "Pac-Man", "Donkey Kong", 
+            "Samus Aran", "Master Chief", "Cyberpunk V", "Kirby", "Arthur Morgan",
+
+            // Historiques & Politiques (Originaux)
+            "Jules César", "Napoléon Bonaparte", "Jeanne d'Arc", "Cléopâtre", 
+            "Albert Einstein", "Abraham Lincoln", "Louis XIV", "Charles de Gaulle", 
+            "Marie Curie", "Leonardo da Vinci", "Winston Churchill", "Nelson Mandela",
+
+            // Musique & Pop-Culture (Originaux)
+            "Mickael Jackson", "Eminem", "Snoop Dogg", "David Guetta", "Jul", 
+            "Céline Dion", "Thomas Pesquet", "Zinedine Zidane", "Kylian Mbappé", 
+            "Stéphane Plaza", "Cyril Hanouna", "Emmanuel Macron", "Jean-Luc Mélenchon",
+            "Tiboinshape", "MrBeast", "Lena Situations", "Gérard Depardieu",
+
+            // + 150 PERSONNALITÉS SUPPLÉMENTAIRES AJOUTÉES
+            // Cinéma & Séries (50)
+            "Indiana Jones", "Terminator", "Rocky Balboa", "Forrest Gump", "Jack Dawson",
+            "Rose DeWitt Bukater", "Le Parrain", "Tony Montana", "Michael Corleone", "Hannibal Lecter",
+            "Docteur House", "Dexter Morgan", "Sheldon Cooper", "Joey Tribbiani", "Chandler Bing",
+            "Ross Geller", "Rachel Green", "Monica Geller", "Phoebe Buffay", "Barney Stinson",
+            "Ted Mosby", "Robin Scherbatsky", "El Profesor (La Casa de Papel)", "Tokyo", "Berlin",
+            "Walter White", "Jesse Pinkman", "Saul Goodman", "Rick Grimes", "Daryl Dixon",
+            "Negan", "Eleven (Stranger Things)", "Hopper", "Mercredi Addams", "Gomez Addams",
+            "Morticia Addams", "Sherlock Holmes", "John Watson", "Moriarty", "Docteur Who",
+            "Jack Torrance", "Edward aux mains d'argent", "Beetlejuice", "Capitaine Jack Sparrow", "Will Turner",
+            "Elizabeth Swann", "Frodon Sacquet", "Sam Gamegie", "Aragorn", "Legolas",
+
+            // Animés, Mangas & Animation (35)
+            "Naruto Uzumaki", "Sasuke Uchiha", "Kakashi Hatake", "Monkey D. Luffy", "Roronoa Zoro",
+            "Sanji", "Son Goku", "Vegeta", "Gohan", "Piccolo",
+            "Tanjiro Kamado", "Nezuko Kamado", "Eren Jaeger", "Mikasa Ackerman", "Levi Ackerman",
+            "Light Yagami", "L (Death Note)", "Satoru Gojo", "Yuji Itadori", "Sukuna",
+            "Sailor Moon", "Sakura Kinomoto", "Saitama (One Punch Man)", "Totoro", "Le Roi Lion",
+            "Aladdin", "Cendrillon", "Blanche-Neige", "Mulan", "Simba",
+            "Pumba", "Timon", "Albus Dumbledore", "Severus Rogue", "Sirius Black",
+
+            // Jeux Vidéo (35)
+            "Solid Snake", "Big Boss", "Lara Croft", "Nathan Drake", "Ellie (The Last of Us)",
+            "Joel Miller", "Crash Bandicoot", "Spyro the Dragon", "Rayman", "Sub-Zero",
+            "Scorpion (Mortal Kombat)", "Liu Kang", "Ryu", "Chun-Li", "Ken Masters",
+            "Pac-Man", "Bowser", "Princess Peach", "Toad", "Yoshi",
+            "Wario", "Waluigi", "Donkey Kong", "Diddy Kong", "Fox McCloud",
+            "Sephiroth", "Cloud Strife", "Tifa Lockhart", "Aerith Gainsborough", "Barret Wallace",
+            "Triss Merigold", "Yennefer de Vengerberg", "Ciri", "Ezio Auditore", "Altair",
+
+            // Musique, Sport & Internet / TV (30)
+            "Taylor Swift", "Beyoncé", "Rihanna", "Drake", "The Weeknd",
+            "Ariana Grande", "Justin Bieber", "Billie Eilish", "Dua Lipa", "Ed Sheeran",
+            "Squeezie", "Sébastien Frit", "Amixem", "Joyca", "Michou",
+            "Inoxtag", "Gotaga", "Domingo", "PewDiePie", "Ninja",
+            "Lionel Messi", "Cristiano Ronaldo", "Neymar Jr", "Karim Benzema", "Antoine Griezmann",
+            "Paul Pogba", "LeBron James", "Michael Jordan", "Kobe Bryant", "Usain Bolt"
+        ];
+
+        let state = {
+            screen: "home", // "home", "transit", "jeu", "victoire"
+            mode: "solo", // "solo" ou "multi"
+            useTimer: false, // Par défaut, pas de timer
+            currentCard: "",
+            timer: 120, // 2 minutes si activé
+            intervalId: null
+        };
+
+        function tirerPersonnageAleatoire() {
+            return PERSONNALITES[Math.floor(Math.random() * PERSONNALITES.length)];
+        }
+
+        function lancerPartie(modeJeu) {
+            state.mode = modeJeu;
+            state.useTimer = document.getElementById("timerToggle") ? document.getElementById("timerToggle").checked : false;
+            state.currentCard = tirerPersonnageAleatoire();
+            state.timer = 120;
+
+            if (modeJeu === "multi") {
+                state.screen = "transit";
+            } else {
+                state.screen = "jeu";
+                if (state.useTimer) demarrerChrono();
+            }
+            render();
+        }
+
+        function demarrerChrono() {
+            if (state.intervalId) clearInterval(state.intervalId);
+            state.intervalId = setInterval(() => {
+                if (state.timer > 0) {
+                    state.timer--;
+                    render();
+                } else {
+                    clearInterval(state.intervalId);
+                }
+            }, 1000);
+        }
+
+        function formaterTemps(secondes) {
+            let m = Math.floor(secondes / 60);
+            let s = secondes % 60;
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function devineTrouve() {
+            if (state.intervalId) clearInterval(state.intervalId);
+            state.screen = "victoire";
+            render();
+        }
+
+        function render() {
+            const app = document.getElementById("app");
+
+            if (state.screen === "home") {
+                app.innerHTML = `
+                    <h1>DEVINE TÊTE 🧠</h1>
+                    <p class="phase-subtitle">Vraies Personnalités & Personnages</p>
+                    <div class="panel">
+                        <p style="color:var(--text-sub); margin-bottom:15px; line-height:1.5;">
+                            Devine la personnalité ou le personnage inscrit sur ton front en posant des questions en 'Oui / Non'.
+                        </p>
+                        
+                        <label class="checkbox-row">
+                            <input type="checkbox" id="timerToggle" ${state.useTimer ? "checked" : ""}>
+                            <span>Activer le chronomètre (2 minutes)</span>
+                        </label>
+
+                        <button class="btn btn-primary" onclick="lancerPartie('solo')">Mode Solo (Devine ton mot) ›</button>
+                        <button class="btn btn-ghost" onclick="lancerPartie('multi')">Mode Multijoueur (Passe le tel) ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "transit") {
+                app.innerHTML = `
+                    <h1>PASSE LE TÉLÉPHONE 📱</h1>
+                    <p class="phase-subtitle">Phase de secret</p>
+                    <div class="panel">
+                        <p style="color:var(--text-sub); margin-bottom:20px; line-height:1.5;">
+                            Le joueur qui devine ferme les yeux. Le maître du jeu clique ci-dessous pour générer la personnalité secrète et colle le téléphone sur son front !
+                        </p>
+                        <button class="btn btn-primary" onclick="state.screen='jeu'; if(state.useTimer) demarrerChrono(); render();">C'est collé sur le front ! Lancer ›</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "jeu") {
+                app.innerHTML = `
+                    <h1>DEVINE TÊTE 🎯</h1>
+                    <p class="phase-subtitle">Quelle personnalité es-tu ?</p>
+                    
+                    <div class="panel">
+                        <p style="font-size:0.95rem; color:var(--text-sub);">La personnalité sur ton front :</p>
+                        <div class="secret-card">
+                            ⭐ ${state.currentCard} ⭐
+                        </div>
+                        ${state.useTimer ? `<div class="timer">⏳ ${formaterTemps(state.timer)}</div>` : `<p style="color:var(--neon-cyan); font-size:1.1rem; margin:10px 0;">Mode libre (Sans temps imparti)</p>`}
+                        <button class="btn btn-primary" onclick="devineTrouve()">Je l'ai trouvé ! 🎉</button>
+                        <button class="btn btn-ghost" onclick="state.screen='home'; if(state.intervalId) clearInterval(state.intervalId); render();">Abandonner ‹</button>
+                    </div>
+                `;
+            }
+            else if (state.screen === "victoire") {
+                app.innerHTML = `
+                    <h1>VICTOIRE ! 🏆</h1>
+                    <p class="phase-subtitle">Le mystère est résolu</p>
+                    <div class="panel">
+                        <p style="color:var(--text-sub); margin-bottom:10px;">Tu étais bien :</p>
+                        <div class="secret-card" style="font-size:1.1rem; padding:15px;">
+                            ✨ ${state.currentCard} ✨
+                        </div>
+                        <button class="btn btn-primary" onclick="lancerPartie('${state.mode}')">Rejouer (Nouveau personnage) ⟳</button>
+                        <button class="btn btn-ghost" onclick="state.screen='home'; render();">Menu Principal ‹</button>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('btn-fullscreen').addEventListener('click', function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                this.textContent = "QUITTER";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                this.textContent = "PLEIN ÉCRAN";
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
