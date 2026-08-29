@@ -1,48 +1,34 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#0b0616">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Roue de la Chance — jeux2soiree</title>
 
-    <title>Roue de la Chance</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
     <style>
-
         :root {
-            --bg-color: #0b0616;
-            --card-bg: #140a26;
-            --grid-line: rgba(255, 46, 136, 0.10);
-            --border-color: rgba(255, 46, 136, 0.35);
+            --bg-body: #0b0616;
+            --bg-panel: #140a26;
+            --grid-line: rgba(124, 58, 237, 0.12);
+
             --text-main: #f3e9ff;
-            --text-sub: #9d8bc4;
-            --accent: #ff2e88;
-            --neon-yellow: #ffe14d;
+            --text-muted: #9d8bc4;
+
+            --neon-pink: #ff2e88;
             --neon-cyan: #22e6ff;
+            --neon-yellow: #ffe14d;
+            --neon-green: #4dffa6;
+            --neon-purple: #a855f7;
 
             --font-display: 'Press Start 2P', monospace;
             --font-body: 'VT323', monospace;
-        }
-
-        :root[data-theme="light"] {
-            --bg-color: #cdbf9c;
-            --card-bg: #e6dcc0;
-            --grid-line: rgba(0, 0, 0, 0.03);
-            --border-color: rgba(179, 165, 120, 0.8);
-            --text-main: #241f17;
-            --text-sub: #6a5f45;
-            --accent: #9e2a24;
-            --neon-yellow: #556021;
-            --neon-cyan: #225588;
         }
 
         * {
@@ -52,13 +38,17 @@
         }
 
         html {
-            background: var(--bg-color);
+            background: var(--bg-body);
+            scroll-behavior: smooth;
         }
 
         body {
             font-family: var(--font-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 30px 15px 60px;
 
-            background-color: var(--bg-color);
+            background-color: var(--bg-body);
 
             background-image:
                 linear-gradient(var(--grid-line) 1px, transparent 1px),
@@ -67,98 +57,111 @@
                     circle at 50% 0%,
                     rgba(255, 46, 136, 0.15) 0%,
                     transparent 55%
+                ),
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(34, 230, 255, 0.12) 0%,
+                    transparent 55%
                 );
 
             background-size:
                 40px 40px,
                 40px 40px,
+                100% 100%,
                 100% 100%;
 
-            color: var(--text-main);
-
-            min-height: 100vh;
-
-            padding: 20px 16px 60px;
-
-            position: relative;
-
-            font-size: 1.25rem;
+            overflow-x: hidden;
         }
 
         body::after {
             content: "";
-
             position: fixed;
             inset: 0;
-
             pointer-events: none;
 
             background:
                 repeating-linear-gradient(
                     to bottom,
-                    rgba(0,0,0,0) 0px,
-                    rgba(0,0,0,0) 2px,
-                    rgba(0,0,0,0.18) 3px,
-                    rgba(0,0,0,0.18) 4px
+                    rgba(0, 0, 0, 0) 0px,
+                    rgba(0, 0, 0, 0) 2px,
+                    rgba(0, 0, 0, 0.18) 3px,
+                    rgba(0, 0, 0, 0.18) 4px
                 );
 
             z-index: 100;
-
             mix-blend-mode: multiply;
         }
 
-        #app {
-            max-width: 1000px;
-
-            margin: 0 auto;
-
-            position: relative;
-
-            z-index: 10;
-        }
-
         /* =========================
-           BARRE DU HAUT
+           TOP BAR
         ========================= */
 
         .top-bar {
-            max-width: 1000px;
-
-            margin: 0 auto 15px;
+            max-width: 1100px;
+            margin: 0 auto 25px;
 
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
+            gap: 15px;
+        }
+
+        .btn-back,
+        .btn-fs {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+
+            text-decoration: none;
+            cursor: pointer;
+
+            padding: 12px 16px;
+
+            background: rgba(255, 46, 136, 0.05);
+
+            transition: 0.15s;
         }
 
         .btn-back {
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            font-family: var(--font-display);
-
-            font-size: 0.5rem;
-
-            color: var(--accent);
-
-            text-decoration: none;
-
-            padding: 10px 14px;
-
-            border: 2px solid var(--accent);
-
-            background: rgba(255, 46, 136, 0.06);
-
-            cursor: pointer;
+            color: var(--neon-pink);
+            border: 2px solid var(--neon-pink);
 
             box-shadow:
-                0 0 0 2px var(--bg-color),
+                0 0 0 2px var(--bg-body),
                 4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+        .btn-fs {
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+
+            box-shadow:
+                0 0 0 2px var(--bg-body),
+                4px 4px 0 rgba(34, 230, 255, 0.35);
+        }
+
+        .btn-back:hover,
+        .btn-fs:hover {
+            transform: translate(-2px, -2px);
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .credits {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            color: var(--neon-yellow);
+        }
+
+        .credits-infinity {
+            font-size: 1rem;
         }
 
         /* =========================
@@ -166,76 +169,54 @@
         ========================= */
 
         header {
-            background: var(--card-bg);
+            max-width: 1100px;
+            margin: 10px auto 25px;
 
-            border: 2px solid var(--accent);
+            border: 2px solid var(--neon-pink);
 
-            padding: 16px;
+            background: rgba(20, 10, 38, 0.9);
 
-            margin-bottom: 20px;
+            padding: 20px;
 
             box-shadow:
-                0 0 0 4px var(--bg-color),
-                6px 6px 0 rgba(0,0,0,0.6),
-                0 0 20px rgba(255,46,136,0.2);
+                0 0 20px rgba(255, 46, 136, 0.15),
+                6px 6px 0 rgba(255, 46, 136, 0.15);
+        }
 
-            display: flex;
+        .brand-name {
+            display: block;
 
-            justify-content: space-between;
+            font-family: var(--font-display);
+            font-size: clamp(0.75rem, 2vw, 1rem);
 
-            align-items: center;
+            color: var(--neon-cyan);
 
-            flex-wrap: wrap;
+            text-shadow:
+                0 0 10px rgba(34, 230, 255, 0.8),
+                2px 2px 0 #004d61;
 
-            gap: 10px;
+            margin-bottom: 12px;
+
+            letter-spacing: 2px;
         }
 
         h1 {
             font-family: var(--font-display);
 
-            font-size: 0.9rem;
+            font-size: clamp(1rem, 4vw, 2rem);
 
-            color: var(--accent);
+            color: var(--neon-pink);
 
             text-shadow:
-                0 0 8px rgba(255,46,136,0.8);
+                0 0 8px rgba(255, 46, 136, 0.9),
+                4px 4px 0 #4a0d2b;
+
+            margin-bottom: 10px;
         }
 
-        .subtitle {
-            font-size: 1rem;
-
-            color: var(--text-sub);
-
-            margin-top: 4px;
-        }
-
-        .headerbtns {
-            display: flex;
-
-            gap: 8px;
-
-            flex-wrap: wrap;
-
-            align-items: center;
-        }
-
-        .themebtn {
-            font-family: var(--font-display);
-
-            font-size: 0.5rem;
-
-            background: rgba(255, 46, 136, 0.08);
-
-            border: 2px solid var(--accent);
-
-            color: var(--accent);
-
-            padding: 8px 10px;
-
-            cursor: pointer;
-
-            box-shadow:
-                2px 2px 0 rgba(0,0,0,0.5);
+        .description {
+            color: var(--text-muted);
+            font-size: 1.3rem;
         }
 
         /* =========================
@@ -243,894 +224,1360 @@
         ========================= */
 
         .panel {
-            background: var(--card-bg);
+            max-width: 1100px;
+            margin: 0 auto 25px;
 
-            border: 2px solid var(--border-color);
+            background: rgba(20, 10, 38, 0.94);
 
-            padding: 20px;
+            border: 2px solid var(--neon-cyan);
 
-            margin-bottom: 16px;
+            padding: 22px;
 
             box-shadow:
-                0 0 0 4px var(--bg-color),
-                6px 6px 0 rgba(0,0,0,0.6);
+                0 0 20px rgba(34, 230, 255, 0.08),
+                6px 6px 0 rgba(0, 0, 0, 0.5);
         }
 
-        .panel h2 {
+        .panel-title {
             font-family: var(--font-display);
-
             font-size: 0.75rem;
 
             color: var(--neon-cyan);
 
-            margin-bottom: 14px;
-
             text-shadow:
-                0 0 6px rgba(34,230,255,0.4);
-        }
+                0 0 8px rgba(34, 230, 255, 0.6);
 
-        .center {
-            text-align: center;
-        }
-
-        .dim {
-            color: var(--text-sub);
+            margin-bottom: 18px;
         }
 
         /* =========================
-           INPUT
+           PARTICIPANTS
         ========================= */
 
-        input[type="text"] {
-            width: 100%;
-
-            background: var(--bg-color);
-
-            border: 2px solid var(--border-color);
-
-            color: var(--text-main);
-
-            padding: 12px;
-
-            font-size: 1.3rem;
-
-            font-family: var(--font-body);
-
-            outline: none;
-
-            margin-bottom: 10px;
-
-            text-align: center;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent);
-
-            box-shadow:
-                0 0 10px rgba(255,46,136,0.2);
-        }
-
-        /* =========================
-           BOUTONS
-        ========================= */
-
-        .btn {
+        .input-row {
             display: flex;
+            gap: 10px;
+        }
 
-            align-items: center;
+        #nameInput {
+            flex: 1;
+            min-width: 0;
 
-            justify-content: center;
+            background: #090510;
 
-            gap: 8px;
+            border: 2px solid var(--neon-pink);
 
-            width: 100%;
+            color: white;
 
             padding: 14px;
 
-            font-family: var(--font-display);
+            font-family: var(--font-body);
+            font-size: 1.3rem;
 
-            font-size: 0.65rem;
-
-            cursor: pointer;
-
-            border: none;
-
-            box-shadow:
-                4px 4px 0 rgba(0,0,0,0.7);
-
-            text-transform: uppercase;
+            outline: none;
 
             text-align: center;
-
-            margin-top: 10px;
         }
 
-        .btn:active {
-            transform: translate(2px, 2px);
-
+        #nameInput:focus {
             box-shadow:
-                2px 2px 0 rgba(0,0,0,0.7);
+                0 0 10px rgba(255, 46, 136, 0.35);
         }
 
-        .btn:disabled {
-            opacity: 0.5;
+        .btn-add {
+            border: 2px solid var(--neon-pink);
 
-            cursor: not-allowed;
-        }
+            background: var(--neon-pink);
 
-        .btn-primary {
-            background: var(--accent);
-
-            color: #fff;
-
-            text-shadow:
-                0 0 6px rgba(0,0,0,0.5);
-        }
-
-        .btn-ghost {
-            background: transparent;
-
-            border: 2px solid var(--accent);
-
-            color: var(--text-main);
-        }
-
-        .btn-yellow {
-            background: var(--neon-yellow);
-
-            color: #140a26;
-        }
-
-        .linkbtn {
-            background: none;
-
-            border: none;
-
-            color: var(--text-sub);
-
-            font-size: 1.1rem;
-
-            cursor: pointer;
-
-            text-decoration: underline;
-
-            display: block;
-
-            margin: 10px auto;
-
-            font-family: var(--font-body);
-        }
-
-        /* =========================
-           LISTE DES NOMS
-        ========================= */
-
-        .name-list {
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 7px;
-
-            margin-top: 15px;
-
-            max-height: 350px;
-
-            overflow-y: auto;
-        }
-
-        .name-item {
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            background: var(--bg-color);
-
-            border: 2px solid var(--border-color);
-
-            padding: 7px 8px 7px 12px;
-
-            min-height: 44px;
-        }
-
-        .name-item span {
-            font-size: 1.2rem;
-
-            word-break: break-word;
-        }
-
-        .remove-name {
-            flex-shrink: 0;
-
-            width: 32px;
-
-            height: 32px;
-
-            margin-left: 8px;
-
-            background: transparent;
-
-            border: 2px solid var(--accent);
-
-            color: var(--accent);
-
-            cursor: pointer;
+            color: white;
 
             font-family: var(--font-display);
-
             font-size: 0.55rem;
+
+            padding: 0 20px;
+
+            cursor: pointer;
+
+            box-shadow:
+                4px 4px 0 #720c3d;
+
+            transition: 0.15s;
+        }
+
+        .btn-add:hover {
+            transform: translate(-2px, -2px);
+
+            box-shadow:
+                6px 6px 0 #720c3d;
         }
 
         .counter {
             text-align: center;
 
+            margin: 18px 0;
+
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+
             color: var(--neon-yellow);
+        }
+
+        #participantsList {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            min-height: 40px;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            background: rgba(168, 85, 247, 0.1);
+
+            border: 1px solid var(--neon-purple);
+
+            padding: 8px 10px;
+
+            font-size: 1.15rem;
+        }
+
+        .remove-player {
+            border: 0;
+
+            background: transparent;
+
+            color: var(--neon-pink);
+
+            cursor: pointer;
 
             font-family: var(--font-display);
 
-            font-size: 0.55rem;
-
-            margin: 12px 0;
+            font-size: 0.65rem;
         }
 
-        /* =========================
-           LAYOUT ROUE
-        ========================= */
+        .empty {
+            color: var(--text-muted);
 
-        .game-layout {
-            display: grid;
+            font-size: 1.2rem;
 
-            grid-template-columns:
-                minmax(0, 1fr)
-                320px;
-
-            gap: 18px;
-
-            align-items: start;
+            text-align: center;
         }
 
-        .wheel-panel {
+        .small-buttons {
             display: flex;
 
-            flex-direction: column;
+            gap: 10px;
 
-            align-items: center;
+            margin-top: 18px;
+        }
 
-            justify-content: center;
+        .small-btn {
+            flex: 1;
+
+            background: transparent;
+
+            color: var(--text-main);
+
+            border: 2px solid var(--neon-cyan);
+
+            padding: 10px;
+
+            font-family: var(--font-display);
+            font-size: 0.5rem;
+
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+        .small-btn:hover:not(:disabled) {
+            background: var(--neon-cyan);
+            color: #000;
+        }
+
+        .small-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         /* =========================
            ROUE
         ========================= */
 
+        .wheel-section {
+            max-width: 1100px;
+
+            margin: 0 auto;
+
+            background: rgba(20, 10, 38, 0.94);
+
+            border: 2px solid var(--neon-pink);
+
+            padding: 25px;
+
+            box-shadow:
+                0 0 30px rgba(255, 46, 136, 0.1),
+                7px 7px 0 rgba(0, 0, 0, 0.5);
+        }
+
         .wheel-wrapper {
             position: relative;
 
-            width: min(75vw, 650px);
+            width: min(90vw, 650px);
 
             aspect-ratio: 1 / 1;
 
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            margin: 10px auto 20px;
+            margin: 10px auto 25px;
         }
 
-        #wheel {
+        canvas {
             width: 100%;
-
             height: 100%;
 
             display: block;
 
             filter:
-                drop-shadow(
-                    0 0 12px
-                    rgba(255,46,136,0.35)
-                );
+                drop-shadow(0 0 10px rgba(255, 46, 136, 0.35));
         }
 
         /* =========================
-           POINTEUR
+           FLECHE
+           
+           Pointe vers le BAS.
+           Elle est donc retournée de 180°
+           par rapport à la version précédente.
         ========================= */
 
         .pointer {
             position: absolute;
 
-            top: -8px;
-
+            top: -5px;
             left: 50%;
 
             transform: translateX(-50%);
 
             width: 0;
-
             height: 0;
 
-            border-left:
-                20px solid transparent;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
 
-            border-right:
-                20px solid transparent;
-
-            border-top:
-                42px solid var(--neon-yellow);
-
-            z-index: 5;
+            /*
+             * border-top = pointe vers le bas
+             */
+            border-top: 42px solid var(--neon-yellow);
+            border-bottom: 0;
 
             filter:
-                drop-shadow(
-                    0 0 6px
-                    rgba(255,225,77,0.7)
-                );
+                drop-shadow(0 0 8px rgba(255, 225, 77, 0.8));
 
-            pointer-events: none;
+            z-index: 10;
+        }
+
+        /*
+         * Petit prolongement de la flèche.
+         */
+
+        .pointer::after {
+            content: "";
+
+            position: absolute;
+
+            left: -10px;
+            top: -42px;
+
+            width: 20px;
+            height: 10px;
+
+            background: var(--neon-yellow);
         }
 
         /* =========================
-           CENTRE ROUE
+           BOUTON
         ========================= */
 
-        .wheel-center {
-            position: absolute;
+        .spin-container {
+            text-align: center;
+        }
 
-            width: 75px;
-
-            height: 75px;
-
-            border-radius: 50%;
-
-            background: var(--card-bg);
-
-            border:
-                4px solid
-                var(--neon-yellow);
-
-            box-shadow:
-                0 0 0 5px var(--bg-color),
-                0 0 15px
-                rgba(255,225,77,0.7);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
+        #spinButton {
             font-family: var(--font-display);
 
-            font-size: 0.5rem;
+            font-size: clamp(0.65rem, 2vw, 0.9rem);
 
-            color: var(--neon-yellow);
+            color: #000;
 
-            z-index: 3;
+            background: var(--neon-pink);
 
-            pointer-events: none;
+            border: 3px solid #fff;
+
+            padding: 18px 35px;
+
+            cursor: pointer;
+
+            box-shadow:
+                6px 6px 0 #720c3d,
+                0 0 20px rgba(255, 46, 136, 0.5);
+
+            transition: 0.15s;
+        }
+
+        #spinButton:hover:not(:disabled) {
+            transform: translate(-3px, -3px);
+
+            box-shadow:
+                9px 9px 0 #720c3d,
+                0 0 30px rgba(255, 46, 136, 0.7);
+        }
+
+        #spinButton:active:not(:disabled) {
+            transform: translate(2px, 2px);
+
+            box-shadow:
+                3px 3px 0 #720c3d;
+        }
+
+        #spinButton:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .hint {
+            color: var(--text-muted);
+
+            font-size: 1.1rem;
+
+            margin-top: 15px;
         }
 
         /* =========================
            RESULTAT
         ========================= */
 
-        .result-box {
-            width: 100%;
+        #result {
+            display: none;
 
-            background: var(--bg-color);
+            margin: 25px auto 0;
 
-            border:
-                2px solid
-                var(--neon-yellow);
-
-            padding: 18px;
+            max-width: 700px;
 
             text-align: center;
 
-            box-shadow:
-                0 0 15px
-                rgba(255,225,77,0.15);
+            border: 3px solid var(--neon-green);
 
-            display: none;
+            padding: 25px;
+
+            background:
+                rgba(77, 255, 166, 0.06);
+
+            box-shadow:
+                0 0 25px rgba(77, 255, 166, 0.2);
         }
 
-        .result-box.visible {
+        #result.show {
             display: block;
 
             animation:
-                resultPop
-                0.5s
-                ease-out;
+                resultAppear 0.5s steps(4);
+        }
+
+        @keyframes resultAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .result-label {
             font-family: var(--font-display);
 
-            color: var(--text-sub);
+            color: var(--neon-yellow);
+
+            font-size: 0.65rem;
+
+            margin-bottom: 15px;
+        }
+
+        #winner {
+            font-family: var(--font-display);
+
+            font-size: clamp(1rem, 5vw, 2rem);
+
+            color: var(--neon-green);
+
+            text-shadow:
+                0 0 10px rgba(77, 255, 166, 0.9);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            max-width: 1100px;
+
+            margin: 45px auto 0;
+
+            padding-top: 20px;
+
+            border-top: 1px solid rgba(124, 58, 237, 0.2);
+
+            text-align: center;
+
+            font-family: var(--font-display);
 
             font-size: 0.5rem;
 
-            margin-bottom: 10px;
-        }
-
-        .result-name {
-            font-family: var(--font-display);
-
-            color: var(--neon-yellow);
-
-            font-size:
-                clamp(
-                    0.8rem,
-                    3vw,
-                    1.4rem
-                );
-
-            text-shadow:
-                0 0 10px
-                rgba(255,225,77,0.7);
-        }
-
-        @keyframes resultPop {
-
-            0% {
-                transform: scale(0.7);
-
-                opacity: 0;
-            }
-
-            70% {
-                transform: scale(1.08);
-            }
-
-            100% {
-                transform: scale(1);
-
-                opacity: 1;
-            }
+            color: var(--text-muted);
         }
 
         /* =========================
            RESPONSIVE
         ========================= */
 
-        @media (max-width: 800px) {
-
-            .game-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .wheel-wrapper {
-                width:
-                    min(
-                        88vw,
-                        600px
-                    );
-            }
-
-            .panel {
-                padding: 15px;
-            }
-        }
-
-        @media (max-width: 500px) {
+        @media (max-width: 650px) {
 
             body {
-                padding:
-                    12px 10px 40px;
+                padding: 15px 10px 40px;
             }
 
-            h1 {
-                font-size: 0.7rem;
+            .top-bar {
+                align-items: stretch;
             }
 
-            .subtitle {
-                font-size: 0.9rem;
+            .credits {
+                display: none;
             }
 
-            .wheel-center {
-                width: 58px;
+            .top-right {
+                margin-left: auto;
+            }
 
-                height: 58px;
+            .input-row {
+                flex-direction: column;
+            }
 
-                font-size: 0.4rem;
+            .btn-add {
+                padding: 14px;
+            }
+
+            .small-buttons {
+                flex-direction: column;
+            }
+
+            .panel,
+            .wheel-section {
+                padding: 15px;
             }
 
             .pointer {
                 border-left-width: 15px;
-
                 border-right-width: 15px;
-
                 border-top-width: 32px;
             }
-        }
 
+            .pointer::after {
+                left: -7px;
+                top: -32px;
+                width: 14px;
+                height: 8px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-<div id="app"></div>
+    <!-- =========================
+         BARRE DU HAUT
+    ========================= -->
 
-<script>
+    <div class="top-bar">
 
-    /* =========================================================
-       ÉTAT DE L'APPLICATION
-    ========================================================= */
+        <a href="../" class="btn-back">
+            &lsaquo; HUB
+        </a>
 
-    const state = {
+        <div class="top-right">
 
-        screen: "home",
+            <span class="credits">
+                CREDITS:
+                <span class="credits-infinity">&infin;</span>
+            </span>
 
-        /* IMPORTANT :
-           La liste est vide au démarrage. */
+            <button
+                type="button"
+                id="btn-fullscreen"
+                class="btn-fs"
+            >
+                <span id="fs-label">
+                    PLEIN ÉCRAN
+                </span>
+            </button>
 
-        names: [],
+        </div>
 
-        themeMode: "dark",
+    </div>
 
-        rotation: 0,
 
-        spinning: false,
+    <!-- =========================
+         HEADER
+    ========================= -->
 
-        winnerIndex: null
-    };
+    <header>
 
+        <span class="brand-name">
+            jeux2soiree
+        </span>
 
-    /* =========================================================
-       STOCKAGE LOCAL
-    ========================================================= */
+        <h1>
+            🎡 ROUE DE LA CHANCE
+        </h1>
 
-    function loadStorage() {
+        <p class="description">
+            Ajoute les participants, lance la roue et découvre qui sera choisi.
+        </p>
 
-        try {
+    </header>
 
-            const savedTheme =
-                localStorage.getItem(
-                    "wheel_theme"
-                );
 
-            if (
-                savedTheme === "dark" ||
-                savedTheme === "light"
-            ) {
+    <!-- =========================
+         PARTICIPANTS
+    ========================= -->
 
-                state.themeMode =
-                    savedTheme;
-            }
+    <section class="panel">
 
-            /*
-             * Les noms précédemment entrés
-             * peuvent être conservés.
-             */
+        <div class="panel-title">
+            PARTICIPANTS
+        </div>
 
-            const savedNames =
-                localStorage.getItem(
-                    "wheel_names"
-                );
+        <div class="input-row">
 
-            if (savedNames) {
+            <input
+                type="text"
+                id="nameInput"
+                placeholder="Entre un nom..."
+                maxlength="25"
+                autocomplete="off"
+            >
 
-                const parsed =
-                    JSON.parse(savedNames);
+            <button
+                type="button"
+                class="btn-add"
+                id="addButton"
+            >
+                + AJOUTER
+            </button>
 
-                if (
-                    Array.isArray(parsed)
-                ) {
+        </div>
 
-                    state.names =
-                        parsed;
-                }
-            }
+        <div class="counter">
 
-        } catch (error) {
+            <span id="participantCount">
+                0
+            </span>
 
-            console.log(
-                "Impossible de charger les données."
-            );
-        }
+            PARTICIPANT
 
-        applyTheme();
-    }
+            <span id="participantPlural"></span>
 
+        </div>
 
-    function saveStorage() {
+        <div id="participantsList">
 
-        try {
+            <div class="empty">
+                Aucun participant.<br>
+                Ajoute le premier nom pour commencer.
+            </div>
 
-            localStorage.setItem(
-                "wheel_theme",
-                state.themeMode
-            );
+        </div>
 
-            localStorage.setItem(
-                "wheel_names",
-                JSON.stringify(
-                    state.names
-                )
-            );
+        <div class="small-buttons">
 
-        } catch (error) {}
-    }
+            <button
+                type="button"
+                class="small-btn"
+                id="shuffleButton"
+            >
+                🔀 MÉLANGER
+            </button>
 
+            <button
+                type="button"
+                class="small-btn"
+                id="clearButton"
+            >
+                🗑 VIDER
+            </button>
 
-    /* =========================================================
-       THEME
-    ========================================================= */
+        </div>
 
-    function applyTheme() {
+    </section>
 
-        document.documentElement
-            .setAttribute(
-                "data-theme",
-                state.themeMode
-            );
-    }
 
+    <!-- =========================
+         ROUE
+    ========================= -->
 
-    function toggleTheme() {
+    <section class="wheel-section">
 
-        state.themeMode =
-            state.themeMode === "dark"
-                ? "light"
-                : "dark";
+        <div class="wheel-wrapper">
 
-        saveStorage();
+            <!-- FLECHE RETOURNEE A 180° -->
 
-        applyTheme();
+            <div class="pointer"></div>
 
-        render();
-    }
+            <canvas
+                id="wheelCanvas"
+                width="700"
+                height="700"
+            ></canvas>
 
+        </div>
 
-    /* =========================================================
-       PLEIN ÉCRAN
-    ========================================================= */
+        <div class="spin-container">
 
-    function toggleFullscreen() {
+            <button
+                type="button"
+                id="spinButton"
+                disabled
+            >
+                🎡 LANCER LA ROUE
+            </button>
 
-        const isFullscreen =
-            document.fullscreenElement ||
-            document.webkitFullscreenElement;
+            <p class="hint">
+                Chaque participant possède exactement la même chance d'être tiré.
+            </p>
 
-        if (!isFullscreen) {
+        </div>
 
-            const element =
-                document.documentElement;
 
-            if (
-                element.requestFullscreen
-            ) {
+        <!-- =========================
+             RESULTAT
+        ========================= -->
 
-                element.requestFullscreen();
-            }
+        <div id="result">
 
-        } else {
+            <div class="result-label">
+                ★ PARTICIPANT SÉLECTIONNÉ ★
+            </div>
 
-            if (
-                document.exitFullscreen
-            ) {
+            <div id="winner">
+                —
+            </div>
 
-                document.exitFullscreen();
-            }
-        }
-    }
+        </div>
 
+    </section>
 
-    document.addEventListener(
-        "fullscreenchange",
-        render
-    );
 
+    <!-- =========================
+         FOOTER
+    ========================= -->
 
-    /* =========================================================
-       AJOUTER UN NOM
-    ========================================================= */
+    <footer>
 
-    function ajouterNom() {
+        © jeux2soiree — HIGH SCORE 999999
 
-        const input =
-            document.getElementById(
-                "nameInput"
-            );
+    </footer>
 
-        if (!input) return;
 
-        const nom =
-            input.value.trim();
+    <script>
 
-        if (!nom) {
+        /* =====================================================
+           VARIABLES
+        ===================================================== */
 
-            input.focus();
+        let participants = [];
 
-            return;
-        }
+        let currentRotation = 0;
 
-        state.names.push(nom);
+        let spinning = false;
 
-        input.value = "";
-
-        saveStorage();
-
-        render();
-
-        setTimeout(() => {
-
-            const newInput =
-                document.getElementById(
-                    "nameInput"
-                );
-
-            if (newInput) {
-
-                newInput.focus();
-            }
-
-        }, 30);
-    }
-
-
-    /* =========================================================
-       SUPPRIMER UN NOM
-    ========================================================= */
-
-    function supprimerNom(index) {
-
-        if (state.spinning) return;
-
-        state.names.splice(
-            index,
-            1
-        );
-
-        state.winnerIndex =
-            null;
-
-        saveStorage();
-
-        render();
-    }
-
-
-    /* =========================================================
-       VIDER LA LISTE
-    ========================================================= */
-
-    function viderListe() {
-
-        if (state.spinning) return;
-
-        if (!state.names.length) return;
-
-        const confirmation =
-            confirm(
-                "Supprimer tous les participants ?"
-            );
-
-        if (!confirmation) return;
-
-        state.names = [];
-
-        state.winnerIndex = null;
-
-        state.rotation = 0;
-
-        saveStorage();
-
-        render();
-    }
-
-
-    /* =========================================================
-       MELANGER
-    ========================================================= */
-
-    function melangerListe() {
-
-        if (state.spinning) return;
-
-        for (
-            let i =
-                state.names.length - 1;
-
-            i > 0;
-
-            i--
-        ) {
-
-            const j =
-                Math.floor(
-                    Math.random() *
-                    (i + 1)
-                );
-
-            [
-                state.names[i],
-                state.names[j]
-            ] = [
-                state.names[j],
-                state.names[i]
-            ];
-        }
-
-        saveStorage();
-
-        render();
-    }
-
-
-    /* =========================================================
-       DESSIN DE LA ROUE
-    ========================================================= */
-
-    function drawWheel() {
 
         const canvas =
-            document.getElementById(
-                "wheel"
-            );
-
-        if (!canvas) return;
-
-        const wrapper =
-            canvas.parentElement;
-
-        const rect =
-            wrapper.getBoundingClientRect();
-
-        const size =
-            Math.max(
-                300,
-                Math.floor(
-                    rect.width
-                )
-            );
-
-        const dpr =
-            window.devicePixelRatio ||
-            1;
-
-        canvas.width =
-            size * dpr;
-
-        canvas.height =
-            size * dpr;
-
-        canvas.style.width =
-            size + "px";
-
-        canvas.style.height =
-            size + "px";
+            document.getElementById("wheelCanvas");
 
         const ctx =
             canvas.getContext("2d");
 
-        ctx.scale(
-            dpr,
-            dpr
-        );
 
-        const center =
-            size / 2;
-
-        const radius =
-            center - 8;
-
-        ctx.clearRect(
-            0,
-            0,
-            size,
-            size
-        );
+        const nameInput =
+            document.getElementById("nameInput");
 
 
-        /* =========================
-           ROUE VIDE
-        ========================= */
+        const addButton =
+            document.getElementById("addButton");
 
-        if (!state.names.length) {
+
+        const shuffleButton =
+            document.getElementById("shuffleButton");
+
+
+        const clearButton =
+            document.getElementById("clearButton");
+
+
+        const spinButton =
+            document.getElementById("spinButton");
+
+
+        const participantsList =
+            document.getElementById("participantsList");
+
+
+        const participantCount =
+            document.getElementById("participantCount");
+
+
+        const participantPlural =
+            document.getElementById("participantPlural");
+
+
+        const result =
+            document.getElementById("result");
+
+
+        const winner =
+            document.getElementById("winner");
+
+
+        /* =====================================================
+           COULEURS
+        ===================================================== */
+
+        const colors = [
+            "#ff2e88",
+            "#22e6ff",
+            "#a855f7",
+            "#ffe14d",
+            "#4dffa6",
+            "#f97316",
+            "#ec4899",
+            "#06b6d4"
+        ];
+
+
+        /* =====================================================
+           RANDOM CRYPTOGRAPHIQUE
+        ===================================================== */
+
+        function secureRandomInt(max) {
+
+            if (max <= 0) {
+                return 0;
+            }
+
+            const array =
+                new Uint32Array(1);
+
+            const maxUint32 =
+                0x100000000;
+
+            const limit =
+                Math.floor(
+                    maxUint32 / max
+                ) * max;
+
+            let value;
+
+            do {
+
+                crypto.getRandomValues(array);
+
+                value =
+                    array[0];
+
+            } while (value >= limit);
+
+            return value % max;
+        }
+
+
+        /* =====================================================
+           RANDOM FLOAT CRYPTOGRAPHIQUE
+           0 <= valeur < 1
+        ===================================================== */
+
+        function secureRandomFloat() {
+
+            const array =
+                new Uint32Array(1);
+
+            crypto.getRandomValues(array);
+
+            return (
+                array[0] /
+                4294967296
+            );
+        }
+
+
+        /* =====================================================
+           AJOUT PARTICIPANT
+        ===================================================== */
+
+        function addParticipant() {
+
+            if (spinning) {
+                return;
+            }
+
+            const name =
+                nameInput.value.trim();
+
+            if (!name) {
+
+                nameInput.focus();
+
+                return;
+            }
+
+            participants.push(name);
+
+            nameInput.value = "";
+
+            result.classList.remove("show");
+
+            updateParticipants();
+
+            drawWheel();
+
+            nameInput.focus();
+        }
+
+
+        /* =====================================================
+           SUPPRIMER PARTICIPANT
+        ===================================================== */
+
+        function removeParticipant(index) {
+
+            if (spinning) {
+                return;
+            }
+
+            participants.splice(
+                index,
+                1
+            );
+
+            result.classList.remove("show");
+
+            updateParticipants();
+
+            drawWheel();
+        }
+
+
+        /* =====================================================
+           AFFICHER LES PARTICIPANTS
+        ===================================================== */
+
+        function updateParticipants() {
+
+            participantCount.textContent =
+                participants.length;
+
+            participantPlural.textContent =
+                participants.length > 1
+                    ? "S"
+                    : "";
+
+            participantsList.innerHTML = "";
+
+
+            if (
+                participants.length === 0
+            ) {
+
+                participantsList.innerHTML = `
+                    <div class="empty">
+                        Aucun participant.<br>
+                        Ajoute le premier nom pour commencer.
+                    </div>
+                `;
+
+            } else {
+
+                participants.forEach(
+                    (name, index) => {
+
+                        const element =
+                            document.createElement("div");
+
+                        element.className =
+                            "participant";
+
+                        element.innerHTML = `
+                            <span>
+                                ${escapeHtml(name)}
+                            </span>
+
+                            <button
+                                type="button"
+                                class="remove-player"
+                                title="Supprimer"
+                            >
+                                ×
+                            </button>
+                        `;
+
+                        element
+                            .querySelector(".remove-player")
+                            .addEventListener(
+                                "click",
+                                () => removeParticipant(index)
+                            );
+
+                        participantsList.appendChild(
+                            element
+                        );
+                    }
+                );
+            }
+
+
+            /*
+             * Il faut au minimum 2 personnes
+             * pour lancer la roue.
+             */
+
+            spinButton.disabled =
+                participants.length < 2;
+        }
+
+
+        /* =====================================================
+           PROTECTION HTML
+        ===================================================== */
+
+        function escapeHtml(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                text;
+
+            return div.innerHTML;
+        }
+
+
+        /* =====================================================
+           MELANGER
+        ===================================================== */
+
+        function shuffleParticipants() {
+
+            if (spinning) {
+                return;
+            }
+
+            for (
+                let i =
+                    participants.length - 1;
+
+                i > 0;
+
+                i--
+            ) {
+
+                const j =
+                    secureRandomInt(
+                        i + 1
+                    );
+
+                [
+                    participants[i],
+                    participants[j]
+                ] = [
+                    participants[j],
+                    participants[i]
+                ];
+            }
+
+            updateParticipants();
+
+            drawWheel();
+        }
+
+
+        /* =====================================================
+           VIDER
+        ===================================================== */
+
+        function clearParticipants() {
+
+            if (spinning) {
+                return;
+            }
+
+            participants = [];
+
+            currentRotation = 0;
+
+            result.classList.remove(
+                "show"
+            );
+
+            winner.textContent =
+                "—";
+
+            updateParticipants();
+
+            drawWheel();
+        }
+
+
+        /* =====================================================
+           DESSIN DE LA ROUE
+        ===================================================== */
+
+        function drawWheel() {
+
+            const size =
+                canvas.width;
+
+            const center =
+                size / 2;
+
+            const radius =
+                center - 18;
+
+
+            ctx.clearRect(
+                0,
+                0,
+                size,
+                size
+            );
+
+
+            /* =========================
+               FOND
+            ========================= */
+
+            ctx.fillStyle =
+                "#090510";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                center,
+                center,
+                radius + 5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+
+            /* =========================
+               ROUE VIDE
+            ========================= */
+
+            if (
+                participants.length === 0
+            ) {
+
+                ctx.strokeStyle =
+                    "#ff2e88";
+
+                ctx.lineWidth =
+                    8;
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    center,
+                    center,
+                    radius,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.stroke();
+
+
+                ctx.fillStyle =
+                    "#9d8bc4";
+
+                ctx.font =
+                    "22px 'Press Start 2P'";
+
+                ctx.textAlign =
+                    "center";
+
+                ctx.textBaseline =
+                    "middle";
+
+
+                ctx.fillText(
+                    "AJOUTE",
+                    center,
+                    center - 18
+                );
+
+                ctx.fillText(
+                    "DES NOMS",
+                    center,
+                    center + 25
+                );
+
+
+                drawCenter();
+
+                return;
+            }
+
+
+            /* =========================
+               ANGLE D'UNE TRANCHE
+            ========================= */
+
+            const segmentAngle =
+                (
+                    Math.PI * 2
+                ) /
+                participants.length;
+
+
+            /* =========================
+               SEGMENTS
+            ========================= */
+
+            participants.forEach(
+                (name, index) => {
+
+                    const startAngle =
+                        currentRotation +
+                        index *
+                        segmentAngle -
+                        Math.PI / 2;
+
+
+                    const endAngle =
+                        startAngle +
+                        segmentAngle;
+
+
+                    /* SEGMENT */
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(
+                        center,
+                        center
+                    );
+
+                    ctx.arc(
+                        center,
+                        center,
+                        radius,
+                        startAngle,
+                        endAngle
+                    );
+
+                    ctx.closePath();
+
+
+                    ctx.fillStyle =
+                        colors[
+                            index %
+                            colors.length
+                        ];
+
+                    ctx.fill();
+
+
+                    /* BORDURE */
+
+                    ctx.strokeStyle =
+                        "#12081f";
+
+                    ctx.lineWidth =
+                        4;
+
+                    ctx.stroke();
+
+
+                    /* =====================
+                       TEXTE
+                    ===================== */
+
+                    const middleAngle =
+                        startAngle +
+                        segmentAngle / 2;
+
+
+                    const textRadius =
+                        radius * 0.64;
+
+
+                    const textX =
+                        center +
+                        Math.cos(
+                            middleAngle
+                        ) *
+                        textRadius;
+
+
+                    const textY =
+                        center +
+                        Math.sin(
+                            middleAngle
+                        ) *
+                        textRadius;
+
+
+                    ctx.save();
+
+
+                    ctx.translate(
+                        textX,
+                        textY
+                    );
+
+
+                    let rotation =
+                        middleAngle +
+                        Math.PI / 2;
+
+
+                    /*
+                     * Empêche le texte
+                     * d'être à l'envers.
+                     */
+
+                    if (
+                        rotation >
+                            Math.PI / 2 &&
+                        rotation <
+                            Math.PI * 1.5
+                    ) {
+
+                        rotation +=
+                            Math.PI;
+                    }
+
+
+                    ctx.rotate(
+                        rotation
+                    );
+
+
+                    /*
+                     * Taille dynamique.
+                     */
+
+                    let fontSize;
+
+                    if (
+                        participants.length <= 4
+                    ) {
+
+                        fontSize = 27;
+
+                    } else if (
+                        participants.length <= 8
+                    ) {
+
+                        fontSize = 21;
+
+                    } else if (
+                        participants.length <= 14
+                    ) {
+
+                        fontSize = 15;
+
+                    } else {
+
+                        fontSize = 11;
+                    }
+
+
+                    ctx.font =
+                        `bold ${fontSize}px 'VT323', monospace`;
+
+
+                    ctx.textAlign =
+                        "center";
+
+                    ctx.textBaseline =
+                        "middle";
+
+
+                    const maxTextWidth =
+                        Math.max(
+                            50,
+                            segmentAngle *
+                            textRadius *
+                            0.78
+                        );
+
+
+                    /*
+                     * Contour noir
+                     * pour une meilleure lecture.
+                     */
+
+                    ctx.lineWidth =
+                        6;
+
+                    ctx.strokeStyle =
+                        "rgba(0,0,0,0.8)";
+
+
+                    ctx.strokeText(
+                        name,
+                        0,
+                        0,
+                        maxTextWidth
+                    );
+
+
+                    /*
+                     * Texte blanc.
+                     */
+
+                    ctx.fillStyle =
+                        "#ffffff";
+
+
+                    ctx.fillText(
+                        name,
+                        0,
+                        0,
+                        maxTextWidth
+                    );
+
+
+                    ctx.restore();
+                }
+            );
+
+
+            /* =========================
+               BORDURE EXTERIEURE
+            ========================= */
 
             ctx.beginPath();
 
@@ -1142,23 +1589,64 @@
                 Math.PI * 2
             );
 
-            ctx.fillStyle =
-                "#211437";
-
-            ctx.fill();
-
-            ctx.lineWidth = 5;
-
             ctx.strokeStyle =
-                "#ff2e88";
+                "#ffffff";
+
+            ctx.lineWidth =
+                6;
 
             ctx.stroke();
 
+
+            /* =========================
+               CENTRE
+            ========================= */
+
+            drawCenter();
+        }
+
+
+        /* =====================================================
+           CENTRE DE LA ROUE
+        ===================================================== */
+
+        function drawCenter() {
+
+            const center =
+                canvas.width / 2;
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                center,
+                center,
+                58,
+                0,
+                Math.PI * 2
+            );
+
+
             ctx.fillStyle =
-                "#9d8bc4";
+                "#0b0616";
+
+            ctx.fill();
+
+
+            ctx.strokeStyle =
+                "#ffe14d";
+
+            ctx.lineWidth =
+                5;
+
+            ctx.stroke();
+
+
+            ctx.fillStyle =
+                "#ffe14d";
 
             ctx.font =
-                "26px VT323";
+                "16px 'Press Start 2P'";
 
             ctx.textAlign =
                 "center";
@@ -1166,1098 +1654,663 @@
             ctx.textBaseline =
                 "middle";
 
+
             ctx.fillText(
-                "AJOUTE DES NOMS",
+                "GO",
                 center,
                 center
             );
-
-            return;
         }
 
 
-        /* =========================
-           SECTEURS
-        ========================= */
+        /* =====================================================
+           AUDIO
+        ===================================================== */
 
-        const count =
-            state.names.length;
-
-        const slice =
-            (Math.PI * 2) /
-            count;
-
-        const colors = [
-
-            "#ff2e88",
-            "#7d3cff",
-            "#22e6ff",
-            "#ff4d4d",
-            "#ff9d00",
-            "#21d19f",
-            "#b84dff",
-            "#ff4db8"
-
-        ];
+        let audioContext =
+            null;
 
 
-        for (
-            let i = 0;
-            i < count;
-            i++
-        ) {
+        function getAudioContext() {
 
-            const start =
-                -Math.PI / 2 +
-                i * slice;
+            if (!audioContext) {
 
-            const end =
-                start + slice;
+                audioContext =
+                    new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
+            }
+
+            if (
+                audioContext.state ===
+                "suspended"
+            ) {
+
+                audioContext.resume();
+            }
+
+            return audioContext;
+        }
 
 
-            /* Secteur */
+        /* =====================================================
+           TIC
+        ===================================================== */
 
-            ctx.beginPath();
+        function playTick() {
 
-            ctx.moveTo(
-                center,
-                center
-            );
+            try {
 
-            ctx.arc(
-                center,
-                center,
-                radius,
-                start,
-                end
-            );
+                const audio =
+                    getAudioContext();
 
-            ctx.closePath();
 
-            ctx.fillStyle =
-                colors[
-                    i %
-                    colors.length
+                const oscillator =
+                    audio.createOscillator();
+
+
+                const gain =
+                    audio.createGain();
+
+
+                oscillator.type =
+                    "square";
+
+                oscillator.frequency.value =
+                    180;
+
+
+                const now =
+                    audio.currentTime;
+
+
+                gain.gain.setValueAtTime(
+                    0.035,
+                    now
+                );
+
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.001,
+                    now + 0.04
+                );
+
+
+                oscillator.connect(
+                    gain
+                );
+
+                gain.connect(
+                    audio.destination
+                );
+
+
+                oscillator.start(
+                    now
+                );
+
+                oscillator.stop(
+                    now + 0.04
+                );
+
+            } catch (error) {
+
+                /* Audio facultatif */
+            }
+        }
+
+
+        /* =====================================================
+           SON GAGNANT
+        ===================================================== */
+
+        function playWinnerSound() {
+
+            try {
+
+                const audio =
+                    getAudioContext();
+
+
+                const notes = [
+                    523,
+                    659,
+                    784,
+                    1047
                 ];
 
-            ctx.fill();
 
-            ctx.lineWidth = 2;
+                notes.forEach(
+                    (
+                        frequency,
+                        index
+                    ) => {
 
-            ctx.strokeStyle =
-                "rgba(11,6,22,0.9)";
+                        const oscillator =
+                            audio.createOscillator();
 
-            ctx.stroke();
+
+                        const gain =
+                            audio.createGain();
+
+
+                        oscillator.type =
+                            "square";
+
+
+                        oscillator.frequency.value =
+                            frequency;
+
+
+                        const start =
+                            audio.currentTime +
+                            index *
+                            0.12;
+
+
+                        gain.gain.setValueAtTime(
+                            0.05,
+                            start
+                        );
+
+
+                        gain.gain.exponentialRampToValueAtTime(
+                            0.001,
+                            start + 0.1
+                        );
+
+
+                        oscillator.connect(
+                            gain
+                        );
+
+                        gain.connect(
+                            audio.destination
+                        );
+
+
+                        oscillator.start(
+                            start
+                        );
+
+                        oscillator.stop(
+                            start + 0.1
+                        );
+                    }
+                );
+
+            } catch (error) {
+
+                /* Audio facultatif */
+            }
+        }
+
+
+        /* =====================================================
+           LANCER LA ROUE
+           
+           IMPORTANT :
+           
+           1. Le gagnant est tiré aléatoirement.
+           2. Une position aléatoire est choisie
+              DANS sa tranche.
+           3. La roue tourne jusqu'à cette position.
+           4. La pointe de la flèche désigne
+              donc réellement le gagnant.
+           
+           La flèche est fixe.
+           C'est la roue qui tourne.
+        ===================================================== */
+
+        function spinWheel() {
+
+            if (
+                spinning ||
+                participants.length < 2
+            ) {
+                return;
+            }
+
+
+            spinning = true;
+
+
+            spinButton.disabled =
+                true;
+
+            shuffleButton.disabled =
+                true;
+
+            clearButton.disabled =
+                true;
+
+
+            result.classList.remove(
+                "show"
+            );
+
+            winner.textContent =
+                "—";
 
 
             /* =========================
-               TEXTE
+               CHOIX DU GAGNANT
             ========================= */
 
-            const middle =
-                start +
-                slice / 2;
-
-            ctx.save();
-
-            ctx.translate(
-                center,
-                center
-            );
-
-            ctx.rotate(
-                middle
-            );
-
-            let text =
-                state.names[i];
-
-            let maxChars;
-
-            if (count > 60) {
-
-                maxChars = 7;
-
-            } else if (count > 40) {
-
-                maxChars = 9;
-
-            } else if (count > 25) {
-
-                maxChars = 11;
-
-            } else if (count > 15) {
-
-                maxChars = 15;
-
-            } else {
-
-                maxChars = 22;
-            }
-
-
-            if (
-                text.length >
-                maxChars
-            ) {
-
-                text =
-                    text.substring(
-                        0,
-                        maxChars - 1
-                    ) + "…";
-            }
-
-
-            let fontSize;
-
-            if (count <= 8) {
-
-                fontSize = 22;
-
-            } else if (count <= 15) {
-
-                fontSize = 17;
-
-            } else if (count <= 30) {
-
-                fontSize = 13;
-
-            } else if (count <= 60) {
-
-                fontSize = 10;
-
-            } else {
-
-                fontSize = 8;
-            }
-
-
-            ctx.font =
-                "bold " +
-                fontSize +
-                "px VT323";
-
-            ctx.fillStyle =
-                "#ffffff";
-
-            ctx.textAlign =
-                "right";
-
-            ctx.textBaseline =
-                "middle";
-
-            ctx.shadowColor =
-                "rgba(0,0,0,0.9)";
-
-            ctx.shadowBlur = 3;
-
-            ctx.fillText(
-                text,
-                radius - 22,
-                0
-            );
-
-            ctx.restore();
-        }
-
-
-        /* =========================
-           CONTOUR EXTERIEUR
-        ========================= */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            center,
-            center,
-            radius,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.lineWidth = 8;
-
-        ctx.strokeStyle =
-            "#ff2e88";
-
-        ctx.shadowColor =
-            "rgba(255,46,136,0.8)";
-
-        ctx.shadowBlur = 12;
-
-        ctx.stroke();
-
-        ctx.shadowBlur = 0;
-    }
-
-
-    /* =========================================================
-       LANCER LA ROUE
-    ========================================================= */
-
-    function lancerRoue() {
-
-        if (state.spinning)
-            return;
-
-        if (
-            state.names.length < 2
-        ) {
-
-            alert(
-                "Ajoute au moins 2 participants !"
-            );
-
-            return;
-        }
-
-
-        state.spinning = true;
-
-        state.winnerIndex =
-            Math.floor(
-                Math.random() *
-                state.names.length
-            );
-
-
-        const count =
-            state.names.length;
-
-        const slice =
-            360 / count;
-
-
-        /*
-         * On calcule l'angle nécessaire
-         * pour placer le gagnant sous
-         * le pointeur situé en haut.
-         */
-
-        const targetAngle =
-            -(
-                state.winnerIndex *
-                slice
-            ) -
-            slice / 2;
-
-
-        const currentAngle =
-            state.rotation % 360;
-
-
-        let delta =
-            targetAngle -
-            currentAngle;
-
-
-        while (delta < 0) {
-
-            delta += 360;
-        }
-
-
-        /*
-         * Nombre de tours :
-         * entre 7 et 9 tours.
-         */
-
-        const extraTurns =
-            7 +
-            Math.floor(
-                Math.random() * 3
-            );
-
-
-        const finalRotation =
-            state.rotation +
-            extraTurns * 360 +
-            delta;
-
-
-        const wheel =
-            document.getElementById(
-                "wheel"
-            );
-
-
-        if (!wheel) return;
-
-
-        wheel.style.transition =
-            "transform 6s cubic-bezier(0.12, 0.78, 0.16, 1)";
-
-
-        wheel.style.transform =
-            "rotate(" +
-            finalRotation +
-            "deg)";
-
-
-        state.rotation =
-            finalRotation;
-
-
-        setTimeout(() => {
-
-            state.spinning =
-                false;
-
-            afficherResultat();
-
-        }, 6100);
-    }
-
-
-    /* =========================================================
-       AFFICHER LE GAGNANT
-    ========================================================= */
-
-    function afficherResultat() {
-
-        const resultBox =
-            document.getElementById(
-                "resultBox"
-            );
-
-        const resultName =
-            document.getElementById(
-                "resultName"
-            );
-
-        if (
-            !resultBox ||
-            !resultName
-        ) return;
-
-
-        resultName.textContent =
-            state.names[
-                state.winnerIndex
-            ];
-
-
-        resultBox.classList.add(
-            "visible"
-        );
-
-
-        jouerSonVictoire();
-    }
-
-
-    /* =========================================================
-       SON DE VICTOIRE
-    ========================================================= */
-
-    function jouerSonVictoire() {
-
-        try {
-
-            const AudioContext =
-                window.AudioContext ||
-                window.webkitAudioContext;
-
-            if (!AudioContext)
-                return;
-
-
-            const audio =
-                new AudioContext();
-
-            const osc =
-                audio.createOscillator();
-
-            const gain =
-                audio.createGain();
-
-
-            osc.type =
-                "square";
-
-
-            osc.frequency.setValueAtTime(
-                440,
-                audio.currentTime
-            );
-
-
-            osc.frequency
-                .exponentialRampToValueAtTime(
-                    880,
-                    audio.currentTime +
-                    0.25
+            const selectedIndex =
+                secureRandomInt(
+                    participants.length
                 );
 
 
-            gain.gain.setValueAtTime(
-                0.001,
-                audio.currentTime
-            );
+            const selectedName =
+                participants[
+                    selectedIndex
+                ];
 
 
-            gain.gain
-                .exponentialRampToValueAtTime(
-                    0.18,
-                    audio.currentTime +
-                    0.03
+            /* =========================
+               ANGLE D'UNE TRANCHE
+            ========================= */
+
+            const segmentAngle =
+                (
+                    Math.PI * 2
+                ) /
+                participants.length;
+
+
+            /*
+             * La flèche pointe vers le haut
+             * de la roue.
+             *
+             * Son angle est donc :
+             *
+             * -PI / 2
+             */
+
+
+            const pointerAngle =
+                -Math.PI / 2;
+
+
+            /*
+             * Pour rendre le résultat plus réaliste,
+             * on ne vise PAS obligatoirement le centre
+             * de la tranche.
+             *
+             * On choisit une position aléatoire
+             * entre 18 % et 82 % de la tranche.
+             *
+             * Ainsi la flèche peut arriver près
+             * d'un bord ou plus vers le milieu.
+             */
+
+            const positionDansTranche =
+                0.18 +
+                secureRandomFloat() *
+                0.64;
+
+
+            const selectedSegmentOffset =
+                (
+                    selectedIndex *
+                    segmentAngle
+                ) +
+                (
+                    positionDansTranche *
+                    segmentAngle
                 );
 
 
-            gain.gain
-                .exponentialRampToValueAtTime(
-                    0.001,
-                    audio.currentTime +
-                    0.5
+            /*
+             * Rotation nécessaire pour que
+             * la position choisie de la tranche
+             * arrive exactement sous la flèche.
+             */
+
+            const targetRotation =
+                pointerAngle -
+                (
+                    selectedSegmentOffset -
+                    Math.PI / 2
                 );
 
 
-            osc.connect(gain);
+            /*
+             * Normalisation.
+             */
 
-            gain.connect(
-                audio.destination
-            );
+            const fullTurn =
+                Math.PI * 2;
 
 
-            osc.start();
+            let delta =
+                targetRotation -
+                currentRotation;
 
-            osc.stop(
-                audio.currentTime +
-                0.5
-            );
 
-        } catch (error) {}
-    }
+            delta =
+                (
+                    delta %
+                    fullTurn +
+                    fullTurn
+                ) %
+                fullTurn;
 
 
-    /* =========================================================
-       RETIRER LE GAGNANT
-    ========================================================= */
+            /*
+             * Entre 7 et 10 tours complets.
+             */
 
-    function retirerGagnant() {
+            const extraTurns =
+                7 +
+                secureRandomInt(4);
 
-        if (
-            state.winnerIndex === null ||
-            state.spinning
-        ) return;
 
+            const finalRotation =
+                currentRotation +
+                delta +
+                extraTurns *
+                fullTurn;
 
-        const winner =
-            state.names[
-                state.winnerIndex
-            ];
 
+            const startRotation =
+                currentRotation;
 
-        const confirmation =
-            confirm(
-                "Retirer \"" +
-                winner +
-                "\" de la roue ?"
-            );
 
+            const totalDistance =
+                finalRotation -
+                startRotation;
 
-        if (!confirmation)
-            return;
 
+            /*
+             * Durée aléatoire.
+             */
 
-        state.names.splice(
-            state.winnerIndex,
-            1
-        );
+            const duration =
+                5000 +
+                secureRandomInt(1500);
 
 
-        state.winnerIndex =
-            null;
+            const startTime =
+                performance.now();
 
-        state.rotation =
-            0;
 
-        saveStorage();
+            let lastTick =
+                Math.floor(
+                    currentRotation /
+                    segmentAngle
+                );
 
-        render();
-    }
 
+            /* =========================
+               ANIMATION
+            ========================= */
 
-    /* =========================================================
-       RESET RESULTAT
-    ========================================================= */
+            function animate(now) {
 
-    function resetResult() {
+                const elapsed =
+                    now -
+                    startTime;
 
-        state.winnerIndex =
-            null;
 
-        state.rotation =
-            0;
-    }
+                const progress =
+                    Math.min(
+                        elapsed /
+                        duration,
+                        1
+                    );
 
 
-    /* =========================================================
-       SECURITE HTML
-    ========================================================= */
+                /*
+                 * Ease-out quintique.
+                 *
+                 * Départ très rapide,
+                 * ralentissement progressif.
+                 */
 
-    function escapeHTML(text) {
+                const eased =
+                    1 -
+                    Math.pow(
+                        1 - progress,
+                        5
+                    );
 
-        return String(text)
 
-            .replaceAll(
-                "&",
-                "&amp;"
-            )
+                currentRotation =
+                    startRotation +
+                    totalDistance *
+                    eased;
 
-            .replaceAll(
-                "<",
-                "&lt;"
-            )
-
-            .replaceAll(
-                ">",
-                "&gt;"
-            )
-
-            .replaceAll(
-                '"',
-                "&quot;"
-            )
-
-            .replaceAll(
-                "'",
-                "&#039;"
-            );
-    }
-
-
-    /* =========================================================
-       AFFICHAGE
-    ========================================================= */
-
-    function render() {
-
-        const isFullscreen =
-            !!(
-                document.fullscreenElement ||
-                document.webkitFullscreenElement
-            );
-
-
-        let html = "";
-
-
-        /* =========================
-           BARRE DU HAUT
-        ========================= */
-
-        html += `
-            <div class="top-bar">
-
-                <a
-                    href="../"
-                    class="btn-back"
-                >
-                    &lsaquo; HUB
-                </a>
-
-            </div>
-        `;
-
-
-        /* =========================
-           HEADER
-        ========================= */
-
-        html += `
-            <header>
-
-                <div>
-
-                    <h1>
-                        ROUE DE LA CHANCE
-                    </h1>
-
-                    <div class="subtitle">
-                        Tirage au sort • Rétro Néon
-                    </div>
-
-                </div>
-
-                <div class="headerbtns">
-
-                    <button
-                        class="themebtn"
-                        onclick="toggleTheme()"
-                    >
-                        ${
-                            state.themeMode === "dark"
-                                ? "☀️"
-                                : "🌙"
-                        }
-                    </button>
-
-                    <button
-                        class="themebtn"
-                        onclick="toggleFullscreen()"
-                    >
-                        ${
-                            isFullscreen
-                                ? "✕"
-                                : "⛶"
-                        }
-                    </button>
-
-                </div>
-
-            </header>
-        `;
-
-
-        /* =====================================================
-           PAGE PARTICIPANTS
-        ===================================================== */
-
-        if (
-            state.screen === "home"
-        ) {
-
-            html += `
-
-                <div class="panel">
-
-                    <h2>
-                        PARTICIPANTS
-                    </h2>
-
-                    <p
-                        class="dim"
-                        style="margin-bottom:12px;"
-                    >
-                        Entre les noms des personnes
-                        à faire participer au tirage.
-                    </p>
-
-
-                    <input
-                        type="text"
-                        id="nameInput"
-                        placeholder="Entre un nom..."
-                        maxlength="60"
-                        autocomplete="off"
-                    >
-
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="ajouterNom()"
-                    >
-                        + AJOUTER LE NOM
-                    </button>
-
-
-                    <div class="counter">
-
-                        ${
-                            state.names.length
-                        }
-
-                        PARTICIPANT${
-                            state.names.length > 1
-                                ? "S"
-                                : ""
-                        }
-
-                    </div>
-
-
-                    <div class="name-list">
-
-                        ${
-                            state.names.length
-
-                            ? state.names.map(
-                                (name, index) => `
-
-                                    <div
-                                        class="name-item"
-                                    >
-
-                                        <span>
-                                            ${
-                                                escapeHTML(
-                                                    name
-                                                )
-                                            }
-                                        </span>
-
-                                        <button
-                                            class="remove-name"
-                                            onclick="supprimerNom(${index})"
-                                        >
-                                            ✕
-                                        </button>
-
-                                    </div>
-
-                                `
-                            ).join("")
-
-                            : `
-
-                                <p
-                                    class="dim center"
-                                    style="padding:20px;"
-                                >
-                                    Aucun participant.
-                                    <br><br>
-                                    Ajoute le premier nom
-                                    pour commencer.
-                                </p>
-
-                            `
-                        }
-
-                    </div>
-
-
-                    <div
-                        style="
-                            display:grid;
-                            grid-template-columns:
-                                1fr 1fr;
-                            gap:8px;
-                            margin-top:12px;
-                        "
-                    >
-
-                        <button
-                            class="btn btn-ghost"
-                            onclick="melangerListe()"
-                        >
-                            🔀 MÉLANGER
-                        </button>
-
-
-                        <button
-                            class="btn btn-ghost"
-                            onclick="viderListe()"
-                        >
-                            🗑 VIDER
-                        </button>
-
-                    </div>
-
-
-                    <button
-                        class="btn btn-primary"
-                        style="margin-top:20px;"
-                        onclick="
-                            if(state.names.length < 2) {
-                                alert('Ajoute au moins 2 participants !');
-                                return;
-                            }
-
-                            state.screen='wheel';
-                            resetResult();
-                            render();
-                        "
-                    >
-                        🎰 LANCER LA ROUE
-                    </button>
-
-                </div>
-            `;
-        }
-
-
-        /* =====================================================
-           PAGE ROUE
-        ===================================================== */
-
-        else if (
-            state.screen === "wheel"
-        ) {
-
-            html += `
-
-                <div class="game-layout">
-
-                    <!-- =====================
-                         ROUE
-                    ====================== -->
-
-                    <div class="panel wheel-panel">
-
-                        <h2>
-                            TIRAGE AU SORT
-                        </h2>
-
-
-                        <div
-                            class="wheel-wrapper"
-                        >
-
-                            <div
-                                class="pointer"
-                            ></div>
-
-
-                            <canvas
-                                id="wheel"
-                            ></canvas>
-
-
-                            <div
-                                class="wheel-center"
-                            >
-                                GO!
-                            </div>
-
-                        </div>
-
-
-                        <!-- RESULTAT -->
-
-                        <div
-                            id="resultBox"
-                            class="result-box"
-                        >
-
-                            <div
-                                class="result-label"
-                            >
-                                🎉 LE GAGNANT EST...
-                            </div>
-
-
-                            <div
-                                id="resultName"
-                                class="result-name"
-                            ></div>
-
-                        </div>
-
-
-                        <!-- LANCER -->
-
-                        <button
-                            class="btn btn-primary"
-                            onclick="lancerRoue()"
-                            ${
-                                state.spinning
-                                    ? "disabled"
-                                    : ""
-                            }
-                        >
-                            🎰 TOURNER LA ROUE
-                        </button>
-
-
-                        <!-- RETIRER -->
-
-                        <button
-                            class="btn btn-yellow"
-                            onclick="retirerGagnant()"
-                        >
-                            ✓ RETIRER LE GAGNANT
-                        </button>
-
-
-                        <!-- MODIFIER -->
-
-                        <button
-                            class="btn btn-ghost"
-                            onclick="
-                                state.screen='home';
-                                resetResult();
-                                render();
-                            "
-                        >
-                            ⚙ MODIFIER LES NOMS
-                        </button>
-
-                    </div>
-
-
-                    <!-- =====================
-                         LISTE
-                    ====================== -->
-
-                    <div class="panel">
-
-                        <h2>
-                            PARTICIPANTS
-                        </h2>
-
-
-                        <div class="counter">
-
-                            ${
-                                state.names.length
-                            }
-
-                            NOM${
-                                state.names.length > 1
-                                    ? "S"
-                                    : ""
-                            }
-
-                        </div>
-
-
-                        <div class="name-list">
-
-                            ${
-                                state.names.map(
-                                    (name, index) => `
-
-                                        <div
-                                            class="name-item"
-                                        >
-
-                                            <span>
-                                                ${
-                                                    escapeHTML(
-                                                        name
-                                                    )
-                                                }
-                                            </span>
-
-                                            <button
-                                                class="remove-name"
-                                                onclick="supprimerNom(${index})"
-                                            >
-                                                ✕
-                                            </button>
-
-                                        </div>
-
-                                    `
-                                ).join("")
-                            }
-
-                        </div>
-
-
-                        <button
-                            class="btn btn-ghost"
-                            onclick="melangerListe()"
-                        >
-                            🔀 MÉLANGER
-                        </button>
-
-
-                        <button
-                            class="linkbtn"
-                            onclick="
-                                state.screen='home';
-                                render();
-                            "
-                        >
-                            ‹ Retour aux participants
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-        }
-
-
-        /* =========================
-           INSERTION
-        ========================= */
-
-        document.getElementById(
-            "app"
-        ).innerHTML = html;
-
-
-        /* =========================
-           ENTER = AJOUT
-        ========================= */
-
-        const input =
-            document.getElementById(
-                "nameInput"
-            );
-
-
-        if (input) {
-
-            input.addEventListener(
-                "keydown",
-                function(event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-
-                        ajouterNom();
-                    }
-                }
-            );
-        }
-
-
-        /* =========================
-           DESSIN ROUE
-        ========================= */
-
-        if (
-            state.screen === "wheel"
-        ) {
-
-            requestAnimationFrame(
-                () => {
-
-                    drawWheel();
-
-                    const wheel =
-                        document.getElementById(
-                            "wheel"
-                        );
-
-                    if (wheel) {
-
-                        wheel.style.transform =
-                            "rotate(" +
-                            state.rotation +
-                            "deg)";
-                    }
-                }
-            );
-        }
-    }
-
-
-    /* =========================================================
-       REDIMENSIONNEMENT
-    ========================================================= */
-
-    window.addEventListener(
-        "resize",
-        function() {
-
-            if (
-                state.screen === "wheel"
-            ) {
 
                 drawWheel();
+
+
+                /*
+                 * Effet sonore.
+                 */
+
+                const currentTick =
+                    Math.floor(
+                        currentRotation /
+                        segmentAngle
+                    );
+
+
+                if (
+                    currentTick !==
+                    lastTick
+                ) {
+
+                    lastTick =
+                        currentTick;
+
+                    playTick();
+                }
+
+
+                /* =========================
+                   CONTINUER
+                ========================= */
+
+                if (
+                    progress < 1
+                ) {
+
+                    requestAnimationFrame(
+                        animate
+                    );
+
+                    return;
+                }
+
+
+                /* =========================
+                   FIN EXACTE
+                ========================= */
+
+                currentRotation =
+                    finalRotation;
+
+
+                drawWheel();
+
+
+                /*
+                 * Petite pause avant
+                 * d'afficher le résultat.
+                 */
+
+                setTimeout(
+                    () => {
+
+                        spinning =
+                            false;
+
+
+                        shuffleButton.disabled =
+                            false;
+
+
+                        clearButton.disabled =
+                            false;
+
+
+                        winner.textContent =
+                            selectedName;
+
+
+                        result.classList.add(
+                            "show"
+                        );
+
+
+                        playWinnerSound();
+
+
+                        spinButton.disabled =
+                            participants.length < 2;
+
+                    },
+                    300
+                );
             }
+
+
+            /*
+             * Lancement réel de l'animation.
+             */
+
+            requestAnimationFrame(
+                animate
+            );
         }
-    );
 
 
-    /* =========================================================
-       DEMARRAGE
-    ========================================================= */
+        /* =====================================================
+           EVENEMENTS
+        ===================================================== */
 
-    loadStorage();
+        addButton.addEventListener(
+            "click",
+            addParticipant
+        );
 
-    render();
 
-</script>
+        nameInput.addEventListener(
+            "keydown",
+            (event) => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    addParticipant();
+                }
+            }
+        );
+
+
+        shuffleButton.addEventListener(
+            "click",
+            shuffleParticipants
+        );
+
+
+        clearButton.addEventListener(
+            "click",
+            clearParticipants
+        );
+
+
+        spinButton.addEventListener(
+            "click",
+            spinWheel
+        );
+
+
+        /* =====================================================
+           PLEIN ECRAN
+        ===================================================== */
+
+        const fullscreenButton =
+            document.getElementById(
+                "btn-fullscreen"
+            );
+
+
+        const fullscreenLabel =
+            document.getElementById(
+                "fs-label"
+            );
+
+
+        fullscreenButton.addEventListener(
+            "click",
+            async () => {
+
+                try {
+
+                    if (
+                        !document.fullscreenElement
+                    ) {
+
+                        await document
+                            .documentElement
+                            .requestFullscreen();
+
+
+                        fullscreenLabel.textContent =
+                            "QUITTER";
+
+                    } else {
+
+                        await document
+                            .exitFullscreen();
+
+
+                        fullscreenLabel.textContent =
+                            "PLEIN ÉCRAN";
+                    }
+
+                } catch (error) {
+
+                    console.log(
+                        "Plein écran indisponible."
+                    );
+                }
+            }
+        );
+
+
+        document.addEventListener(
+            "fullscreenchange",
+            () => {
+
+                if (
+                    !document.fullscreenElement
+                ) {
+
+                    fullscreenLabel.textContent =
+                        "PLEIN ÉCRAN";
+                }
+            }
+        );
+
+
+        /* =====================================================
+           INITIALISATION
+        ===================================================== */
+
+        updateParticipants();
+
+        drawWheel();
+
+    </script>
 
 </body>
 </html>
-```
