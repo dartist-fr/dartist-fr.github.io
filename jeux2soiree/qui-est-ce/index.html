@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0b0616">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Qui est-ce ? — Salle d'Arcade (Multijoueur)</title>
+    <title>Qui est-ce ? • jeux2soiree</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -228,7 +228,7 @@ let isHost = false;
 let roomCode = "";
 
 let state = {
-    screen: "home", // "home", "host_waiting", "join_form", "game"
+    screen: "home", // "home", "solo", "net_host_or_join", "host_waiting", "join_form", "game"
     personnages: [],
     mystere: null,
     themeMode: "dark"
@@ -276,25 +276,30 @@ function selectionner24Aleatoires() {
     return copieMelangee.slice(0, 24).map(p => ({ nom: p.nom, img: p.img, elimine: false }));
 }
 
+// Lancer le Mode Solo (Un seul tableau, tirage au sort d'un nom mystère)
+function demarrerModeSolo() {
+    state.personnages = selectionner24Aleatoires();
+    let randomIndex = Math.floor(Math.random() * state.personnages.length);
+    state.mystere = state.personnages[randomIndex];
+    state.screen = "solo";
+    render();
+}
+
 function startNewRound() {
     if (!isHost) return;
     
-    // L'hôte génère une nouvelle grille et 2 personnages mystères différents
     let nouvelleGrille = selectionner24Aleatoires();
     let indexHost = Math.floor(Math.random() * 24);
     let indexGuest = Math.floor(Math.random() * 24);
     
-    // On s'assure que l'adversaire a un personnage mystère différent
     while (indexGuest === indexHost) {
         indexGuest = Math.floor(Math.random() * 24);
     }
 
-    // Mise à jour locale pour l'Hôte (on clone pour être sûr de la désynchronisation des actions)
     state.personnages = JSON.parse(JSON.stringify(nouvelleGrille));
     state.mystere = state.personnages[indexHost];
     state.screen = "game";
 
-    // Envoi de la grille commune et de l'index unique au Client
     if (conn && conn.open) {
         conn.send({
             type: 'INIT_GAME',
@@ -322,7 +327,7 @@ function startHosting() {
         setupConnectionListeners();
 
         conn.on('open', function() {
-            startNewRound(); // Démarre la partie automatiquement quand le client se connecte
+            startNewRound();
         });
     });
 }
@@ -350,13 +355,11 @@ function connectToRoom() {
 function setupConnectionListeners() {
     conn.on('data', function(data) {
         if(data.type === 'INIT_GAME') {
-            // Le client reçoit la grille de l'hôte et son propre index mystère
             state.personnages = JSON.parse(JSON.stringify(data.grille));
             state.mystere = state.personnages[data.mystereIndex];
             state.screen = "game";
             render();
         } else if(data.type === 'REQUEST_RESTART') {
-            // Si le client demande à recommencer, l'hôte génère une nouvelle partie
             if(isHost) {
                 startNewRound();
             }
@@ -364,19 +367,19 @@ function setupConnectionListeners() {
     });
 }
 
-// Fonction de relance rapide
 function recommencerPartie() {
-    if(isHost) {
+    if(state.screen === "solo") {
+        demarrerModeSolo();
+    } else if(isHost) {
         startNewRound();
     } else {
         if(conn && conn.open) {
-            conn.send({ type: 'REQUEST_RESTART' }); // Demande à l'hôte de relancer
+            conn.send({ type: 'REQUEST_RESTART' });
         }
     }
 }
 
 function toggleEliminer(index) {
-    // Les clics n'affectent QUE l'écran actuel (pas d'envoi réseau)
     state.personnages[index].elimine = !state.personnages[index].elimine;
     render();
 }
@@ -386,13 +389,22 @@ function render() {
     var html = "";
     
     html += '<header>';
-    html += '<div><h1>QUI EST-CE ?</h1><div class="subtitle">Salon en Ligne (Grilles Indépendantes)</div></div>';
+    html += '<div><h1>QUI EST-CE ?</h1><div class="subtitle">Solo & Multijoueur</div></div>';
     html += '<div class="headerbtns">';
     html += '<button class="themebtn" onclick="toggleTheme()">'+(state.themeMode==="dark" ? "☀️" : "🌙")+'</button>';
     html += '<button class="themebtn" onclick="toggleFullscreen()">'+(isFs ? "✕" : "⛶")+'</button>';
     html += '</div></header>';
 
     if(state.screen === "home") {
+        html += '<div class="panel center">';
+        html += '<h2>Choix du Mode</h2>';
+        html += '<p class="dim" style="margin-bottom:15px;">Sélectionnez votre type de partie :</p>';
+        html += '<button class="btn btn-primary" onclick="demarrerModeSolo()">Mode Solo (1 Tableau + Nom au hasard) ›</button>';
+        html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="state.screen=\'net_host_or_join\'; render();">Mode Multijoueur (En Ligne) ›</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "net_host_or_join") {
+        html += '<button class="linkbtn" onclick="state.screen=\'home\'; render();">&#8249; Retour au choix</button>';
         html += '<div class="panel center">';
         html += '<h2>Salon Multijoueur</h2>';
         html += '<p class="dim" style="margin-bottom:15px;">Même tableau pour les deux, mais chaque joueur mène son enquête de son côté :</p>';
@@ -406,7 +418,7 @@ function render() {
         html += '<p class="dim">Donne ce code à ton adversaire :</p>';
         html += '<div class="codebox">'+roomCode+'</div>';
         html += '<p class="dim" style="margin-top:15px;">En attente de connexion du second joueur...</p>';
-        html += '<button class="linkbtn" onclick="state.screen=\'home\'; render();">&#8249; Annuler</button>';
+        html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Annuler</button>';
         html += '</div>';
     }
     else if(state.screen === "join_form") {
@@ -415,7 +427,29 @@ function render() {
         html += '<p class="dim" style="margin-bottom:10px;">Entre le code à 4 caractères :</p>';
         html += '<input type="text" id="roomCodeInput" placeholder="EX: A4X9" maxlength="4" style="text-transform:uppercase;">';
         html += '<button class="btn btn-primary" onclick="connectToRoom()">Se connecter au salon</button>';
-        html += '<button class="linkbtn" onclick="state.screen=\'home\'; render();">&#8249; Retour</button>';
+        html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Retour</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "solo") {
+        let cartes = state.personnages.map((p, index) => `
+            <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
+                <img src="${p.img}" alt="${p.nom}">
+                <span>${p.nom}</span>
+            </div>
+        `).join("");
+
+        html += '<div class="panel center" style="margin-bottom:15px; padding:12px;">';
+        html += '<div style="font-family:var(--font-display); font-size:0.7rem; color:var(--neon-cyan);">MODE SOLO 🎯</div>';
+        html += '<p class="dim" style="font-size:1rem; margin-top:5px;">Le personnage mystère tiré au sort :</p>';
+        html += '<div class="secret-reveal-card">';
+        html += '🎯 ' + (state.mystere ? state.mystere.nom : '') + '';
+        html += '</div></div>';
+
+        html += '<div class="panel">';
+        html += '<h2>Votre Grille de Jeu</h2>';
+        html += '<div class="grid-persos">' + cartes + '</div>';
+        html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer (Nouveau tirage) ⟳</button>';
+        html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Changer de mode</button>';
         html += '</div>';
     }
     else if(state.screen === "game") {
@@ -437,6 +471,7 @@ function render() {
         html += '<h2>Ton Enquête (Actions privées)</h2>';
         html += '<div class="grid-persos">' + cartes + '</div>';
         html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer avec le même groupe ⟳</button>';
+        html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Retour au menu</button>';
         html += '</div>';
     }
 
