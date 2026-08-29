@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0b0616">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Qui est-ce ? • Solo & Multijoueur</title>
+    <title>Qui est-ce ? — Salle d'Arcade (Solo & Multijoueur)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -36,7 +36,6 @@
             --neon-yellow: #556021;
             --neon-cyan: #225588;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { background: var(--bg-color); }
         body {
@@ -53,14 +52,12 @@
             position: relative;
             font-size: 1.25rem;
         }
-
         body::after {
             content: "";
             position: fixed; inset: 0; pointer-events: none;
             background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px);
             z-index: 100; mix-blend-mode: multiply;
         }
-
         #app { max-width: 800px; margin: 0 auto; position: relative; z-index: 10; }
 
         .top-bar { max-width: 800px; margin: 0 auto 15px; display: flex; justify-content: space-between; align-items: center; }
@@ -83,7 +80,7 @@
         }
         h1 { font-family: var(--font-display); font-size: 0.9rem; color: var(--accent); text-shadow: 0 0 8px rgba(255,46,136,0.8); margin: 0; }
         .subtitle { font-size: 1rem; color: var(--text-sub); margin-top: 4px; }
-        .headerbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .headerbtns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         
         .themebtn {
             font-family: var(--font-display); font-size: 0.5rem;
@@ -91,7 +88,6 @@
             color: var(--accent); padding: 8px 10px; cursor: pointer;
             box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
         }
-
         .panel {
             background: var(--card-bg);
             border: 2px solid var(--border-color);
@@ -106,14 +102,12 @@
             margin-bottom: 14px;
             text-shadow: 0 0 6px rgba(34,230,255,0.4);
         }
-
         input[type=text] {
             width: 100%; background: var(--bg-color); border: 2px solid var(--border-color);
             color: var(--text-main); padding: 10px; font-size: 1.25rem; font-family: var(--font-body);
             outline: none; margin-bottom: 10px; text-align: center;
         }
         input[type=text]:focus { border-color: var(--accent); }
-
         .btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             width: 100%; padding: 14px; font-family: var(--font-display); font-size: 0.65rem;
@@ -132,21 +126,18 @@
         .linkbtn { background: none; border: none; color: var(--text-sub); font-size: 1.1rem; cursor: pointer; text-decoration: underline; display: block; margin: 10px auto; font-family: var(--font-body); }
         .center { text-align: center; }
         .dim { color: var(--text-sub); }
-
         .secret-reveal-card {
             background: var(--bg-color); border: 2px solid var(--neon-yellow);
             padding: 15px; margin: 10px 0; text-align: center;
             font-family: var(--font-display); font-size: 0.9rem; color: var(--neon-yellow);
             text-shadow: 0 0 8px rgba(255,225,77,0.6);
         }
-
         .grid-persos {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
             gap: 8px;
             margin-top: 12px;
         }
-
         .carte-perso {
             background: var(--bg-color);
             border: 2px solid var(--border-color);
@@ -156,348 +147,375 @@
             cursor: pointer;
             transition: all 0.15s ease;
             user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-
         .carte-perso:hover {
             border-color: var(--accent);
             transform: translateY(-2px);
         }
-
         .carte-perso.elimine {
             opacity: 0.3;
             filter: grayscale(1);
             border-color: #444;
         }
-
         .carte-perso img {
             width: 100%;
-            height: 60px;
+            height: 65px;
             object-fit: cover;
             border-radius: 2px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             border: 1px solid var(--border-color);
         }
-
         .carte-perso span {
             font-family: var(--font-body);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-main);
             display: block;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.15;
+            text-align: center;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="../" class="btn-back">&lsaquo; HUB</a>
-    </div>
-
     <div id="app"></div>
 
-    <script>
-    const LISTE_COMPLETE_PERSONNAGES = [
-        { nom: "Zinedine Zidane", img: "ooo" },
-        { nom: "Omar Sy", img: "ooo" },
-        { nom: "Jean Dujardin", img: "ooo" },
-        { nom: "Louis de Funès", img: "ooo" },
-        { nom: "Coluche", img: "ooo" },
-        { nom: "Barack Obama", img: "ooo" },
-        { nom: "Elon Musk", img: "ooo" },
-        { nom: "Taylor Swift", img: "ooo" },
-        { nom: "Cristiano Ronaldo", img: "ooo" },
-        { nom: "Lionel Messi", img: "ooo" },
-        { nom: "Donald Trump", img: "ooo" },
-        { nom: "Jamel Debbouze", img: "ooo" },
-        { nom: "Kad Merad", img: "ooo" },
-        { nom: "Homer Simpson", img: "ooo" },
-        { nom: "Bart Simpson", img: "ooo" },
-        { nom: "Mickey Mouse", img: "ooo" },
-        { nom: "SpongeBob", img: "ooo" },
-        { nom: "Pikachu", img: "ooo" },
-        { nom: "Mario", img: "ooo" },
-        { nom: "Astérix", img: "ooo" },
-        { nom: "Tintin", img: "ooo" },
-        { nom: "Batman", img: "ooo" },
-        { nom: "Yoda", img: "ooo" },
-        { nom: "Dwayne Johnson", img: "ooo" },
-        { nom: "Tom Cruise", img: "ooo" },
-        { nom: "Leonardo DiCaprio", img: "ooo" },
-        { nom: "Scarlett Johansson", img: "ooo" },
-        { nom: "Angelina Jolie", img: "ooo" },
-        { nom: "Brad Pitt", img: "ooo" },
-        { nom: "Neymar", img: "ooo" },
-        { nom: "Zlatan Ibrahimović", img: "ooo" },
-        { nom: "Karim Benzema", img: "ooo" },
-        { nom: "Antoine Griezmann", img: "ooo" },
-        { nom: "Paul Pogba", img: "ooo" },
-        { nom: "Cyprien", img: "ooo" },
-        { nom: "Mister V", img: "ooo" },
-        { nom: "Carlito", img: "ooo" },
-        { nom: "Michael Jackson", img: "ooo" },
-        { nom: "Elvis Presley", img: "ooo" },
-        { nom: "Bob Marley", img: "ooo" },
-        { nom: "Beyoncé", img: "ooo" },
-        { nom: "Lady Gaga", img: "ooo" },
-        { nom: "Adele", img: "ooo" },
-        { nom: "Rihanna", img: "ooo" },
-        { nom: "Donald Duck", img: "ooo" },
-        { nom: "Goofy", img: "ooo" },
-        { nom: "Elsa", img: "ooo" },
-        { nom: "Stitch", img: "ooo" },
-        { nom: "Winnie l'Ourson", img: "ooo" },
-        { nom: "Spider-Man", img: "ooo" },
-        { nom: "Iron Man", img: "ooo" },
-        { nom: "Hulk", img: "ooo" },
-        { nom: "Captain America", img: "ooo" },
-        { nom: "Dark Vador", img: "ooo" },
-        { nom: "Harry Potter", img: "ooo" },
-        { nom: "Hermione Granger", img: "ooo" },
-        { nom: "Gandalf", img: "ooo" },
-        { nom: "Gollum", img: "ooo" },
-        { nom: "Mr Bean", img: "ooo" },
-        { nom: "Shrek", img: "ooo" },
-        { nom: "Donkey", img: "ooo" },
-        { nom: "Kung Fu Panda", img: "ooo" },
-        { nom: "Minion", img: "ooo" },
-        { nom: "Albert Einstein", img: "ooo" },
-        { nom: "Napoléon Bonaparte", img: "ooo" },
-        { nom: "Cléopâtre", img: "ooo" },
-        { nom: "Mark Zuckerberg", img: "ooo" },
-        { nom: "Bill Gates", img: "ooo" }
-    ];
+<script>
+const LISTE_COMPLETE_PERSONNAGES = [
+    { nom: "Emmanuel Macron", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQ1zb_Z3FCmJwmEWSc-b7jqT8ERj3wWkFY1v-al0SDGsP8zHlRnoVSrX1MswvWc2fWd1h_YkT75vtAUvQzuzBlM2N867Ws&s=19" },
+    { nom: "Jean-Luc Mélenchon", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-IkBJhWqAbtr4P7loj3Fsoe1Q4O6ih-OSKucoKn3G7_SLZGyJ_2sKAjLiXSlZV0sZIDxBiUWmBFlFACty_sojxmcAIk6hXxF4_tCsRf0U&s=10" },
+    { nom: "Marine Le Pen", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqNKxrKH8Y_hgr9SlSicfI_65f4X4D8fMQsR2_ICPPmhu5rKuekEAJ3-RGkD5bFNwKwZjkaE5FzBs2M5hx-rk0vruuAXWm-4290Q12yVs2&s=10" },
+    { nom: "Éric Zemmour", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShQm_vQS94B8qHnFHHeWKXTGQ5BbOVi5ZJXIB7Sv247uob57ayqmCF-ebrFxu_jl_Xyeont4ufe7KcJ08zQU0qoV9d-wM&s=10" },
+    { nom: "Nicolas Sarkozy", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcToAXQncEDKnq6HBiyDyBfdg3iqgO22FyAoUQ60kjtsJ0IxuBmLRXQshhBNgtTvcVt_q6s-_Og1mHsfKhZoJ1tlG4MiJu1G&s=19" },
+    { nom: "Jacques Chirac", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhLv1TGXjdE5c54kA2hl3aiwACOIKnQoKcd22AHjGIKYtGp22r3veuCvQEupCKDKaYVLmMdy2_hBGMIgsA1IusDoYR6Ow&s=10" },
+    { nom: "François Hollande", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcT5WvOWtYswEEzp2zsQugRACAN4aiDqWgX760LG8AjzwKgPzOtdWb5LHTSg1UxL_jZoXWIRv4vLxZmYk293fEFsbcFtFfc&s=19" },
+    { nom: "Gérard Depardieu", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbN6BXOxItdO5qngzSk0i9TtHRP27apjFFc3GJWf1DPNMXSQv7FBre0qiqBIHF-IIXMksO0NJFRPral4N0u-iJNkFc9-MARZvSIafmq5UpfA&s=10" },
+    { nom: "Cyril Hanouna", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ-GMEv1uA9AxnkGfD26Ew8kolZiG67JoTiDY2cTnkyj1UGY1DiHnCdyHz3UouVo3Xb-VXyFaHDnBSdo8VIS1ovLGQl7c&s=10" },
+    { nom: "Balkany", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFax0rte650ewMC3Eh9B86_fyzfrCSzoGeE2neCaZNzINsYxmkRRKZqnHmJA74kuIfZV8F61OVLzpCMJsqjhvOHFISa1BG&s=10" },
+    { nom: "Johnny Hallyday", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkQN1qLR37QoYTmvWkqXbWc07QaEdc3RjWTrwcs1mdVD0wXWw8vRfnf47JBoQHEGHL8jmuFqU1PJlJYXYtCZl-LNtjBMGe&s=10" },
+    { nom: "Dieudonné", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJaq6ANN9xJF4dhV93ls8lFhITSCjDqQss88VOkysBcL-2YgThW3Y-j2-tiMNWTEFiEQG0hzFyAXNHQ9ANUeVzN4TLstQ&s=10" },
+    { nom: "Kylian Mbappé", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRTr6IiDkcTx_WRMolOBYyby-3JESLPRB-DQB2jd3oxBHlZbbjZgQRiqZtppDh6HTURn8NJWWr7H_IWKo7nKoQXh3nEjELPYYrEdhuTLtWS40lbF7kfLpmQN9qvkRcvEbXuWtwcofiCQiQ&s=19" },
+    { nom: "Stéphane Plaza", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRczCK1k_55zoYHRBDcayp_T3OKsh_VhE7p5A0TQOC4zbCg6g1yS0fBSsSrqwMcCFqYWMsWRjYEmWO27E2w2dqtULpEvc8&s=10" },
+    { nom: "Jean-Marie Bigard", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvntFqYgeJyIoQMVmJ9i6YlwyzLj00fv9oJGYyt3aP0CmDgjza9UhUwDaGNQDxQWv4lAPCxKViK-N-XJ-ICLS8JJGbSZA&s=10" },
+    { nom: "Léon Marchand", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVoZcZZ-4ccFS5M4gQkdV742JZtuufO40WcoGl16yAnpiKeQeWm28Ea0bSAbF9tAy5syTFSbQhcZhn0kfCRBERdTfDeILYo6aaBxaq0pIR5w&s=10" },
+    { nom: "Booba", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTec55buZptjYDQTFJNvaIuL5SSOW6yW6QU-lLHxbOCxmceMcREjK7e9eCmJzvd2RYRk8KBh78dPWSXWo2eRAg3txykp3A&s=10" },
+    { nom: "Gims", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1K_7nUv_Ejn7T0MW9jrjqzw49ydVtfj9Vo72GvAvzfHdC0eS_22vxL2_36MCwMBD8HeNcsZNyH2M6QntY25WpGdp-Xm-HphlmYnr8ZfUm&s=10" },
+    { nom: "Jul", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnpF6_BCcnxISS8n7SZ6zSrZWXO6_KarZFHygpDCnRCFQMxKvnNe8FCze97CAHObJYwSH5fePslAmbhAwKnFARqBnw5xLjppcrLLLedYMU&s=10" },
+    { nom: "Vincent Bolloré", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmdwXxx10zGI91oc3F--cvAxC1px3makbgJp9zEOpucA&s=10" },
+    { nom: "Joseph Staline", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgB2VYZ4jGfH9BXJa5vQm1VB2Si0K73WRRy4yhnzG31ywE16UMNlUAkrMH6edAXzrcQnbvptE8rD7w8RVsW3DDwlWDjcI&s=10" },
+    { nom: "Adolf Hitler", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRg3x_f6W3t2ZoSCmnkeqlYP392TCMGpq4sTMaQsmrRPr482P4IsOXHyY6b79n2yA0V8wyW2CRNCWSLlN5303aopD1tSek&s=19" },
+    { nom: "Kim Jong-un", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFIvh6YWhuGeMHcHXpi1Q_ifCOOwq6LBazMuGNAtNRKaQgifZY8qkvJKJ44t7AbufY1zZVv0mUhEB4GlDG4nQ-0XQn4-u2F9_qR0ydsoYz&s=10" },
+    { nom: "Vladimir Poutine", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU5QyiZueyJUtXq6cL_v830DDI-Pplz_CHukFnRFVc1iBT5gaKH2PkqAb7JxqzC4garFI2IXqJl9m8PNJe9x8ceUGTWqEL_n9bXp8kkyqq&s=10" },
+    { nom: "Patrick Sébastien", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlI3JoXPiI59c94gNgIycV-BIUGEAFa1AlPlUX1wG6UcGIGmxj_Q1Y7RZlc28Ch8pSSJ0zHH7xp1WcvYkaeIb2Gh6u1CQS9NVweLayEpwW&s=10" },
+    { nom: "Tibo InShape", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzQsiKGowlFmw4XFHaWwo5VCxiSCasO-7fhRPRiZ59jTORtw_pqF9iFQa4Cr336LlbUbx6h2hcyXbuyfqbAQ6OLong0dfLVvs7651V4pLkvw&s=10" },
+    { nom: "Philippe Etchebest", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ90QyqEE4PdT05DwQugJ3sCmLl16gC9WexpU2_MVwOFr_ZyjRqpg001_ifReGx2BzoGTd6E3dsebJZClHTnplD5XMwQIGfDtK4X1ry9bJe&s=10" },
+    { nom: "Mimie Mathy", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTWXCkNAwJ4S-N7Ruu1tE-0ogksNN1C_XtxLrwHxYbq2Fd85Ht8JpcEEoubqAmGmP7ymFSiOfjFrFyMoR0qlNeDN9-m36MXuyhOzJQGe3f2Q&s=10" },
+    { nom: "Mia Khalifa", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDrYFfGC9iKwLx1OFj9qDGl8B6J3o0rgI2yBlzYGt_EQ&s=10" },
+    { nom: "Sarah Fraisou", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa0Iy94jpPoZOySqIMXJuMk2YSTNRm7AXhveNzm64vF-gb82X3f19tr6X4Q4WYyKXZHr_btHDx2cNNsGhMF4EW0B14g3Zs-qTCEaTZR5ox&s=10" },
+    { nom: "Afida Turner", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFmt4PG9WrWoPgMHY81ZvDHOA0LXUHwh1CHnF2zt7523e_RcS-UAwp2eq4YAsvW3JB-S6IgJKl26HAMexYYaV89w95EaJN0m5cI7bkVqsd&s=10" },
+    { nom: "Kim Kardashian", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy2ZcP-mK829S3V01z3NTLiF0fs886ta422zLrQ48zVxzTibxRZ4eALUmSyayh0Lxb9kQ-Mz2oUbLYbESg7O7iq-Rb8JHmIJcHs8TW6zKlzg&s=10" },
+    { nom: "Lena Situations", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnO5EMxXrMyKBNj7w996bNEnlvu3yPxPGS7URDsUlPSanftsV0LqFfPczcjUl4abFy47iM7I4Bwynh3BpLRH4nP8a2EGReUYus2wAKsclW&s=10" },
+    { nom: "Jean-Claude Van Damme", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaA2bjuR0fEJanQNcfuKEJM17_x_kaPYIR4yY0ybSy_w-dyjUbfBroFkgOy1K3WsEPZqcipc04mLtS0E-mPkTCZDVlVoNh2czLk6LSoP1gLw&s=10" },
+    { nom: "MrBeast", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDurc1tnaOpmQRto8Bok8VRK3rrI0WVDt4LFVIO2wubsgJHAjPbm1i9w-iuT4njbr_YEZOKWL4eNh7dEYDTIdtkhljV8WjdZzoveey6odPtQ&s=10" },
+    { nom: "Erling Haaland", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd__8JPLda71PoK2GquIaKPFuhxJ7QZ9vlBC61B-SOHjiJbPKLx7Fz7rguIFxbVuNDhV_nWDYd848avplRxEiR1YLHC_kALXly2bs33cHE&s=10" },
+    { nom: "Ed Sheeran", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTET9KC466xm7XcNjpo1aWOc4ioPVlI-66muDagx8jQj8ceOCOoEElVsj-6GbYd4TaxC-xQG-IG3tfqFFq9UpofdwvkZEFoY3Uil2EimKG7Ig&s=10" },
+    { nom: "Zinedine Zidane", img: "https://cdn.artphotolimited.com/images/59888232b0ba742a2efde168/1000x1000/zinedine-zidane-france-ukraine.jpg" },
+    { nom: "Omar Sy", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREBAIglSyrbGGeJ6AeLcyizepcJH_wMYuBPLaRJXF4hw&s=10" },
+    { nom: "Jean Dujardin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZfXUkQ8RWh8P5xUIaj835GXu10ammNtkt4kjUeL0fUw&s=10" },
+    { nom: "Louis de Funès", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRPGnZHnR1vu97KdDTmLkyKDFVWWKGM6YerXeFkKCX5w&s=10" },
+    { nom: "Coluche", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdm93c5CRLMjSvdFnZByvsVdbldmGFszCHrf6ChRhiiw&s=10" },
+    { nom: "Barack Obama", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzdhqZtZFDLDiGHt-R4nEYpIR8zFmHoocpzOh8H8WikdNBby2f39neDH0bW2OfnIGYVLRsa2R92rOjd7yVCyfj8Uh00xHSpoiNszXyb4HN&s=10" },
+    { nom: "Elon Musk", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa5GiZlGfpVa8dC9xDojttIBcuuH6_A4t_YG-mfE-LLk7r-M8nzevbPyvMJqYPdRRFCvS24SM0GBHuPa5DcFeNYhQboD0&s=10" },
+    { nom: "Taylor Swift", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSN6xoRBtrUyrZi4ckguPjAAlJf6m0B2c-UioCgK6AJ-FeOGNezLe7KoYFe3KcW-l3Ib03VGxb-bLRYAhfCydBfxESlzJg&s=19" },
+    { nom: "Cristiano Ronaldo", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSBEkZ6YLTC7nvKDCXdIkFQ8wtrBtAT9lDSWZHO-l4Y9b0nLLFPe5cklj1Lauq99B9z6Pr3d6G70YwbsJEDurYYY50HYkp5&s=19" },
+    { nom: "Lionel Messi", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcR2UCGrcRsHr6t32Ox64DtleK6uiuJHKpd93ng8_vkdcduOcGy_WnVQlftuku-wJdEHQTVXxwZgGivBt_dBVB9MVlKLOJYa&s=19" },
+    { nom: "Donald Trump", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSTN8Vf-kDjwTXQLHyB8pEUJARHOEI0xjcQ0O_1YfEPHO0X97CjMO4RB4g-VuFV07Fz_D6mOqbhXVRXGC5jwrfP-ZYtFlRU&s=19" },
+    { nom: "Jamel Debbouze", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSt2JOQSBGRmlexdgt3TyWhklbYdtyI-_V7PJHQA5BrI6WgjTt_A03kz1OF9wkTq_7lU5L1jQ69Kn3elHKWPzPKtsg5--s&s=19" },
+    { nom: "Kad Merad", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmjG79Eds2Kc2g3MSPdz4N0qiaYTC9a2xjkI0X9xr_RbqsHt2TwgpY6NCKQgh-KTB3Tu1ISjMiU27uTPrQtAfqsXCbworH&s=10" },
+    { nom: "Homer Simpson", img: "data:image/jpeg;base64,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" },
+    { nom: "Bart Simpson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfp1RoLyRyo8cJ_0NUYSspO1rdlovbAsYkQH91jOTEAj9VuTGRhSiKCHJA3o2wUwVcdCbyYEMMXZ0q2jIFXdppRBVgzc0z7vzwQeFqeCbSYA&s=10" },
+    { nom: "Mickey Mouse", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYplJUizOnY7tw7X1c6HHv98sd20VrL57nrFJqUHiZwdkwbIqvEV5ffgmVRhbE3cRT1WMc9h7pBJY74bfxtewKeoePfxE1TM6nY2WV2593Kg&s=10" },
+    { nom: "Bob l'éponge", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJBvMdAl9xDNvDd6p4Php4bqq322jSn5avqvq-cbaoUg&s=10" },
+    { nom: "Pikachu", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8Vde0BMKgJhCZuH7iiyDn48F47YHEb0mmYCN7iG94w8xsflGJh9k1xsnZQQ5bdNPhWB35M3U-0ajbjiV8hTLwT_ze4HOt2HIY8iiqpAyl1g&s=10" },
+    { nom: "Mario", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkiVYBbWax65_OajnLxTY7_j9pxuwjP4bnDphCMDct5pu1cJ83y-4joYtw1vNFxZS_2IdgneiWzvApwRseZhsuqwYvT4W3mDemfOMJGf7CeA&s=10" },
+    { nom: "Astérix", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4j3jY4AyR5QyiyiB4_6Ttou8GkVV5K5a1eoSb6JHaFQ&s=10" },
+    { nom: "Tintin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToBkwPvaww68V75-zCCoNBG0rTm1aASPbaflKQPtbCb9xdZ1e80644Nq50B9U-tIC4RXGq-6mLDAbhYtgRn9S8Q6KbmGxF23ce4v5F5UGUOg&s=10" },
+    { nom: "Batman", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKOCz8F8w3MPVzLaW2uJkF1DO9FiB0KjFOL4uwzVeasg&s=10" },
+    { nom: "Yoda", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdXjBa3Ixu_6ImtW3zwL08A0a8x1ncYjnJW_20OvYWAX0SyVCFi8EnVX58MujmfNz1k8DuARc52Doty5yGUY1NQPbAH8WEGjjf4bFnpsnv&s=10" },
+    { nom: "Dwayne Johnson", img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSY10lCNnEBVpENW-zxWcK_JefaV4PhigSRsqBmDVOyUNCUzwcLmiqLvjMPAbl0ywXMfxuy65paahL5Xe52NkREQBJZIdmCvVbCwm9e903kFZNhR1p0IWR-MYNXDak1X8X0BGRv5XKS51o&s=19" },
+    { nom: "Tom Cruise", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQULmwm8Jj-3mer_q85286eQYzlYsj1mpO_waXuOtWw9Wt6GluNnU6UiZMRmYnqSlxF2qDIQClS0IjAWWNJBj430u1yst8&s=10" },
+    { nom: "Leonardo DiCaprio", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSw2C6hTlmGBHqYFyiOSPW2XH98paNXwZoiY6Q2MdGJCPsJHFMb61qDrBsROGjalL43x7AFw07WoXcwesmvy6F2A4eWOk&s=10" },
+    { nom: "Angelina Jolie", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GMYbYbxUyYJRdHzIoNCAwnp8nkOWDs65Egh6I_HSuhuQ9usky5c28sMwmONZxib6kUtcBTP7JdQyW-7M3-1zYGmh8Hs&s=10" },
+    { nom: "Brad Pitt", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS07jP7laO_D_puj04lgJWPYmfs_OWkl2baG8x_Xhk1atfz7oh5HQ3Kgzvwi5Esd5h93Tz5HV1w-wWrcnb1sitZrNa6wX4&s=10" },
+    { nom: "Neymar", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbGHmbQbyK-0FXCxFQ12lckaP3YiO99w9yibTprck-qFaD4GTlzZV7DtQJz5VAT7UhWIvxfbxSgZcf5N53ruMvOkKmnaCJ&s=10" },
+    { nom: "Antoine Griezmann", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhNgg_CNJzXB1x1ZHK_pB7TK1uoUEU9PrHoqe1DMuwYQ&s=10" },
+    { nom: "Michael Jackson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-sWqcaV5Y6rFls2G-d0Uxl0fGwpsWXV0Ase5mEG6_dup5KZn8mu9CT1Ct4pbWaXYaXT1qAMgtx6O4w3CRRa2RQ0vkDfc&s=10" },
+    { nom: "Beyoncé", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRawsmjTQJ9Ve75VabPVXQM4csQthlvcuKkqHfnguuRnJfAZf-STVXLQ_ycM2wHnV6yDl2VyHob1t6wUrnehWlTYUQ15c9O&s=10" },
+    { nom: "Lady Gaga", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT56_4M-RKQnSfoLLW4qpCcpqt9nltLGVZ_xNtZzf-zg4scUYa0FBSWR5uL983qOd-r_p3xXwGRwx0s0f_ww8ihdeoAKRYG&s=10" },
+    { nom: "Adele", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDgs0P4SJml5bprSjsdXt_fTMpiJhEt1b-Zqva_My7Mg72SfKSTAiArIhulvV1u1Qg4S_HJEisuzufaeQLKYwTvkOmCJo&s=10" },
+    { nom: "Rihanna", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSagHLShBr-3NOpVjrhlCgIqYFyGAByrlhIvhbrlM3r9jEbpa_kD1YYu-qNKLQiPGL4KPbFEaMe5_9OrW8HhaRF_WVZA3I&s=10" },
+    { nom: "Donald Duck", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4lw26OoyglIUknCr5xfVlfOIfi2RqdLvOUbj7NljT-ypVgU4fI9DXhQFQ2mqCqYpAmJaEGyFLU3c5tRBq4bjTwhceiOdAo6xbVTTbR2QQ&s=10" },
+    { nom: "Goofy", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIW-oup36PRMheEnl9zito50one580qlftfTlEAYDgiANbhDFa_Vlr7TGJBI5EeYMdn8amZ7DkhsxFDCrvfF29PcR6qoEJJNSUvn7iq0iwXw&s=10" },
+    { nom: "Elsa Reine des Neiges", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5ht2hsLAMgWwlGXSgSktM0UOzCjJc_ZipQ2oGWlvv76HYDH8T6gmYw3GxQDiUpbV2_maL0A5VmdqylFEqgL0C0nM4BP2jLLsOXVszaZiR&s=10" },
+    { nom: "Stitch", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr83t4Xg5ILi70JnbcZR42Wf-xUlpcbafIvaThnuc-iLGpTWmn6w4yQpaL4fYA1BTXNDgAFSbjZPxiny8CvJUNGf9v29Qme6ThVPMZL3R4&s=10" },
+    { nom: "Winnie l'Ourson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0OAF9O8Mqtw7u-d7yWxmKB9eGmOgWgotexL05ORgmGg&s" },
+    { nom: "Spider-Man", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIaIb5aHdB6B2oMVoz2mBPbhwOmSfKL4jCVGGttT47tA&s=10" },
+    { nom: "Iron Man", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPJt6PYyYnSMWm3mKyXM_-3qO2dQausaWwvCdQoD3PMg&s=10" },
+    { nom: "Hulk", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9y65vG53ERD_Dcu1QypDbFznwNANDSp1-QJkoXKyBFg&s=10" },
+    { nom: "Captain America", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcwVzVQj1g7W90Atuvk6fDEAtvgfBjus1Y4JlcX9mw3w&s=10" },
+    { nom: "Dark Vador", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH_gXwBznVs2yOq6Oo1J83rJ3zhfKM4vCg3tAeeBN3WQ&s" },
+    { nom: "Harry Potter", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhQYKzG9WbY7tw7X1c6HHv98sd20VrL57nrFJqUHiZwdkwbIqvEV5ffgmVRhbE3cRT1WMc9h7pBJY74bfxtewKeoePfxE1TM6nY2WV2593Kg&s=10" },
+    { nom: "Hermione Granger", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNR1BzfMl7vB2Sqc_tS_c4IXtL0bZwesRHZJ5d6wfAVQ&s=10" },
+    { nom: "Gandalf", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXn4JRgO6PP7h0qixTif0Vp83MjVo9h8J04D4ukGabFQ&s=10" },
+    { nom: "Gollum", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcQNKdZ3KQyED9UtWWH2Lww2XO34XV5gpuTX64ktAMkw&s=10" },
+    { nom: "Mr Bean", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmn4QDwDVuRpvKLe8ggHkRvUY1ROq53c08jhV4fMNgcA&s=10" },
+    { nom: "Shrek", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXgGVc_A-vjWZFY-S0X-liDNdfMThCz16e8fE-6Kc1A&s=10" },
+    { nom: "Po • Kung Fu Panda", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiqASQ3KcTVIHjoxLzD3VSZ7ehNdXNo0uuKyJkh7y-Dw&s=10" },
+    { nom: "Minion", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH82rhtd0wcRtoI0BwptYC53gBNMSY1xNm7-WQG-63xw&s=10" },
+    { nom: "Albert Einstein", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYn44doRsxipf0fdf3uhyH4HdR5Iz_WPYSXmireTnywg&s" },
+    { nom: "Napoléon Bonaparte", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFT3-Uq1lyZSwrc0mwWrqQ_9wcVDwiYjqxWlQfP8SJlA&s=10" },
+    { nom: "Cléopâtre", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScemBn1wFVIlSTqT0woq8-OLHMyNZPL0zCzThhB3QgaQ&s=10" },
+    { nom: "Mark Zuckerberg", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7vLonoCqoRlcG7p6P5307paSjIKcX3kSLSS-tHJ148A&s=10" },
+    { nom: "Bill Gates", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQiE_gieMkDR7v1WSrKGmwy4SeUsQQY6uocqmHcoJmXA&s=10" }
+];
 
-    let peer = null;
-    let conn = null;
-    let isHost = false;
-    let roomCode = "";
-    let state = {
-        screen: "home",
-        personnages: [],
-        mystere: null,
-        themeMode: "dark"
-    };
+let peer = null;
+let conn = null;
+let isHost = false;
+let roomCode = "";
+let state = {
+    screen: "home",
+    personnages: [],
+    mystere: null,
+    themeMode: "dark"
+};
 
-    function loadStorage() {
-        try {
-            var tm = localStorage.getItem("qi_theme");
-            if (tm === "light" || tm === "dark") state.themeMode = tm;
-        } catch(e) {}
-        applyTheme();
-    }
-    function applyTheme() {
-        document.documentElement.setAttribute("data-theme", state.themeMode);
-    }
-    function toggleTheme() {
-        state.themeMode = state.themeMode === "dark" ? "light" : "dark";
-        try { localStorage.setItem("qi_theme", state.themeMode); } catch(e) {}
-        applyTheme();
-        render();
-    }
-    function toggleFullscreen() {
-        var isFs = document.fullscreenElement || document.webkitFullscreenElement;
-        if (!isFs) {
-            var el = document.documentElement;
-            if (el.requestFullscreen) el.requestFullscreen();
-        } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-        }
-    }
-    document.addEventListener("fullscreenchange", function(){ render(); });
-    function generateRoomCode() {
-        var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        var code = "";
-        for(var i=0; i<4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-        return code;
-    }
-    function selectionner24Aleatoires() {
-        let copieMelangee = [...LISTE_COMPLETE_PERSONNAGES].sort(() => 0.5 - Math.random());
-        return copieMelangee.slice(0, Math.min(24, copieMelangee.length)).map(p => ({ nom: p.nom, img: p.img, elimine: false }));
-    }
-    function demarrerModeSolo() {
-        state.personnages = selectionner24Aleatoires();
-        let randomIndex = Math.floor(Math.random() * state.personnages.length);
-        state.mystere = state.personnages[randomIndex];
-        state.screen = "solo";
-        render();
-    }
-    function startNewRound() {
-        if (!isHost) return;
-        let nouvelleGrille = selectionner24Aleatoires();
-        let indexHost = Math.floor(Math.random() * nouvelleGrille.length);
-        let indexGuest = Math.floor(Math.random() * nouvelleGrille.length);
-        if (nouvelleGrille.length > 1) {
-            while (indexGuest === indexHost) {
-                indexGuest = Math.floor(Math.random() * nouvelleGrille.length);
-            }
-        }
-        state.personnages = JSON.parse(JSON.stringify(nouvelleGrille));
-        state.mystere = state.personnages[indexHost];
-        state.screen = "game";
-        if (conn && conn.open) {
-            conn.send({
-                type: 'INIT_GAME',
-                grille: nouvelleGrille,
-                mystereIndex: indexGuest
-            });
-        }
-        render();
-    }
-    function startHosting() {
-        isHost = true;
-        roomCode = generateRoomCode();
-        if(peer) peer.destroy();
-        peer = new Peer(roomCode);
-        peer.on('open', function(id) {
-            state.screen = "host_waiting";
-            render();
-        });
-        peer.on('connection', function(c) {
-            conn = c;
-            setupConnectionListeners();
-            conn.on('open', function() {
-                startNewRound();
-            });
-        });
-    }
-    function joinRoomForm() {
-        isHost = false;
-        state.screen = "join_form";
-        render();
-    }
-    function connectToRoom() {
-        var codeInput = document.getElementById("roomCodeInput");
-        if(!codeInput || !codeInput.value.trim()) { alert("Entre un code de salon valide !"); return; }
-        roomCode = codeInput.value.trim().toUpperCase();
-        if(peer) peer.destroy();
-        peer = new Peer();
-        peer.on('open', function() {
-            conn = peer.connect(roomCode);
-            setupConnectionListeners();
-        });
-    }
-    function setupConnectionListeners() {
-        conn.on('data', function(data) {
-            if(data.type === 'INIT_GAME') {
-                state.personnages = JSON.parse(JSON.stringify(data.grille));
-                state.mystere = state.personnages[data.mystereIndex];
-                state.screen = "game";
-                render();
-            } else if(data.type === 'REQUEST_RESTART') {
-                if(isHost) {
-                    startNewRound();
-                }
-            }
-        });
-    }
-    function recommencerPartie() {
-        if(state.screen === "solo") {
-            demarrerModeSolo();
-        } else if(isHost) {
-            startNewRound();
-        } else {
-            if(conn && conn.open) {
-                conn.send({ type: 'REQUEST_RESTART' });
-            }
-        }
-    }
-    function toggleEliminer(index) {
-        state.personnages[index].elimine = !state.personnages[index].elimine;
-        render();
-    }
-    function render() {
-        var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-        var html = "";
-        
-        html += '<header>';
-        html += '<div><h1>QUI EST-CE ?</h1><div class="subtitle">Solo & Multijoueur</div></div>';
-        html += '<div class="headerbtns">';
-        html += '<button class="themebtn" onclick="toggleTheme()">'+(state.themeMode==="dark" ? "☀️" : "🌙")+'</button>';
-        html += '<button class="themebtn" onclick="toggleFullscreen()">'+(isFs ? "✕" : "⛶")+'</button>';
-        html += '</div></header>';
-        if(state.screen === "home") {
-            html += '<div class="panel center">';
-            html += '<h2>Choix du Mode</h2>';
-            html += '<p class="dim" style="margin-bottom:15px;">Sélectionnez votre type de partie :</p>';
-            html += '<button class="btn btn-primary" onclick="demarrerModeSolo()">Mode Solo (1 Tableau + Nom au hasard) ›</button>';
-            html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="state.screen=\'net_host_or_join\'; render();">Mode Multijoueur (En Ligne) ›</button>';
-            html += '</div>';
-        }
-        else if(state.screen === "net_host_or_join") {
-            html += '<button class="linkbtn" onclick="state.screen=\'home\'; render();">&#8249; Retour au choix</button>';
-            html += '<div class="panel center">';
-            html += '<h2>Salon Multijoueur</h2>';
-            html += '<p class="dim" style="margin-bottom:15px;">Même tableau pour les deux, mais chaque joueur mène son enquête de son côté :</p>';
-            html += '<button class="btn btn-primary" onclick="startHosting()">Créer un salon</button>';
-            html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="joinRoomForm()">Rejoindre un salon</button>';
-            html += '</div>';
-        }
-        else if(state.screen === "host_waiting") {
-            html += '<div class="panel center">';
-            html += '<h2>Salon Créé</h2>';
-            html += '<p class="dim">Donne ce code à ton adversaire :</p>';
-            html += '<div class="codebox">'+roomCode+'</div>';
-            html += '<p class="dim" style="margin-top:15px;">En attente de connexion du second joueur...</p>';
-            html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Annuler</button>';
-            html += '</div>';
-        }
-        else if(state.screen === "join_form") {
-            html += '<div class="panel center">';
-            html += '<h2>Rejoindre un salon</h2>';
-            html += '<p class="dim" style="margin-bottom:10px;">Entre le code à 4 caractères :</p>';
-            html += '<input type="text" id="roomCodeInput" placeholder="EX: A4X9" maxlength="4" style="text-transform:uppercase;">';
-            html += '<button class="btn btn-primary" onclick="connectToRoom()">Se connecter au salon</button>';
-            html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Retour</button>';
-            html += '</div>';
-        }
-        else if(state.screen === "solo") {
-            let cartes = state.personnages.map((p, index) => `
-                <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
-                    <img src="${p.img}" alt="${p.nom}" loading="lazy">
-                    <span>${p.nom}</span>
-                </div>
-            `).join("");
-            html += '<div class="panel center" style="margin-bottom:15px; padding:12px;">';
-            html += '<div style="font-family:var(--font-display); font-size:0.7rem; color:var(--neon-cyan);">MODE SOLO 🎯</div>';
-            html += '<p class="dim" style="font-size:1rem; margin-top:5px;">Le personnage mystère tiré au sort :</p>';
-            html += '<div class="secret-reveal-card">';
-            html += '🎯 ' + (state.mystere ? state.mystere.nom : '') + '';
-            html += '</div></div>';
-            html += '<div class="panel">';
-            html += '<h2>Votre Grille de Jeu</h2>';
-            html += '<div class="grid-persos">' + cartes + '</div>';
-            html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer (Nouveau tirage) ⟳</button>';
-            html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Changer de mode</button>';
-            html += '</div>';
-        }
-        else if(state.screen === "game") {
-            let cartes = state.personnages.map((p, index) => `
-                <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
-                    <img src="${p.img}" alt="${p.nom}" loading="lazy">
-                    <span>${p.nom}</span>
-                </div>
-            `).join("");
-            html += '<div class="panel center" style="margin-bottom:15px; padding:12px;">';
-            html += '<div style="font-family:var(--font-display); font-size:0.7rem; color:var(--neon-cyan);">SALON : ' + roomCode + '</div>';
-            html += '<p class="dim" style="font-size:1rem; margin-top:5px;">L\'adversaire doit deviner :</p>';
-            html += '<div class="secret-reveal-card">';
-            html += '🎯 ' + (state.mystere ? state.mystere.nom : 'Chargement...') + '';
-            html += '</div></div>';
-            html += '<div class="panel">';
-            html += '<h2>Ton Enquête (Actions privées)</h2>';
-            html += '<div class="grid-persos">' + cartes + '</div>';
-            html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer avec le même groupe ⟳</button>';
-            html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Retour au menu</button>';
-            html += '</div>';
-        }
-        document.getElementById("app").innerHTML = html;
-        var rci = document.getElementById("roomCodeInput");
-        if(rci){ rci.addEventListener("keydown", function(e){ if(e.key==="Enter") connectToRoom(); }); rci.focus({preventScroll:true}); }
-    }
-    loadStorage();
+function loadStorage() {
+    try {
+        var tm = localStorage.getItem("qi_theme");
+        if (tm === "light" || tm === "dark") state.themeMode = tm;
+    } catch(e) {}
+    applyTheme();
+}
+function applyTheme() {
+    document.documentElement.setAttribute("data-theme", state.themeMode);
+}
+function toggleTheme() {
+    state.themeMode = state.themeMode === "dark" ? "light" : "dark";
+    try { localStorage.setItem("qi_theme", state.themeMode); } catch(e) {}
+    applyTheme();
     render();
-    </script>
+}
+function toggleFullscreen() {
+    var isFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!isFs) {
+        var el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen();
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+}
+document.addEventListener("fullscreenchange", function(){ render(); });
+function generateRoomCode() {
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    var code = "";
+    for(var i=0; i<4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+    return code;
+}
+function selectionner24Aleatoires() {
+    let copieMelangee = [...LISTE_COMPLETE_PERSONNAGES].sort(() => 0.5 - Math.random());
+    return copieMelangee.slice(0, 24).map(p => ({ nom: p.nom, img: p.img, elimine: false }));
+}
+function demarrerModeSolo() {
+    state.personnages = selectionner24Aleatoires();
+    let randomIndex = Math.floor(Math.random() * state.personnages.length);
+    state.mystere = state.personnages[randomIndex];
+    state.screen = "solo";
+    render();
+}
+function startNewRound() {
+    if (!isHost) return;
+    let nouvelleGrille = selectionner24Aleatoires();
+    let indexHost = Math.floor(Math.random() * 24);
+    let indexGuest = Math.floor(Math.random() * 24);
+    while (indexGuest === indexHost) {
+        indexGuest = Math.floor(Math.random() * 24);
+    }
+    state.personnages = JSON.parse(JSON.stringify(nouvelleGrille));
+    state.mystere = state.personnages[indexHost];
+    state.screen = "game";
+    if (conn && conn.open) {
+        conn.send({
+            type: 'INIT_GAME',
+            grille: nouvelleGrille,
+            mystereIndex: indexGuest
+        });
+    }
+    render();
+}
+function startHosting() {
+    isHost = true;
+    roomCode = generateRoomCode();
+    if(peer) peer.destroy();
+    peer = new Peer(roomCode);
+    peer.on('open', function(id) {
+        state.screen = "host_waiting";
+        render();
+    });
+    peer.on('connection', function(c) {
+        conn = c;
+        setupConnectionListeners();
+        conn.on('open', function() {
+            startNewRound();
+        });
+    });
+}
+function joinRoomForm() {
+    isHost = false;
+    state.screen = "join_form";
+    render();
+}
+function connectToRoom() {
+    var codeInput = document.getElementById("roomCodeInput");
+    if(!codeInput || !codeInput.value.trim()) { alert("Entre un code de salon valide !"); return; }
+    roomCode = codeInput.value.trim().toUpperCase();
+    if(peer) peer.destroy();
+    peer = new Peer();
+    peer.on('open', function() {
+        conn = peer.connect(roomCode);
+        setupConnectionListeners();
+    });
+}
+function setupConnectionListeners() {
+    conn.on('data', function(data) {
+        if(data.type === 'INIT_GAME') {
+            state.personnages = JSON.parse(JSON.stringify(data.grille));
+            state.mystere = state.personnages[data.mystereIndex];
+            state.screen = "game";
+            render();
+        } else if(data.type === 'REQUEST_RESTART') {
+            if(isHost) {
+                startNewRound();
+            }
+        }
+    });
+}
+function recommencerPartie() {
+    if(state.screen === "solo") {
+        demarrerModeSolo();
+    } else if(isHost) {
+        startNewRound();
+    } else {
+        if(conn && conn.open) {
+            conn.send({ type: 'REQUEST_RESTART' });
+        }
+    }
+}
+function toggleEliminer(index) {
+    state.personnages[index].elimine = !state.personnages[index].elimine;
+    render();
+}
+function render() {
+    var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    var html = "";
+    
+    html += '<div class="top-bar">';
+    html += '<a href="../" class="btn-back">&lsaquo; HUB</a>';
+    html += '</div>';
+
+    html += '<header>';
+    html += '<div><h1>QUI EST-CE ?</h1><div class="subtitle">Solo & Multijoueur</div></div>';
+    html += '<div class="headerbtns">';
+    html += '<button class="themebtn" onclick="toggleTheme()">'+(state.themeMode==="dark" ? "☀️" : "🌙")+'</button>';
+    html += '<button class="themebtn" onclick="toggleFullscreen()">'+(isFs ? "✕" : "⛶")+'</button>';
+    html += '</div></header>';
+
+    if(state.screen === "home") {
+        html += '<div class="panel center">';
+        html += '<h2>Choix du Mode</h2>';
+        html += '<p class="dim" style="margin-bottom:15px;">Sélectionnez votre type de partie :</p>';
+        html += '<button class="btn btn-primary" onclick="demarrerModeSolo()">Mode Solo (1 Tableau + Nom au hasard) ›</button>';
+        html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="state.screen=\'net_host_or_join\'; render();">Mode Multijoueur (En Ligne) ›</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "net_host_or_join") {
+        html += '<button class="linkbtn" onclick="state.screen=\'home\'; render();">&#8249; Retour au choix</button>';
+        html += '<div class="panel center">';
+        html += '<h2>Salon Multijoueur</h2>';
+        html += '<p class="dim" style="margin-bottom:15px;">Même tableau pour les deux, mais chaque joueur mène son enquête de son côté :</p>';
+        html += '<button class="btn btn-primary" onclick="startHosting()">Créer un salon</button>';
+        html += '<button class="btn btn-ghost" style="margin-top:10px;" onclick="joinRoomForm()">Rejoindre un salon</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "host_waiting") {
+        html += '<div class="panel center">';
+        html += '<h2>Salon Créé</h2>';
+        html += '<p class="dim">Donne ce code à ton adversaire :</p>';
+        html += '<div class="codebox">'+roomCode+'</div>';
+        html += '<p class="dim" style="margin-top:15px;">En attente de connexion du second joueur...</p>';
+        html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Annuler</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "join_form") {
+        html += '<div class="panel center">';
+        html += '<h2>Rejoindre un salon</h2>';
+        html += '<p class="dim" style="margin-bottom:10px;">Entre le code à 4 caractères :</p>';
+        html += '<input type="text" id="roomCodeInput" placeholder="EX: A4X9" maxlength="4" style="text-transform:uppercase;">';
+        html += '<button class="btn btn-primary" onclick="connectToRoom()">Se connecter au salon</button>';
+        html += '<button class="linkbtn" onclick="state.screen=\'net_host_or_join\'; render();">&#8249; Retour</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "solo") {
+        let cartes = state.personnages.map((p, index) => `
+            <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
+                <img src="${p.img}" alt="${p.nom}" loading="lazy">
+                <span>${p.nom}</span>
+            </div>
+        `).join("");
+        html += '<div class="panel center" style="margin-bottom:15px; padding:12px;">';
+        html += '<div style="font-family:var(--font-display); font-size:0.7rem; color:var(--neon-cyan);">MODE SOLO 🎯</div>';
+        html += '<p class="dim" style="font-size:1rem; margin-top:5px;">Le personnage mystère tiré au sort :</p>';
+        html += '<div class="secret-reveal-card">';
+        html += '🎯 ' + (state.mystere ? state.mystere.nom : '') + '';
+        html += '</div></div>';
+        html += '<div class="panel">';
+        html += '<h2>Votre Grille de Jeu</h2>';
+        html += '<div class="grid-persos">' + cartes + '</div>';
+        html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer (Nouveau tirage) ⟳</button>';
+        html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Changer de mode</button>';
+        html += '</div>';
+    }
+    else if(state.screen === "game") {
+        let cartes = state.personnages.map((p, index) => `
+            <div class="carte-perso ${p.elimine ? 'elimine' : ''}" onclick="toggleEliminer(${index})">
+                <img src="${p.img}" alt="${p.nom}" loading="lazy">
+                <span>${p.nom}</span>
+            </div>
+        `).join("");
+        html += '<div class="panel center" style="margin-bottom:15px; padding:12px;">';
+        html += '<div style="font-family:var(--font-display); font-size:0.7rem; color:var(--neon-cyan);">SALON : ' + roomCode + '</div>';
+        html += '<p class="dim" style="font-size:1rem; margin-top:5px;">L\'adversaire doit deviner :</p>';
+        html += '<div class="secret-reveal-card">';
+        html += '🎯 ' + (state.mystere ? state.mystere.nom : 'Chargement...') + '';
+        html += '</div></div>';
+        html += '<div class="panel">';
+        html += '<h2>Ton Enquête (Actions privées)</h2>';
+        html += '<div class="grid-persos">' + cartes + '</div>';
+        html += '<button class="btn btn-ghost" style="margin-top:20px;" onclick="recommencerPartie()">Recommencer avec le même groupe ⟳</button>';
+        html += '<button class="linkbtn" style="margin-top:10px;" onclick="state.screen=\'home\'; render();">‹ Retour au menu</button>';
+        html += '</div>';
+    }
+    document.getElementById("app").innerHTML = html;
+    var rci = document.getElementById("roomCodeInput");
+    if(rci){ rci.addEventListener("keydown", function(e){ if(e.key==="Enter") connectToRoom(); }); rci.focus({preventScroll:true}); }
+}
+loadStorage();
+render();
+</script>
 </body>
 </html>
