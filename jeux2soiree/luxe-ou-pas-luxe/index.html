@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Le Juste Prix — jeux2soiree</title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../favicon.png"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        :root {
+
+            --bg-body: #0b0616;
+            --bg-panel: #140a26;
+            --grid-line: rgba(124, 58, 237, 0.12);
+
+            --text-main: #f3e9ff;
+            --text-muted: #9d8bc4;
+
+            --neon-pink: #ff2e88;
+            --neon-cyan: #22e6ff;
+            --neon-yellow: #ffe14d;
+            --neon-green: #4dffa6;
+            --neon-orange: #f97316;
+            --neon-purple: #a855f7;
+
+            --font-display: 'Press Start 2P', monospace;
+            --font-body: 'VT323', monospace;
+        }
+
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+        }
+
+
+        html {
+
+            background: var(--bg-body);
+
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family: var(--font-body);
+
+            color: var(--text-main);
+
+            min-height: 100vh;
+
+            padding: 25px 15px 60px;
+
+            background-color: var(--bg-body);
+
+            background-image:
+
+                linear-gradient(
+                    var(--grid-line) 1px,
+                    transparent 1px
+                ),
+
+                linear-gradient(
+                    90deg,
+                    var(--grid-line) 1px,
+                    transparent 1px
+                ),
+
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(255, 46, 136, 0.15) 0%,
+                    transparent 55%
+                ),
+
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(34, 230, 255, 0.12) 0%,
+                    transparent 55%
+                );
+
+            background-size:
+
+                40px 40px,
+                40px 40px,
+                100% 100%,
+                100% 100%;
+
+            overflow-x: hidden;
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background:
+
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(0, 0, 0, 0) 0px,
+                    rgba(0, 0, 0, 0) 2px,
+                    rgba(0, 0, 0, 0.15) 3px,
+                    rgba(0, 0, 0, 0.15) 4px
+                );
+
+            z-index: 100;
+
+            mix-blend-mode: multiply;
+        }
+
+
+        /* =====================================================
+           BARRE DU HAUT
+        ===================================================== */
+
+        .top-bar {
+
+            max-width: 1100px;
+
+            margin: 0 auto 25px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .btn-back,
+        .btn-fs {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-family: var(--font-display);
+
+            font-size: 0.55rem;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            padding: 12px 16px;
+
+            background: rgba(255, 46, 136, 0.05);
+
+            transition: 0.15s;
+        }
+
+
+        .btn-back {
+
+            color: var(--neon-pink);
+
+            border: 2px solid var(--neon-pink);
+
+            box-shadow:
+
+                0 0 0 2px var(--bg-body),
+
+                4px 4px 0 rgba(255, 46, 136, 0.35);
+        }
+
+
+        .btn-fs {
+
+            color: var(--neon-cyan);
+
+            border: 2px solid var(--neon-cyan);
+
+            box-shadow:
+
+                0 0 0 2px var(--bg-body),
+
+                4px 4px 0 rgba(34, 230, 255, 0.35);
+        }
+
+
+        .btn-back:hover,
+        .btn-fs:hover {
+
+            transform: translate(-2px, -2px);
+        }
+
+
+        .top-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .credits {
+
+            font-family: var(--font-display);
+
+            font-size: 0.55rem;
+
+            color: var(--neon-yellow);
+        }
+
+
+        .credits-infinity {
+
+            font-size: 1rem;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+
+            max-width: 1100px;
+
+            margin: 10px auto 25px;
+
+            border: 2px solid var(--neon-pink);
+
+            background: rgba(20, 10, 38, 0.94);
+
+            padding: 25px;
+
+            box-shadow:
+
+                0 0 20px rgba(255, 46, 136, 0.15),
+
+                6px 6px 0 rgba(255, 46, 136, 0.15);
+        }
+
+
+        .brand-name {
+
+            display: block;
+
+            font-family: var(--font-display);
+
+            font-size: clamp(
+                0.75rem,
+                2vw,
+                1rem
+            );
+
+            color: var(--neon-cyan);
+
+            text-shadow:
+
+                0 0 10px rgba(34, 230, 255, 0.8),
+
+                2px 2px 0 #004d61;
+
+            margin-bottom: 12px;
+
+            letter-spacing: 2px;
+        }
+
+
+        h1 {
+
+            font-family: var(--font-display);
+
+            font-size: clamp(
+                1rem,
+                4vw,
+                2rem
+            );
+
+            color: var(--neon-pink);
+
+            text-shadow:
+
+                0 0 8px rgba(255, 46, 136, 0.9),
+
+                4px 4px 0 #4a0d2b;
+
+            margin-bottom: 12px;
+        }
+
+
+        .description {
+
+            color: var(--text-muted);
+
+            font-size: 1.35rem;
+        }
+
+
+        /* =====================================================
+           SCORE
+        ===================================================== */
+
+        .score-bar {
+
+            max-width: 1100px;
+
+            margin: 0 auto 25px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 15px;
+
+            border: 2px solid var(--neon-yellow);
+
+            background: rgba(
+                255,
+                225,
+                77,
+                0.05
+            );
+
+            box-shadow:
+
+                4px 4px 0 rgba(0, 0, 0, 0.5);
+        }
+
+
+        .score-label {
+
+            font-family: var(--font-display);
+
+            font-size: 0.6rem;
+
+            color: var(--neon-yellow);
+        }
+
+
+        #score {
+
+            font-family: var(--font-display);
+
+            font-size: 1rem;
+
+            color: white;
+
+            text-shadow:
+
+                0 0 10px rgba(
+                    255,
+                    225,
+                    77,
+                    0.8
+                );
+        }
+
+
+        /* =====================================================
+           JEU
+        ===================================================== */
+
+        .game-panel {
+
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            background: rgba(
+                20,
+                10,
+                38,
+                0.96
+            );
+
+            border: 2px solid var(--neon-cyan);
+
+            padding: 30px;
+
+            box-shadow:
+
+                0 0 30px rgba(
+                    34,
+                    230,
+                    255,
+                    0.1
+                ),
+
+                7px 7px 0 rgba(
+                    0,
+                    0,
+                    0,
+                    0.5
+                );
+        }
+
+
+        .object-number {
+
+            text-align: center;
+
+            font-family: var(--font-display);
+
+            font-size: 0.55rem;
+
+            color: var(--neon-green);
+
+            margin-bottom: 20px;
+        }
+
+
+        .object-card {
+
+            text-align: center;
+
+            border: 2px solid var(--neon-purple);
+
+            background: rgba(
+                168,
+                85,
+                247,
+                0.06
+            );
+
+            padding: 30px 20px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+
+                0 0 20px rgba(
+                    168,
+                    85,
+                    247,
+                    0.1
+                );
+        }
+
+
+        .object-image {
+
+            width: 250px;
+
+            height: 250px;
+
+            object-fit: contain;
+
+            display: block;
+
+            margin: 0 auto 20px;
+
+            border-radius: 10px;
+
+            background: rgba(
+                0,
+                0,
+                0,
+                0.25
+            );
+
+            filter:
+
+                drop-shadow(
+                    0 0 10px
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        0.15
+                    )
+                );
+        }
+
+
+        .object-icon {
+
+            font-size: 5rem;
+
+            display: block;
+
+            margin-bottom: 15px;
+        }
+
+
+        #objectName {
+
+            font-family: var(--font-display);
+
+            font-size: clamp(
+                0.9rem,
+                3vw,
+                1.5rem
+            );
+
+            line-height: 1.6;
+
+            color: white;
+
+            text-shadow:
+
+                0 0 8px rgba(
+                    168,
+                    85,
+                    247,
+                    0.7
+                );
+        }
+
+
+        /* =====================================================
+           ESTIMATION
+        ===================================================== */
+
+        .guess-area {
+
+            max-width: 550px;
+
+            margin: 0 auto;
+
+            text-align: center;
+        }
+
+
+        .guess-label {
+
+            display: block;
+
+            font-family: var(--font-display);
+
+            font-size: 0.6rem;
+
+            color: var(--neon-cyan);
+
+            margin-bottom: 15px;
+        }
+
+
+        #guessInput {
+
+            width: 100%;
+
+            min-width: 0;
+
+            background: #090510;
+
+            border: 2px solid var(--neon-cyan);
+
+            color: white;
+
+            padding: 15px;
+
+            padding-right: 45px;
+
+            font-family: var(--font-body);
+
+            font-size: 1.6rem;
+
+            outline: none;
+
+            text-align: center;
+        }
+
+
+        #guessInput:focus {
+
+            box-shadow:
+
+                0 0 15px rgba(
+                    34,
+                    230,
+                    255,
+                    0.3
+                );
+        }
+
+
+        .currency {
+
+            position: relative;
+        }
+
+
+        .currency::after {
+
+            content: "€";
+
+            position: absolute;
+
+            right: 15px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: var(--neon-yellow);
+
+            font-family: var(--font-display);
+
+            font-size: 0.7rem;
+
+            pointer-events: none;
+        }
+
+
+        #submitGuess {
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            padding: 17px;
+
+            border: 3px solid white;
+
+            background: var(--neon-pink);
+
+            color: white;
+
+            font-family: var(--font-display);
+
+            font-size: 0.65rem;
+
+            cursor: pointer;
+
+            box-shadow:
+
+                5px 5px 0 #720c3d,
+
+                0 0 20px rgba(
+                    255,
+                    46,
+                    136,
+                    0.35
+                );
+
+            transition: 0.15s;
+        }
+
+
+        #submitGuess:hover:not(:disabled) {
+
+            transform: translate(-2px, -2px);
+
+            box-shadow:
+
+                7px 7px 0 #720c3d,
+
+                0 0 30px rgba(
+                    255,
+                    46,
+                    136,
+                    0.6
+                );
+        }
+
+
+        #submitGuess:disabled {
+
+            opacity: 0.4;
+
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           RESULTAT
+        ===================================================== */
+
+        #result {
+
+            display: none;
+
+            margin: 30px auto 0;
+
+            max-width: 650px;
+
+            text-align: center;
+
+            border: 3px solid var(--neon-green);
+
+            padding: 25px;
+
+            background: rgba(
+                77,
+                255,
+                166,
+                0.06
+            );
+
+            box-shadow:
+
+                0 0 25px rgba(
+                    77,
+                    255,
+                    166,
+                    0.2
+                );
+        }
+
+
+        #result.show {
+
+            display: block;
+
+            animation:
+
+                resultAppear
+                0.4s
+                steps(4);
+        }
+
+
+        @keyframes resultAppear {
+
+            0% {
+
+                opacity: 0;
+
+                transform: scale(0.85);
+            }
+
+            60% {
+
+                transform: scale(1.04);
+            }
+
+            100% {
+
+                opacity: 1;
+
+                transform: scale(1);
+            }
+        }
+
+
+        .result-label {
+
+            font-family: var(--font-display);
+
+            font-size: 0.6rem;
+
+            color: var(--neon-yellow);
+
+            margin-bottom: 15px;
+        }
+
+
+        /* =====================================================
+           VÉRITABLE NOM DU PRODUIT
+        ===================================================== */
+
+        .real-name {
+
+            font-family: var(--font-body);
+
+            font-size: 2rem;
+
+            line-height: 1.3;
+
+            color: var(--neon-cyan);
+
+            margin-bottom: 12px;
+
+            text-shadow:
+
+                0 0 10px rgba(
+                    34,
+                    230,
+                    255,
+                    0.5
+                );
+        }
+
+
+        .real-price {
+
+            font-family: var(--font-display);
+
+            font-size: clamp(
+                1.1rem,
+                5vw,
+                2rem
+            );
+
+            color: var(--neon-green);
+
+            text-shadow:
+
+                0 0 10px rgba(
+                    77,
+                    255,
+                    166,
+                    0.8
+                );
+
+            margin-bottom: 15px;
+        }
+
+
+        .difference {
+
+            color: white;
+
+            font-size: 1.4rem;
+
+            margin-bottom: 10px;
+        }
+
+
+        .points {
+
+            font-family: var(--font-display);
+
+            font-size: clamp(
+                0.8rem,
+                3vw,
+                1.2rem
+            );
+
+            margin-top: 15px;
+        }
+
+
+        .points.perfect {
+
+            color: var(--neon-green);
+
+            text-shadow:
+
+                0 0 10px rgba(
+                    77,
+                    255,
+                    166,
+                    0.8
+                );
+        }
+
+
+        .points.good {
+
+            color: var(--neon-yellow);
+        }
+
+
+        .points.bad {
+
+            color: var(--neon-pink);
+        }
+
+
+        #nextButton {
+
+            width: 100%;
+
+            max-width: 450px;
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            border: 2px solid var(--neon-cyan);
+
+            background: rgba(
+                34,
+                230,
+                255,
+                0.08
+            );
+
+            color: var(--neon-cyan);
+
+            font-family: var(--font-display);
+
+            font-size: 0.6rem;
+
+            cursor: pointer;
+
+            transition: 0.15s;
+        }
+
+
+        #nextButton:hover {
+
+            background: var(--neon-cyan);
+
+            color: #000;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================================
+           BARÈME
+        ===================================================== */
+
+        .rules {
+
+            max-width: 900px;
+
+            margin: 25px auto 0;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .rule {
+
+            text-align: center;
+
+            padding: 15px 10px;
+
+            border: 1px solid var(--neon-purple);
+
+            background: rgba(
+                168,
+                85,
+                247,
+                0.05
+            );
+        }
+
+
+        .rule-percent {
+
+            display: block;
+
+            font-family: var(--font-display);
+
+            font-size: 0.65rem;
+
+            color: var(--neon-cyan);
+
+            margin-bottom: 8px;
+        }
+
+
+        .rule-points {
+
+            font-family: var(--font-display);
+
+            font-size: 0.65rem;
+
+            color: var(--neon-yellow);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            max-width: 1100px;
+
+            margin: 45px auto 0;
+
+            padding-top: 20px;
+
+            border-top:
+
+                1px solid rgba(
+                    124,
+                    58,
+                    237,
+                    0.2
+                );
+
+            text-align: center;
+
+            font-family: var(--font-display);
+
+            font-size: 0.5rem;
+
+            color: var(--text-muted);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 650px) {
+
+            body {
+
+                padding:
+                    15px
+                    10px
+                    40px;
+            }
+
+
+            .credits {
+
+                display: none;
+            }
+
+
+            .top-right {
+
+                margin-left: auto;
+            }
+
+
+            .game-panel {
+
+                padding: 18px;
+            }
+
+
+            .rules {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .object-image {
+
+                width: 180px;
+
+                height: 180px;
+            }
+
+
+            .object-icon {
+
+                font-size: 4rem;
+            }
+
+
+            .real-name {
+
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         BARRE DU HAUT
+    ===================================================== -->
+
+    <div class="top-bar">
+
+
+        <a
+            href="../"
+            class="btn-back"
+        >
+            &lsaquo; HUB
+        </a>
+
+
+        <div class="top-right">
+
+
+            <span class="credits">
+
+                CREDITS:
+
+                <span class="credits-infinity">
+                    &infin;
+                </span>
+
+            </span>
+
+
+            <button
+                type="button"
+                id="btn-fullscreen"
+                class="btn-fs"
+            >
+
+                <span id="fs-label">
+                    PLEIN ÉCRAN
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header>
+
+
+        <span class="brand-name">
+            jeux2soiree
+        </span>
+
+
+        <h1>
+            💰 LE JUSTE PRIX
+        </h1>
+
+
+        <p class="description">
+
+            Estime le prix des objets et
+            rapproche-toi au maximum du vrai prix !
+
+        </p>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         SCORE
+    ===================================================== -->
+
+    <div class="score-bar">
+
+
+        <span class="score-label">
+            SCORE
+        </span>
+
+
+        <span id="score">
+            0
+        </span>
+
+
+        <span class="score-label">
+            POINTS
+        </span>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JEU
+    ===================================================== -->
+
+    <main class="game-panel">
+
+
+        <div class="object-number">
+
+            OBJET
+
+            <span id="questionNumber">
+                1
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             OBJET
+        ================================================= -->
+
+        <div class="object-card">
+
+
+            <img
+                id="objectImage"
+                class="object-image"
+                src=""
+                alt=""
+                style="display:none;"
+            >
+
+
+            <span
+                class="object-icon"
+                id="objectIcon"
+            >
+                🎁
+            </span>
+
+
+            <!--
+
+                AVANT LA RÉPONSE :
+
+                C'est "name" qui est affiché.
+
+                Exemple :
+                "Un sac en cuir marron"
+
+            -->
+
+            <div id="objectName">
+                Chargement...
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ESTIMATION
+        ================================================= -->
+
+        <div class="guess-area">
+
+
+            <label
+                for="guessInput"
+                class="guess-label"
+            >
+
+                À TON AVIS, COMBIEN ÇA COÛTE ?
+
+            </label>
+
+
+            <div class="currency">
+
+
+                <input
+                    type="number"
+                    id="guessInput"
+                    placeholder="Ex : 49.99"
+                    min="0"
+                    step="0.01"
+                    inputmode="decimal"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="submitGuess"
+            >
+
+                VALIDER MON PRIX
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RESULTAT
+        ================================================= -->
+
+        <div id="result">
+
+
+            <div class="result-label">
+
+                ★ RÉSULTAT ★
+
+            </div>
+
+
+            <!--
+
+                VÉRITABLE NOM DU PRODUIT
+
+                Apparaît uniquement après validation.
+
+            -->
+
+            <div
+                class="real-name"
+                id="realName"
+            >
+                —
+            </div>
+
+
+            <!--
+
+                PRIX RÉEL
+
+            -->
+
+            <div
+                class="real-price"
+                id="realPrice"
+            >
+                —
+            </div>
+
+
+            <div
+                class="difference"
+                id="difference"
+            >
+                —
+            </div>
+
+
+            <div
+                class="points"
+                id="points"
+            >
+                —
+            </div>
+
+
+            <button
+                type="button"
+                id="nextButton"
+            >
+
+                OBJET SUIVANT ▶
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         BARÈME
+    ===================================================== -->
+
+    <section class="rules">
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 5 %
+            </span>
+
+            <span class="rule-points">
+                100 POINTS
+            </span>
+
+        </div>
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 10 %
+            </span>
+
+            <span class="rule-points">
+                90 POINTS
+            </span>
+
+        </div>
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 15 %
+            </span>
+
+            <span class="rule-points">
+                80 POINTS
+            </span>
+
+        </div>
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 20 %
+            </span>
+
+            <span class="rule-points">
+                70 POINTS
+            </span>
+
+        </div>
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 25 %
+            </span>
+
+            <span class="rule-points">
+                60 POINTS
+            </span>
+
+        </div>
+
+
+        <div class="rule">
+
+            <span class="rule-percent">
+                ≤ 30 %
+            </span>
+
+            <span class="rule-points">
+                50 POINTS
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer>
+
+        © jeux2soiree — HIGH SCORE 999999
+
+    </footer>
+
+
+
+    <script>
+
+
+        /* =====================================================
+           
+           =====================================================
+           
+           🎯 AJOUTER TES PRODUITS ICI
+           
+           =====================================================
+           
+           Pour ajouter un produit :
+           
+           1. Copie un bloc complet.
+           
+           2. Colle-le juste en dessous.
+           
+           3. Modifie les 4 informations.
+           
+           =====================================================
+           
+           name :
+           NOM GÉNÉRIQUE AFFICHÉ AVANT LA RÉPONSE
+           
+           realName :
+           VÉRITABLE NOM DU PRODUIT
+           
+           price :
+           PRIX RÉEL
+           
+           image :
+           LIEN DE L'IMAGE
+           
+           =====================================================
+           
+           ⚠️ price doit être un nombre.
+           
+           CORRECT :
+           
+           price: 899.99
+           
+           INCORRECT :
+           
+           price: "899.99 €"
+           
+           =====================================================
+           
+           ⚠️ Une virgule doit être placée entre
+           chaque produit.
+           
+           ===================================================== */
+
+
+        const objects = [
+
+
+            /* =================================================
+               PRODUIT 1 — MODÈLE À REMPLIR
+            ================================================= */
+
+           
+            {
+            name: "Pull en cachemire",
+            realName: "Loro Piana",
+            price: 1400,
+            image: "https://www.mytheresa.com/image/1094/1238/100/a0/P00897939.jpg"
+            },
+ {
+            name: "Bougie blanche minimaliste",
+            realName: "Brunello Cucinelli",
+            price: 500,
+            image: "https://www.mytheresa.com/image/1094/1238/100/a0/P00897939.jpg"
+            },
+
+        ];
+
+
+
+        /* =====================================================
+           VARIABLES DU JEU
+        ===================================================== */
+
+
+        let currentObject = null;
+
+        let usedObjects = [];
+
+        let totalScore = 0;
+
+        let questionNumber = 0;
+
+        let hasAnswered = false;
+
+
+
+        /* =====================================================
+           ELEMENTS HTML
+        ===================================================== */
+
+
+        const objectName =
+            document.getElementById(
+                "objectName"
+            );
+
+
+        const objectIcon =
+            document.getElementById(
+                "objectIcon"
+            );
+
+
+        const objectImage =
+            document.getElementById(
+                "objectImage"
+            );
+
+
+        const guessInput =
+            document.getElementById(
+                "guessInput"
+            );
+
+
+        const submitGuess =
+            document.getElementById(
+                "submitGuess"
+            );
+
+
+        const result =
+            document.getElementById(
+                "result"
+            );
+
+
+        const realName =
+            document.getElementById(
+                "realName"
+            );
+
+
+        const realPrice =
+            document.getElementById(
+                "realPrice"
+            );
+
+
+        const difference =
+            document.getElementById(
+                "difference"
+            );
+
+
+        const points =
+            document.getElementById(
+                "points"
+            );
+
+
+        const nextButton =
+            document.getElementById(
+                "nextButton"
+            );
+
+
+        const score =
+            document.getElementById(
+                "score"
+            );
+
+
+        const questionNumberElement =
+            document.getElementById(
+                "questionNumber"
+            );
+
+
+
+        /* =====================================================
+           RANDOM SÉCURISÉ
+        ===================================================== */
+
+
+        function secureRandomInt(max) {
+
+
+            if (max <= 0) {
+
+                return 0;
+            }
+
+
+            if (
+                window.crypto &&
+                window.crypto.getRandomValues
+            ) {
+
+
+                const array =
+                    new Uint32Array(1);
+
+
+                const maxUint32 =
+                    0xFFFFFFFF;
+
+
+                const limit =
+                    maxUint32 -
+                    (
+                        maxUint32 % max
+                    );
+
+
+                let value;
+
+
+                do {
+
+                    crypto.getRandomValues(
+                        array
+                    );
+
+                    value =
+                        array[0];
+
+                } while (
+                    value >= limit
+                );
+
+
+                return value % max;
+            }
+
+
+            return Math.floor(
+                Math.random() * max
+            );
+        }
+
+
+
+        /* =====================================================
+           CHOISIR UN OBJET
+           
+           Aucun objet n'apparaît deux fois
+           avant que toute la liste soit utilisée.
+        ===================================================== */
+
+
+        function getNextObject() {
+
+
+            if (
+                !Array.isArray(objects) ||
+                objects.length === 0
+            ) {
+
+                return null;
+            }
+
+
+            if (
+                usedObjects.length >=
+                objects.length
+            ) {
+
+                usedObjects = [];
+            }
+
+
+            const available =
+                objects
+                    .map(
+                        (_, index) => index
+                    )
+                    .filter(
+                        index =>
+                            !usedObjects.includes(
+                                index
+                            )
+                    );
+
+
+            if (
+                available.length === 0
+            ) {
+
+                usedObjects = [];
+
+                return getNextObject();
+            }
+
+
+            const randomPosition =
+                secureRandomInt(
+                    available.length
+                );
+
+
+            const selectedIndex =
+                available[
+                    randomPosition
+                ];
+
+
+            usedObjects.push(
+                selectedIndex
+            );
+
+
+            return objects[
+                selectedIndex
+            ];
+        }
+
+
+
+        /* =====================================================
+           CHARGER UN NOUVEL OBJET
+        ===================================================== */
+
+
+        function loadNextObject() {
+
+
+            currentObject =
+                getNextObject();
+
+
+            if (!currentObject) {
+
+
+                objectName.textContent =
+                    "Ajoute des objets dans le code.";
+
+
+                submitGuess.disabled =
+                    true;
+
+
+                return;
+            }
+
+
+            questionNumber++;
+
+
+            questionNumberElement.textContent =
+                questionNumber;
+
+
+
+            /* =================================================
+               IMAGE
+            ================================================= */
+
+
+            objectImage.onerror =
+                null;
+
+
+            if (
+                typeof currentObject.image ===
+                "string" &&
+                currentObject.image.trim() !== "" &&
+                !currentObject.image.startsWith(
+                    "URL DE L'IMAGE"
+                )
+            ) {
+
+
+                objectImage.src =
+                    currentObject.image;
+
+
+                objectImage.alt =
+                    currentObject.name;
+
+
+                objectImage.style.display =
+                    "block";
+
+
+                objectIcon.style.display =
+                    "none";
+
+
+                objectImage.onerror =
+                    function () {
+
+
+                        objectImage.style.display =
+                            "none";
+
+
+                        objectIcon.style.display =
+                            "block";
+                    };
+
+
+            } else {
+
+
+                objectImage.removeAttribute(
+                    "src"
+                );
+
+
+                objectImage.style.display =
+                    "none";
+
+
+                objectIcon.style.display =
+                    "block";
+            }
+
+
+
+            /* =================================================
+               NOM GÉNÉRIQUE
+               
+               Le vrai nom n'est PAS affiché ici.
+            ================================================= */
+
+
+            objectName.textContent =
+                currentObject.name;
+
+
+
+            /* =================================================
+               RESET DE LA RÉPONSE
+            ================================================= */
+
+
+            guessInput.value = "";
+
+            guessInput.disabled = false;
+
+            submitGuess.disabled = false;
+
+            hasAnswered = false;
+
+
+
+            /* =================================================
+               RESET DU RÉSULTAT
+            ================================================= */
+
+
+            result.classList.remove(
+                "show"
+            );
+
+
+            realName.textContent =
+                "—";
+
+
+            realPrice.textContent =
+                "—";
+
+
+            difference.textContent =
+                "—";
+
+
+            points.textContent =
+                "—";
+
+
+            points.className =
+                "points";
+
+
+
+            /* =================================================
+               FOCUS
+            ================================================= */
+
+
+            setTimeout(
+                () => {
+
+                    guessInput.focus();
+
+                },
+                100
+            );
+        }
+
+
+
+        /* =====================================================
+           CALCUL DES POINTS
+        ===================================================== */
+
+
+        function calculatePoints(
+            percentage
+        ) {
+
+
+            if (
+                percentage <= 5
+            ) {
+
+                return 100;
+            }
+
+
+            if (
+                percentage <= 10
+            ) {
+
+                return 90;
+            }
+
+
+            if (
+                percentage <= 15
+            ) {
+
+                return 80;
+            }
+
+
+            if (
+                percentage <= 20
+            ) {
+
+                return 70;
+            }
+
+
+            if (
+                percentage <= 25
+            ) {
+
+                return 60;
+            }
+
+
+            if (
+                percentage <= 30
+            ) {
+
+                return 50;
+            }
+
+
+            return 0;
+        }
+
+
+
+        /* =====================================================
+           FORMATAGE DU PRIX
+        ===================================================== */
+
+
+        function formatPrice(
+            price
+        ) {
+
+
+            return Number(
+                price
+            ).toLocaleString(
+                "fr-FR",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            ) + " €";
+        }
+
+
+
+        /* =====================================================
+           VALIDATION
+        ===================================================== */
+
+
+        function validateGuess() {
+
+
+            if (
+                hasAnswered ||
+                !currentObject
+            ) {
+
+                return;
+            }
+
+
+            const guess =
+                parseFloat(
+                    guessInput.value
+                );
+
+
+            if (
+                Number.isNaN(guess) ||
+                guess < 0
+            ) {
+
+                guessInput.focus();
+
+                return;
+            }
+
+
+            const price =
+                Number(
+                    currentObject.price
+                );
+
+
+            /*
+               Sécurité :
+               empêche un produit mal renseigné
+               de faire planter le jeu.
+            */
+
+
+            if (
+                Number.isNaN(price) ||
+                price < 0
+            ) {
+
+                alert(
+                    "Le prix de ce produit n'est pas correctement renseigné."
+                );
+
+                return;
+            }
+
+
+            hasAnswered = true;
+
+
+            guessInput.disabled = true;
+
+            submitGuess.disabled = true;
+
+
+
+            /* =================================================
+               CALCUL DE L'ÉCART
+            ================================================= */
+
+
+            const absoluteDifference =
+                Math.abs(
+                    guess - price
+                );
+
+
+            let percentage = 0;
+
+
+            if (
+                price > 0
+            ) {
+
+
+                percentage =
+                    (
+                        absoluteDifference /
+                        price
+                    ) * 100;
+
+
+            } else {
+
+
+                percentage =
+                    guess === 0
+                        ? 0
+                        : 100;
+            }
+
+
+
+            /* =================================================
+               POINTS
+            ================================================= */
+
+
+            const earnedPoints =
+                calculatePoints(
+                    percentage
+                );
+
+
+            totalScore +=
+                earnedPoints;
+
+
+            score.textContent =
+                totalScore;
+
+
+
+            /* =================================================
+               ⭐ RÉVÉLATION DU VRAI NOM
+            ================================================= */
+
+
+            realName.textContent =
+                currentObject.realName ||
+                "Nom non renseigné";
+
+
+
+            /* =================================================
+               ⭐ RÉVÉLATION DU VRAI PRIX
+            ================================================= */
+
+
+            realPrice.textContent =
+                formatPrice(
+                    price
+                );
+
+
+
+            /* =================================================
+               ÉCART
+            ================================================= */
+
+
+            difference.innerHTML =
+                `
+                Ton estimation :
+                <strong>
+                    ${formatPrice(guess)}
+                </strong>
+
+                <br>
+
+                Écart :
+                <strong>
+                    ${percentage.toFixed(1)} %
+                </strong>
+                `;
+
+
+
+            /* =================================================
+               POINTS AFFICHÉS
+            ================================================= */
+
+
+            if (
+                earnedPoints === 100
+            ) {
+
+
+                points.className =
+                    "points perfect";
+
+
+                points.textContent =
+                    "🎯 PARFAIT ! +100 POINTS";
+
+
+            } else if (
+                earnedPoints > 0
+            ) {
+
+
+                points.className =
+                    "points good";
+
+
+                points.textContent =
+                    `+${earnedPoints} POINTS`;
+
+
+            } else {
+
+
+                points.className =
+                    "points bad";
+
+
+                points.textContent =
+                    "0 POINT — TROP ÉLOIGNÉ !";
+            }
+
+
+
+            /* =================================================
+               AFFICHER LE RÉSULTAT
+            ================================================= */
+
+
+            result.classList.add(
+                "show"
+            );
+
+
+
+            /* =================================================
+               SCROLL
+            ================================================= */
+
+
+            setTimeout(
+                () => {
+
+
+                    result.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest"
+                    });
+
+
+                },
+                100
+            );
+        }
+
+
+
+        /* =====================================================
+           OBJET SUIVANT
+        ===================================================== */
+
+
+        function nextObject() {
+
+
+            if (
+                !hasAnswered
+            ) {
+
+                return;
+            }
+
+
+            loadNextObject();
+        }
+
+
+
+        /* =====================================================
+           BOUTON VALIDER
+        ===================================================== */
+
+
+        submitGuess.addEventListener(
+            "click",
+            validateGuess
+        );
+
+
+
+        /* =====================================================
+           BOUTON OBJET SUIVANT
+        ===================================================== */
+
+
+        nextButton.addEventListener(
+            "click",
+            nextObject
+        );
+
+
+
+        /* =====================================================
+           TOUCHE ENTRÉE
+        ===================================================== */
+
+
+        guessInput.addEventListener(
+            "keydown",
+            (event) => {
+
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+
+                    event.preventDefault();
+
+
+                    validateGuess();
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           PLEIN ÉCRAN
+        ===================================================== */
+
+
+        const fullscreenButton =
+            document.getElementById(
+                "btn-fullscreen"
+            );
+
+
+        const fullscreenLabel =
+            document.getElementById(
+                "fs-label"
+            );
+
+
+        fullscreenButton.addEventListener(
+            "click",
+            async () => {
+
+
+                try {
+
+
+                    if (
+                        !document.fullscreenElement
+                    ) {
+
+
+                        await document
+                            .documentElement
+                            .requestFullscreen();
+
+
+                        fullscreenLabel.textContent =
+                            "QUITTER";
+
+
+                    } else {
+
+
+                        await document
+                            .exitFullscreen();
+
+
+                        fullscreenLabel.textContent =
+                            "PLEIN ÉCRAN";
+                    }
+
+
+                } catch (error) {
+
+
+                    console.log(
+                        "Plein écran indisponible."
+                    );
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           CHANGEMENT DU MODE PLEIN ÉCRAN
+        ===================================================== */
+
+
+        document.addEventListener(
+            "fullscreenchange",
+            () => {
+
+
+                if (
+                    !document.fullscreenElement
+                ) {
+
+
+                    fullscreenLabel.textContent =
+                        "PLEIN ÉCRAN";
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           INITIALISATION
+        ===================================================== */
+
+
+        if (
+            objects.length > 0
+        ) {
+
+
+            loadNextObject();
+
+
+        } else {
+
+
+            objectName.textContent =
+                "Ajoute des objets dans le code.";
+
+
+            submitGuess.disabled =
+                true;
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>
