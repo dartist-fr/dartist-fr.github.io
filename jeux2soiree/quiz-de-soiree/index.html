@@ -1,0 +1,3270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quiz de Soirée — jeux2soiree</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#0b0616;
+    --panel:#140a26;
+    --pink:#ff2e88;
+    --cyan:#22e6ff;
+    --yellow:#ffe14d;
+    --green:#4dffa6;
+    --purple:#a855f7;
+    --orange:#f97316;
+    --text:#f3e9ff;
+    --muted:#9d8bc4;
+    --display:'Press Start 2P',monospace;
+    --body:'VT323',monospace;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    background:var(--bg);
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    padding:25px 15px 60px;
+    color:var(--text);
+    font-family:var(--body);
+    background-color:var(--bg);
+    background-image:
+        linear-gradient(rgba(124,58,237,.12) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(124,58,237,.12) 1px,transparent 1px),
+        radial-gradient(circle at 50% 0%,rgba(255,46,136,.15),transparent 55%),
+        radial-gradient(circle at 50% 100%,rgba(34,230,255,.12),transparent 55%);
+    background-size:40px 40px,40px 40px,100% 100%,100% 100%;
+    overflow-x:hidden;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:100;
+    background:repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2px,
+        rgba(0,0,0,.15) 3px,
+        rgba(0,0,0,.15) 4px
+    );
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.top-bar{
+    max-width:1100px;
+    margin:0 auto 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.btn-back,
+.btn-fs{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 16px;
+    font-family:var(--display);
+    font-size:.55rem;
+    text-decoration:none;
+    background:rgba(255,46,136,.05);
+}
+
+.btn-back{
+    color:var(--pink);
+    border:2px solid var(--pink);
+    box-shadow:0 0 0 2px var(--bg),4px 4px 0 rgba(255,46,136,.35);
+}
+
+.btn-fs{
+    color:var(--cyan);
+    border:2px solid var(--cyan);
+    box-shadow:0 0 0 2px var(--bg),4px 4px 0 rgba(34,230,255,.35);
+}
+
+.btn-back:hover,
+.btn-fs:hover{
+    transform:translate(-2px,-2px);
+}
+
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.credits{
+    font-family:var(--display);
+    font-size:.55rem;
+    color:var(--yellow);
+}
+
+.credits-infinity{
+    font-size:1rem;
+}
+
+header{
+    max-width:1000px;
+    margin:10px auto 25px;
+    padding:25px;
+    text-align:center;
+    background:rgba(20,10,38,.95);
+    border:2px solid var(--pink);
+    box-shadow:0 0 20px rgba(255,46,136,.15),6px 6px 0 rgba(255,46,136,.15);
+}
+
+.brand-name{
+    display:block;
+    margin-bottom:14px;
+    font-family:var(--display);
+    font-size:clamp(.7rem,2vw,1rem);
+    color:var(--cyan);
+    text-shadow:0 0 10px rgba(34,230,255,.8),2px 2px 0 #004d61;
+    letter-spacing:2px;
+}
+
+h1{
+    margin-bottom:12px;
+    font-family:var(--display);
+    font-size:clamp(1rem,4vw,2rem);
+    color:var(--pink);
+    text-shadow:0 0 8px rgba(255,46,136,.9),4px 4px 0 #4a0d2b;
+}
+
+.description{
+    color:var(--muted);
+    font-size:1.35rem;
+}
+
+.setup,
+.game{
+    max-width:1000px;
+    margin:0 auto;
+    padding:25px;
+    background:rgba(20,10,38,.96);
+    border:2px solid var(--cyan);
+    box-shadow:0 0 30px rgba(34,230,255,.08),7px 7px 0 rgba(0,0,0,.5);
+}
+
+.game{
+    display:none;
+    margin-top:25px;
+}
+
+.game.show{
+    display:block;
+    animation:appear .3s ease;
+}
+
+@keyframes appear{
+    from{opacity:0;transform:scale(.97)}
+    to{opacity:1;transform:scale(1)}
+}
+
+.setup-title{
+    margin-bottom:25px;
+    text-align:center;
+    font-family:var(--display);
+    font-size:.8rem;
+    color:var(--cyan);
+}
+
+.config-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.config-box{
+    padding:18px;
+    background:#090510;
+    border:2px solid var(--purple);
+}
+
+.config-label{
+    display:block;
+    margin-bottom:10px;
+    font-family:var(--display);
+    font-size:.5rem;
+    color:var(--muted);
+}
+
+select,
+input[type="number"]{
+    width:100%;
+    padding:13px;
+    outline:none;
+    color:white;
+    background:#12091f;
+    border:2px solid var(--cyan);
+    font-family:var(--body);
+    font-size:1.35rem;
+}
+
+.category-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.category-button,
+.difficulty-button,
+.mode-button{
+    padding:13px 8px;
+    color:white;
+    background:#12091f;
+    border:2px solid var(--purple);
+    font-family:var(--display);
+    font-size:.42rem;
+    transition:.15s;
+}
+
+.category-button:hover,
+.difficulty-button:hover,
+.mode-button:hover{
+    transform:translateY(-2px);
+}
+
+.category-button.active{
+    color:#000;
+    background:var(--cyan);
+    border-color:white;
+}
+
+.random-category{
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    color:var(--purple);
+    background:rgba(168,85,247,.1);
+    border:2px dashed var(--purple);
+    font-family:var(--display);
+    font-size:.5rem;
+}
+
+.random-category:hover{
+    color:white;
+    background:var(--purple);
+}
+
+.difficulty-row,
+.mode-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.difficulty-button.easy.active{
+    color:#000;
+    background:var(--green);
+    border-color:white;
+}
+
+.difficulty-button.medium.active{
+    color:#000;
+    background:var(--yellow);
+    border-color:white;
+}
+
+.difficulty-button.hard.active{
+    color:white;
+    background:var(--pink);
+    border-color:white;
+}
+
+.mode-button{
+    border-color:var(--orange);
+}
+
+.mode-button.active{
+    color:#000;
+    background:var(--orange);
+    border-color:white;
+}
+
+.availability{
+    margin-top:20px;
+    padding:15px;
+    text-align:center;
+    background:#090510;
+    border:2px solid var(--yellow);
+}
+
+.availability-label{
+    margin-bottom:8px;
+    font-family:var(--display);
+    font-size:.46rem;
+    color:var(--muted);
+}
+
+#availableQuestions{
+    font-family:var(--display);
+    font-size:.9rem;
+    color:var(--yellow);
+}
+
+#availabilityMessage{
+    margin-top:8px;
+    font-size:1.1rem;
+}
+
+.start-container{
+    margin-top:22px;
+}
+
+#startButton{
+    width:100%;
+    padding:20px;
+    color:#000;
+    background:var(--pink);
+    border:3px solid white;
+    font-family:var(--display);
+    font-size:.7rem;
+    box-shadow:6px 6px 0 #720c3d,0 0 20px rgba(255,46,136,.4);
+}
+
+#startButton:hover:not(:disabled){
+    transform:translate(-3px,-3px);
+    box-shadow:9px 9px 0 #720c3d,0 0 30px rgba(255,46,136,.7);
+}
+
+#startButton:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+}
+
+.game-info{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.info-box{
+    padding:15px;
+    text-align:center;
+    background:#090510;
+    border:2px solid var(--purple);
+}
+
+.info-label{
+    display:block;
+    margin-bottom:8px;
+    font-family:var(--display);
+    font-size:.43rem;
+    color:var(--muted);
+}
+
+.info-value{
+    font-family:var(--display);
+    font-size:.7rem;
+    color:var(--yellow);
+}
+
+.progress-container{
+    margin-bottom:25px;
+}
+
+.progress-text{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    font-family:var(--display);
+    font-size:.46rem;
+    color:var(--muted);
+}
+
+.progress-bar,
+.timer-bar{
+    width:100%;
+    height:14px;
+    background:#090510;
+    border:2px solid var(--cyan);
+}
+
+.progress-fill{
+    width:0;
+    height:100%;
+    background:var(--cyan);
+    transition:width .25s ease;
+}
+
+.timer-container{
+    max-width:600px;
+    margin:20px auto;
+    text-align:center;
+}
+
+.timer{
+    margin-bottom:10px;
+    font-family:var(--display);
+    font-size:1.1rem;
+    color:var(--green);
+}
+
+.timer.warning{
+    color:var(--pink);
+    animation:blink .5s steps(1) infinite;
+}
+
+@keyframes blink{
+    50%{opacity:.3}
+}
+
+.timer-fill{
+    width:100%;
+    height:100%;
+    background:var(--green);
+    transition:width .1s linear;
+}
+
+.presenter-panel{
+    display:none;
+    margin-bottom:20px;
+    padding:18px;
+    text-align:center;
+    background:#090510;
+    border:2px dashed var(--orange);
+}
+
+.presenter-panel.show{
+    display:block;
+}
+
+.presenter-label{
+    margin-bottom:12px;
+    font-family:var(--display);
+    font-size:.55rem;
+    color:var(--orange);
+}
+
+.reveal-button{
+    margin-top:12px;
+    padding:10px 15px;
+    color:var(--yellow);
+    background:transparent;
+    border:2px solid var(--yellow);
+    font-family:var(--display);
+    font-size:.45rem;
+}
+
+.presenter-answer{
+    display:none;
+    margin-top:12px;
+    color:var(--green);
+    font-size:1.5rem;
+}
+
+.presenter-answer.show{
+    display:block;
+}
+
+.question-box{
+    margin-bottom:20px;
+    padding:25px;
+    text-align:center;
+    background:#090510;
+    border:2px solid var(--yellow);
+    box-shadow:0 0 20px rgba(255,225,77,.08);
+}
+
+.question-number{
+    margin-bottom:18px;
+    font-family:var(--display);
+    font-size:.55rem;
+    color:var(--pink);
+}
+
+#question{
+    color:white;
+    font-family:var(--body);
+    font-size:clamp(2rem,4vw,3rem);
+    font-weight:bold;
+    line-height:1.15;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.answer{
+    min-height:90px;
+    padding:20px 18px;
+    color:white;
+    text-align:left;
+    background:#090510;
+    border:2px solid var(--purple);
+    box-shadow:4px 4px 0 rgba(0,0,0,.6);
+    font-family:var(--body);
+    font-size:1.5rem;
+    font-weight:bold;
+    transition:.15s;
+}
+
+.answer:hover:not(:disabled){
+    transform:translate(-3px,-3px);
+    border-color:var(--cyan);
+}
+
+.answer-letter{
+    display:inline-grid;
+    width:34px;
+    height:34px;
+    margin-right:12px;
+    place-items:center;
+    vertical-align:middle;
+    background:var(--purple);
+    font-family:var(--display);
+    font-size:.5rem;
+}
+
+.answer.correct{
+    background:rgba(77,255,166,.15);
+    border-color:var(--green);
+}
+
+.answer.correct .answer-letter{
+    color:#000;
+    background:var(--green);
+}
+
+.answer.wrong{
+    background:rgba(255,46,136,.15);
+    border-color:var(--pink);
+}
+
+.answer.wrong .answer-letter{
+    background:var(--pink);
+}
+
+.feedback{
+    min-height:35px;
+    margin-top:18px;
+    text-align:center;
+    font-family:var(--display);
+    font-size:.6rem;
+}
+
+.feedback.correct{
+    color:var(--green);
+}
+
+.feedback.wrong{
+    color:var(--pink);
+}
+
+#endScreen{
+    display:none;
+    padding:40px 20px;
+    text-align:center;
+}
+
+#endScreen.show{
+    display:block;
+}
+
+.end-icon{
+    margin-bottom:20px;
+    font-size:4rem;
+}
+
+.end-title{
+    margin-bottom:25px;
+    font-family:var(--display);
+    font-size:clamp(1rem,4vw,1.8rem);
+    color:var(--pink);
+}
+
+.final-score{
+    margin-bottom:15px;
+    font-family:var(--display);
+    font-size:clamp(1.5rem,6vw,3rem);
+    color:var(--green);
+}
+
+.final-message{
+    margin-bottom:30px;
+    color:var(--muted);
+    font-size:1.6rem;
+}
+
+.restart{
+    padding:16px 25px;
+    color:#000;
+    background:var(--pink);
+    border:3px solid white;
+    font-family:var(--display);
+    font-size:.6rem;
+    box-shadow:5px 5px 0 #720c3d;
+}
+
+footer{
+    max-width:1000px;
+    margin:40px auto 0;
+    padding-top:20px;
+    text-align:center;
+    border-top:1px solid rgba(124,58,237,.2);
+    font-family:var(--display);
+    font-size:.5rem;
+    color:var(--muted);
+}
+
+@media(max-width:650px){
+    body{padding:15px 10px 40px}
+    .credits{display:none}
+    .top-right{margin-left:auto}
+    header,.setup,.game{padding:15px}
+    .config-grid{grid-template-columns:1fr}
+    .category-row{grid-template-columns:1fr}
+    .difficulty-row,.mode-row{grid-template-columns:1fr}
+    .game-info{grid-template-columns:1fr 1fr}
+    .answers{grid-template-columns:1fr}
+    .answer{min-height:70px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <a href="../" class="btn-back">&lsaquo; HUB</a>
+
+    <div class="top-right">
+        <span class="credits">
+            CREDITS: <span class="credits-infinity">&infin;</span>
+        </span>
+
+        <button type="button" id="btn-fullscreen" class="btn-fs">
+            <span id="fs-label">PLEIN ÉCRAN</span>
+        </button>
+    </div>
+</div>
+
+<header>
+    <span class="brand-name">jeux2soiree</span>
+    <h1>🧠 QUIZ DE SOIRÉE</h1>
+    <p class="description">
+        Configure ta partie puis montre ce que tu sais.
+    </p>
+</header>
+
+<section class="setup" id="setup">
+
+    <div class="setup-title">
+        ⚙ CONFIGURATION DE LA PARTIE
+    </div>
+
+    <div class="config-grid">
+
+        <div class="config-box">
+            <span class="config-label">CATÉGORIE</span>
+
+            <div class="category-row">
+
+                <button type="button"
+                        class="category-button active"
+                        data-category="all">
+                    🎲 TOUT
+                </button>
+
+                <button type="button"
+                        class="category-button"
+                        data-category="culture">
+                    🧠 CULTURE
+                </button>
+
+                <button type="button"
+                        class="category-button"
+                        data-category="sport">
+                    ⚽ SPORT
+                </button>
+
+                <button type="button"
+                        class="category-button"
+                        data-category="sciences">
+                    🔬 SCIENCES
+                </button>
+
+                <button type="button"
+                        class="category-button"
+                        data-category="geographie">
+                    🌍 GÉOGRAPHIE
+                </button>
+
+                <button type="button"
+                        class="category-button"
+                        data-category="histoire">
+                    🏛 HISTOIRE
+                </button>
+
+            </div>
+
+            <button type="button"
+                    class="random-category"
+                    id="randomCategory">
+                🎲 CATÉGORIE ALÉATOIRE
+            </button>
+        </div>
+
+        <div class="config-box">
+            <span class="config-label">DIFFICULTÉ</span>
+
+            <div class="difficulty-row">
+
+                <button type="button"
+                        class="difficulty-button easy active"
+                        data-difficulty="easy">
+                    🟢 FACILE
+                </button>
+
+                <button type="button"
+                        class="difficulty-button medium"
+                        data-difficulty="medium">
+                    🟡 MOYEN
+                </button>
+
+                <button type="button"
+                        class="difficulty-button hard"
+                        data-difficulty="hard">
+                    🔴 DIFFICILE
+                </button>
+
+            </div>
+        </div>
+
+        <div class="config-box">
+            <span class="config-label">
+                NOMBRE DE QUESTIONS
+            </span>
+
+            <input type="number"
+                   id="questionAmount"
+                   min="1"
+                   max="1000"
+                   value="10">
+        </div>
+
+        <div class="config-box">
+            <span class="config-label">
+                TEMPS PAR QUESTION
+            </span>
+
+            <select id="questionTime">
+                <option value="5">5 secondes</option>
+                <option value="10">10 secondes</option>
+                <option value="15" selected>15 secondes</option>
+                <option value="20">20 secondes</option>
+                <option value="30">30 secondes</option>
+                <option value="45">45 secondes</option>
+                <option value="60">60 secondes</option>
+            </select>
+        </div>
+
+        <div class="config-box" style="grid-column:1/-1">
+            <span class="config-label">MODE DE JEU</span>
+
+            <div class="mode-row">
+
+                <button type="button"
+                        class="mode-button active"
+                        data-mode="classic">
+                    🎮 CLASSIQUE
+                </button>
+
+                <button type="button"
+                        class="mode-button"
+                        data-mode="presenter">
+                    🎤 PRÉSENTATEUR
+                </button>
+
+                <button type="button"
+                        class="mode-button"
+                        data-mode="minute">
+                    ⚡ MAX EN 1 MINUTE
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="availability">
+
+        <div class="availability-label">
+            QUESTIONS DISPONIBLES AVEC CES RÉGLAGES
+        </div>
+
+        <div id="availableQuestions">0</div>
+
+        <div id="availabilityMessage">
+            Chargement...
+        </div>
+
+    </div>
+
+    <div class="start-container">
+        <button type="button" id="startButton">
+            🚀 LANCER LA PARTIE
+        </button>
+    </div>
+
+</section>
+
+<main class="game" id="game">
+
+    <div class="game-info">
+
+        <div class="info-box">
+            <span class="info-label">SCORE</span>
+            <span class="info-value" id="score">0</span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">QUESTION</span>
+            <span class="info-value" id="questionCounter">1 / 10</span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">CATÉGORIE</span>
+            <span class="info-value" id="gameCategory">—</span>
+        </div>
+
+        <div class="info-box">
+            <span class="info-label">DIFFICULTÉ</span>
+            <span class="info-value" id="gameDifficulty">—</span>
+        </div>
+
+    </div>
+
+    <div class="progress-container">
+
+        <div class="progress-text">
+            <span>PROGRESSION</span>
+            <span id="progressPercent">0%</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+    </div>
+
+    <div class="timer-container" id="timerContainer">
+
+        <div class="timer" id="timer">
+            ⏱ 15
+        </div>
+
+        <div class="timer-bar">
+            <div class="timer-fill" id="timerFill"></div>
+        </div>
+
+    </div>
+
+    <div class="presenter-panel" id="presenterPanel">
+
+        <div class="presenter-label">
+            🎤 MODE PRÉSENTATEUR
+        </div>
+
+        <div>
+            Le présentateur peut lire la question aux joueurs.
+        </div>
+
+        <button type="button"
+                class="reveal-button"
+                id="revealButton">
+            👁 AFFICHER LA RÉPONSE
+        </button>
+
+        <div class="presenter-answer"
+             id="presenterAnswer">
+            —
+        </div>
+
+    </div>
+
+    <section class="question-box">
+
+        <div class="question-number"
+             id="questionNumber">
+            QUESTION 01
+        </div>
+
+        <div id="question">
+            Chargement...
+        </div>
+
+    </section>
+
+    <section class="answers" id="answers"></section>
+
+    <div class="feedback" id="feedback"></div>
+
+    <section id="endScreen">
+
+        <div class="end-icon">🏆</div>
+
+        <div class="end-title">
+            QUIZ TERMINÉ !
+        </div>
+
+        <div class="final-score" id="finalScore">
+            0 POINTS
+        </div>
+
+        <div class="final-message" id="finalMessage">
+            —
+        </div>
+
+        <button type="button"
+                class="restart"
+                id="restartButton">
+            🔄 NOUVELLE PARTIE
+        </button>
+
+    </section>
+
+</main>
+
+<footer>
+    © jeux2soiree — HIGH SCORE 999999
+</footer>
+
+<script>
+
+/* ============================================================
+   BANQUE DE DONNÉES
+   ============================================================
+
+   IMPORTANT :
+
+   Cette version ne fabrique PLUS de questions avec :
+
+       [VARIANTE 1]
+       [VARIANTE 2]
+       etc.
+
+   Chaque question générée possède :
+   - une formulation différente réelle
+   - une bonne réponse connue
+   - trois mauvaises réponses issues du même type de données
+   - une catégorie
+   - une difficulté
+
+   Les questions d'une partie sont tirées SANS remise.
+============================================================ */
+
+
+/* ============================================================
+   DONNÉES CULTURE
+============================================================ */
+
+const DATA = {
+
+culture: [
+
+["France","Paris"],
+["Italie","Rome"],
+["Espagne","Madrid"],
+["Portugal","Lisbonne"],
+["Allemagne","Berlin"],
+["Belgique","Bruxelles"],
+["Pays-Bas","Amsterdam"],
+["Autriche","Vienne"],
+["Suisse","Berne"],
+["Grèce","Athènes"],
+["Irlande","Dublin"],
+["Royaume-Uni","Londres"],
+["Norvège","Oslo"],
+["Suède","Stockholm"],
+["Finlande","Helsinki"],
+["Danemark","Copenhague"],
+["Pologne","Varsovie"],
+["Hongrie","Budapest"],
+["Roumanie","Bucarest"],
+["Bulgarie","Sofia"],
+["Croatie","Zagreb"],
+["Slovénie","Ljubljana"],
+["Slovaquie","Bratislava"],
+["Tchéquie","Prague"],
+["Estonie","Tallinn"],
+["Lettonie","Riga"],
+["Lituanie","Vilnius"],
+["Islande","Reykjavik"],
+["Maroc","Rabat"],
+["Algérie","Alger"],
+["Tunisie","Tunis"],
+["Égypte","Le Caire"],
+["Turquie","Ankara"],
+["Japon","Tokyo"],
+["Chine","Pékin"],
+["Corée du Sud","Séoul"],
+["Inde","New Delhi"],
+["Thaïlande","Bangkok"],
+["Vietnam","Hanoï"],
+["Indonésie","Jakarta"],
+["Australie","Canberra"],
+["Nouvelle-Zélande","Wellington"],
+["Canada","Ottawa"],
+["États-Unis","Washington D.C."],
+["Mexique","Mexico"],
+["Brésil","Brasília"],
+["Argentine","Buenos Aires"],
+["Chili","Santiago"],
+["Pérou","Lima"],
+["Colombie","Bogota"],
+["Équateur","Quito"],
+["Uruguay","Montevideo"],
+["Paraguay","Asunción"],
+["Bolivie","Sucre"],
+["Venezuela","Caracas"],
+["Afrique du Sud","Pretoria"],
+["Kenya","Nairobi"],
+["Éthiopie","Addis-Abeba"],
+["Nigeria","Abuja"],
+["Ghana","Accra"],
+["Sénégal","Dakar"],
+["Tanzanie","Dodoma"],
+["Ouganda","Kampala"],
+["Rwanda","Kigali"],
+["Madagascar","Antananarivo"],
+["Maurice","Port-Louis"],
+["Cuba","La Havane"],
+["Jamaïque","Kingston"],
+["Islande","Reykjavik"],
+["Pakistan","Islamabad"],
+["Afghanistan","Kaboul"],
+["Iran","Téhéran"],
+["Irak","Bagdad"],
+["Jordanie","Amman"],
+["Liban","Beyrouth"],
+["Israël","Jérusalem"],
+["Arabie saoudite","Riyad"],
+["Émirats arabes unis","Abou Dabi"],
+["Qatar","Doha"],
+["Oman","Mascate"],
+["Népal","Katmandou"],
+["Mongolie","Oulan-Bator"],
+["Philippines","Manille"],
+["Malaisie","Kuala Lumpur"],
+["Singapour","Singapour"],
+["Brunei","Bandar Seri Begawan"],
+["Cambodge","Phnom Penh"],
+["Laos","Vientiane"],
+["Myanmar","Naypyidaw"],
+["Sri Lanka","Sri Jayawardenepura Kotte"],
+["Fidji","Suva"],
+["Samoa","Apia"],
+["Tonga","Nuku'alofa"],
+["Vanuatu","Port-Vila"],
+["Papouasie-Nouvelle-Guinée","Port Moresby"],
+["Maldives","Malé"]
+
+],
+
+/* ============================================================
+   SPORT
+============================================================ */
+
+sport: [
+
+["football","11 joueurs"],
+["basket-ball","5 joueurs"],
+["handball","7 joueurs"],
+["volley-ball","6 joueurs"],
+["rugby à XV","15 joueurs"],
+["water-polo","7 joueurs"],
+["baseball","9 joueurs"],
+["hockey sur glace","6 joueurs"],
+["football américain","11 joueurs"],
+["cricket","11 joueurs"],
+["tennis","1 ou 2 joueurs"],
+["badminton","1 ou 2 joueurs"],
+["beach-volley","2 joueurs"],
+["futsal","5 joueurs"],
+["rugby à VII","7 joueurs"],
+["hockey sur gazon","11 joueurs"],
+["polo","4 joueurs"],
+["curling","4 joueurs"],
+["biathlon","ski et tir"],
+["triathlon","natation, cyclisme et course"],
+["pentathlon moderne","cinq disciplines"],
+["décathlon","dix épreuves"],
+["heptathlon","sept épreuves"],
+["marathon","42,195 km"],
+["semi-marathon","21,0975 km"],
+["Tour de France","cyclisme"],
+["Roland-Garros","tennis"],
+["Wimbledon","tennis"],
+["US Open","tennis"],
+["Open d'Australie","tennis"],
+["Super Bowl","football américain"],
+["NBA","basket-ball"],
+["Champions League","football"],
+["Coupe du monde FIFA","football"],
+["Coupe du monde de rugby","rugby"],
+["Coupe Davis","tennis"],
+["Masters 1000","tennis"],
+["Ligue des champions","football"],
+["Six Nations","rugby"],
+["Stanley Cup","hockey sur glace"],
+["Vuelta","cyclisme"],
+["Giro d'Italia","cyclisme"],
+["Paris-Roubaix","cyclisme"],
+["Liège-Bastogne-Liège","cyclisme"],
+["Flèche Wallonne","cyclisme"],
+["Grand Prix de Monaco","Formule 1"],
+["24 Heures du Mans","automobile"],
+["Indianapolis 500","automobile"],
+["MotoGP","moto"],
+["Formule 1","monoplace"],
+["X Games","sports extrêmes"],
+["Dakar","rallye-raid"],
+["Rallye Monte-Carlo","rallye automobile"],
+["Tournoi des Six Nations","rugby"],
+["Euro","football"],
+["Copa América","football"],
+["AfroBasket","basket-ball"],
+["EuroBasket","basket-ball"],
+["March Madness","basket-ball universitaire"],
+["Stanley Cup","hockey sur glace"],
+["Clásico","football"],
+["Derby d'Angleterre","football"],
+["Kentucky Derby","courses hippiques"],
+["Wimbledon","tennis"],
+["Ryder Cup","golf"],
+["The Masters","golf"],
+["British Open","golf"],
+["US Open","golf"],
+["Tournoi olympique","Jeux olympiques"],
+["Jeux paralympiques","sport"],
+["Ironman","triathlon"],
+["UTMB","trail"],
+["Davis Cup","tennis"],
+["Fed Cup","tennis"],
+["Volleyball Nations League","volley-ball"],
+["Handball Champions League","handball"],
+["Euroleague","basket-ball"],
+["NHL","hockey sur glace"],
+["NFL","football américain"],
+["MLB","baseball"],
+["ATP","tennis masculin"],
+["WTA","tennis féminin"],
+["UCI","cyclisme"],
+["World Athletics","athlétisme"],
+["World Aquatics","sports aquatiques"],
+["FIFA","football"],
+["UEFA","football européen"],
+["FIBA","basket-ball"],
+["World Rugby","rugby"],
+["ITF","tennis"],
+["IOC","Jeux olympiques"],
+["UFC","arts martiaux mixtes"],
+["WRC","rallye automobile"],
+["WEC","endurance automobile"]
+
+],
+
+/* ============================================================
+   SCIENCES
+============================================================ */
+
+sciences: [
+
+["Mercure","planète la plus proche du Soleil"],
+["Vénus","planète la plus chaude du Système solaire"],
+["Terre","planète où nous vivons"],
+["Mars","planète rouge"],
+["Jupiter","plus grande planète du Système solaire"],
+["Saturne","planète célèbre pour ses anneaux"],
+["Uranus","géante glacée"],
+["Neptune","planète la plus éloignée du Soleil"],
+["Lune","satellite naturel de la Terre"],
+["Soleil","étoile du Système solaire"],
+["Eau","H₂O"],
+["Oxygène","O"],
+["Hydrogène","H"],
+["Carbone","C"],
+["Azote","N"],
+["Hélium","He"],
+["Fer","Fe"],
+["Or","Au"],
+["Argent","Ag"],
+["Cuivre","Cu"],
+["Sodium","Na"],
+["Potassium","K"],
+["Calcium","Ca"],
+["Magnésium","Mg"],
+["Chlore","Cl"],
+["Carbone","C"],
+["Phosphore","P"],
+["Soufre","S"],
+["Silicium","Si"],
+["Néon","Ne"],
+["Argon","Ar"],
+["Cerveau","organe principal du système nerveux"],
+["Cœur","organe qui pompe le sang"],
+["Poumons","organes principaux de la respiration"],
+["Foie","organe important du métabolisme"],
+["Reins","organes qui filtrent le sang"],
+["ADN","molécule contenant l'information génétique"],
+["ARN","acide ribonucléique"],
+["neurone","cellule du système nerveux"],
+["globule rouge","cellule qui transporte principalement l'oxygène"],
+["globule blanc","cellule impliquée dans les défenses immunitaires"],
+["gravité","force d'attraction entre les masses"],
+["photosynthèse","processus utilisé par les plantes pour produire de la matière organique"],
+["évaporation","passage de l'état liquide à l'état gazeux"],
+["fusion","passage de l'état solide à l'état liquide"],
+["solidification","passage de l'état liquide à l'état solide"],
+["condensation","passage de l'état gazeux à l'état liquide"],
+["ébullition","vaporisation dans tout le liquide"],
+["thermomètre","instrument servant à mesurer la température"],
+["baromètre","instrument servant à mesurer la pression atmosphérique"],
+["microscope","instrument permettant d'observer de très petits objets"],
+["télescope","instrument permettant d'observer des objets célestes"],
+["Newton","unité de force"],
+["Joule","unité d'énergie"],
+["Watt","unité de puissance"],
+["Pascal","unité de pression"],
+["Volt","unité de tension électrique"],
+["Ampère","unité d'intensité électrique"],
+["Ohm","unité de résistance électrique"],
+["Hertz","unité de fréquence"],
+["mètre","unité de longueur du Système international"],
+["kilogramme","unité de masse du Système international"],
+["seconde","unité de temps du Système international"],
+["Kelvin","unité de température du Système international"],
+["ADN","acide désoxyribonucléique"],
+["bactérie","organisme unicellulaire procaryote"],
+["virus","agent infectieux acellulaire"],
+["cellule","unité de base du vivant"],
+["mitose","division cellulaire donnant deux cellules filles"],
+["mutation","modification de la séquence de l'ADN"],
+["atome","unité de base d'un élément chimique"],
+["proton","particule chargée positivement"],
+["électron","particule chargée négativement"],
+["neutron","particule électriquement neutre"],
+["photon","quantum de lumière"],
+["oxygène","gaz indispensable à la respiration humaine"],
+["dioxyde de carbone","CO₂"],
+["ozone","O₃"],
+["acide chlorhydrique","HCl"],
+["méthane","CH₄"],
+["ammoniac","NH₃"],
+["NaCl","chlorure de sodium"],
+["H₂O","eau"],
+["CO₂","dioxyde de carbone"],
+["O₂","dioxygène"],
+["N₂","diazote"],
+["Einstein","relativité"],
+["Darwin","théorie de l'évolution par sélection naturelle"],
+["Newton","gravitation"],
+["Pasteur","travaux sur les microbes et la vaccination"],
+["Curie","travaux sur la radioactivité"],
+["Galilée","astronomie"],
+["Copernic","modèle héliocentrique"],
+["Archimède","principe de la poussée des fluides"],
+["Fleming","découverte de la pénicilline"],
+["Watson et Crick","modèle de la structure de l'ADN"],
+["Hubble","astronomie et expansion de l'Univers"]
+
+],
+
+/* ============================================================
+   GÉOGRAPHIE
+============================================================ */
+
+geographie: [
+
+["Pacifique","plus grand océan"],
+["Atlantique","océan séparant notamment l'Europe et l'Amérique"],
+["Indien","océan situé notamment entre l'Afrique, l'Asie et l'Australie"],
+["Arctique","océan autour du pôle Nord"],
+["Antarctique","continent autour du pôle Sud"],
+["Everest","plus haute montagne au-dessus du niveau de la mer"],
+["Himalaya","chaîne de montagnes où se trouve l'Everest"],
+["Alpes","chaîne de montagnes européenne"],
+["Andes","chaîne de montagnes d'Amérique du Sud"],
+["Rocheuses","chaîne de montagnes d'Amérique du Nord"],
+["Sahara","vaste désert chaud d'Afrique"],
+["Amazonie","vaste région de forêt tropicale d'Amérique du Sud"],
+["Nil","fleuve d'Afrique du Nord-Est"],
+["Amazone","grand fleuve d'Amérique du Sud"],
+["Mississippi","grand fleuve des États-Unis"],
+["Danube","fleuve européen"],
+["Rhône","fleuve français"],
+["Seine","fleuve traversant Paris"],
+["Loire","plus long fleuve entièrement situé en France"],
+["Garonne","fleuve du sud-ouest de la France"],
+["Méditerranée","mer située entre l'Europe, l'Afrique et l'Asie"],
+["Mer Rouge","mer située entre l'Afrique et la péninsule Arabique"],
+["Mer Noire","mer située entre l'Europe de l'Est et l'Asie occidentale"],
+["Baltique","mer du nord de l'Europe"],
+["Manche","mer séparant notamment la France et le Royaume-Uni"],
+["Gibraltar","détroit entre l'Europe et l'Afrique"],
+["Panama","pays traversé par un célèbre canal interocéanique"],
+["Madagascar","grande île de l'océan Indien"],
+["Groenland","grande île arctique"],
+["Islande","île de l'Atlantique Nord"],
+["Sicile","île italienne"],
+["Sardaigne","île italienne"],
+["Corse","île française de Méditerranée"],
+["Crète","île grecque"],
+["Chypre","île de Méditerranée orientale"],
+["Japon","archipel d'Asie orientale"],
+["Indonésie","grand archipel d'Asie du Sud-Est"],
+["Philippines","archipel d'Asie du Sud-Est"],
+["Nouvelle-Zélande","pays insulaire du Pacifique"],
+["Australie","pays et continent"],
+["Europe","continent"],
+["Asie","continent"],
+["Afrique","continent"],
+["Amérique du Nord","continent"],
+["Amérique du Sud","continent"],
+["Océanie","région comprenant notamment l'Australie et les îles du Pacifique"],
+["Antarctique","continent autour du pôle Sud"],
+["Équateur","ligne séparant les hémisphères nord et sud"],
+["Tropique du Cancer","ligne de latitude située au nord de l'équateur"],
+["Tropique du Capricorne","ligne de latitude située au sud de l'équateur"],
+["Méridien de Greenwich","méridien de référence pour la longitude"],
+["latitude","position nord-sud"],
+["longitude","position est-ouest"],
+["Paris","capitale de la France"],
+["Rome","capitale de l'Italie"],
+["Madrid","capitale de l'Espagne"],
+["Lisbonne","capitale du Portugal"],
+["Berlin","capitale de l'Allemagne"],
+["Bruxelles","capitale de la Belgique"],
+["Amsterdam","capitale des Pays-Bas"],
+["Vienne","capitale de l'Autriche"],
+["Berne","capitale de la Suisse"],
+["Athènes","capitale de la Grèce"],
+["Dublin","capitale de l'Irlande"],
+["Londres","capitale du Royaume-Uni"],
+["Oslo","capitale de la Norvège"],
+["Stockholm","capitale de la Suède"],
+["Helsinki","capitale de la Finlande"],
+["Copenhague","capitale du Danemark"],
+["Varsovie","capitale de la Pologne"],
+["Budapest","capitale de la Hongrie"],
+["Prague","capitale de la Tchéquie"],
+["Zagreb","capitale de la Croatie"],
+["Rabat","capitale du Maroc"],
+["Alger","capitale de l'Algérie"],
+["Tunis","capitale de la Tunisie"],
+["Le Caire","capitale de l'Égypte"],
+["Tokyo","capitale du Japon"],
+["Pékin","capitale de la Chine"],
+["Séoul","capitale de la Corée du Sud"],
+["New Delhi","capitale de l'Inde"],
+["Ottawa","capitale du Canada"],
+["Washington D.C.","capitale des États-Unis"],
+["Brasília","capitale du Brésil"],
+["Buenos Aires","capitale de l'Argentine"],
+["Lima","capitale du Pérou"],
+["Santiago","capitale du Chili"],
+["Bogota","capitale de la Colombie"],
+["Quito","capitale de l'Équateur"],
+["Canberra","capitale de l'Australie"],
+["Nairobi","capitale du Kenya"],
+["Dakar","capitale du Sénégal"],
+["Le Kilimandjaro","montagne d'Afrique"],
+["Mont Blanc","plus haut sommet des Alpes"],
+["Mer Morte","lac salé situé au Moyen-Orient"]
+
+],
+
+/* ============================================================
+   HISTOIRE
+============================================================ */
+
+histoire: [
+
+["1789","début de la Révolution française"],
+["1804","Napoléon devient empereur des Français"],
+["1815","défaite de Napoléon à Waterloo"],
+["1914","début de la Première Guerre mondiale"],
+["1918","fin de la Première Guerre mondiale"],
+["1939","début de la Seconde Guerre mondiale"],
+["1945","fin de la Seconde Guerre mondiale"],
+["1944","Débarquement de Normandie"],
+["1947","indépendance de l'Inde"],
+["1969","premiers pas humains sur la Lune"],
+["1989","chute du mur de Berlin"],
+["1991","disparition de l'URSS"],
+["1492","premier voyage de Christophe Colomb vers les Amériques"],
+["1517","publication des 95 thèses de Luther"],
+["1783","traité de Paris mettant fin à la guerre d'indépendance américaine"],
+["1848","abolition de l'esclavage dans les colonies françaises"],
+["1870","début de la guerre franco-prussienne"],
+["1871","Commune de Paris"],
+["1905","Einstein publie plusieurs travaux majeurs de physique"],
+["1917","Révolution russe"],
+["1929","début de la Grande Dépression après le krach de Wall Street"],
+["1940","appel du 18 Juin"],
+["1957","signature du traité de Rome"],
+["1961","construction du mur de Berlin"],
+["1962","indépendance de l'Algérie"],
+["1968","mouvements sociaux de Mai 68 en France"],
+["1973","premier choc pétrolier"],
+["1981","première victoire de la gauche à l'élection présidentielle française de la Ve République"],
+["1992","traité de Maastricht"],
+["2002","mise en circulation de l'euro sous forme de billets et pièces"],
+["Napoléon Bonaparte","empereur des Français"],
+["Jules César","dirigeant romain"],
+["Cléopâtre","reine d'Égypte"],
+["Jeanne d'Arc","figure française de la guerre de Cent Ans"],
+["Louis XIV","Roi-Soleil"],
+["Charlemagne","empereur couronné en 800"],
+["Alexandre le Grand","roi de Macédoine"],
+["Christophe Colomb","explorateur associé au voyage de 1492"],
+["Gutenberg","imprimerie européenne"],
+["Galilée","astronome italien"],
+["Copernic","modèle héliocentrique"],
+["Léonard de Vinci","artiste et savant de la Renaissance"],
+["Michel-Ange","artiste de la Renaissance"],
+["Mozart","compositeur autrichien"],
+["Beethoven","compositeur allemand"],
+["Shakespeare","dramaturge anglais"],
+["Victor Hugo","écrivain français"],
+["Molière","dramaturge français"],
+["Napoléon III","empereur des Français"],
+["Louis XVI","roi de France pendant la Révolution française"],
+["Marie-Antoinette","reine de France"],
+["Henri IV","roi de France"],
+["François Ier","roi de France de la Renaissance"],
+["Richelieu","cardinal et homme d'État français"],
+["Vercingétorix","chef gaulois"],
+["Clovis","roi des Francs"],
+["Guillaume le Conquérant","duc de Normandie et roi d'Angleterre"],
+["Richard Cœur de Lion","roi d'Angleterre"],
+["Élisabeth Ire","reine d'Angleterre"],
+["George Washington","premier président des États-Unis"],
+["Abraham Lincoln","président américain pendant la guerre de Sécession"],
+["Martin Luther King Jr.","militant américain des droits civiques"],
+["Nelson Mandela","président sud-africain et figure de la lutte contre l'apartheid"],
+["Mahatma Gandhi","figure majeure de l'indépendance de l'Inde"],
+["Winston Churchill","Premier ministre britannique pendant une grande partie de la Seconde Guerre mondiale"],
+["Franklin D. Roosevelt","président américain pendant une grande partie de la Seconde Guerre mondiale"],
+["Charles de Gaulle","chef de la France libre puis président français"],
+["Simón Bolívar","figure des indépendances sud-américaines"],
+["Hammurabi","roi de Babylone associé à un célèbre code de lois"],
+["Alexandre le Grand","conquérant de l'Antiquité"],
+["Socrate","philosophe grec"],
+["Platon","philosophe grec"],
+["Aristote","philosophe grec"],
+["Périclès","homme politique athénien"],
+["Auguste","premier empereur romain"],
+["Constantin","empereur romain associé à la légalisation du christianisme"],
+["Justinianien","empereur byzantin"],
+["Marco Polo","voyageur vénitien"],
+["Vasco de Gama","navigateur portugais"],
+["Magellan","expédition ayant réalisé le premier tour du monde"],
+["James Cook","explorateur britannique"],
+["Isaac Newton","scientifique anglais"],
+["Albert Einstein","physicien du XXe siècle"],
+["Marie Curie","scientifique ayant travaillé sur la radioactivité"],
+["Louis Pasteur","scientifique français"],
+["Charles Darwin","naturaliste britannique"],
+["Alan Turing","mathématicien et pionnier de l'informatique"],
+["Rosa Parks","figure du mouvement des droits civiques aux États-Unis"],
+["Amelia Earhart","aviatrice américaine"],
+["Youri Gagarine","premier humain dans l'espace"],
+["Neil Armstrong","premier humain à marcher sur la Lune"],
+["Rosa Parks","militante américaine des droits civiques"],
+["Titanic","paquebot ayant coulé en 1912"],
+["Bastille","forteresse prise le 14 juillet 1789"],
+["Versailles","palais royal français"],
+["Waterloo","bataille de 1815"],
+["Verdun","bataille majeure de la Première Guerre mondiale"],
+["Stalingrad","bataille majeure de la Seconde Guerre mondiale"],
+["Pearl Harbor","attaque japonaise contre une base américaine en 1941"],
+["Normandie","région du débarquement allié de 1944"],
+["Berlin","ville où se trouvait le mur de Berlin"],
+["Rome","centre majeur de la civilisation romaine"],
+["Athènes","cité grecque antique"]
+
+]
+
+};
+
+
+/* ============================================================
+   RANDOM CRYPTOGRAPHIQUE
+============================================================ */
+
+function secureRandomInt(max){
+
+    if(max <= 0) return 0;
+
+    const array = new Uint32Array(1);
+    const limit =
+        Math.floor(4294967296 / max) * max;
+
+    let value;
+
+    do{
+        crypto.getRandomValues(array);
+        value = array[0];
+    }while(value >= limit);
+
+    return value % max;
+}
+
+
+/* ============================================================
+   MÉLANGE
+============================================================ */
+
+function shuffle(array){
+
+    const result = [...array];
+
+    for(let i=result.length-1;i>0;i--){
+
+        const j = secureRandomInt(i+1);
+
+        [result[i],result[j]] =
+        [result[j],result[i]];
+    }
+
+    return result;
+}
+
+
+/* ============================================================
+   NOMS DES CATÉGORIES
+============================================================ */
+
+const categoryNames = {
+    all:"TOUTES",
+    culture:"CULTURE",
+    sport:"SPORT",
+    sciences:"SCIENCES",
+    geographie:"GÉOGRAPHIE",
+    histoire:"HISTOIRE"
+};
+
+const difficultyNames = {
+    easy:"FACILE",
+    medium:"MOYEN",
+    hard:"DIFFICILE"
+};
+
+
+/* ============================================================
+   BANQUE
+============================================================ */
+
+const questionBank = [];
+
+
+/* ============================================================
+   AJOUT QUESTION
+============================================================ */
+
+function addQuestion(question,correct,wrong,category,difficulty){
+
+    const answers =
+        shuffle([
+            correct,
+            ...wrong.filter(x=>x !== correct)
+        ]).slice(0,4);
+
+    if(
+        answers.length !== 4 ||
+        !answers.includes(correct)
+    ){
+        return;
+    }
+
+    questionBank.push({
+        question,
+        answers,
+        correct:answers.indexOf(correct),
+        category,
+        difficulty
+    });
+}
+
+
+/* ============================================================
+   CONSTRUCTION D'UNE BANQUE PROPRE
+============================================================ */
+
+function buildQuestionBank(){
+
+    questionBank.length = 0;
+
+    const templates = {
+
+        culture:[
+            (s,a)=>`Quelle est la capitale de ${s} ?`,
+            (s,a)=>`Quelle ville est la capitale de ${s} ?`,
+            (s,a)=>`Si tu visites ${s}, quelle capitale peux-tu découvrir ?`
+        ],
+
+        sport:[
+            (s,a)=>`Quelle réponse correspond à ${s} ?`,
+            (s,a)=>`À quoi associe-t-on principalement ${s} ?`,
+            (s,a)=>`Dans quelle discipline ou compétition retrouve-t-on ${s} ?`
+        ],
+
+        sciences:[
+            (s,a)=>`Quelle information correspond à ${s} ?`,
+            (s,a)=>`En sciences, que désigne ${s} ?`,
+            (s,a)=>`Que faut-il associer à ${s} ?`
+        ],
+
+        geographie:[
+            (s,a)=>`Que peut-on associer à ${s} ?`,
+            (s,a)=>`Quelle affirmation concerne ${s} ?`,
+            (s,a)=>`En géographie, que désigne ${s} ?`
+        ],
+
+        histoire:[
+            (s,a)=>`À quoi associe-t-on ${s} ?`,
+            (s,a)=>`Quelle information historique concerne ${s} ?`,
+            (s,a)=>`Que faut-il retenir à propos de ${s} ?`
+        ]
+
+    };
+
+
+    Object.entries(DATA).forEach(
+        ([category,data])=>{
+
+            data.forEach(
+                ([subject,answer],index)=>{
+
+                    const others =
+                        data
+                        .filter((_,i)=>i !== index)
+                        .map(x=>x[1])
+                        .filter(x=>x !== answer);
+
+                    const uniqueOthers =
+                        [...new Set(others)];
+
+                    if(uniqueOthers.length < 3){
+                        return;
+                    }
+
+                    /*
+                     * Chaque formulation correspond à une
+                     * vraie question différente.
+                     *
+                     * Aucun texte "VARIANTE X".
+                     */
+
+                    templates[category].forEach(
+                        template=>{
+
+                            addQuestion(
+                                template(subject,answer),
+                                answer,
+                                shuffle(uniqueOthers).slice(0,3),
+                                category,
+                                "easy"
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * Création de questions plus difficiles à partir
+     * des mêmes données, mais avec des formulations
+     * inversées lorsque les données le permettent.
+     */
+
+    DATA.culture.forEach(
+        ([country,capital],index)=>{
+
+            const others =
+                DATA.culture
+                .filter((_,i)=>i!==index)
+                .map(x=>x[0]);
+
+            if(others.length>=3){
+
+                addQuestion(
+                    `Dans quel pays se trouve la capitale ${capital} ?`,
+                    country,
+                    shuffle(others).slice(0,3),
+                    "culture",
+                    "medium"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.sport.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.sport
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Quelle proposition correspond à ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "sport",
+                    "medium"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.sciences.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.sciences
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Quelle est la bonne association scientifique pour ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "sciences",
+                    "medium"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.geographie.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.geographie
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Quelle information correspond à ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "geographie",
+                    "medium"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.histoire.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.histoire
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Quelle association historique est correcte pour ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "histoire",
+                    "medium"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * QUESTIONS DIFFICILES :
+     *
+     * On utilise uniquement des données dont la réponse
+     * est explicite dans la banque.
+     *
+     * Elles ne sont pas copiées avec "[VARIANTE X]".
+     */
+
+    DATA.culture.forEach(
+        ([country,capital],index)=>{
+
+            const others =
+                DATA.culture
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==capital);
+
+            if(others.length>=3){
+
+                addQuestion(
+                    `Parmi ces villes, laquelle est officiellement la capitale de ${country} ?`,
+                    capital,
+                    shuffle(others).slice(0,3),
+                    "culture",
+                    "hard"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.sport.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.sport
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Quelle réponse est exacte concernant ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "sport",
+                    "hard"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.sciences.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.sciences
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Laquelle de ces propositions décrit correctement ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "sciences",
+                    "hard"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.geographie.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.geographie
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Laquelle de ces affirmations est correcte à propos de ${subject} ?`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "geographie",
+                    "hard"
+                );
+
+            }
+
+        }
+    );
+
+
+    DATA.histoire.forEach(
+        ([subject,answer],index)=>{
+
+            const others =
+                DATA.histoire
+                .filter((_,i)=>i!==index)
+                .map(x=>x[1])
+                .filter(x=>x!==answer);
+
+            if([...new Set(others)].length>=3){
+
+                addQuestion(
+                    `Laquelle de ces associations historiques est correcte ? ${subject}`,
+                    answer,
+                    shuffle([...new Set(others)]).slice(0,3),
+                    "histoire",
+                    "hard"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * SUPPRESSION DES DOUBLONS
+     */
+
+    const unique = new Map();
+
+    questionBank.forEach(q=>{
+
+        const key =
+            q.question
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g,"")
+            .toLowerCase()
+            .trim();
+
+        if(!unique.has(key)){
+            unique.set(key,q);
+        }
+
+    });
+
+    questionBank.length = 0;
+
+    unique.forEach(q=>{
+        questionBank.push(q);
+    });
+
+
+    /*
+     * Mélange général de la banque.
+     */
+
+    const mixed = shuffle(questionBank);
+
+    questionBank.length = 0;
+
+    questionBank.push(...mixed);
+
+
+    console.log(
+        "Questions réelles chargées :",
+        questionBank.length
+    );
+
+}
+
+
+/* ============================================================
+   ÉLÉMENTS
+============================================================ */
+
+let selectedCategory = "all";
+let selectedDifficulty = "easy";
+let selectedMode = "classic";
+let selectedQuestionAmount = 10;
+let selectedTime = 15;
+
+let questions = [];
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+let gameEnded = false;
+
+let timerInterval = null;
+let timeLeft = 15;
+let globalTimeLeft = 60;
+
+const setup =
+    document.getElementById("setup");
+
+const game =
+    document.getElementById("game");
+
+const startButton =
+    document.getElementById("startButton");
+
+const questionAmount =
+    document.getElementById("questionAmount");
+
+const questionTime =
+    document.getElementById("questionTime");
+
+const availableQuestions =
+    document.getElementById("availableQuestions");
+
+const availabilityMessage =
+    document.getElementById("availabilityMessage");
+
+const scoreElement =
+    document.getElementById("score");
+
+const questionCounter =
+    document.getElementById("questionCounter");
+
+const gameCategory =
+    document.getElementById("gameCategory");
+
+const gameDifficulty =
+    document.getElementById("gameDifficulty");
+
+const questionElement =
+    document.getElementById("question");
+
+const answersElement =
+    document.getElementById("answers");
+
+const feedback =
+    document.getElementById("feedback");
+
+const questionNumber =
+    document.getElementById("questionNumber");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const progressPercent =
+    document.getElementById("progressPercent");
+
+const timer =
+    document.getElementById("timer");
+
+const timerFill =
+    document.getElementById("timerFill");
+
+const timerContainer =
+    document.getElementById("timerContainer");
+
+const presenterPanel =
+    document.getElementById("presenterPanel");
+
+const presenterAnswer =
+    document.getElementById("presenterAnswer");
+
+const revealButton =
+    document.getElementById("revealButton");
+
+const endScreen =
+    document.getElementById("endScreen");
+
+const finalScore =
+    document.getElementById("finalScore");
+
+const finalMessage =
+    document.getElementById("finalMessage");
+
+const restartButton =
+    document.getElementById("restartButton");
+
+
+/* ============================================================
+   FILTRAGE
+============================================================ */
+
+function getFilteredQuestions(){
+
+    return questionBank.filter(q=>{
+
+        const categoryOK =
+            selectedCategory === "all" ||
+            q.category === selectedCategory;
+
+        const difficultyOK =
+            q.difficulty === selectedDifficulty;
+
+        return categoryOK && difficultyOK;
+
+    });
+
+}
+
+
+/* ============================================================
+   COMPTEUR
+============================================================ */
+
+function updateAvailability(){
+
+    const available =
+        getFilteredQuestions().length;
+
+    availableQuestions.textContent =
+        available;
+
+    let requested =
+        parseInt(questionAmount.value) || 1;
+
+    if(selectedMode === "minute"){
+
+        requested = Math.min(
+            available,
+            1000
+        );
+
+        questionAmount.value =
+            requested;
+
+        questionAmount.disabled =
+            true;
+
+        questionTime.disabled =
+            true;
+
+    }else{
+
+        questionAmount.disabled =
+            false;
+
+        questionTime.disabled =
+            false;
+
+    }
+
+    selectedQuestionAmount =
+        Math.max(1,requested);
+
+    questionAmount.max =
+        Math.max(1,available);
+
+    if(available === 0){
+
+        availabilityMessage.textContent =
+            "⚠ Aucune question disponible.";
+
+        availabilityMessage.style.color =
+            "var(--pink)";
+
+        startButton.disabled =
+            true;
+
+        return;
+    }
+
+    if(
+        selectedMode !== "minute" &&
+        selectedQuestionAmount > available
+    ){
+
+        availabilityMessage.textContent =
+            `⚠ ${available} questions disponibles avec ces réglages.`;
+
+        availabilityMessage.style.color =
+            "var(--pink)";
+
+        startButton.disabled =
+            true;
+
+    }else{
+
+        if(selectedMode === "minute"){
+
+            availabilityMessage.textContent =
+                `✓ ${available} questions disponibles. Le chrono dure 1 minute.`;
+
+        }else{
+
+            availabilityMessage.textContent =
+                `✓ ${selectedQuestionAmount} question${selectedQuestionAmount>1?"s":""} seront utilisées.`;
+
+        }
+
+        availabilityMessage.style.color =
+            "var(--green)";
+
+        startButton.disabled =
+            false;
+    }
+
+}
+
+
+/* ============================================================
+   CATÉGORIES
+============================================================ */
+
+document
+.querySelectorAll(".category-button")
+.forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        document
+        .querySelectorAll(".category-button")
+        .forEach(b=>b.classList.remove("active"));
+
+        button.classList.add("active");
+
+        selectedCategory =
+            button.dataset.category;
+
+        updateAvailability();
+
+    });
+
+});
+
+
+/* ============================================================
+   CATÉGORIE ALÉATOIRE
+============================================================ */
+
+document
+.getElementById("randomCategory")
+.addEventListener("click",()=>{
+
+    const categories = [
+        "culture",
+        "sport",
+        "sciences",
+        "geographie",
+        "histoire"
+    ];
+
+    selectedCategory =
+        categories[
+            secureRandomInt(categories.length)
+        ];
+
+    document
+    .querySelectorAll(".category-button")
+    .forEach(button=>{
+
+        button.classList.toggle(
+            "active",
+            button.dataset.category === selectedCategory
+        );
+
+    });
+
+    updateAvailability();
+
+});
+
+
+/* ============================================================
+   DIFFICULTÉ
+============================================================ */
+
+document
+.querySelectorAll(".difficulty-button")
+.forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        document
+        .querySelectorAll(".difficulty-button")
+        .forEach(b=>b.classList.remove("active"));
+
+        button.classList.add("active");
+
+        selectedDifficulty =
+            button.dataset.difficulty;
+
+        updateAvailability();
+
+    });
+
+});
+
+
+/* ============================================================
+   MODE
+============================================================ */
+
+document
+.querySelectorAll(".mode-button")
+.forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        document
+        .querySelectorAll(".mode-button")
+        .forEach(b=>b.classList.remove("active"));
+
+        button.classList.add("active");
+
+        selectedMode =
+            button.dataset.mode;
+
+        updateAvailability();
+
+    });
+
+});
+
+
+/* ============================================================
+   NOMBRE
+============================================================ */
+
+questionAmount.addEventListener(
+    "input",
+    updateAvailability
+);
+
+
+/* ============================================================
+   PRÉPARATION
+============================================================ */
+
+function prepareGame(){
+
+    const filtered =
+        getFilteredQuestions();
+
+    if(!filtered.length){
+        return;
+    }
+
+    /*
+     * TRÈS IMPORTANT :
+     *
+     * shuffle() crée une copie de la banque.
+     *
+     * slice() prend ensuite des questions différentes.
+     *
+     * Donc aucune question ne peut être répétée
+     * dans une même partie.
+     */
+
+    questions =
+        shuffle(filtered)
+        .slice(
+            0,
+            Math.min(
+                selectedQuestionAmount,
+                filtered.length
+            )
+        );
+
+    currentQuestion = 0;
+    score = 0;
+    answered = false;
+    gameEnded = false;
+
+    globalTimeLeft = 60;
+
+    scoreElement.textContent = "0";
+
+    setup.style.display = "none";
+    game.classList.add("show");
+
+    if(selectedMode === "presenter"){
+
+        presenterPanel.classList.add("show");
+
+    }else{
+
+        presenterPanel.classList.remove("show");
+
+    }
+
+    showQuestion();
+
+    if(selectedMode === "minute"){
+        startGlobalTimer();
+    }
+
+}
+
+
+/* ============================================================
+   AFFICHER QUESTION
+============================================================ */
+
+function showQuestion(){
+
+    if(gameEnded){
+        return;
+    }
+
+    clearInterval(timerInterval);
+
+    answered = false;
+
+    const data =
+        questions[currentQuestion];
+
+    if(!data){
+
+        finishGame();
+
+        return;
+    }
+
+    questionElement.textContent =
+        data.question;
+
+    questionNumber.textContent =
+        "QUESTION " +
+        String(currentQuestion+1)
+        .padStart(2,"0");
+
+    if(selectedMode === "minute"){
+
+        questionCounter.textContent =
+            `${currentQuestion+1} / ∞`;
+
+        progressFill.style.width =
+            "0%";
+
+        progressPercent.textContent =
+            "MODE 1 MINUTE";
+
+    }else{
+
+        questionCounter.textContent =
+            `${currentQuestion+1} / ${questions.length}`;
+
+        const progress =
+            (currentQuestion / questions.length) * 100;
+
+        progressFill.style.width =
+            progress + "%";
+
+        progressPercent.textContent =
+            Math.round(progress) + "%";
+
+    }
+
+    gameCategory.textContent =
+        categoryNames[data.category];
+
+    gameDifficulty.textContent =
+        difficultyNames[data.difficulty];
+
+    feedback.textContent =
+        "";
+
+    feedback.className =
+        "feedback";
+
+    presenterAnswer.classList.remove("show");
+
+    presenterAnswer.textContent =
+        data.answers[data.correct];
+
+    revealButton.textContent =
+        "👁 AFFICHER LA RÉPONSE";
+
+    answersElement.innerHTML =
+        "";
+
+    const letters =
+        ["A","B","C","D"];
+
+    data.answers.forEach(
+        (answer,index)=>{
+
+            const button =
+                document.createElement("button");
+
+            button.type =
+                "button";
+
+            button.className =
+                "answer";
+
+            const letter =
+                document.createElement("span");
+
+            letter.className =
+                "answer-letter";
+
+            letter.textContent =
+                letters[index];
+
+            button.appendChild(letter);
+
+            button.appendChild(
+                document.createTextNode(
+                    answer
+                )
+            );
+
+            button.addEventListener(
+                "click",
+                ()=>checkAnswer(index)
+            );
+
+            answersElement.appendChild(
+                button
+            );
+
+        }
+    );
+
+    if(selectedMode === "minute"){
+
+        updateGlobalTimer();
+
+    }else{
+
+        startQuestionTimer();
+
+    }
+
+}
+
+
+/* ============================================================
+   TIMER QUESTION
+============================================================ */
+
+function startQuestionTimer(){
+
+    timeLeft =
+        selectedTime;
+
+    updateQuestionTimer();
+
+    timerInterval =
+        setInterval(()=>{
+
+            timeLeft -= .1;
+
+            updateQuestionTimer();
+
+            if(timeLeft <= 0){
+
+                clearInterval(timerInterval);
+
+                timeLeft = 0;
+
+                updateQuestionTimer();
+
+                if(!answered){
+
+                    checkAnswer(-1);
+
+                }
+
+            }
+
+        },100);
+
+}
+
+
+function updateQuestionTimer(){
+
+    const seconds =
+        Math.ceil(timeLeft);
+
+    timer.textContent =
+        `⏱ ${seconds}`;
+
+    const percent =
+        Math.max(
+            0,
+            (timeLeft / selectedTime) * 100
+        );
+
+    timerFill.style.width =
+        percent + "%";
+
+    if(timeLeft <= 5){
+
+        timer.classList.add("warning");
+
+        timerFill.style.background =
+            "var(--pink)";
+
+    }else{
+
+        timer.classList.remove("warning");
+
+        timerFill.style.background =
+            "var(--green)";
+
+    }
+
+}
+
+
+/* ============================================================
+   MODE 1 MINUTE
+============================================================ */
+
+function startGlobalTimer(){
+
+    clearInterval(timerInterval);
+
+    globalTimeLeft =
+        60;
+
+    updateGlobalTimer();
+
+    timerInterval =
+        setInterval(()=>{
+
+            globalTimeLeft -= .1;
+
+            updateGlobalTimer();
+
+            if(globalTimeLeft <= 0){
+
+                globalTimeLeft = 0;
+
+                updateGlobalTimer();
+
+                clearInterval(timerInterval);
+
+                finishGame();
+
+            }
+
+        },100);
+
+}
+
+
+function updateGlobalTimer(){
+
+    const seconds =
+        Math.ceil(globalTimeLeft);
+
+    timer.textContent =
+        `⚡ ${seconds}s`;
+
+    timerFill.style.width =
+        Math.max(
+            0,
+            globalTimeLeft / 60 * 100
+        ) + "%";
+
+    if(globalTimeLeft <= 10){
+
+        timer.classList.add("warning");
+
+        timerFill.style.background =
+            "var(--pink)";
+
+    }else{
+
+        timer.classList.remove("warning");
+
+        timerFill.style.background =
+            "var(--green)";
+
+    }
+
+}
+
+
+/* ============================================================
+   RÉPONSE
+============================================================ */
+
+function checkAnswer(selected){
+
+    if(answered || gameEnded){
+        return;
+    }
+
+    answered = true;
+
+    if(selectedMode !== "minute"){
+
+        clearInterval(timerInterval);
+
+    }
+
+    const data =
+        questions[currentQuestion];
+
+    const buttons =
+        document.querySelectorAll(".answer");
+
+    buttons.forEach(
+        (button,index)=>{
+
+            button.disabled = true;
+
+            if(index === data.correct){
+
+                button.classList.add("correct");
+
+            }
+
+            if(
+                index === selected &&
+                selected !== data.correct
+            ){
+
+                button.classList.add("wrong");
+
+            }
+
+        }
+    );
+
+
+    if(selected === data.correct){
+
+        let points = 100;
+
+        if(selectedMode !== "minute"){
+
+            points +=
+                Math.round(timeLeft * 5);
+
+        }
+
+        score += points;
+
+        scoreElement.textContent =
+            score;
+
+        feedback.textContent =
+            `✓ BONNE RÉPONSE ! +${points}`;
+
+        feedback.className =
+            "feedback correct";
+
+        playCorrectSound();
+
+    }else{
+
+        feedback.textContent =
+            selected === -1
+            ? "⏱ TEMPS ÉCOULÉ !"
+            : "✕ MAUVAISE RÉPONSE !";
+
+        feedback.className =
+            "feedback wrong";
+
+        playWrongSound();
+
+    }
+
+
+    /*
+     * MODE 1 MINUTE :
+     *
+     * Le chrono global continue.
+     *
+     * Il ne repart PAS à zéro.
+     *
+     * Chaque réponse entraîne immédiatement
+     * l'affichage d'une nouvelle question.
+     */
+
+    if(selectedMode === "minute"){
+
+        setTimeout(()=>{
+
+            if(!gameEnded){
+
+                currentQuestion++;
+
+                if(
+                    currentQuestion >= questions.length
+                ){
+
+                    finishGame();
+
+                }else{
+
+                    showQuestion();
+
+                }
+
+            }
+
+        },120);
+
+        return;
+    }
+
+
+    setTimeout(
+        nextQuestion,
+        800
+    );
+
+}
+
+
+/* ============================================================
+   QUESTION SUIVANTE
+============================================================ */
+
+function nextQuestion(){
+
+    if(gameEnded){
+        return;
+    }
+
+    currentQuestion++;
+
+    if(
+        currentQuestion >= questions.length
+    ){
+
+        finishGame();
+
+    }else{
+
+        showQuestion();
+
+    }
+
+}
+
+
+/* ============================================================
+   FIN
+============================================================ */
+
+function finishGame(){
+
+    if(gameEnded){
+        return;
+    }
+
+    gameEnded = true;
+
+    clearInterval(timerInterval);
+
+    progressFill.style.width =
+        "100%";
+
+    progressPercent.textContent =
+        "100%";
+
+    document
+    .querySelector(".question-box")
+    .style.display =
+        "none";
+
+    answersElement.style.display =
+        "none";
+
+    timerContainer.style.display =
+        "none";
+
+    presenterPanel.classList.remove(
+        "show"
+    );
+
+    if(selectedMode === "minute"){
+
+        finalScore.textContent =
+            `${currentQuestion} QUESTIONS`;
+
+        finalMessage.textContent =
+            `⚡ Tu as répondu à ${currentQuestion} question${currentQuestion>1?"s":""} en 1 minute et obtenu ${score} points !`;
+
+    }else{
+
+        finalScore.textContent =
+            `${score} POINTS`;
+
+        const percentage =
+            questions.length
+            ? score /
+              (questions.length * 175)
+            : 0;
+
+        if(percentage >= .85){
+
+            finalMessage.textContent =
+                "🔥 INCROYABLE ! Tu es une véritable encyclopédie !";
+
+        }else if(percentage >= .65){
+
+            finalMessage.textContent =
+                "🏆 Excellent ! Très gros score !";
+
+        }else if(percentage >= .45){
+
+            finalMessage.textContent =
+                "😎 Solide ! Tu connais bien tes classiques.";
+
+        }else if(percentage >= .25){
+
+            finalMessage.textContent =
+                "👍 Pas mal ! Tu peux encore progresser.";
+
+        }else{
+
+            finalMessage.textContent =
+                "😂 Il va falloir réviser un peu !";
+
+        }
+
+    }
+
+    endScreen.classList.add("show");
+
+    playWinnerSound();
+
+}
+
+
+/* ============================================================
+   MODE PRÉSENTATEUR
+============================================================ */
+
+revealButton.addEventListener(
+    "click",
+    ()=>{
+
+        presenterAnswer.classList.toggle(
+            "show"
+        );
+
+        if(
+            presenterAnswer.classList.contains("show")
+        ){
+
+            revealButton.textContent =
+                "🙈 CACHER LA RÉPONSE";
+
+        }else{
+
+            revealButton.textContent =
+                "👁 AFFICHER LA RÉPONSE";
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   SONS
+============================================================ */
+
+let audioContext = null;
+
+function getAudio(){
+
+    if(!audioContext){
+
+        audioContext =
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    return audioContext;
+}
+
+
+function playTone(
+    frequency,
+    duration,
+    type="square"
+){
+
+    try{
+
+        const audio =
+            getAudio();
+
+        const oscillator =
+            audio.createOscillator();
+
+        const gain =
+            audio.createGain();
+
+        oscillator.type =
+            type;
+
+        oscillator.frequency.value =
+            frequency;
+
+        gain.gain.setValueAtTime(
+            .04,
+            audio.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audio.destination
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audio.currentTime + duration
+        );
+
+    }catch(error){}
+
+}
+
+
+function playCorrectSound(){
+
+    playTone(784,.08);
+
+    setTimeout(
+        ()=>playTone(1047,.12),
+        80
+    );
+
+}
+
+
+function playWrongSound(){
+
+    playTone(
+        180,
+        .18,
+        "sawtooth"
+    );
+
+}
+
+
+function playWinnerSound(){
+
+    [523,659,784,1047]
+    .forEach(
+        (note,index)=>{
+
+            setTimeout(
+                ()=>playTone(note,.12),
+                index * 120
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   PLEIN ÉCRAN
+============================================================ */
+
+const fullscreenButton =
+    document.getElementById("btn-fullscreen");
+
+const fullscreenLabel =
+    document.getElementById("fs-label");
+
+fullscreenButton.addEventListener(
+    "click",
+    async()=>{
+
+        try{
+
+            if(!document.fullscreenElement){
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+                fullscreenLabel.textContent =
+                    "QUITTER";
+
+            }else{
+
+                await document.exitFullscreen();
+
+                fullscreenLabel.textContent =
+                    "PLEIN ÉCRAN";
+
+            }
+
+        }catch(error){
+
+            console.log(
+                "Plein écran indisponible."
+            );
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "fullscreenchange",
+    ()=>{
+
+        if(!document.fullscreenElement){
+
+            fullscreenLabel.textContent =
+                "PLEIN ÉCRAN";
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   LANCER
+============================================================ */
+
+startButton.addEventListener(
+    "click",
+    ()=>{
+
+        if(startButton.disabled){
+            return;
+        }
+
+        selectedQuestionAmount =
+            parseInt(
+                questionAmount.value
+            ) || 10;
+
+        selectedTime =
+            parseInt(
+                questionTime.value
+            ) || 15;
+
+        prepareGame();
+
+    }
+);
+
+
+/* ============================================================
+   REJOUER
+============================================================ */
+
+restartButton.addEventListener(
+    "click",
+    ()=>{
+
+        clearInterval(timerInterval);
+
+        game.classList.remove("show");
+
+        setup.style.display =
+            "block";
+
+        endScreen.classList.remove("show");
+
+        document
+        .querySelector(".question-box")
+        .style.display =
+            "block";
+
+        answersElement.style.display =
+            "grid";
+
+        timerContainer.style.display =
+            "block";
+
+        updateAvailability();
+
+    }
+);
+
+
+/* ============================================================
+   INITIALISATION
+============================================================ */
+
+buildQuestionBank();
+
+/*
+ * Vérification automatique.
+ */
+
+console.log(
+    `Quiz chargé : ${questionBank.length} questions`
+);
+
+console.log(
+    "Facile :",
+    questionBank.filter(q=>q.difficulty==="easy").length
+);
+
+console.log(
+    "Moyen :",
+    questionBank.filter(q=>q.difficulty==="medium").length
+);
+
+console.log(
+    "Difficile :",
+    questionBank.filter(q=>q.difficulty==="hard").length
+);
+
+updateAvailability();
+
+</script>
+
+</body>
+</html>
