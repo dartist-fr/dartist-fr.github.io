@@ -873,6 +873,35 @@ function quitGame(){
 
 
 /* =========================================================
+   RÉINITIALISER LA CONNEXION AVANT UN NOUVEL ESSAI
+========================================================= */
+
+function resetConnection(){
+
+  if(connection){
+
+    try{
+      connection.close();
+    }catch(e){}
+
+    connection = null;
+
+  }
+
+  if(peer){
+
+    try{
+      peer.destroy();
+    }catch(e){}
+
+    peer = null;
+
+  }
+
+}
+
+
+/* =========================================================
    NOUVELLE PARTIE
 ========================================================= */
 
@@ -922,11 +951,62 @@ function showNetwork(){
 
 function makeCode(){
 
-  return 'BN' +
-    Math.random()
-      .toString(36)
-      .slice(2,5)
-      .toUpperCase();
+  /* On évite 0/O, 1/I/L pour ne pas confondre
+     les codes recopiés à la main entre deux téléphones. */
+
+  const chars =
+    '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+
+  let code = 'BN';
+
+  for(let i=0;i<4;i++){
+
+    code +=
+      chars[
+        Math.floor(
+          Math.random() * chars.length
+        )
+      ];
+
+  }
+
+  return code;
+
+}
+
+
+/* =========================================================
+   MESSAGES D'ERREUR RÉSEAU LISIBLES
+========================================================= */
+
+function friendlyPeerError(type){
+
+  const messages = {
+
+    'peer-unavailable':
+      'Salon introuvable. Vérifie le code (majuscules, sans espace) ou demande à l’hôte de recréer un salon.',
+
+    'network':
+      'Connexion réseau perdue. Vérifie ta connexion et réessaie.',
+
+    'disconnected':
+      'Déconnecté du serveur. Réessaie dans quelques secondes.',
+
+    'server-error':
+      'Le serveur de connexion est indisponible. Réessaie plus tard.',
+
+    'unavailable-id':
+      'Ce code est déjà utilisé, réessaie.',
+
+    'browser-incompatible':
+      'Ton navigateur ne supporte pas le jeu en ligne.'
+
+  };
+
+  return (
+    messages[type] ||
+    ('Erreur de connexion (' + type + '). Réessaie.')
+  );
 
 }
 
@@ -944,6 +1024,8 @@ function hostOnline(){
     return;
 
   }
+
+  resetConnection();
 
   const id = makeCode();
 
@@ -997,7 +1079,7 @@ function hostOnline(){
   peer.on('error',e=>{
 
     $('networkInfo').textContent =
-      'Erreur : ' + e.type;
+      friendlyPeerError(e.type);
 
   });
 
@@ -1022,7 +1104,8 @@ function joinOnline(){
     $('roomInput')
       .value
       .trim()
-      .toUpperCase();
+      .toUpperCase()
+      .replace(/\s+/g,'');
 
   if(!id){
 
@@ -1031,6 +1114,8 @@ function joinOnline(){
     return;
 
   }
+
+  resetConnection();
 
   player = 1;
 
@@ -1051,7 +1136,7 @@ function joinOnline(){
   peer.on('error',e=>{
 
     $('networkInfo').textContent =
-      'Erreur : ' + e.type;
+      friendlyPeerError(e.type);
 
   });
 
