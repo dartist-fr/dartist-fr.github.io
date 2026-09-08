@@ -1,0 +1,2843 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bataille navale — jeux2soiree</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+<style>
+:root{
+  --bg:#0b0616;
+  --panel:#160b29;
+  --pink:#ff2e88;
+  --cyan:#22e6ff;
+  --green:#4dffa6;
+  --yellow:#ffe14d;
+  --muted:#aa98c8;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  background:var(--bg);
+  color:#fff;
+  font:23px VT323,monospace;
+  min-height:100vh;
+  background-image:
+    linear-gradient(#7c3aed1b 1px,transparent 1px),
+    linear-gradient(90deg,#7c3aed1b 1px,transparent 1px),
+    radial-gradient(circle at 50% 0,#ff2e8827,transparent 45%);
+  background-size:40px 40px,40px 40px,100% 100%;
+}
+
+main{
+  max-width:1080px;
+  margin:auto;
+  padding:25px 15px 55px;
+}
+
+header,
+.panel{
+  background:#160b29ee;
+  border:2px solid var(--cyan);
+  box-shadow:
+    6px 6px #0009,
+    0 0 25px #22e6ff24;
+}
+
+header{
+  border-color:var(--pink);
+  padding:25px;
+  margin-bottom:25px;
+}
+
+header span,
+h1,
+h2,
+button{
+  font-family:'Press Start 2P',monospace;
+}
+
+header span{
+  color:var(--cyan);
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+h1{
+  font-size:clamp(22px,5vw,42px);
+  line-height:1.35;
+  color:var(--pink);
+  text-shadow:4px 4px #55112f;
+  margin:16px 0;
+}
+
+header p{
+  color:var(--muted);
+  margin:0;
+}
+
+.panel{
+  text-align:center;
+  padding:25px;
+}
+
+h2{
+  font-size:15px;
+  line-height:1.6;
+  color:var(--yellow);
+}
+
+button{
+  color:#fff;
+  background:#241143;
+  border:2px solid var(--cyan);
+  padding:15px;
+  cursor:pointer;
+  font-size:11px;
+  line-height:1.55;
+  box-shadow:4px 4px #0009;
+  transition:.12s;
+}
+
+button:hover:not(:disabled){
+  transform:translate(-2px,-2px);
+  box-shadow:
+    6px 6px #0009,
+    0 0 18px #22e6ff66;
+}
+
+button:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.modes,
+.fleet{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.modes button{
+  min-width:220px;
+}
+
+.modes small{
+  font:22px VT323;
+  color:var(--muted);
+}
+
+.status{
+  margin-bottom:22px;
+  padding:14px;
+  border:2px solid var(--green);
+  background:#4dffa610;
+  text-align:center;
+  min-height:60px;
+}
+
+.fleet{
+  margin:18px;
+}
+
+.ship{
+  position:relative;
+}
+
+.ship.selected{
+  border-color:var(--green);
+  background:#4dffa622;
+}
+
+.ship.placed{
+  opacity:.32;
+}
+
+.controls{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.boards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:26px;
+  margin-top:24px;
+  text-align:center;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  grid-template-rows:repeat(10,1fr);
+  gap:2px;
+  width:min(100%,490px);
+  aspect-ratio:1;
+  margin:auto;
+  padding:3px;
+  border:2px solid var(--cyan);
+  background:#090511;
+  user-select:none;
+  overflow:hidden;
+}
+
+.cell{
+  border:0;
+  box-shadow:none;
+  padding:0;
+  background:#191230;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:VT323,monospace;
+}
+
+.cell:hover:not(:disabled){
+  background:#24315a;
+  transform:none;
+  box-shadow:none;
+}
+
+.cell.shipcell{
+  background:#8655cb;
+  box-shadow:inset 0 0 0 1px #b98cff;
+}
+
+.cell.hit{
+  background:var(--pink);
+}
+
+.cell.miss{
+  background:#16546e;
+}
+
+.cell.hit:after{
+  content:'✹';
+  font:clamp(10px,2vw,20px) VT323;
+}
+
+.cell.miss:after{
+  content:'•';
+  color:var(--cyan);
+  font-size:24px;
+}
+
+.cell.preview{
+  background:#4dffa677;
+}
+
+.cell.bad{
+  background:#ff2e8866;
+}
+
+/* =========================
+   BATEAUX SUR LA GRILLE
+========================= */
+
+.board-wrap{
+  position:relative;
+  width:min(100%,490px);
+  aspect-ratio:1;
+  margin:auto;
+}
+
+.board-wrap .board{
+  width:100%;
+  height:100%;
+}
+
+.placed-ship{
+  position:absolute;
+  z-index:5;
+  background:#8655cb;
+  border:2px solid #b98cff;
+  box-shadow:
+    0 0 8px #8655cb99,
+    inset 0 0 8px #ffffff22;
+  cursor:pointer;
+}
+
+.placed-ship:hover{
+  border-color:var(--green);
+  z-index:20;
+}
+
+.ship-dots{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  pointer-events:none;
+}
+
+.ship-dot{
+  width:7px;
+  height:7px;
+  background:#fff;
+  opacity:.7;
+}
+
+.placed-ship.selected-ship{
+  border-color:var(--green);
+  box-shadow:
+    0 0 12px var(--green),
+    inset 0 0 8px #ffffff33;
+}
+
+.rotate-ship{
+  position:absolute;
+  width:30px;
+  height:30px;
+  padding:0;
+  right:-14px;
+  top:-14px;
+  background:#090511;
+  color:var(--yellow);
+  border:2px solid var(--yellow);
+  font-family:VT323,monospace;
+  font-size:20px;
+  line-height:20px;
+  box-shadow:3px 3px #000;
+  z-index:10;
+}
+
+.rotate-ship:hover{
+  color:#fff;
+  background:#2b1b42;
+  transform:none;
+  box-shadow:3px 3px #000;
+}
+
+.grid-frame{
+  display:grid;
+  grid-template-columns:26px 1fr;
+  grid-template-rows:22px 1fr;
+  gap:4px;
+  width:min(100%,490px);
+  margin:auto;
+}
+
+.corner{
+  grid-column:1;
+  grid-row:1;
+}
+
+.col-labels{
+  grid-column:2;
+  grid-row:1;
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  align-items:center;
+  justify-items:center;
+  color:var(--cyan);
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;
+}
+
+.row-labels{
+  grid-column:1;
+  grid-row:2;
+  display:grid;
+  grid-template-rows:repeat(10,1fr);
+  align-items:center;
+  justify-items:center;
+  color:var(--cyan);
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;
+}
+
+.grid-frame .board-wrap{
+  grid-column:2;
+  grid-row:2;
+  width:100%;
+  margin:0;
+}
+
+.ship-label{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  color:#fff;
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;
+  text-shadow:2px 2px #000;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+#screen{
+  position:fixed;
+  inset:0;
+  background:#0b0616f5;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:25px;
+  z-index:100;
+}
+
+/* CORRECTION DE L'ÉCRAN NOIR */
+#screen[hidden]{
+  display:none !important;
+}
+
+#screen .panel{
+  max-width:500px;
+  width:100%;
+}
+
+#screen h2{
+  font-size:22px;
+}
+
+#screen button{
+  margin-top:18px;
+}
+
+#toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 20px;
+  background:#170b2b;
+  border:2px solid var(--yellow);
+  opacity:0;
+  transition:.2s;
+  pointer-events:none;
+  z-index:200;
+}
+
+#toast.show{
+  opacity:1;
+}
+
+.legend{
+  color:var(--muted);
+  font-size:20px;
+  margin:8px 0;
+}
+
+.network-code{
+  font-family:'Press Start 2P',monospace;
+  font-size:20px;
+  color:var(--green);
+  letter-spacing:3px;
+  margin:15px 0;
+}
+
+.fleet-status-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  margin-top:6px;
+}
+
+.fleet-status-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:10px;
+}
+
+.fleet-status-item{
+  padding:9px 12px;
+  border:2px solid var(--cyan);
+  background:#160b29;
+  font:18px VT323,monospace;
+  text-align:left;
+  color:#fff;
+  box-shadow:3px 3px #0009;
+}
+
+.fleet-status-item.sunk{
+  border-color:var(--pink);
+  color:var(--muted);
+  text-decoration:line-through;
+  opacity:.55;
+  box-shadow:none;
+}
+
+@media(max-width:620px){
+
+  .fleet-status-grid{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+
+  main{
+    padding:15px 9px;
+  }
+
+  .boards{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .panel{
+    padding:16px;
+  }
+
+  .modes button{
+    min-width:0;
+    width:100%;
+  }
+
+  .fleet{
+    margin:12px 0;
+  }
+
+  .fleet button{
+    width:100%;
+  }
+
+  .board-wrap{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<header>
+  <span>jeux2soiree</span>
+  <h1>BATAILLE NAVALE</h1>
+  <p>Coule la flotte ennemie avant qu’elle ne coule la tienne.</p>
+</header>
+
+<!-- =========================
+     MENU
+========================= -->
+
+<section id="menu" class="panel">
+
+  <h2>CHOISIS TON MODE</h2>
+
+  <div class="modes">
+
+    <button onclick="newGame('solo')">
+      SOLO<br>
+      <small>contre l’ordinateur</small>
+    </button>
+
+    <button onclick="newGame('duo')">
+      2 JOUEURS<br>
+      <small>sur le même écran</small>
+    </button>
+
+    <button onclick="showNetwork()">
+      EN LIGNE<br>
+      <small>chacun son téléphone</small>
+    </button>
+
+  </div>
+
+  <div id="networkMenu" hidden style="margin-top:22px">
+
+    <h2>SALON PRIVÉ</h2>
+
+    <input
+      id="roomInput"
+      maxlength="5"
+      placeholder="CODE DU SALON"
+      autocomplete="off"
+      style="
+        padding:12px;
+        text-align:center;
+        background:#090511;
+        color:#fff;
+        border:2px solid var(--cyan);
+        font:22px VT323;
+        width:220px;
+        text-transform:uppercase;
+      "
+    >
+
+    <div class="controls" style="margin-top:12px">
+
+      <button onclick="hostOnline()">
+        CRÉER UN SALON
+      </button>
+
+      <button onclick="joinOnline()">
+        REJOINDRE
+      </button>
+
+    </div>
+
+    <p id="networkInfo" style="color:var(--muted);margin:12px 0 0"></p>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     JEU
+========================= -->
+
+<section id="game" hidden>
+
+  <div id="status" class="status"></div>
+
+  <!-- PLACEMENT -->
+
+  <section id="setup" class="panel">
+
+    <h2 id="setupTitle">PLACE TA FLOTTE</h2>
+
+    <p id="help">
+      Touche un navire dans la liste pour le sélectionner, puis touche une case pour le placer.
+      Retouche-le pour le déplacer, ou utilise ↻ pour le faire pivoter.
+    </p>
+
+    <div id="fleet" class="fleet"></div>
+
+    <div class="controls">
+
+      <button onclick="rotateSelected()">
+        ↻ ROTATION
+      </button>
+
+      <button id="ready" disabled onclick="confirmFleet()">
+        FLOTTE PRÊTE
+      </button>
+
+      <button onclick="quitGame()">
+        QUITTER
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- GRILLES -->
+
+  <div class="boards">
+
+    <section>
+
+      <h2 id="ownTitle">TA FLOTTE</h2>
+
+      <div class="grid-frame">
+        <div class="corner"></div>
+        <div class="col-labels" id="ownColLabels"></div>
+        <div class="row-labels" id="ownRowLabels"></div>
+        <div class="board-wrap" id="ownWrap">
+          <div id="own" class="board"></div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <section>
+
+      <h2 id="enemyTitle">ENNEMI</h2>
+
+      <div class="grid-frame">
+        <div class="corner"></div>
+        <div class="col-labels" id="enemyColLabels"></div>
+        <div class="row-labels" id="enemyRowLabels"></div>
+        <div class="board-wrap">
+          <div id="enemy" class="board"></div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <!-- SUIVI DES FLOTTES -->
+
+  <section id="fleetStatus" class="panel" hidden>
+
+    <div class="fleet-status-grid">
+
+      <div>
+        <h2>TA FLOTTE</h2>
+        <div id="ownFleetStatus" class="fleet-status-list"></div>
+      </div>
+
+      <div>
+        <h2>FLOTTE ENNEMIE</h2>
+        <div id="enemyFleetStatus" class="fleet-status-list"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     ÉCRAN DE TRANSITION
+========================= -->
+
+<div id="screen" hidden></div>
+
+<div id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const FLEET = [
+  ['Porte-avions',5],
+  ['Croiseur',4],
+  ['Sous-marin',3],
+  ['Destroyer',3],
+  ['Torpilleur',2]
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let mode = null;
+
+let player = 0;
+
+let turn = 0;
+
+let phase = 'place';
+
+let vertical = false;
+
+let selected = 0;
+
+let placements = [[],[]];
+
+let boards = [null,null];
+
+let shots = [new Set(),new Set()];
+
+let botShots = new Set();
+
+let botBoard = null;
+
+let peer = null;
+
+let connection = null;
+
+
+/* =========================================================
+   OUTILS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const key = cell => cell.r + ',' + cell.c;
+
+function cells(){
+
+  return Array.from(
+    {length:100},
+    (_,i)=>({
+      r:Math.floor(i/10),
+      c:i%10
+    })
+  );
+
+}
+
+
+function toast(text){
+
+  $('toast').textContent = text;
+
+  $('toast').classList.add('show');
+
+  clearTimeout(toast.timer);
+
+  toast.timer = setTimeout(()=>{
+    $('toast').classList.remove('show');
+  },1800);
+
+}
+
+
+/* =========================================================
+   REPÈRES A-J / 1-10
+========================================================= */
+
+function renderLabels(){
+
+  const cols = 'ABCDEFGHIJ'.split('');
+
+  const rows =
+    Array.from({length:10},(_,i)=>i+1);
+
+
+  ['ownColLabels','enemyColLabels'].forEach(id=>{
+
+    const el = $(id);
+
+    el.innerHTML = '';
+
+    cols.forEach(letter=>{
+
+      const s = document.createElement('span');
+
+      s.textContent = letter;
+
+      el.appendChild(s);
+
+    });
+
+  });
+
+
+  ['ownRowLabels','enemyRowLabels'].forEach(id=>{
+
+    const el = $(id);
+
+    el.innerHTML = '';
+
+    rows.forEach(n=>{
+
+      const s = document.createElement('span');
+
+      s.textContent = n;
+
+      el.appendChild(s);
+
+    });
+
+  });
+
+}
+
+
+/* =========================================================
+   QUITTER
+========================================================= */
+
+function quitGame(){
+
+  if(connection){
+
+    try{
+      connection.close();
+    }catch(e){}
+
+  }
+
+  if(peer){
+
+    try{
+      peer.destroy();
+    }catch(e){}
+
+  }
+
+  location.reload();
+
+}
+
+
+/* =========================================================
+   NOUVELLE PARTIE
+========================================================= */
+
+function newGame(m){
+
+  mode = m;
+
+  player = 0;
+
+  turn = 0;
+
+  phase = 'place';
+
+  vertical = false;
+
+  selected = 0;
+
+  placements = [[],[]];
+
+  boards = [null,null];
+
+  shots = [new Set(),new Set()];
+
+  botShots = new Set();
+
+  botBoard = null;
+
+  $('menu').hidden = true;
+
+  $('game').hidden = false;
+
+  startPlace();
+
+}
+
+
+/* =========================================================
+   MENU EN LIGNE
+========================================================= */
+
+function showNetwork(){
+
+  $('networkMenu').hidden = !$('networkMenu').hidden;
+
+}
+
+
+function makeCode(){
+
+  return 'BN' +
+    Math.random()
+      .toString(36)
+      .slice(2,5)
+      .toUpperCase();
+
+}
+
+
+/* =========================================================
+   HÔTE
+========================================================= */
+
+function hostOnline(){
+
+  if(!window.Peer){
+
+    toast('PeerJS ne s’est pas chargé.');
+
+    return;
+
+  }
+
+  const id = makeCode();
+
+  $('networkInfo').textContent =
+    'Création du salon…';
+
+  peer = new Peer(id);
+
+  peer.on('open',()=>{
+
+    $('networkInfo').innerHTML =
+      'CODE DU SALON';
+
+    const code = document.createElement('div');
+
+    code.className = 'network-code';
+
+    code.textContent = id;
+
+    $('networkInfo').appendChild(code);
+
+    const info = document.createElement('div');
+
+    info.textContent =
+      'Partage ce code avec le joueur 2.';
+
+    $('networkInfo').appendChild(info);
+
+  });
+
+
+  peer.on('connection',c=>{
+
+    if(connection){
+
+      c.close();
+
+      return;
+
+    }
+
+    connection = c;
+
+    player = 0;
+
+    prepareConnection();
+
+  });
+
+
+  peer.on('error',e=>{
+
+    $('networkInfo').textContent =
+      'Erreur : ' + e.type;
+
+  });
+
+}
+
+
+/* =========================================================
+   JOINDRE
+========================================================= */
+
+function joinOnline(){
+
+  if(!window.Peer){
+
+    toast('PeerJS ne s’est pas chargé.');
+
+    return;
+
+  }
+
+  const id =
+    $('roomInput')
+      .value
+      .trim()
+      .toUpperCase();
+
+  if(!id){
+
+    toast('Entre le code du salon.');
+
+    return;
+
+  }
+
+  player = 1;
+
+  $('networkInfo').textContent =
+    'Connexion au salon…';
+
+  peer = new Peer();
+
+  peer.on('open',()=>{
+
+    connection = peer.connect(id);
+
+    prepareConnection();
+
+  });
+
+
+  peer.on('error',e=>{
+
+    $('networkInfo').textContent =
+      'Erreur : ' + e.type;
+
+  });
+
+}
+
+
+/* =========================================================
+   CONNEXION
+========================================================= */
+
+function prepareConnection(){
+
+  connection.on('open',()=>{
+
+    if(player === 1){
+
+      mode = 'network';
+
+      $('menu').hidden = true;
+
+      $('game').hidden = false;
+
+      phase = 'place';
+
+      startPlace();
+
+      connection.send({
+        type:'joined'
+      });
+
+    }
+
+  });
+
+
+  connection.on('data',networkData);
+
+
+  connection.on('close',()=>{
+
+    toast('La connexion avec l’autre joueur est fermée.');
+
+  });
+
+}
+
+
+/* =========================================================
+   DONNÉES RÉSEAU
+========================================================= */
+
+function networkData(data){
+
+  if(!data) return;
+
+
+  /* Le joueur 2 vient de rejoindre */
+
+  if(data.type === 'joined'){
+
+    if(player === 0){
+
+      toast('Joueur 2 connecté !');
+
+      startPlace();
+
+    }
+
+    return;
+
+  }
+
+
+  /* L'hôte demande au joueur 2 de jouer */
+
+  if(data.type === 'place'){
+
+    player = 1;
+
+    phase = 'place';
+
+    startPlace();
+
+    return;
+
+  }
+
+
+  /* Joueur 2 a envoyé sa flotte */
+
+  if(data.type === 'fleet'){
+
+    boards[1] = data.fleet;
+
+    turn = 0;
+
+    phase = 'battle';
+
+    $('setup').hidden = true;
+
+    $('status').textContent =
+      'Les deux flottes sont prêtes ! Joueur 1 commence.';
+
+    renderBoards();
+
+    connection.send({
+      type:'battle',
+      boards:boards,
+      shots:shots.map(s=>[...s]),
+      turn:turn
+    });
+
+    return;
+
+  }
+
+
+  /* Tir du joueur 2 */
+
+  if(data.type === 'fire'){
+
+    if(player === 0){
+
+      hostFire(data.cell);
+
+    }
+
+    return;
+
+  }
+
+
+  /* Synchronisation */
+
+  if(data.type === 'battle' || data.type === 'state'){
+
+    boards = data.boards;
+
+    shots = data.shots.map(
+      a=>new Set(a)
+    );
+
+    turn = data.turn;
+
+    phase = 'battle';
+
+    $('setup').hidden = true;
+
+    $('status').textContent =
+      turn === player
+        ? 'À toi de tirer !'
+        : 'Tour de l’adversaire…';
+
+    renderBoards();
+
+    return;
+
+  }
+
+
+  /* Fin */
+
+  if(data.type === 'end'){
+
+    end(data.winner === player);
+
+    return;
+
+  }
+
+}
+
+
+/* =========================================================
+   TIR DU JOUEUR 1 REÇU PAR L'HÔTE
+========================================================= */
+
+function hostFire(c){
+
+  if(
+    turn !== 1 ||
+    !c ||
+    shots[1].has(key(c))
+  ){
+
+    return;
+
+  }
+
+  shots[1].add(key(c));
+
+  const hit =
+    boards[0]
+      .flat()
+      .some(x=>key(x)===key(c));
+
+  toast(
+    hit
+      ? 'L’adversaire touche !'
+      : 'L’adversaire rate.'
+  );
+
+
+  const defeated =
+    boards[0]
+      .flat()
+      .every(x=>shots[1].has(key(x)));
+
+
+  if(defeated){
+
+    connection.send({
+      type:'end',
+      winner:1
+    });
+
+    end(false);
+
+    return;
+
+  }
+
+
+  turn = 0;
+
+  phase = 'battle';
+
+  connection.send({
+    type:'battle',
+    boards:boards,
+    shots:shots.map(s=>[...s]),
+    turn:turn
+  });
+
+  $('status').textContent =
+    'À toi de tirer !';
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   SYNCHRONISATION
+========================================================= */
+
+function syncNet(){
+
+  if(
+    connection &&
+    connection.open
+  ){
+
+    connection.send({
+
+      type:'battle',
+
+      boards:boards,
+
+      shots:shots.map(
+        s=>[...s]
+      ),
+
+      turn:turn
+
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   PLACEMENT
+========================================================= */
+
+function startPlace(){
+
+  vertical = false;
+
+  selected = 0;
+
+  placements[player] = [];
+
+  $('setup').hidden = false;
+
+  $('setupTitle').textContent =
+    mode === 'duo'
+      ? 'JOUEUR ' + (player+1) + ' : PLACE TA FLOTTE'
+      : 'PLACE TA FLOTTE';
+
+
+  $('help').textContent =
+    'Clique sur un navire puis glisse-le sur la grille. Utilise ↻ sur un bateau pour le tourner.';
+
+
+  $('ready').disabled = true;
+
+
+  $('ownTitle').textContent =
+    mode === 'duo'
+      ? 'FLOTTE DU JOUEUR ' + (player+1)
+      : 'TA FLOTTE';
+
+
+  $('enemyTitle').textContent =
+    'ENNEMI';
+
+
+  $('status').textContent =
+    mode === 'duo'
+      ? 'Joueur ' + (player+1) + ', prépare ta flotte.'
+      : 'Prépare ta flotte.';
+
+
+  renderFleet();
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   CELLULES D'UN NAVIRE
+========================================================= */
+
+function shipCells(start,size,v){
+
+  return Array.from(
+    {length:size},
+    (_,i)=>({
+
+      r:start.r + (v ? i : 0),
+
+      c:start.c + (v ? 0 : i)
+
+    })
+  );
+
+}
+
+
+/* =========================================================
+   VÉRIFICATION
+========================================================= */
+
+function good(add,ignoreIndex=-1){
+
+  return add.every(cell=>{
+
+    if(
+      cell.r < 0 ||
+      cell.r >= 10 ||
+      cell.c < 0 ||
+      cell.c >= 10
+    ){
+
+      return false;
+
+    }
+
+
+    for(
+      let i=0;
+      i<placements[player].length;
+      i++
+    ){
+
+      if(i === ignoreIndex) continue;
+
+      const ship =
+        placements[player][i];
+
+      if(!ship) continue;
+
+      if(
+        ship.some(
+          x=>key(x)===key(cell)
+        )
+      ){
+
+        return false;
+
+      }
+
+    }
+
+    return true;
+
+  });
+
+}
+
+
+/* =========================================================
+   LISTE DES NAVIRES
+========================================================= */
+
+function renderFleet(){
+
+  const f = $('fleet');
+
+  f.innerHTML = '';
+
+  FLEET.forEach(
+    ([name,size],i)=>{
+
+      const b =
+        document.createElement('button');
+
+      b.className =
+        'ship ' +
+        (i === selected ? 'selected ' : '') +
+        (placements[player][i] ? 'placed' : '');
+
+      b.textContent =
+        name + ' (' + size + ')' +
+        (placements[player][i] ? ' ✓' : '');
+
+      b.onclick = ()=>{
+
+        selected = i;
+
+        renderFleet();
+
+        renderBoards();
+
+      };
+
+      f.appendChild(b);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   GRILLE
+========================================================= */
+
+function grid(el,fn){
+
+  el.innerHTML = '';
+
+  cells().forEach(cell=>{
+
+    const b =
+      document.createElement('button');
+
+    b.className = 'cell';
+
+    b.dataset.r = cell.r;
+
+    b.dataset.c = cell.c;
+
+    b.onclick = ()=>{
+      fn(cell);
+    };
+
+    el.appendChild(b);
+
+  });
+
+}
+
+
+/* =========================================================
+   DESSIN DE LA FLOTTE
+========================================================= */
+
+function drawOwn(){
+
+  const wrap = $('ownWrap');
+
+  const board = $('own');
+
+  grid(board,ownClick);
+
+  /* Affichage des bateaux classiques
+     uniquement pour le mode bataille */
+
+  if(
+    phase !== 'place' &&
+    boards[player]
+  ){
+
+    boards[player]
+      .flat()
+      .forEach(cell=>{
+
+        const b =
+          board.children[
+            cell.r * 10 + cell.c
+          ];
+
+        if(b){
+
+          b.classList.add('shipcell');
+
+        }
+
+      });
+
+  }
+
+
+  /* Placement interactif */
+
+  if(phase === 'place'){
+
+    renderPlacedShips();
+
+  }else{
+
+    /* On retire les bateaux flottants du placement
+       pour laisser apparaître les cases touchées/ratées
+       en dessous, sans rien qui les cache. */
+
+    wrap
+      .querySelectorAll('.placed-ship')
+      .forEach(el=>el.remove());
+
+  }
+
+
+  /* Tirs reçus */
+
+  if(phase === 'battle'){
+
+    const incoming =
+      shots[1-player];
+
+    incoming.forEach(k=>{
+
+      const [r,c] =
+        k.split(',').map(Number);
+
+      const b =
+        board.children[
+          r * 10 + c
+        ];
+
+      if(!b) return;
+
+      const boat =
+        placements[player]
+          .flat()
+          .some(
+            x=>key(x)===k
+          ) ||
+        (
+          boards[player] &&
+          boards[player]
+            .flat()
+            .some(
+              x=>key(x)===k
+            )
+        );
+
+      b.classList.remove('shipcell');
+
+      b.classList.add(
+        boat ? 'hit' : 'miss'
+      );
+
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   NAVIRES INTERACTIFS
+========================================================= */
+
+function renderPlacedShips(){
+
+  const wrap = $('ownWrap');
+
+  wrap
+    .querySelectorAll('.placed-ship')
+    .forEach(el=>el.remove());
+
+
+  const board = $('own');
+
+  const wrapRect =
+    wrap.getBoundingClientRect();
+
+
+  placements[player].forEach(
+    (ship,index)=>{
+
+      if(!ship || !ship.length)
+        return;
+
+
+      const minR =
+        Math.min(...ship.map(x=>x.r));
+
+      const minC =
+        Math.min(...ship.map(x=>x.c));
+
+      const maxR =
+        Math.max(...ship.map(x=>x.r));
+
+      const maxC =
+        Math.max(...ship.map(x=>x.c));
+
+
+      /* On mesure les vraies cases du DOM
+         pour un positionnement pixel-exact,
+         sans dérive au fil de la grille. */
+
+      const topLeftCell =
+        board.children[minR * 10 + minC];
+
+      const bottomRightCell =
+        board.children[maxR * 10 + maxC];
+
+      if(!topLeftCell || !bottomRightCell)
+        return;
+
+
+      const topLeftRect =
+        topLeftCell.getBoundingClientRect();
+
+      const bottomRightRect =
+        bottomRightCell.getBoundingClientRect();
+
+
+      const el =
+        document.createElement('div');
+
+      el.className =
+        'placed-ship' +
+        (index === selected ? ' selected-ship' : '');
+
+      el.dataset.index = index;
+
+
+      el.style.left =
+        (topLeftRect.left - wrapRect.left) + 'px';
+
+      el.style.top =
+        (topLeftRect.top - wrapRect.top) + 'px';
+
+      el.style.width =
+        (bottomRightRect.right - topLeftRect.left) + 'px';
+
+      el.style.height =
+        (bottomRightRect.bottom - topLeftRect.top) + 'px';
+
+
+      el.onclick = event=>{
+
+        if(event.target.classList.contains('rotate-ship'))
+          return;
+
+        selected = index;
+
+        renderFleet();
+
+        renderBoards();
+
+      };
+
+
+      /* Points du bateau */
+
+      const dots =
+        document.createElement('div');
+
+      dots.className =
+        'ship-dots';
+
+
+      for(let i=0;i<ship.length;i++){
+
+        const dot =
+          document.createElement('span');
+
+        dot.className =
+          'ship-dot';
+
+        dots.appendChild(dot);
+
+      }
+
+      el.appendChild(dots);
+
+
+      /* Nom */
+
+      const label =
+        document.createElement('div');
+
+      label.className =
+        'ship-label';
+
+      label.textContent =
+        FLEET[index][0];
+
+      el.appendChild(label);
+
+
+      /* Bouton rotation directement sur le bateau */
+
+      const rotate =
+        document.createElement('button');
+
+      rotate.className =
+        'rotate-ship';
+
+      rotate.textContent =
+        '↻';
+
+      rotate.title =
+        'Tourner ce navire';
+
+      rotate.onclick = event=>{
+
+        event.stopPropagation();
+
+        selected = index;
+
+        rotateShip(index);
+
+      };
+
+      el.appendChild(rotate);
+
+
+      wrap.appendChild(el);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   ROTATION D'UN BATEAU
+========================================================= */
+
+function rotateShip(index){
+
+  if(phase !== 'place') return;
+
+  const ship =
+    placements[player][index];
+
+  if(!ship) return;
+
+
+  const first =
+    ship[0];
+
+  const size =
+    ship.length;
+
+
+  const isVertical =
+    ship.length > 1 &&
+    ship[1].r !== ship[0].r;
+
+
+  const newVertical =
+    !isVertical;
+
+
+  let newShip;
+
+
+  /*
+    On conserve le coin supérieur/gauche
+    du bateau pour rendre la rotation intuitive.
+  */
+
+  const minR =
+    Math.min(...ship.map(x=>x.r));
+
+  const minC =
+    Math.min(...ship.map(x=>x.c));
+
+
+  newShip =
+    shipCells(
+      {
+        r:minR,
+        c:minC
+      },
+      size,
+      newVertical
+    );
+
+
+  if(!good(newShip,index)){
+
+    toast(
+      'Impossible de tourner ici.'
+    );
+
+    return;
+
+  }
+
+
+  placements[player][index] =
+    newShip;
+
+
+  renderFleet();
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   ROTATION DU NAVIRE SÉLECTIONNÉ
+========================================================= */
+
+function rotateSelected(){
+
+  if(phase !== 'place') return;
+
+  const ship =
+    placements[player][selected];
+
+
+  if(ship){
+
+    rotateShip(selected);
+
+  }else{
+
+    vertical = !vertical;
+
+    toast(
+      vertical
+        ? 'Orientation verticale'
+        : 'Orientation horizontale'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLIC / TAP SUR LA GRILLE
+   (place un nouveau navire, ou déplace le navire
+   sélectionné s'il est déjà placé)
+========================================================= */
+
+function ownClick(cell){
+
+  if(phase !== 'place') return;
+
+
+  const size =
+    FLEET[selected][1];
+
+  const ship =
+    placements[player][selected];
+
+
+  if(!ship){
+
+    const add =
+      shipCells(
+        cell,
+        size,
+        vertical
+      );
+
+
+    if(!good(add)){
+
+      toast(
+        'Impossible de placer ce navire ici.'
+      );
+
+      return;
+
+    }
+
+
+    placements[player][selected] =
+      add;
+
+
+    let next =
+      selected + 1;
+
+
+    while(
+      next < FLEET.length &&
+      placements[player][next]
+    ){
+
+      next++;
+
+    }
+
+
+    if(next < FLEET.length){
+
+      selected = next;
+
+    }
+
+  }else{
+
+    const isVertical =
+      ship.length > 1 &&
+      ship[1].r !== ship[0].r;
+
+
+    const add =
+      shipCells(
+        cell,
+        size,
+        isVertical
+      );
+
+
+    if(!good(add,selected)){
+
+      toast(
+        'Impossible de déplacer ce navire ici.'
+      );
+
+      return;
+
+    }
+
+
+    placements[player][selected] =
+      add;
+
+  }
+
+
+  renderFleet();
+
+  renderBoards();
+
+  checkReady();
+
+}
+
+
+/* =========================================================
+   PRÊT ?
+========================================================= */
+
+function checkReady(){
+
+  const ready =
+    placements[player]
+      .length === FLEET.length &&
+    placements[player]
+      .every(Boolean);
+
+
+  $('ready').disabled =
+    !ready;
+
+
+  if(ready){
+
+    $('help').textContent =
+      'Ta flotte est prête. Tu peux encore déplacer ou tourner les bateaux, puis valider.';
+
+  }
+
+}
+
+
+/* =========================================================
+   DESSIN ENNEMI
+========================================================= */
+
+function drawEnemy(){
+
+  grid(
+    $('enemy'),
+    fire
+  );
+
+
+  if(phase !== 'battle')
+    return;
+
+
+  const visible =
+    shots[player];
+
+
+  visible.forEach(k=>{
+
+    const [r,c] =
+      k.split(',').map(Number);
+
+
+    const b =
+      $('enemy').children[
+        r * 10 + c
+      ];
+
+
+    if(!b) return;
+
+
+    let target;
+
+
+    if(mode === 'solo'){
+
+      target = botBoard;
+
+    }else{
+
+      target =
+        boards[1-player];
+
+    }
+
+
+    const hit =
+      target &&
+      target
+        .flat()
+        .some(
+          x=>key(x)===k
+        );
+
+
+    b.classList.add(
+      hit ? 'hit' : 'miss'
+    );
+
+    b.disabled = true;
+
+  });
+
+
+  Array.from(
+    $('enemy').children
+  ).forEach(b=>{
+
+    if(
+      phase !== 'battle' ||
+      (
+        mode === 'network' &&
+        turn !== player
+      ) ||
+      b.disabled
+    ){
+
+      b.disabled = true;
+
+    }
+
+  });
+
+}
+
+
+/* =========================================================
+   AFFICHAGE
+========================================================= */
+
+function renderBoards(){
+
+  drawOwn();
+
+  drawEnemy();
+
+  renderFleetStatus();
+
+}
+
+
+/* =========================================================
+   SUIVI DES FLOTTES (navires coulés / restants)
+========================================================= */
+
+function shipSunk(ship,shotsSet){
+
+  return (
+    !!ship &&
+    ship.every(
+      cell => shotsSet.has(key(cell))
+    )
+  );
+
+}
+
+
+function renderFleetStatus(){
+
+  const panel = $('fleetStatus');
+
+
+  if(
+    phase === 'place' ||
+    phase === null
+  ){
+
+    panel.hidden = true;
+
+    return;
+
+  }
+
+
+  panel.hidden = false;
+
+
+  const myBoard =
+    boards[player];
+
+  const enemyBoard =
+    mode === 'solo'
+      ? botBoard
+      : boards[1-player];
+
+  const shotsOnMe =
+    shots[1-player];
+
+  const myShots =
+    shots[player];
+
+
+  const fill = (containerId,fleetBoard,shotsSet)=>{
+
+    const el = $(containerId);
+
+    el.innerHTML = '';
+
+    FLEET.forEach(
+      ([name,size],i)=>{
+
+        const ship =
+          fleetBoard
+            ? fleetBoard[i]
+            : null;
+
+        const sunk =
+          shipSunk(ship,shotsSet);
+
+        const item =
+          document.createElement('div');
+
+        item.className =
+          'fleet-status-item' +
+          (sunk ? ' sunk' : '');
+
+        item.textContent =
+          (sunk ? '☠ ' : '▮ ') +
+          name +
+          ' (' + size + ')';
+
+        el.appendChild(item);
+
+      }
+    );
+
+  };
+
+
+  fill('ownFleetStatus',myBoard,shotsOnMe);
+
+  fill('enemyFleetStatus',enemyBoard,myShots);
+
+}
+
+
+/* =========================================================
+   VALIDER LA FLOTTE
+========================================================= */
+
+function confirmFleet(){
+
+  if(
+    placements[player].length !== FLEET.length ||
+    !placements[player].every(Boolean)
+  ){
+
+    toast(
+      'Place tous les bateaux avant de commencer.'
+    );
+
+    return;
+
+  }
+
+
+  boards[player] =
+    placements[player].map(
+      ship =>
+        ship.map(
+          cell=>({...cell})
+        )
+    );
+
+
+  /* =========================
+     EN LIGNE
+  ========================= */
+
+  if(mode === 'network'){
+
+    phase = 'waiting';
+
+    $('setup').hidden = true;
+
+
+    if(player === 0){
+
+      $('status').textContent =
+        'Flotte prête. En attente du joueur 2…';
+
+      if(connection && connection.open){
+
+        connection.send({
+          type:'place'
+        });
+
+      }
+
+    }else{
+
+      $('status').textContent =
+        'Flotte envoyée. En attente de l’hôte…';
+
+
+      if(connection && connection.open){
+
+        connection.send({
+          type:'fleet',
+          fleet:boards[1]
+        });
+
+      }
+
+    }
+
+
+    renderBoards();
+
+    return;
+
+  }
+
+
+  /* =========================
+     SOLO
+  ========================= */
+
+  if(mode === 'solo'){
+
+    botBoard =
+      randomFleet();
+
+    beginBattle();
+
+    return;
+
+  }
+
+
+  /* =========================
+     LOCAL 2 JOUEURS
+  ========================= */
+
+  if(player === 0){
+
+    player = 1;
+
+    showPassScreen(
+      'JOUEUR 2',
+      'Ne regarde pas la flotte du joueur 1.',
+      hideScreenAndPlace
+    );
+
+  }else{
+
+    player = 0;
+
+    beginBattle();
+
+  }
+
+}
+
+
+/* =========================================================
+   ÉCRAN JOUEUR SUIVANT
+========================================================= */
+
+function showPassScreen(title,text,onContinue){
+
+  window._screenContinue =
+    onContinue || hideScreenAndPlace;
+
+  $('screen').hidden = false;
+
+  $('screen').innerHTML = `
+
+    <div class="panel">
+
+      <h2>${title}</h2>
+
+      <p>${text}</p>
+
+      <button onclick="_screenContinue()">
+        À MON TOUR
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+function hideScreenAndPlace(){
+
+  $('screen').hidden = true;
+
+  startPlace();
+
+}
+
+
+/* =========================================================
+   FLOTTES ALÉATOIRES
+========================================================= */
+
+function randomFleet(){
+
+  const fleet = [];
+
+
+  for(
+    const [,size]
+    of FLEET
+  ){
+
+    let ship;
+
+
+    do{
+
+      const start = {
+
+        r:
+          Math.floor(
+            Math.random()*10
+          ),
+
+        c:
+          Math.floor(
+            Math.random()*10
+          )
+
+      };
+
+
+      ship =
+        shipCells(
+          start,
+          size,
+          Math.random() < .5
+        );
+
+
+    }while(
+
+      !ship.every(
+        x=>
+          x.r >= 0 &&
+          x.r < 10 &&
+          x.c >= 0 &&
+          x.c < 10
+      )
+
+      ||
+
+      fleet
+        .flat()
+        .some(
+          x=>
+            ship.some(
+              y=>
+                key(x)===key(y)
+            )
+        )
+
+    );
+
+
+    fleet.push(ship);
+
+  }
+
+
+  return fleet;
+
+}
+
+
+/* =========================================================
+   COMMENCER LA BATAILLE
+========================================================= */
+
+function beginBattle(){
+
+  phase = 'battle';
+
+  $('setup').hidden = true;
+
+
+  if(mode === 'solo'){
+
+    $('status').textContent =
+      'À toi de tirer !';
+
+    $('ownTitle').textContent =
+      'TA FLOTTE';
+
+  }else{
+
+    turn = 0;
+
+    $('status').textContent =
+      'Joueur 1 : à toi de tirer !';
+
+    $('ownTitle').textContent =
+      'FLOTTE JOUEUR ' + (player+1);
+
+  }
+
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   TIR
+========================================================= */
+
+function fire(cell){
+
+  if(
+    phase !== 'battle' ||
+    shots[player].has(key(cell))
+  ){
+
+    return;
+
+  }
+
+
+  /* =========================
+     EN LIGNE : JOUEUR 2
+  ========================= */
+
+  if(
+    mode === 'network' &&
+    player === 1
+  ){
+
+    if(turn !== player){
+
+      return;
+
+    }
+
+
+    connection.send({
+
+      type:'fire',
+
+      cell:cell
+
+    });
+
+
+    phase = 'waiting';
+
+    $('status').textContent =
+      'Tir envoyé…';
+
+    renderBoards();
+
+    return;
+
+  }
+
+
+  /* =========================
+     TIR NORMAL
+  ========================= */
+
+  shots[player].add(
+    key(cell)
+  );
+
+
+  const target =
+    mode === 'solo'
+      ? botBoard
+      : boards[1-player];
+
+
+  const hit =
+    target
+      .flat()
+      .some(
+        x=>key(x)===key(cell)
+      );
+
+
+  toast(
+    hit
+      ? 'TOUCHÉ !'
+      : 'À L’EAU !'
+  );
+
+
+  renderBoards();
+
+
+  const defeated =
+    target
+      .flat()
+      .every(
+        x=>
+          shots[player]
+            .has(key(x))
+      );
+
+
+  if(defeated){
+
+    if(mode === 'network'){
+
+      connection.send({
+        type:'end',
+        winner:player
+      });
+
+    }
+
+    end(true);
+
+    return;
+
+  }
+
+
+  /* =========================
+     ORDINATEUR
+  ========================= */
+
+  if(mode === 'solo'){
+
+    phase = 'wait';
+
+    setTimeout(
+      botFire,
+      650
+    );
+
+    return;
+
+  }
+
+
+  /* =========================
+     EN LIGNE
+  ========================= */
+
+  if(mode === 'network'){
+
+    turn = 1;
+
+    syncNet();
+
+    $('status').textContent =
+      'Tour de l’adversaire…';
+
+    renderBoards();
+
+    return;
+
+  }
+
+
+  /* =========================
+     LOCAL
+  ========================= */
+
+  player =
+    1-player;
+
+  passTurn();
+
+}
+
+
+/* =========================================================
+   ORDINATEUR
+========================================================= */
+
+function botFire(){
+
+  const options =
+    cells().filter(
+      c=>
+        !botShots.has(
+          key(c)
+        )
+    );
+
+
+  if(!options.length)
+    return;
+
+
+  const cell =
+    options[
+      Math.floor(
+        Math.random()*options.length
+      )
+    ];
+
+
+  botShots.add(
+    key(cell)
+  );
+
+
+  shots[1] =
+    botShots;
+
+
+  const hit =
+    boards[0]
+      .flat()
+      .some(
+        x=>key(x)===key(cell)
+      );
+
+
+  toast(
+    hit
+      ? 'L’ordinateur touche !'
+      : 'L’ordinateur rate.'
+  );
+
+
+  const defeated =
+    boards[0]
+      .flat()
+      .every(
+        x=>
+          botShots.has(
+            key(x)
+          )
+      );
+
+
+  if(defeated){
+
+    end(false);
+
+    return;
+
+  }
+
+
+  phase = 'battle';
+
+  $('status').textContent =
+    'À toi de tirer !';
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   TOUR JOUEUR LOCAL
+========================================================= */
+
+function passTurn(){
+
+  showPassScreen(
+    'JOUEUR ' + (player+1),
+    'Prends le contrôle. Ne regarde pas la grille précédente.',
+    resumeTurn
+  );
+
+}
+
+
+/* =========================================================
+   REPRENDRE LE TOUR
+========================================================= */
+
+function resumeTurn(){
+
+  $('screen').hidden = true;
+
+  $('status').textContent =
+    'Joueur ' +
+    (player+1) +
+    ' : à toi de tirer !';
+
+  $('ownTitle').textContent =
+    'FLOTTE JOUEUR ' +
+    (player+1);
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   FIN
+========================================================= */
+
+function end(win){
+
+  phase = 'end';
+
+  $('setup').hidden = true;
+
+
+  $('status').textContent =
+    win
+      ? 'VICTOIRE — toute la flotte ennemie est coulée !'
+      : 'DÉFAITE — ta flotte a coulé.';
+
+
+  toast(
+    win
+      ? 'VICTOIRE !'
+      : 'DÉFAITE'
+  );
+
+
+  renderBoards();
+
+}
+
+
+/* =========================================================
+   INITIALISATION
+========================================================= */
+
+/*
+   IMPORTANT :
+   On ne montre PAS #screen au démarrage.
+   La règle CSS #screen[hidden] garantit qu'il
+   reste complètement invisible.
+*/
+
+$('screen').hidden = true;
+
+$('game').hidden = true;
+
+$('menu').hidden = false;
+
+renderLabels();
+
+</script>
+
+</body>
+</html>
