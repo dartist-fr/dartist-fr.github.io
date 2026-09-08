@@ -702,6 +702,8 @@
 
     <main class="grid-jeux">
 
+        <!-- DEVINE TÊTE -->
+
         <a
             href="devine-tete/"
             class="carte-jeu purple"
@@ -714,7 +716,7 @@
             </div>
 
             <div class="info-jeu">
-                Devine la personnalité sur ton front en posant des questions en 'Oui / Non' !
+                Devine la personnalité sur ton front en posant des questions en « Oui / Non » !
             </div>
 
             <span class="btn-jouer">
@@ -722,6 +724,8 @@
             </span>
         </a>
 
+
+        <!-- TU PRÉFÈRES -->
 
         <a
             href="tu-preferes/"
@@ -744,6 +748,8 @@
         </a>
 
 
+        <!-- TIME'S UP -->
+
         <a
             href="times-up/"
             class="carte-jeu yellow"
@@ -764,6 +770,8 @@
             </span>
         </a>
 
+
+        <!-- LOUP-GAROU -->
 
         <a
             href="loup-garou/"
@@ -786,6 +794,8 @@
         </a>
 
 
+        <!-- UNDERCOVER -->
+
         <a
             href="undercover/"
             class="carte-jeu pink"
@@ -806,6 +816,8 @@
             </span>
         </a>
 
+
+        <!-- QUI EST-CE -->
 
         <a
             href="qui-est-ce/"
@@ -828,6 +840,8 @@
         </a>
 
 
+        <!-- LE KILLER -->
+
         <a
             href="le-killer/"
             class="carte-jeu pink"
@@ -848,6 +862,8 @@
             </span>
         </a>
 
+
+        <!-- INSIDER -->
 
         <a
             href="insider/"
@@ -870,6 +886,8 @@
         </a>
 
 
+        <!-- FRÉQUENCE -->
+
         <a
             href="frequence/"
             class="carte-jeu cyan"
@@ -890,6 +908,8 @@
             </span>
         </a>
 
+
+        <!-- LE BOBARD -->
 
         <a
             href="le-bobard/"
@@ -912,6 +932,8 @@
         </a>
 
 
+        <!-- MORPION -->
+
         <a
             href="morpion/"
             class="carte-jeu cyan"
@@ -933,6 +955,8 @@
         </a>
 
 
+        <!-- LE PENDU -->
+
         <a
             href="pendu/"
             class="carte-jeu cyan"
@@ -946,6 +970,31 @@
 
             <div class="info-jeu">
                 Fais deviner ton propre mot secret à ton adversaire lettre par lettre.
+            </div>
+
+            <span class="btn-jouer">
+                Jouer &#9654;
+            </span>
+        </a>
+
+
+        <!-- =========================
+             BATAILLE NAVALE
+        ========================= -->
+
+        <a
+            href="bataille-navale/"
+            class="carte-jeu cyan"
+            data-tag="2 JOUEURS"
+        >
+            <div class="icone">🚢</div>
+
+            <div class="titre-jeu">
+                Bataille Navale
+            </div>
+
+            <div class="info-jeu">
+                Place ta flotte, cache tes navires et coule la flotte ennemie !
             </div>
 
             <span class="btn-jouer">
@@ -992,9 +1041,7 @@
         </a>
 
 
-        <!-- =========================
-             ROUE DE LA CHANCE
-        ========================= -->
+        <!-- ROUE DE LA CHANCE -->
 
         <a
             href="roue-de-la-chance/"
@@ -1079,6 +1126,17 @@
                     document.exitFullscreen();
                 }
 
+                label.textContent = 'PLEIN ÉCRAN';
+            }
+
+        });
+
+
+        document.addEventListener('fullscreenchange', () => {
+
+            if (document.fullscreenElement) {
+                label.textContent = 'QUITTER';
+            } else {
                 label.textContent = 'PLEIN ÉCRAN';
             }
 
