@@ -2,2814 +2,2193 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>UNO • Jeux2Soirée</title>
 
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
-*{
-    box-sizing:border-box;
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:#090b12;
+  color:#fff;
+  font-family:'VT323',monospace;
+  overflow-x:hidden;
 }
 
-html,
 body{
-    margin:0;
-    min-height:100%;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
+    #090b12;
+  background-size:25px 25px;
 }
 
-body{
-    min-height:100vh;
-    background:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
-        #090b12;
-    background-size:25px 25px;
-    color:#fff;
-    font-family:'VT323',monospace;
-    overflow-x:hidden;
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.025) 0,
+    rgba(255,255,255,.025) 1px,
+    transparent 2px,
+    transparent 5px
+  );
+  z-index:999;
 }
 
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.025) 0px,
-        rgba(255,255,255,.025) 1px,
-        transparent 2px,
-        transparent 5px
-    );
-    z-index:9999;
-}
-
-button,
-input{
-    font-family:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-button:disabled{
-    opacity:.35;
-    cursor:not-allowed;
-}
-
-.hidden{
-    display:none !important;
-}
-
-/* =========================================================
-   ACCUEIL
-========================================================= */
+button,input{font-family:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
 #home{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
 }
 
 .home-box{
-    width:100%;
-    max-width:700px;
-    text-align:center;
-    padding:35px;
-    border:3px solid #fff;
-    box-shadow:8px 8px 0 #000;
-    background:#10131d;
+  width:100%;
+  max-width:720px;
+  text-align:center;
+  padding:30px;
+  border:3px solid #fff;
+  box-shadow:8px 8px 0 #000;
+  background:#10131d;
 }
 
 .logo{
-    font-family:'Press Start 2P';
-    font-size:clamp(30px,7vw,60px);
-    margin-bottom:15px;
-    text-shadow:5px 5px 0 #000;
+  font-family:'Press Start 2P';
+  font-size:clamp(30px,7vw,58px);
+  margin-bottom:10px;
+  text-shadow:4px 4px #000;
 }
 
-.logo span{
-    color:#ff305f;
-}
+.logo span{color:#ff305f}
 
 .subtitle{
-    font-size:28px;
-    margin-bottom:30px;
+  font-size:27px;
+  margin-bottom:25px;
 }
 
 .menu{
-    display:grid;
-    gap:15px;
+  display:grid;
+  gap:12px;
 }
 
 .main-btn{
-    border:3px solid #fff;
-    background:#171b28;
-    color:#fff;
-    padding:18px;
-    font-size:25px;
-    box-shadow:5px 5px 0 #000;
-    transition:.15s;
+  border:3px solid #fff;
+  background:#171b28;
+  color:#fff;
+  padding:16px;
+  font-size:25px;
+  box-shadow:5px 5px #000;
 }
 
 .main-btn:hover{
-    transform:translate(-3px,-3px);
-    background:#fff;
-    color:#111;
+  transform:translate(-3px,-3px);
+  background:#fff;
+  color:#111;
 }
 
 .main-btn.create{
-    background:#e92852;
+  background:#e92852;
 }
 
-.form-box{
-    margin-top:20px;
-    display:grid;
-    gap:12px;
+.setup{
+  margin-top:20px;
+  border:2px solid #555;
+  padding:18px;
+  background:#0c0f18;
+  text-align:left;
+}
+
+.setup h2{
+  font-family:'Press Start 2P';
+  font-size:16px;
+  text-align:center;
+  margin:5px 0 18px;
+}
+
+.setup-label{
+  font-size:23px;
+  margin:12px 0 7px;
 }
 
 input{
-    width:100%;
-    padding:15px;
-    background:#080a10;
-    border:3px solid #fff;
-    color:#fff;
-    font-size:25px;
-    outline:none;
+  width:100%;
+  padding:13px;
+  background:#080a10;
+  border:3px solid #fff;
+  color:#fff;
+  font-size:24px;
+  outline:none;
 }
 
 input:focus{
-    border-color:#ff315e;
+  border-color:#ff315e;
+}
+
+.mode-choice{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.mode-btn{
+  padding:14px;
+  border:3px solid #777;
+  background:#171b28;
+  color:#fff;
+  font-size:20px;
+}
+
+.mode-btn.active{
+  border-color:#fff;
+  background:#e92852;
+}
+
+.check-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:23px;
+  padding:10px 0;
+}
+
+.check-row input{
+  width:22px;
+  height:22px;
 }
 
 .small{
-    font-size:21px;
-    opacity:.8;
+  font-size:20px;
+  opacity:.8;
 }
 
-/* =========================================================
-   MENU CREATION
-========================================================= */
-
-#createMenu{
-    margin-top:20px;
-    border-top:2px solid #444;
-    padding-top:20px;
+.message{
+  text-align:center;
+  font-size:24px;
+  margin:12px 0;
+  min-height:26px;
 }
-
-.create-title{
-    font-family:'Press Start 2P';
-    font-size:16px;
-    margin-bottom:20px;
-}
-
-.mode-options{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.mode-option{
-    border:3px solid #666;
-    background:#151925;
-    color:#fff;
-    padding:18px 10px;
-    font-size:20px;
-}
-
-.mode-option.selected{
-    border-color:#fff;
-    background:#e92852;
-}
-
-.setting{
-    margin-top:15px;
-    padding:15px;
-    border:2px solid #444;
-    background:#0d1018;
-    font-size:21px;
-}
-
-.setting label{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-}
-
-.setting input[type="checkbox"]{
-    width:22px;
-    height:22px;
-}
-
-/* =========================================================
-   APP
-========================================================= */
 
 #app{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 
 .topbar{
-    height:70px;
-    border-bottom:3px solid #fff;
-    background:#10131d;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 20px;
+  height:65px;
+  border-bottom:3px solid #fff;
+  background:#10131d;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 15px;
 }
 
 .top-title{
-    font-family:'Press Start 2P';
-    font-size:20px;
+  font-family:'Press Start 2P';
+  font-size:18px;
 }
 
 .room-code{
-    border:2px solid #fff;
-    padding:7px 14px;
-    font-size:23px;
+  border:2px solid #fff;
+  padding:7px 12px;
+  font-size:23px;
 }
 
 #gameArea{
-    flex:1;
-    padding:20px;
+  flex:1;
+  padding:15px;
 }
 
-/* =========================================================
-   LOBBY
-========================================================= */
-
 #lobby{
-    max-width:850px;
-    margin:auto;
-    text-align:center;
+  text-align:center;
+  max-width:800px;
+  margin:auto;
 }
 
 .big-room{
-    font-family:'Press Start 2P';
-    font-size:clamp(40px,10vw,80px);
-    margin:25px;
-    color:#ff305f;
-    text-shadow:5px 5px 0 #000;
+  font-family:'Press Start 2P';
+  font-size:clamp(40px,10vw,80px);
+  margin:25px;
 }
 
 .lobby-players{
-    display:grid;
-    gap:8px;
-    margin:20px 0;
+  display:grid;
+  gap:8px;
+  margin:18px 0;
 }
 
 .lobby-player{
-    background:#151925;
-    border:2px solid #555;
-    padding:12px;
-    font-size:25px;
+  background:#151925;
+  border:2px solid #555;
+  padding:10px;
+  font-size:24px;
 }
 
 .lobby-player.host{
-    border-color:#ffd928;
+  border-color:#ffd928;
 }
-
-.lobby-settings{
-    margin:20px 0;
-    padding:15px;
-    border:2px solid #444;
-    background:#10131d;
-    font-size:21px;
-}
-
-#message{
-    text-align:center;
-    font-size:25px;
-    margin:12px;
-}
-
-.start-btn{
-    padding:15px 35px;
-    background:#fff;
-    color:#111;
-    border:3px solid #fff;
-    font-size:24px;
-    box-shadow:5px 5px 0 #000;
-}
-
-/* =========================================================
-   TABLE TV
-========================================================= */
 
 #tvMode{
-    min-height:calc(100vh - 110px);
-    display:flex;
-    flex-direction:column;
+  display:flex;
+  flex-direction:column;
+  min-height:calc(100vh - 95px);
 }
 
 .players{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-bottom:15px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
 }
 
 .player-box{
-    min-width:130px;
-    padding:10px 18px;
-    background:#121622;
-    border:2px solid #666;
-    text-align:center;
-    transition:.2s;
+  background:#121622;
+  border:2px solid #666;
+  padding:9px 16px;
+  min-width:125px;
+  text-align:center;
 }
 
 .player-box.active{
-    border-color:#fff;
-    box-shadow:0 0 18px rgba(255,255,255,.5);
-    transform:translateY(-4px);
+  border-color:#fff;
+  box-shadow:0 0 15px rgba(255,255,255,.5);
+  transform:translateY(-3px);
 }
 
 .player-name{
-    font-size:23px;
+  font-size:22px;
 }
 
 .card-count{
-    font-size:20px;
-    opacity:.75;
+  font-size:19px;
+  opacity:.75;
 }
 
 .status{
-    text-align:center;
-    font-size:32px;
-    margin:10px;
+  text-align:center;
+  font-size:30px;
+  margin:12px;
 }
 
-.table{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:50px;
-    min-height:350px;
+.table,
+.phone-table{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:35px;
+  min-height:330px;
 }
 
-.deck-zone{
-    text-align:center;
+.zone{
+  text-align:center;
 }
 
 .zone-title{
-    font-size:25px;
-    margin-bottom:10px;
+  font-size:24px;
+  margin-bottom:8px;
 }
 
 .deck,
 .card{
-    width:105px;
-    height:150px;
-    border-radius:12px;
-    border:4px solid #fff;
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    box-shadow:5px 5px 0 rgba(0,0,0,.5);
+  width:105px;
+  height:150px;
+  border-radius:12px;
+  border:4px solid #fff;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:5px 5px rgba(0,0,0,.5);
+  overflow:hidden;
 }
 
 .deck{
-    background:
-        repeating-linear-gradient(
-            45deg,
-            #161b28,
-            #161b28 8px,
-            #252c3c 8px,
-            #252c3c 16px
-        );
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #161b28,
+      #161b28 8px,
+      #252c3c 8px,
+      #252c3c 16px
+    );
 }
 
-.deck::after{
-    content:"UNO";
-    color:#ff305f;
-    font-family:'Press Start 2P';
-    font-size:18px;
-    transform:rotate(-25deg);
+.deck:after{
+  content:"UNO";
+  color:#ff305f;
+  font-family:'Press Start 2P';
+  font-size:18px;
+  transform:rotate(-25deg);
 }
 
 .card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:fill;
 }
 
-.card-fallback{
-    font-family:'Press Start 2P';
-    font-size:13px;
-    text-align:center;
-    padding:5px;
+.card .symbol{
+  font-family:'Press Start 2P';
+  font-size:16px;
+  text-align:center;
 }
 
-/* =========================================================
-   MODE JOUEUR
-========================================================= */
+.card.red{background:#ed214e}
+.card.yellow{background:#ffd928;color:#111}
+.card.green{background:#20bd63}
+.card.blue{background:#2075e8}
+.card.black{background:#151820}
+
+.tv-actions{
+  text-align:center;
+  padding:12px;
+}
+
+.start-btn{
+  padding:14px 28px;
+  background:#fff;
+  color:#111;
+  border:3px solid #fff;
+  font-size:24px;
+}
 
 #playerMode{
-    max-width:1100px;
-    margin:auto;
+  max-width:1050px;
+  margin:auto;
 }
 
 .player-info{
-    text-align:center;
+  text-align:center;
+  margin-bottom:8px;
 }
 
 .player-turn{
-    font-family:'Press Start 2P';
-    font-size:19px;
-    margin:10px;
+  font-family:'Press Start 2P';
+  font-size:18px;
+  margin:8px;
 }
 
-#currentColor{
-    font-size:24px;
+.current-color{
+  font-size:22px;
 }
 
-.mobile-table{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:25px;
-    margin:15px auto 25px;
+.penalty{
+  font-size:25px;
+  color:#ffd928;
+  min-height:30px;
 }
 
-.mobile-zone{
-    text-align:center;
+.phone-table{
+  min-height:190px;
+  gap:22px;
+  margin:8px 0;
 }
 
-.mobile-zone-title{
-    font-size:21px;
-    margin-bottom:8px;
-}
-
-.mobile-card{
-    width:75px;
-    height:108px;
-    border-radius:10px;
-    border:3px solid #fff;
-    overflow:hidden;
-    box-shadow:4px 4px 0 #000;
-}
-
-.mobile-card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+.phone-table .deck,
+.phone-table .card{
+  width:78px;
+  height:112px;
 }
 
 .my-hand{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:8px;
-    margin:20px 0;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:12px auto;
+  max-width:1000px;
 }
 
 .hand-card{
-    width:75px;
-    height:110px;
-    border-radius:10px;
-    overflow:hidden;
-    border:3px solid #fff;
-    background:#151820;
-    transition:.15s;
-    cursor:pointer;
-    box-shadow:3px 3px 0 #000;
-}
-
-.hand-card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-}
-
-.hand-card.playable{
-    box-shadow:
-        0 0 10px #fff,
-        0 0 22px rgba(255,255,255,.7);
-    transform:translateY(-3px);
+  width:68px;
+  height:102px;
+  cursor:pointer;
+  transition:.15s;
 }
 
 .hand-card:hover{
-    transform:translateY(-10px);
+  transform:translateY(-8px);
 }
 
-.hand-card.not-playable{
-    opacity:.65;
+.hand-card.playable{
+  box-shadow:0 0 18px #fff;
 }
 
 .controls{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:20px 0;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:14px 0;
 }
 
 .action-btn{
-    padding:14px 22px;
-    background:#161a26;
-    border:2px solid #fff;
-    color:#fff;
-    font-size:23px;
+  padding:13px 20px;
+  background:#161a26;
+  border:2px solid #fff;
+  color:#fff;
+  font-size:22px;
 }
 
-.action-btn:hover:not(:disabled){
-    background:#fff;
-    color:#111;
+.action-btn:hover{
+  background:#fff;
+  color:#000;
 }
 
 .action-btn.uno{
-    background:#e92852;
+  background:#e92852;
 }
 
-/* =========================================================
-   PENDING DRAW
-========================================================= */
-
-.pending-draw{
-    margin:10px auto;
-    text-align:center;
-    font-size:23px;
-    color:#ffd928;
+.action-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
 }
-
-/* =========================================================
-   MODAL
-========================================================= */
 
 .modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.85);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:2000;
-    padding:20px;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  padding:20px;
 }
 
 .modal-box{
-    width:100%;
-    max-width:500px;
-    background:#10131d;
-    border:3px solid #fff;
-    padding:30px;
-    text-align:center;
-    box-shadow:8px 8px 0 #000;
+  width:100%;
+  max-width:520px;
+  background:#10131d;
+  border:3px solid #fff;
+  padding:28px;
+  text-align:center;
+  box-shadow:8px 8px #000;
 }
 
 .modal-box h2{
-    font-family:'Press Start 2P';
-    font-size:20px;
+  font-family:'Press Start 2P';
+  font-size:20px;
+  line-height:1.5;
+  margin:0 0 12px;
+}
+
+.modal-box p{
+  font-size:27px;
+  margin:10px;
 }
 
 .color-buttons{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:25px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
 }
 
 .color-btn{
-    padding:20px;
-    border:3px solid #fff;
-    font-size:25px;
+  padding:18px;
+  border:3px solid #fff;
+  font-size:24px;
 }
 
-.red-btn{
-    background:#ed214e;
-    color:#fff;
-}
-
-.yellow-btn{
-    background:#ffd928;
-    color:#111;
-}
-
-.green-btn{
-    background:#20bd63;
-    color:#fff;
-}
-
-.blue-btn{
-    background:#2075e8;
-    color:#fff;
-}
-
-/* =========================================================
-   FIN DE MANCHE
-========================================================= */
-
-#winnerModal .modal-box{
-    max-width:600px;
-}
-
-.winner-title{
-    font-family:'Press Start 2P';
-    color:#ffd928;
-    font-size:26px;
-    line-height:1.5;
-    margin-bottom:20px;
-}
+.red-btn{background:#ed214e;color:#fff}
+.yellow-btn{background:#ffd928;color:#111}
+.green-btn{background:#20bd63;color:#fff}
+.blue-btn{background:#2075e8;color:#fff}
 
 .winner-name{
-    font-family:'Press Start 2P';
-    color:#ff305f;
-    font-size:30px;
-    margin:20px 0;
+  font-family:'Press Start 2P';
+  font-size:22px;
+  color:#ffd928;
+  margin:15px 0;
 }
 
 .winner-points{
-    font-size:28px;
-    margin:15px;
+  font-size:30px;
 }
 
-.winner-score{
-    font-size:24px;
-    opacity:.85;
+.modal-actions{
+  margin-top:20px;
 }
-
-.winner-actions{
-    margin-top:25px;
-}
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
 
 @media(max-width:600px){
 
-    #home{
-        padding:10px;
-    }
+  #home{
+    padding:10px;
+  }
 
-    .home-box{
-        padding:22px 15px;
-    }
+  .home-box{
+    padding:20px 14px;
+  }
 
-    .subtitle{
-        font-size:23px;
-    }
+  .subtitle{
+    font-size:23px;
+  }
 
-    .main-btn{
-        font-size:21px;
-        padding:15px;
-    }
+  .mode-choice{
+    grid-template-columns:1fr;
+  }
 
-    .mode-options{
-        grid-template-columns:1fr;
-    }
+  .setup h2{
+    font-size:14px;
+  }
 
-    .topbar{
-        height:60px;
-        padding:0 10px;
-    }
+  .topbar{
+    height:58px;
+  }
 
-    .top-title{
-        font-size:13px;
-    }
+  .top-title{
+    font-size:12px;
+  }
 
-    .room-code{
-        font-size:17px;
-        padding:6px 9px;
-    }
+  .room-code{
+    font-size:17px;
+    padding:6px 9px;
+  }
 
-    #gameArea{
-        padding:10px;
-    }
+  #gameArea{
+    padding:8px;
+  }
 
-    .big-room{
-        margin:20px 5px;
-    }
+  .table{
+    gap:12px;
+    min-height:250px;
+  }
 
-    .player-turn{
-        font-size:15px;
-    }
+  .deck,
+  .card{
+    width:80px;
+    height:115px;
+  }
 
-    .mobile-table{
-        gap:18px;
-    }
+  .player-box{
+    min-width:100px;
+  }
 
-    .mobile-card{
-        width:65px;
-        height:94px;
-    }
+  .player-name{
+    font-size:18px;
+  }
 
-    .hand-card{
-        width:58px;
-        height:86px;
-    }
+  .phone-table{
+    min-height:145px;
+    gap:15px;
+  }
 
-    .action-btn{
-        font-size:20px;
-        padding:12px 18px;
-    }
+  .phone-table .deck,
+  .phone-table .card{
+    width:68px;
+    height:98px;
+  }
 
-    .table{
-        gap:15px;
-        min-height:250px;
-    }
+  .hand-card{
+    width:58px;
+    height:87px;
+  }
 
-    .deck,
-    .card{
-        width:80px;
-        height:115px;
-    }
+  .my-hand{
+    gap:5px;
+  }
 
-    .player-box{
-        min-width:95px;
-        padding:7px;
-    }
+  .player-turn{
+    font-size:14px;
+  }
 
-    .player-name{
-        font-size:18px;
-    }
+  .action-btn{
+    font-size:20px;
+    padding:11px 16px;
+  }
 
+  .winner-name{
+    font-size:18px;
+  }
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- ========================================================
-     ACCUEIL
-========================================================= -->
-
 <section id="home">
 
-    <div class="home-box">
+  <div class="home-box">
 
-        <div class="logo">
-            <span>UNO</span>
+    <div class="logo">
+      <span>UNO</span>
+    </div>
+
+    <div class="subtitle">
+      Jeux2Soirée • Multijoueur
+    </div>
+
+    <div id="homeMenu" class="menu">
+
+      <button
+        class="main-btn create"
+        onclick="showSetup('tv')">
+        🖥️ CRÉER • TV + TÉLÉPHONES
+      </button>
+
+      <button
+        class="main-btn"
+        onclick="showSetup('phones')">
+        📱 CRÉER • TÉLÉPHONES UNIQUEMENT
+      </button>
+
+      <button
+        class="main-btn"
+        onclick="showJoin()">
+        ↗ REJOINDRE UN SALON
+      </button>
+
+    </div>
+
+    <div id="setup" class="setup hidden">
+
+      <h2>CONFIGURATION DE LA PARTIE</h2>
+
+      <div class="setup-label">
+        MODE
+      </div>
+
+      <div class="mode-choice">
+
+        <button
+          id="modeTvBtn"
+          class="mode-btn"
+          onclick="selectMode('tv')">
+          🖥️ TV + TÉLÉPHONES
+        </button>
+
+        <button
+          id="modePhonesBtn"
+          class="mode-btn"
+          onclick="selectMode('phones')">
+          📱 TÉLÉPHONES UNIQUEMENT
+        </button>
+
+      </div>
+
+      <div id="creatorNameBox" class="hidden">
+
+        <div class="setup-label">
+          TON PRÉNOM
         </div>
 
-        <div class="subtitle">
-            Jeux2Soirée • Multijoueur
-        </div>
-
-        <div class="menu">
-
-            <button
-                class="main-btn create"
-                onclick="showCreateMenu()">
-                🃏 CRÉER UN SALON
-            </button>
-
-            <button
-                class="main-btn"
-                onclick="showJoin()">
-                📱 REJOINDRE UN SALON
-            </button>
-
-        </div>
-
-        <!-- CREATION -->
-
-        <div id="createMenu" class="hidden">
-
-            <div class="create-title">
-                CONFIGURATION DE LA PARTIE
-            </div>
-
-            <div class="mode-options">
-
-                <button
-                    id="modeTV"
-                    class="mode-option selected"
-                    onclick="selectMode('tv')">
-
-                    🖥️<br>
-                    ÉCRAN + TÉLÉPHONES
-
-                </button>
-
-                <button
-                    id="modePhones"
-                    class="mode-option"
-                    onclick="selectMode('phones')">
-
-                    📱<br>
-                    TÉLÉPHONES UNIQUEMENT
-
-                </button>
-
-            </div>
-
-            <div id="creatorNameBox"
-                 class="form-box hidden">
-
-                <input
-                    id="creatorName"
-                    maxlength="18"
-                    autocomplete="off"
-                    placeholder="TON PRÉNOM">
-
-            </div>
-
-            <div class="setting">
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        id="stacking">
-
-                    🔥 Autoriser l'empilement des +2
-
-                </label>
-
-            </div>
-
-            <div style="margin-top:15px">
-
-                <button
-                    class="main-btn create"
-                    onclick="createRoom()">
-
-                    CRÉER LA PARTIE
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- REJOINDRE -->
-
-        <div
-            id="joinForm"
-            class="form-box hidden">
-
-            <input
-                id="roomInput"
-                maxlength="6"
-                autocomplete="off"
-                autocapitalize="characters"
-                placeholder="CODE DU SALON">
-
-            <input
-                id="nameInput"
-                maxlength="18"
-                autocomplete="off"
-                placeholder="TON PRÉNOM">
-
-            <button
-                class="main-btn create"
-                onclick="joinRoom()">
-
-                REJOINDRE
-
-            </button>
-
-        </div>
-
-        <div id="message"></div>
+        <input
+          id="creatorNameInput"
+          maxlength="18"
+          placeholder="TON PRÉNOM">
 
         <div class="small">
-            2 à 10 joueurs
+          En mode téléphones, le créateur joue aussi dans la partie.
         </div>
+
+      </div>
+
+      <label class="check-row">
+
+        <input
+          id="stackingInput"
+          type="checkbox">
+
+        <span>
+          Autoriser l'empilement des +2
+        </span>
+
+      </label>
+
+      <div class="small">
+        Exemple : +2 → +2 → le suivant prend +4 s'il ne peut pas ajouter de +2.
+      </div>
+
+      <div class="controls">
+
+        <button
+          class="action-btn"
+          onclick="createConfiguredRoom()">
+          ▶ CRÉER LA PARTIE
+        </button>
+
+        <button
+          class="action-btn"
+          onclick="cancelSetup()">
+          RETOUR
+        </button>
+
+      </div>
 
     </div>
 
-</section>
+    <div id="joinForm" class="setup hidden">
 
+      <h2>REJOINDRE UN SALON</h2>
 
-<!-- ========================================================
-     APPLICATION
-========================================================= -->
+      <div class="setup-label">
+        CODE
+      </div>
 
-<section
-    id="app"
-    class="hidden">
+      <input
+        id="roomInput"
+        maxlength="6"
+        placeholder="CODE DU SALON">
 
-    <header class="topbar">
+      <div class="setup-label">
+        TON PRÉNOM
+      </div>
 
-        <div class="top-title">
-            UNO
-        </div>
+      <input
+        id="nameInput"
+        maxlength="18"
+        placeholder="TON PRÉNOM">
 
-        <div class="room-code">
-            SALON :
-            <strong id="roomCodeDisplay">----</strong>
-        </div>
+      <div class="controls">
 
-    </header>
+        <button
+          class="action-btn"
+          onclick="joinRoom()">
+          ↗ REJOINDRE
+        </button>
 
+        <button
+          class="action-btn"
+          onclick="cancelJoin()">
+          RETOUR
+        </button>
 
-    <main id="gameArea">
+      </div>
 
-        <!-- LOBBY -->
+    </div>
 
-        <section id="lobby">
+    <div id="message" class="message"></div>
 
-            <div
-                class="big-room"
-                id="lobbyCode">
-                ----
-            </div>
+    <div class="small">
+      2 à 10 joueurs
+    </div>
 
-            <div class="small">
-                Donnez ce code aux autres joueurs
-            </div>
-
-            <div
-                class="lobby-settings"
-                id="lobbySettings">
-            </div>
-
-            <div
-                class="lobby-players"
-                id="lobbyPlayers">
-            </div>
-
-            <div id="hostControls">
-
-                <button
-                    class="start-btn"
-                    onclick="startGame()">
-
-                    ▶ COMMENCER LA PARTIE
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- TV -->
-
-        <section
-            id="tvMode"
-            class="hidden">
-
-            <div
-                class="players"
-                id="tvPlayers">
-            </div>
-
-            <div
-                class="status"
-                id="tvStatus">
-                En attente...
-            </div>
-
-            <div
-                class="pending-draw"
-                id="tvPendingDraw">
-            </div>
-
-            <div class="table">
-
-                <div class="deck-zone">
-
-                    <div class="zone-title">
-                        PIOCHE
-                    </div>
-
-                    <div class="deck"></div>
-
-                </div>
-
-                <div class="deck-zone">
-
-                    <div class="zone-title">
-                        DÉFAUSSE
-                    </div>
-
-                    <div id="tvDiscard"></div>
-
-                </div>
-
-            </div>
-
-            <div class="tv-actions">
-
-                <button
-                    class="start-btn hidden"
-                    id="newGameBtn"
-                    onclick="newGame()">
-
-                    🔄 NOUVELLE MANCHE
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- JOUEUR -->
-
-        <section
-            id="playerMode"
-            class="hidden">
-
-            <div class="player-info">
-
-                <div
-                    class="player-turn"
-                    id="playerTurn">
-                    EN ATTENTE
-                </div>
-
-                <div id="currentColor"></div>
-
-                <div
-                    class="pending-draw"
-                    id="playerPendingDraw">
-                </div>
-
-            </div>
-
-
-            <!-- PIOCHE / DEFAUSSE -->
-
-            <div class="mobile-table">
-
-                <div class="mobile-zone">
-
-                    <div class="mobile-zone-title">
-                        PIOCHE
-                    </div>
-
-                    <div class="mobile-card">
-                        <div class="deck"
-                             style="width:100%;height:100%;border:0;border-radius:7px">
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="mobile-zone">
-
-                    <div class="mobile-zone-title">
-                        DÉFAUSSE
-                    </div>
-
-                    <div
-                        id="mobileDiscard"
-                        class="mobile-card">
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- MAIN -->
-
-            <div
-                class="my-hand"
-                id="myHand">
-            </div>
-
-
-            <div class="controls">
-
-                <button
-                    class="action-btn"
-                    id="drawBtn"
-                    onclick="drawCard()">
-
-                    🃏 PIOCHER
-
-                </button>
-
-                <button
-                    class="action-btn uno"
-                    id="unoBtn"
-                    onclick="callUno()">
-
-                    UNO !
-
-                </button>
-
-            </div>
-
-            <div
-                class="small"
-                style="text-align:center">
-
-                Clique sur une carte pour la jouer.
-
-            </div>
-
-        </section>
-
-    </main>
+  </div>
 
 </section>
 
 
-<!-- ========================================================
-     MODAL COULEUR
-========================================================= -->
+<section id="app" class="hidden">
+
+  <header class="topbar">
+
+    <div class="top-title">
+      UNO
+    </div>
+
+    <div class="room-code">
+      SALON :
+      <strong id="roomCodeDisplay">----</strong>
+    </div>
+
+  </header>
+
+  <main id="gameArea">
+
+    <section id="lobby">
+
+      <div class="big-room" id="lobbyCode">
+        ----
+      </div>
+
+      <div class="small">
+        Donnez ce code aux autres joueurs
+      </div>
+
+      <div class="small" id="modeLabel"></div>
+
+      <div
+        class="lobby-players"
+        id="lobbyPlayers">
+      </div>
+
+      <div id="hostControls">
+
+        <button
+          class="start-btn"
+          onclick="startGame()">
+          ▶ COMMENCER LA PARTIE
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section id="tvMode" class="hidden">
+
+      <div
+        class="players"
+        id="tvPlayers">
+      </div>
+
+      <div
+        class="status"
+        id="tvStatus">
+        En attente...
+      </div>
+
+      <div class="table">
+
+        <div class="zone">
+
+          <div class="zone-title">
+            PIOCHE
+          </div>
+
+          <div class="deck"></div>
+
+          <div
+            class="small"
+            id="tvDeckCount">
+            0 cartes
+          </div>
+
+        </div>
+
+        <div class="zone">
+
+          <div class="zone-title">
+            DÉFAUSSE
+          </div>
+
+          <div
+            class="card"
+            id="tvDiscard">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="tv-actions">
+
+        <button
+          class="start-btn hidden"
+          id="tvNewGameBtn"
+          onclick="newGame()">
+          ↻ NOUVELLE MANCHE
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section id="playerMode" class="hidden">
+
+      <div class="player-info">
+
+        <div
+          class="player-turn"
+          id="playerTurn">
+        </div>
+
+        <div
+          class="current-color"
+          id="currentColor">
+        </div>
+
+        <div
+          class="penalty"
+          id="penalty">
+        </div>
+
+      </div>
+
+
+      <div class="phone-table">
+
+        <div class="zone">
+
+          <div class="zone-title">
+            PIOCHE
+          </div>
+
+          <div
+            class="deck"
+            id="phoneDeck">
+          </div>
+
+          <div
+            class="small"
+            id="phoneDeckCount">
+            0 cartes
+          </div>
+
+        </div>
+
+        <div class="zone">
+
+          <div class="zone-title">
+            DÉFAUSSE
+          </div>
+
+          <div
+            class="card"
+            id="phoneDiscard">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="my-hand"
+        id="myHand">
+      </div>
+
+
+      <div class="controls">
+
+        <button
+          id="drawBtn"
+          class="action-btn"
+          onclick="drawCard()">
+          🃏 PIOCHER
+        </button>
+
+        <button
+          id="unoBtn"
+          class="action-btn uno"
+          onclick="callUno()">
+          UNO !
+        </button>
+
+      </div>
+
+
+      <div
+        class="small"
+        id="handInfo"
+        style="text-align:center">
+      </div>
+
+    </section>
+
+  </main>
+
+</section>
+
 
 <div
-    class="modal hidden"
-    id="colorModal">
+  id="colorModal"
+  class="modal hidden">
 
-    <div class="modal-box">
+  <div class="modal-box">
 
-        <h2>
-            CHOISIS UNE COULEUR
-        </h2>
+    <h2>
+      CHOISIS UNE COULEUR
+    </h2>
 
-        <div class="color-buttons">
+    <div class="color-buttons">
 
-            <button
-                class="color-btn red-btn"
-                onclick="chooseColor('red')">
-                🔴 ROUGE
-            </button>
+      <button
+        class="color-btn red-btn"
+        onclick="chooseColor('red')">
+        🔴 ROUGE
+      </button>
 
-            <button
-                class="color-btn yellow-btn"
-                onclick="chooseColor('yellow')">
-                🟡 JAUNE
-            </button>
+      <button
+        class="color-btn yellow-btn"
+        onclick="chooseColor('yellow')">
+        🟡 JAUNE
+      </button>
 
-            <button
-                class="color-btn green-btn"
-                onclick="chooseColor('green')">
-                🟢 VERT
-            </button>
+      <button
+        class="color-btn green-btn"
+        onclick="chooseColor('green')">
+        🟢 VERT
+      </button>
 
-            <button
-                class="color-btn blue-btn"
-                onclick="chooseColor('blue')">
-                🔵 BLEU
-            </button>
-
-        </div>
+      <button
+        class="color-btn blue-btn"
+        onclick="chooseColor('blue')">
+        🔵 BLEU
+      </button>
 
     </div>
+
+  </div>
 
 </div>
 
 
-<!-- ========================================================
-     VAINQUEUR
-========================================================= -->
-
 <div
-    class="modal hidden"
-    id="winnerModal">
+  id="winnerModal"
+  class="modal hidden">
 
-    <div class="modal-box">
+  <div class="modal-box">
 
-        <div class="winner-title">
-            🏆 MANCHE TERMINÉE !
-        </div>
+    <h2>
+      🏆 FIN DE LA MANCHE !
+    </h2>
 
-        <div
-            class="winner-name"
-            id="winnerName">
-        </div>
+    <div
+      class="winner-name"
+      id="winnerName">
+    </div>
 
-        <div
-            class="winner-points"
-            id="winnerPoints">
-        </div>
+    <p>
+      remporte la manche !
+    </p>
 
-        <div
-            class="winner-score"
-            id="winnerScore">
-        </div>
+    <div
+      class="winner-points"
+      id="winnerPoints">
+    </div>
 
-        <div class="winner-actions">
+    <p id="winnerScore"></p>
 
-            <button
-                class="start-btn"
-                id="winnerNewGameBtn"
-                onclick="newGame()">
+    <div class="modal-actions">
 
-                🔄 NOUVELLE MANCHE
+      <button
+        id="winnerNewGameBtn"
+        class="start-btn hidden"
+        onclick="newGame()">
+        ↻ NOUVELLE MANCHE
+      </button>
 
-            </button>
-
-            <div
-                id="winnerWaiting"
-                class="small hidden">
-
-                En attente du prochain départ...
-
-            </div>
-
-        </div>
+      <div
+        id="winnerWaiting"
+        class="small hidden">
+        En attente de l'hôte...
+      </div>
 
     </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
-
 const SERVER_URL =
-    "wss://uno-jeux2soiree.onrender.com";
+  "wss://uno-jeux2soiree.onrender.com";
 
-const CARDS_PATH =
-    "cards/";
+let ws = null;
+let state = null;
 
-
-/* =========================================================
-   VARIABLES
-========================================================= */
-
-let socket = null;
-
-let mode = null;
-
-let room = null;
-
-let playerName = null;
-
-let playerId = null;
-
-let gameState = null;
-
-let pendingCardIndex = null;
+let roomCode = "";
+let myPlayerId = null;
+let selectedMode = "tv";
+let selectedCardIndex = null;
 
 
-/* =========================================================
-   UTILITAIRE
-========================================================= */
-
-function $(id){
-    return document.getElementById(id);
-}
+const $ = id =>
+  document.getElementById(id);
 
 
 function showMessage(text){
-    $("message").textContent = text;
+  $("message").textContent = text;
 }
 
 
-/* =========================================================
-   MENU CREATION
-========================================================= */
+function connect(){
 
-function showCreateMenu(){
+  if(ws && ws.readyState === WebSocket.OPEN){
+    return;
+  }
 
-    $("createMenu")
-        .classList
-        .remove("hidden");
+  ws = new WebSocket(SERVER_URL);
 
-    $("joinForm")
-        .classList
-        .add("hidden");
+  ws.onopen = () => {
+    showMessage("");
+  };
 
-}
+  ws.onclose = () => {
+    showMessage("Connexion au serveur perdue.");
+  };
 
+  ws.onerror = () => {
+    showMessage("Impossible de contacter le serveur.");
+  };
 
-function selectMode(selected){
+  ws.onmessage = event => {
 
-    mode = selected;
+    let data;
 
-    $("modeTV")
-        .classList
-        .toggle(
-            "selected",
-            selected === "tv"
-        );
-
-    $("modePhones")
-        .classList
-        .toggle(
-            "selected",
-            selected === "phones"
-        );
-
-    $("creatorNameBox")
-        .classList
-        .toggle(
-            "hidden",
-            selected !== "phones"
-        );
-
-}
-
-
-/* =========================================================
-   CREER SALON
-========================================================= */
-
-function createRoom(){
-
-    if(!mode)
-        mode = "tv";
-
-    if(mode === "phones"){
-
-        const name =
-            $("creatorName")
-                .value
-                .trim();
-
-        if(!name){
-
-            showMessage(
-                "Entre ton prénom."
-            );
-
-            return;
-        }
-
-        playerName = name;
-
+    try{
+      data = JSON.parse(event.data);
+    }
+    catch{
+      return;
     }
 
-    connect();
+    handleServerMessage(data);
+
+  };
+}
+
+
+function send(data){
+
+  if(!ws || ws.readyState !== WebSocket.OPEN){
+    showMessage("Connexion au serveur...");
+    return;
+  }
+
+  ws.send(JSON.stringify(data));
+}
+
+
+function handleServerMessage(data){
+
+  if(data.type === "error"){
+
+    showMessage(data.message || "Erreur.");
+    return;
+
+  }
+
+
+  if(data.type === "room_created"){
+
+    roomCode = data.room;
+    myPlayerId = data.playerId;
+
+    openApp();
+
+    return;
+
+  }
+
+
+  if(data.type === "joined"){
+
+    roomCode = data.room;
+    myPlayerId = data.playerId;
+
+    openApp();
+
+    return;
+
+  }
+
+
+  if(data.type === "color_required"){
+
+    selectedCardIndex = data.cardIndex;
+
+    $("colorModal").classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  if(data.type === "state"){
+
+    state = data.state;
+
+    renderState();
+
+    return;
+
+  }
+
+
+  if(data.type === "round_end"){
+
+    showWinner(data);
+
+    return;
+
+  }
 
 }
 
 
-/* =========================================================
-   REJOINDRE
-========================================================= */
+function openApp(){
+
+  $("home").classList.add("hidden");
+  $("app").classList.remove("hidden");
+
+  $("roomCodeDisplay").textContent = roomCode;
+  $("lobbyCode").textContent = roomCode;
+
+}
+
+
+function showSetup(mode){
+
+  selectedMode = mode;
+
+  $("homeMenu").classList.add("hidden");
+  $("joinForm").classList.add("hidden");
+  $("setup").classList.remove("hidden");
+
+  selectMode(mode);
+
+}
+
+
+function selectMode(mode){
+
+  selectedMode = mode;
+
+  $("modeTvBtn").classList.toggle(
+    "active",
+    mode === "tv"
+  );
+
+  $("modePhonesBtn").classList.toggle(
+    "active",
+    mode === "phones"
+  );
+
+  $("creatorNameBox").classList.toggle(
+    "hidden",
+    mode !== "phones"
+  );
+
+}
+
+
+function cancelSetup(){
+
+  $("setup").classList.add("hidden");
+  $("homeMenu").classList.remove("hidden");
+
+}
+
 
 function showJoin(){
 
-    $("joinForm")
-        .classList
-        .remove("hidden");
+  $("homeMenu").classList.add("hidden");
+  $("setup").classList.add("hidden");
+  $("joinForm").classList.remove("hidden");
 
-    $("createMenu")
-        .classList
-        .add("hidden");
+}
 
-    setTimeout(
-        () => $("roomInput").focus(),
-        50
+
+function cancelJoin(){
+
+  $("joinForm").classList.add("hidden");
+  $("homeMenu").classList.remove("hidden");
+
+}
+
+
+function createConfiguredRoom(){
+
+  const name =
+    $("creatorNameInput").value.trim();
+
+  if(selectedMode === "phones" && !name){
+
+    showMessage(
+      "Entre ton prénom pour jouer."
     );
+
+    return;
+
+  }
+
+  connect();
+
+  const sendCreate = () => {
+
+    send({
+      type:"create_room",
+      mode:selectedMode,
+      name:name,
+      stacking:$("stackingInput").checked
+    });
+
+  };
+
+
+  if(ws.readyState === WebSocket.OPEN){
+    sendCreate();
+  }
+  else{
+    ws.addEventListener(
+      "open",
+      sendCreate,
+      {once:true}
+    );
+  }
 
 }
 
 
 function joinRoom(){
 
-    const roomValue =
-        $("roomInput")
-            .value
-            .trim()
-            .toUpperCase();
+  const room =
+    $("roomInput").value.trim().toUpperCase();
 
-    const name =
-        $("nameInput")
-            .value
-            .trim();
+  const name =
+    $("nameInput").value.trim();
 
-    if(!roomValue){
-
-        showMessage(
-            "Entre le code du salon."
-        );
-
-        return;
-    }
-
-    if(!name){
-
-        showMessage(
-            "Entre ton prénom."
-        );
-
-        return;
-    }
-
-    room = roomValue;
-
-    playerName = name;
-
-    mode = "player";
-
-    connect();
-
-}
-
-
-/* =========================================================
-   CONNEXION
-========================================================= */
-
-function connect(){
+  if(!room){
 
     showMessage(
-        "Connexion..."
+      "Entre le code du salon."
     );
 
-    try{
+    return;
 
-        socket =
-            new WebSocket(
-                SERVER_URL
-            );
+  }
 
-    }catch(error){
+  if(!name){
 
-        showMessage(
-            "Impossible de se connecter."
-        );
-
-        return;
-
-    }
-
-
-    socket.onopen = () => {
-
-        showMessage("");
-
-        if(mode === "tv"){
-
-            send({
-                type:"create_room",
-                mode:"tv",
-                stacking:
-                    $("stacking").checked
-            });
-
-        }
-        else if(mode === "phones"){
-
-            send({
-                type:"create_room",
-                mode:"phones",
-                name:playerName,
-                stacking:
-                    $("stacking").checked
-            });
-
-        }
-        else{
-
-            send({
-                type:"join_room",
-                room:room,
-                name:playerName
-            });
-
-        }
-
-    };
-
-
-    socket.onmessage = event => {
-
-        let data;
-
-        try{
-
-            data =
-                JSON.parse(
-                    event.data
-                );
-
-        }catch(e){
-
-            return;
-
-        }
-
-        handleMessage(data);
-
-    };
-
-
-    socket.onclose = () => {
-
-        showMessage(
-            "Connexion au serveur perdue."
-        );
-
-    };
-
-
-    socket.onerror = () => {
-
-        showMessage(
-            "Erreur de connexion."
-        );
-
-    };
-
-}
-
-
-/* =========================================================
-   ENVOYER
-========================================================= */
-
-function send(data){
-
-    if(
-        socket &&
-        socket.readyState ===
-        WebSocket.OPEN
-    ){
-
-        socket.send(
-            JSON.stringify(data)
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   MESSAGES
-========================================================= */
-
-function handleMessage(data){
-
-    switch(data.type){
-
-        case "room_created":
-
-            room =
-                data.room;
-
-            playerId =
-                data.playerId ||
-                null;
-
-            openApp();
-
-            break;
-
-
-        case "joined":
-
-            playerId =
-                data.playerId;
-
-            room =
-                data.room;
-
-            openApp();
-
-            break;
-
-
-        case "state":
-
-            gameState =
-                data.state;
-
-            render();
-
-            break;
-
-
-        case "error":
-
-            showMessage(
-                data.message ||
-                "Une erreur est survenue."
-            );
-
-            break;
-
-
-        case "color_required":
-
-            pendingCardIndex =
-                data.cardIndex;
-
-            $("colorModal")
-                .classList
-                .remove("hidden");
-
-            break;
-
-
-        case "round_end":
-
-            showWinner(
-                data
-            );
-
-            break;
-
-    }
-
-}
-
-
-/* =========================================================
-   OUVERTURE
-========================================================= */
-
-function openApp(){
-
-    $("home")
-        .classList
-        .add("hidden");
-
-    $("app")
-        .classList
-        .remove("hidden");
-
-    $("roomCodeDisplay")
-        .textContent =
-        room;
-
-    $("lobbyCode")
-        .textContent =
-        room;
-
-    render();
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(){
-
-    if(!gameState)
-        return;
-
-
-    if(
-        gameState.status ===
-        "waiting"
-    ){
-
-        $("lobby")
-            .classList
-            .remove("hidden");
-
-        $("tvMode")
-            .classList
-            .add("hidden");
-
-        $("playerMode")
-            .classList
-            .add("hidden");
-
-        renderLobby();
-
-        return;
-
-    }
-
-
-    $("lobby")
-        .classList
-        .add("hidden");
-
-
-    if(
-        gameState.displayMode ===
-        "tv" &&
-        mode === "tv"
-    ){
-
-        $("tvMode")
-            .classList
-            .remove("hidden");
-
-        $("playerMode")
-            .classList
-            .add("hidden");
-
-        renderTV();
-
-    }
-    else{
-
-        $("playerMode")
-            .classList
-            .remove("hidden");
-
-        $("tvMode")
-            .classList
-            .add("hidden");
-
-        renderPlayer();
-
-    }
-
-}
-
-
-/* =========================================================
-   LOBBY
-========================================================= */
-
-function renderLobby(){
-
-    const list =
-        $("lobbyPlayers");
-
-    list.innerHTML = "";
-
-
-    gameState.players
-        .forEach(player => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "lobby-player" +
-                (
-                    player.host
-                        ? " host"
-                        : ""
-                );
-
-            div.textContent =
-                player.name +
-                (
-                    player.host
-                        ? " 👑"
-                        : ""
-                );
-
-            list.appendChild(div);
-
-        });
-
-
-    $("lobbySettings")
-        .textContent =
-        (
-            gameState.settings &&
-            gameState.settings.stacking
-        )
-            ? "🔥 Empilement des +2 activé"
-            : "Empilement des +2 désactivé";
-
-
-    const isHost =
-        gameState.isHost;
-
-
-    if(isHost){
-
-        $("hostControls")
-            .classList
-            .remove("hidden");
-
-    }
-    else{
-
-        $("hostControls")
-            .classList
-            .add("hidden");
-
-    }
-
-}
-
-
-/* =========================================================
-   TV
-========================================================= */
-
-function renderTV(){
-
-    const list =
-        $("tvPlayers");
-
-    list.innerHTML = "";
-
-
-    gameState.players
-        .forEach(player => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "player-box" +
-                (
-                    player.id ===
-                    gameState.currentPlayer
-                        ? " active"
-                        : ""
-                );
-
-            div.innerHTML = `
-
-                <div class="player-name">
-                    ${escapeHtml(player.name)}
-                </div>
-
-                <div class="card-count">
-                    ${player.cardCount}
-                    carte${player.cardCount > 1 ? "s" : ""}
-                </div>
-
-            `;
-
-            list.appendChild(div);
-
-        });
-
-
-    $("tvStatus")
-        .textContent =
-        gameState.currentPlayerName
-            ? "🔥 Tour de " +
-              gameState.currentPlayerName
-            : "Partie terminée";
-
-
-    if(
-        gameState.pendingDraw > 0
-    ){
-
-        $("tvPendingDraw")
-            .textContent =
-            "🔥 "+gameState.pendingDraw+
-            " cartes à prendre";
-
-    }
-    else{
-
-        $("tvPendingDraw")
-            .textContent = "";
-
-    }
-
-
-    renderDiscard(
-        $("tvDiscard"),
-        "card"
+    showMessage(
+      "Entre ton prénom."
     );
 
+    return;
 
-    if(
-        gameState.status ===
-        "finished"
-    ){
+  }
 
-        $("newGameBtn")
-            .classList
-            .remove("hidden");
+  connect();
 
-    }
-    else{
-
-        $("newGameBtn")
-            .classList
-            .add("hidden");
-
-    }
-
-}
-
-
-/* =========================================================
-   JOUEUR
-========================================================= */
-
-function renderPlayer(){
-
-    const me =
-        gameState.me;
-
-    if(!me)
-        return;
-
-
-    const myTurn =
-        gameState.currentPlayer ===
-        playerId;
-
-
-    $("playerTurn")
-        .textContent =
-        myTurn
-            ? "🔥 À TOI DE JOUER !"
-            : "⏳ Tour de " +
-              (
-                  gameState.currentPlayerName ||
-                  "..."
-              );
-
-
-    $("currentColor")
-        .textContent =
-        gameState.currentColor
-            ? "Couleur : " +
-              colorName(
-                  gameState.currentColor
-              )
-            : "";
-
-
-    if(
-        gameState.pendingDraw > 0
-    ){
-
-        $("playerPendingDraw")
-            .textContent =
-            "🔥 +"+
-            gameState.pendingDraw+
-            " à prendre";
-
-    }
-    else{
-
-        $("playerPendingDraw")
-            .textContent = "";
-
-    }
-
-
-    renderHand(
-        me.hand,
-        myTurn
-    );
-
-
-    $("drawBtn")
-        .disabled =
-        !myTurn ||
-        me.hasDrawn;
-
-
-    $("unoBtn")
-        .disabled =
-        me.hand.length !== 1;
-
-
-    renderDiscard(
-        $("mobileDiscard"),
-        "mobile-card"
-    );
-
-}
-
-
-/* =========================================================
-   MAIN / MAIN
-========================================================= */
-
-function renderHand(
-    hand,
-    myTurn
-){
-
-    const container =
-        $("myHand");
-
-    container.innerHTML = "";
-
-
-    hand.forEach(
-        (card,index) => {
-
-            const element =
-                createCardElement(
-                    card
-                );
-
-            element.classList
-                .add("hand-card");
-
-
-            const playable =
-                myTurn &&
-                isPlayable(card,index);
-
-
-            if(playable){
-
-                element.classList
-                    .add("playable");
-
-            }
-            else if(myTurn){
-
-                element.classList
-                    .add("not-playable");
-
-            }
-
-
-            element.onclick =
-                () => {
-
-                    if(playable){
-
-                        playCard(index);
-
-                    }
-
-                };
-
-
-            container.appendChild(
-                element
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CARTES
-========================================================= */
-
-function createCardElement(card){
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.className =
-        "card " +
-        (
-            card.color ||
-            "black"
-        );
-
-
-    const img =
-        document.createElement(
-            "img"
-        );
-
-
-    const filename =
-        getCardFilename(
-            card
-        );
-
-
-    img.src =
-        CARDS_PATH +
-        encodeURIComponent(
-            filename
-        );
-
-
-    img.alt =
-        cardLabel(card);
-
-
-    img.onerror =
-        () => {
-
-            img.remove();
-
-            const fallback =
-                document.createElement(
-                    "div"
-                );
-
-            fallback.className =
-                "card-fallback";
-
-            fallback.textContent =
-                cardLabel(card);
-
-            div.appendChild(
-                fallback
-            );
-
-        };
-
-
-    div.appendChild(
-        img
-    );
-
-
-    return div;
-
-}
-
-
-/* =========================================================
-   NOMS FICHIERS CARTES
-========================================================= */
-
-function getCardFilename(card){
-
-    const color =
-        capitalize(
-            card.color
-        );
-
-
-    if(card.type === "number"){
-
-        /*
-         * TES FICHIERS ACTUELS :
-         *
-         * Red- 0.png
-         * Red- 1.png
-         * Red- 2.png
-         *
-         * etc.
-         *
-         * Les bleus 2 et 3 sont maintenant
-         * également nommés normalement :
-         *
-         * Blue- 2.png
-         * Blue- 3.png
-         */
-
-        return (
-            color +
-            "- " +
-            card.value +
-            ".png"
-        );
-
-    }
-
-
-    if(card.type === "draw2"){
-
-        /*
-         * Deux exemplaires :
-         * Red Draw2- 1.png
-         * Red Draw2- 2.png
-         */
-
-        return (
-            color +
-            " Draw2- " +
-            (
-                card.copy ||
-                1
-            ) +
-            ".png"
-        );
-
-    }
-
-
-    if(card.type === "reverse"){
-
-        return (
-            color +
-            " Reverse- " +
-            (
-                card.copy ||
-                1
-            ) +
-            ".png"
-        );
-
-    }
-
-
-    if(card.type === "skip"){
-
-        return (
-            color +
-            " Skip- " +
-            (
-                card.copy ||
-                1
-            ) +
-            ".png"
-        );
-
-    }
-
-
-    if(card.type === "wild"){
-
-        return (
-            "Wild-" +
-            (
-                card.copy ||
-                1
-            ) +
-            ".png"
-        );
-
-    }
-
-
-    if(card.type === "wild4"){
-
-        return (
-            "Draw4-" +
-            (
-                card.copy ||
-                1
-            ) +
-            ".png"
-        );
-
-    }
-
-
-    return "";
-
-}
-
-
-/* =========================================================
-   LABEL CARTE
-========================================================= */
-
-function cardLabel(card){
-
-    if(card.type === "number")
-        return String(card.value);
-
-    if(card.type === "skip")
-        return "SKIP";
-
-    if(card.type === "reverse")
-        return "REVERSE";
-
-    if(card.type === "draw2")
-        return "+2";
-
-    if(card.type === "wild")
-        return "WILD";
-
-    if(card.type === "wild4")
-        return "+4";
-
-    return "UNO";
-
-}
-
-
-/* =========================================================
-   DEFAUSSE
-========================================================= */
-
-function renderDiscard(
-    container,
-    className
-){
-
-    container.innerHTML = "";
-
-
-    if(!gameState.discard)
-        return;
-
-
-    const card =
-        createCardElement(
-            gameState.discard
-        );
-
-
-    card.className =
-        className;
-
-
-    container.appendChild(
-        card
-    );
-
-}
-
-
-/* =========================================================
-   CARTE JOUABLE
-========================================================= */
-
-function isPlayable(
-    card,
-    index
-){
-
-    if(!gameState)
-        return false;
-
-
-    /*
-     * Si un +2 est en attente,
-     * seul un +2 peut être ajouté.
-     */
-
-    if(
-        gameState.pendingDraw > 0
-    ){
-
-        if(
-            gameState.settings &&
-            gameState.settings.stacking
-        ){
-
-            return card.type === "draw2";
-
-        }
-
-        return false;
-
-    }
-
-
-    /*
-     * Après avoir pioché :
-     * seule la carte piochée peut être jouée.
-     */
-
-    if(
-        gameState.me &&
-        gameState.me.hasDrawn &&
-        gameState.me.drawnCardId
-    ){
-
-        if(
-            card.id !==
-            gameState.me.drawnCardId
-        ){
-
-            return false;
-
-        }
-
-    }
-
-
-    if(card.type === "wild")
-        return true;
-
-
-    if(card.type === "wild4")
-        return gameState.canPlayWild4;
-
-
-    if(
-        card.color ===
-        gameState.currentColor
-    ){
-
-        return true;
-
-    }
-
-
-    const discard =
-        gameState.discard;
-
-
-    if(!discard)
-        return true;
-
-
-    if(
-        card.type === discard.type &&
-        card.type !== "number"
-    ){
-
-        return true;
-
-    }
-
-
-    if(
-        card.type === "number" &&
-        discard.type === "number" &&
-        card.value === discard.value
-    ){
-
-        return true;
-
-    }
-
-
-    return false;
-
-}
-
-
-/* =========================================================
-   JOUER
-========================================================= */
-
-function playCard(index){
-
-    if(!gameState.me)
-        return;
-
-
-    const card =
-        gameState.me.hand[index];
-
-
-    if(!card)
-        return;
-
-
-    if(
-        !isPlayable(
-            card,
-            index
-        )
-    ){
-
-        return;
-
-    }
-
-
-    if(
-        card.type === "wild" ||
-        card.type === "wild4"
-    ){
-
-        pendingCardIndex =
-            index;
-
-        $("colorModal")
-            .classList
-            .remove("hidden");
-
-        return;
-
-    }
-
+  const sendJoin = () => {
 
     send({
-
-        type:"play_card",
-
-        index:index
-
+      type:"join_room",
+      room,
+      name
     });
+
+  };
+
+
+  if(ws.readyState === WebSocket.OPEN){
+    sendJoin();
+  }
+  else{
+    ws.addEventListener(
+      "open",
+      sendJoin,
+      {once:true}
+    );
+  }
 
 }
 
-
-/* =========================================================
-   CHOIX COULEUR
-========================================================= */
-
-function chooseColor(color){
-
-    $("colorModal")
-        .classList
-        .add("hidden");
-
-
-    if(
-        pendingCardIndex === null
-    ){
-
-        return;
-
-    }
-
-
-    send({
-
-        type:"play_card",
-
-        index:
-            pendingCardIndex,
-
-        color:
-            color
-
-    });
-
-
-    pendingCardIndex =
-        null;
-
-}
-
-
-/* =========================================================
-   PIOCHER
-========================================================= */
-
-function drawCard(){
-
-    if(
-        !gameState ||
-        !gameState.me
-    ){
-
-        return;
-
-    }
-
-
-    const myTurn =
-        gameState.currentPlayer ===
-        playerId;
-
-
-    if(!myTurn)
-        return;
-
-
-    if(gameState.me.hasDrawn)
-        return;
-
-
-    send({
-
-        type:"draw"
-
-    });
-
-}
-
-
-/* =========================================================
-   UNO
-========================================================= */
-
-function callUno(){
-
-    send({
-
-        type:"uno"
-
-    });
-
-}
-
-
-/* =========================================================
-   PARTIE
-========================================================= */
 
 function startGame(){
 
-    send({
-
-        type:"start_game"
-
-    });
+  send({
+    type:"start_game"
+  });
 
 }
 
 
 function newGame(){
 
-    $("winnerModal")
-        .classList
-        .add("hidden");
+  $("winnerModal").classList.add("hidden");
 
-    send({
-
-        type:"new_game"
-
-    });
+  send({
+    type:"new_game"
+  });
 
 }
 
 
-/* =========================================================
-   VAINQUEUR
-========================================================= */
+function drawCard(){
 
-function showWinner(data){
+  send({
+    type:"draw"
+  });
 
-    $("winnerName")
-        .textContent =
-        data.winner +
-        " gagne !";
+}
 
 
-    $("winnerPoints")
-        .textContent =
-        "+" +
-        data.points +
-        " points";
+function callUno(){
+
+  send({
+    type:"uno"
+  });
+
+}
 
 
-    $("winnerScore")
-        .textContent =
-        "Score total : " +
-        data.score;
+function chooseColor(color){
+
+  $("colorModal").classList.add("hidden");
+
+  if(selectedCardIndex === null){
+    return;
+  }
+
+  send({
+    type:"play_card",
+    index:selectedCardIndex,
+    color
+  });
+
+  selectedCardIndex = null;
+
+}
 
 
-    $("winnerModal")
-        .classList
-        .remove("hidden");
+function playCard(index){
 
+  if(!state || !state.me){
+    return;
+  }
+
+  if(state.currentPlayer !== myPlayerId){
+    return;
+  }
+
+  const card =
+    state.me.hand[index];
+
+  if(!card){
+    return;
+  }
+
+
+  if(
+    card.type === "wild" ||
+    card.type === "wild4"
+  ){
+
+    selectedCardIndex = index;
+
+    $("colorModal").classList.remove("hidden");
+
+    return;
+
+  }
+
+
+  send({
+    type:"play_card",
+    index
+  });
+
+}
+
+
+function renderState(){
+
+  if(!state){
+    return;
+  }
+
+
+  const isTV =
+    state.mode === "tv";
+
+  $("lobby").classList.toggle(
+    "hidden",
+    state.status !== "waiting"
+  );
+
+  $("tvMode").classList.toggle(
+    "hidden",
+    !isTV ||
+    state.status === "waiting"
+  );
+
+  $("playerMode").classList.toggle(
+    "hidden",
+    isTV ||
+    state.status === "waiting"
+  );
+
+
+  $("modeLabel").textContent =
+    isTV
+      ? "🖥️ Mode TV + téléphones"
+      : "📱 Mode téléphones uniquement";
+
+
+  renderLobby();
+  renderTV();
+  renderPlayer();
+
+}
+
+
+function renderLobby(){
+
+  if(!state){
+    return;
+  }
+
+  const container =
+    $("lobbyPlayers");
+
+  container.innerHTML = "";
+
+
+  state.players.forEach(player => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "lobby-player" +
+      (player.host ? " host" : "");
+
+    div.textContent =
+      (player.host ? "👑 " : "") +
+      player.name;
+
+    container.appendChild(div);
+
+  });
+
+
+  const me =
+    state.players.find(
+      p => p.id === myPlayerId
+    );
+
+  const isHost =
+    me && me.host;
+
+  $("hostControls").classList.toggle(
+    "hidden",
+    !isHost
+  );
+
+}
+
+
+function renderTV(){
+
+  if(!state){
+    return;
+  }
+
+
+  const container =
+    $("tvPlayers");
+
+  container.innerHTML = "";
+
+
+  state.players.forEach(player => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "player-box" +
+      (
+        state.currentPlayer === player.id
+          ? " active"
+          : ""
+      );
+
+    div.innerHTML = `
+      <div class="player-name">
+        ${escapeHtml(player.name)}
+      </div>
+      <div class="card-count">
+        ${player.cardCount} carte${player.cardCount > 1 ? "s" : ""}
+      </div>
+    `;
+
+    container.appendChild(div);
+
+  });
+
+
+  if(state.status === "playing"){
+
+    const current =
+      state.currentPlayerName || "";
+
+    $("tvStatus").textContent =
+      "🎯 TOUR DE " + current +
+      (
+        state.pendingDraw > 0
+          ? " • +"+state.pendingDraw+" À PRENDRE"
+          : ""
+      );
+
+  }
+  else{
+
+    $("tvStatus").textContent =
+      "En attente...";
+
+  }
+
+
+  $("tvDeckCount").textContent =
+    state.deckCount + " cartes";
+
+
+  renderCard(
+    $("tvDiscard"),
+    state.discard
+  );
+
+
+  const me =
+    state.players.find(
+      p => p.id === myPlayerId
+    );
+
+  const isHost =
+    me && me.host;
+
+  $("tvNewGameBtn").classList.toggle(
+    "hidden",
+    !isHost || state.status !== "finished"
+  );
+
+}
+
+
+function renderPlayer(){
+
+  if(!state || !state.me){
+    return;
+  }
+
+
+  const myTurn =
+    state.currentPlayer === myPlayerId;
+
+
+  $("playerTurn").textContent =
+    myTurn
+      ? "🎯 C'EST TON TOUR !"
+      : "⏳ TOUR DE " +
+        (state.currentPlayerName || "...");
+
+
+  const colors = {
+    red:"🔴 ROUGE",
+    yellow:"🟡 JAUNE",
+    green:"🟢 VERT",
+    blue:"🔵 BLEU"
+  };
+
+  $("currentColor").textContent =
+    "Couleur : " +
+    (colors[state.currentColor] || "—");
+
+
+  $("penalty").textContent =
+    state.pendingDraw > 0
+      ? "⚠️ +"+state.pendingDraw+" À PRENDRE"
+      : "";
+
+
+  $("phoneDeckCount").textContent =
+    state.deckCount + " cartes";
+
+
+  renderCard(
+    $("phoneDiscard"),
+    state.discard
+  );
+
+
+  renderHand();
+
+
+  $("drawBtn").disabled =
+    !myTurn ||
+    state.me.hasDrawn;
+
+
+  $("unoBtn").disabled =
+    !myTurn ||
+    state.me.hand.length !== 1;
+
+
+  $("handInfo").textContent =
+    state.me.hand.length +
+    " carte" +
+    (
+      state.me.hand.length > 1
+        ? "s"
+        : ""
+    );
+
+}
+
+
+function renderHand(){
+
+  const container =
+    $("myHand");
+
+  container.innerHTML = "";
+
+
+  const hand =
+    state.me.hand || [];
+
+
+  const groups = [
+    "red",
+    "yellow",
+    "green",
+    "blue",
+    "wild"
+  ];
+
+
+  groups.forEach(color => {
+
+    hand.forEach((card,index) => {
+
+      if(card.color !== color){
+        return;
+      }
+
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "hand-card";
+
+
+      if(
+        state.currentPlayer === myPlayerId &&
+        isClientPlayable(card)
+      ){
+
+        wrapper.classList.add(
+          "playable"
+        );
+
+      }
+
+
+      const img =
+        createCardImage(card);
+
+      if(img){
+
+        wrapper.appendChild(img);
+
+      }
+      else{
+
+        wrapper.textContent =
+          cardLabel(card);
+
+      }
+
+
+      wrapper.onclick =
+        () => playCard(index);
+
+
+      container.appendChild(wrapper);
+
+    });
+
+  });
+
+}
+
+
+function isClientPlayable(card){
+
+  if(!state){
+    return false;
+  }
+
+
+  if(state.pendingDraw > 0){
+
+    return (
+      state.settings &&
+      state.settings.stacking &&
+      card.type === "draw2"
+    );
+
+  }
+
+
+  if(card.type === "wild"){
+    return true;
+  }
+
+
+  if(card.type === "wild4"){
+
+    const hasCurrentColor =
+      state.me.hand.some(
+        c => c.color === state.currentColor
+      );
+
+    return !hasCurrentColor;
+
+  }
+
+
+  if(card.color === state.currentColor){
+    return true;
+  }
+
+
+  const top =
+    state.discard;
+
+  if(!top){
+    return true;
+  }
+
+
+  if(
+    card.type !== "number" &&
+    card.type === top.type
+  ){
+
+    return true;
+
+  }
+
+
+  if(
+    card.type === "number" &&
+    top.type === "number" &&
+    card.value === top.value
+  ){
+
+    return true;
+
+  }
+
+
+  return false;
+
+}
+
+
+function createCardImage(card){
+
+  const img =
+    document.createElement("img");
+
+  img.alt =
+    cardLabel(card);
+
+
+  let candidates = [];
+
+
+  if(card.type === "number"){
 
     if(
-        gameState &&
-        gameState.isHost
+      card.color === "blue" &&
+      card.value === 2
     ){
 
-        $("winnerNewGameBtn")
-            .classList
-            .remove("hidden");
+      candidates = [
+        "cards/Blue- 12.png",
+        "cards/Blue- 2.png"
+      ];
 
-        $("winnerWaiting")
-            .classList
-            .add("hidden");
+    }
+    else if(
+      card.color === "blue" &&
+      card.value === 3
+    ){
+
+      candidates = [
+        "cards/Blue- 13.png",
+        "cards/Blue- 3.png"
+      ];
 
     }
     else{
 
-        $("winnerNewGameBtn")
-            .classList
-            .add("hidden");
+      const prefix =
+        capitalize(card.color);
 
-        $("winnerWaiting")
-            .classList
-            .remove("hidden");
+      candidates = [
+        `cards/${prefix}- ${card.value}.png`,
+        `cards/${prefix}-${card.value}.png`
+      ];
 
     }
 
+  }
+
+
+  else if(card.type === "draw2"){
+
+    const prefix =
+      capitalize(card.color);
+
+    candidates = [
+      `cards/${prefix} Draw2- 2.png`,
+      `cards/${prefix} Draw2- 1.png`,
+      `cards/${prefix}Draw2- 2.png`,
+      `cards/${prefix}Draw2- 1.png`
+    ];
+
+  }
+
+
+  else if(card.type === "reverse"){
+
+    const prefix =
+      capitalize(card.color);
+
+    candidates = [
+      `cards/${prefix} Reverse- 1.png`,
+      `cards/${prefix} Reverse- 2.png`,
+      `cards/${prefix}Reverse- 1.png`,
+      `cards/${prefix}Reverse- 2.png`
+    ];
+
+  }
+
+
+  else if(card.type === "skip"){
+
+    const prefix =
+      capitalize(card.color);
+
+    candidates = [
+      `cards/${prefix} Skip- 1.png`,
+      `cards/${prefix} Skip- 2.png`,
+      `cards/${prefix} Skip- 3.png`,
+      `cards/${prefix}Skip- 1.png`,
+      `cards/${prefix}Skip- 2.png`
+    ];
+
+  }
+
+
+  else if(card.type === "wild"){
+
+    candidates = [
+      "cards/Wild-1.png",
+      "cards/Wild-2.png",
+      "cards/Wild-3.png",
+      "cards/Wild-4.png"
+    ];
+
+  }
+
+
+  else if(card.type === "wild4"){
+
+    candidates = [
+      "cards/Draw4- 1.png",
+      "cards/Draw4- 2.png",
+      "cards/Draw4- 3.png",
+      "cards/Draw4- 4.png"
+    ];
+
+  }
+
+
+  if(!candidates.length){
+    return null;
+  }
+
+
+  let candidateIndex = 0;
+
+
+  function tryNext(){
+
+    if(candidateIndex >= candidates.length){
+
+      img.remove();
+
+      return;
+
+    }
+
+    img.src =
+      candidates[candidateIndex++];
+
+  }
+
+
+  img.onerror = tryNext;
+
+  tryNext();
+
+  return img;
+
 }
 
 
-/* =========================================================
-   COULEUR
-========================================================= */
+function renderCard(element,card){
 
-function colorName(color){
+  element.innerHTML = "";
 
-    const names = {
-
-        red:"ROUGE",
-
-        yellow:"JAUNE",
-
-        green:"VERT",
-
-        blue:"BLEU"
-
-    };
+  if(!card){
+    return;
+  }
 
 
-    return names[color] || "";
+  const img =
+    createCardImage(card);
+
+  if(img){
+
+    element.appendChild(img);
+
+  }
+  else{
+
+    element.innerHTML =
+      `<div class="symbol">${cardLabel(card)}</div>`;
+
+    element.className =
+      "card " + (card.color || "black");
+
+  }
 
 }
 
 
-/* =========================================================
-   CAPITALISATION
-========================================================= */
+function cardLabel(card){
+
+  if(!card){
+    return "";
+  }
+
+
+  if(card.type === "number"){
+    return String(card.value);
+  }
+
+  if(card.type === "skip"){
+    return "⊘";
+  }
+
+  if(card.type === "reverse"){
+    return "↔";
+  }
+
+  if(card.type === "draw2"){
+    return "+2";
+  }
+
+  if(card.type === "wild"){
+    return "WILD";
+  }
+
+  if(card.type === "wild4"){
+    return "+4";
+  }
+
+  return "?";
+
+}
+
 
 function capitalize(value){
 
-    if(!value)
-        return "";
+  return value.charAt(0).toUpperCase() +
+         value.slice(1);
 
-    return (
-        value.charAt(0)
-        .toUpperCase() +
-        value.slice(1)
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function showWinner(data){
+
+  $("winnerModal")
+    .classList.remove("hidden");
+
+  $("winnerName").textContent =
+    "🏆 " + data.winner;
+
+  $("winnerPoints").textContent =
+    "+" + data.points + " points";
+
+  $("winnerScore").textContent =
+    "Score total : " +
+    data.score;
+
+
+  const me =
+    state &&
+    state.players &&
+    state.players.find(
+      p => p.id === myPlayerId
+    );
+
+
+  const isHost =
+    me && me.host;
+
+
+  $("winnerNewGameBtn")
+    .classList.toggle(
+      "hidden",
+      !isHost
+    );
+
+  $("winnerWaiting")
+    .classList.toggle(
+      "hidden",
+      isHost
     );
 
 }
 
 
-/* =========================================================
-   SECURITE
-========================================================= */
-
-function escapeHtml(text){
-
-    return String(text)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
+$("roomInput").addEventListener(
+  "keydown",
+  e => {
+    if(e.key === "Enter"){
+      joinRoom();
+    }
+  }
+);
 
 
-/* =========================================================
-   ENTER
-========================================================= */
-
-$("roomInput")
-    .addEventListener(
-        "input",
-        event => {
-
-            event.target.value =
-                event.target.value
-                    .toUpperCase()
-                    .replace(
-                        /[^A-Z0-9]/g,
-                        ""
-                    );
-
-        }
-    );
+$("nameInput").addEventListener(
+  "keydown",
+  e => {
+    if(e.key === "Enter"){
+      joinRoom();
+    }
+  }
+);
 
 
-$("roomInput")
-    .addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                event.key ===
-                "Enter"
-            ){
-
-                $("nameInput")
-                    .focus();
-
-            }
-
-        }
-    );
-
-
-$("nameInput")
-    .addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                event.key ===
-                "Enter"
-            ){
-
-                joinRoom();
-
-            }
-
-        }
-    );
-
-
-$("creatorName")
-    .addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                event.key ===
-                "Enter"
-            ){
-
-                createRoom();
-
-            }
-
-        }
-    );
-
-
-$("colorModal")
-    .addEventListener(
-        "click",
-        event => {
-
-            if(
-                event.target ===
-                $("colorModal")
-            ){
-
-                $("colorModal")
-                    .classList
-                    .add("hidden");
-
-                pendingCardIndex =
-                    null;
-
-            }
-
-        }
-    );
+$("creatorNameInput").addEventListener(
+  "keydown",
+  e => {
+    if(e.key === "Enter"){
+      createConfiguredRoom();
+    }
+  }
+);
 
 </script>
 
