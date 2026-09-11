@@ -387,6 +387,54 @@ function resetPlayerTurnFlags(player) {
   player.drawnCardId = null;
 }
 
+function clearPendingDrawTimer(room) {
+  if (room.pendingDrawTimer) {
+    clearTimeout(room.pendingDrawTimer);
+    room.pendingDrawTimer = null;
+  }
+}
+
+function scheduleStackingAutoDraw(room, targetId) {
+  clearPendingDrawTimer(room);
+
+  room.pendingDrawTimer = setTimeout(() => {
+    room.pendingDrawTimer = null;
+
+    if (room.status !== "playing" || room.currentPlayerId !== targetId || room.pendingDraw <= 0) {
+      return;
+    }
+
+    const target = currentPlayer(room);
+    if (!target) return;
+
+    const amount = room.pendingDraw;
+    const drawn = drawCards(room, target, amount);
+
+    room.pendingDraw = 0;
+    room.penaltyDecision = null;
+    resetPlayerTurnFlags(target);
+
+    addLog(room, `⚠️ ${target.name} ne répond pas avec un +2 : il pioche automatiquement ${drawn} carte(s) (+${amount}).`);
+
+    broadcast(room, {
+      type: "action_effect",
+      effect: {
+        type: "draw2",
+        actorId: null,
+        actorName: "Pénalité",
+        targetId: target.id,
+        targetName: target.name,
+        amount,
+        stacking: true,
+        automatic: true
+      }
+    });
+
+    nextPlayer(room, 1);
+    sendState(room);
+  }, STACKING_AUTO_DRAW_MS);
+}
+
 function advanceAfterCard(room, card) {
   // PASS
   if (card.type === "skip") {
@@ -480,10 +528,15 @@ function advanceAfterCard(room, card) {
           }
         });
       }
+
+      if (target) {
+        scheduleStackingAutoDraw(room, target.id);
+      }
       return;
     }
 
     // Empilement désactivé : le +2 est appliqué immédiatement.
+    clearPendingDrawTimer(room);
     room.pendingDraw = 2;
     const penaltyAmount = 2;
 
@@ -512,6 +565,7 @@ function advanceAfterCard(room, card) {
   // +4 : la pénalité est appliquée immédiatement.
   if (card.type === "wild4") {
     const actor = currentPlayer(room);
+    clearPendingDrawTimer(room);
     room.pendingDraw = 4;
     const penaltyAmount = 4;
 
@@ -578,6 +632,7 @@ function applyPenaltyImmediately(room) {
 }
 
 function finishRound(room, winner) {
+  clearPendingDrawTimer(room);
   let points = 0;
 
   for (const player of room.players) {
@@ -684,6 +739,10 @@ function playCard(room, player, index, chosenColor) {
 
   const card = player.hand[index];
 
+  if (room.pendingDrawTimer && room.settings.stacking && room.pendingDraw > 0 && card.type === "draw2") {
+    clearPendingDrawTimer(room);
+  }
+
   // Après une pioche normale, seule la carte piochée peut être jouée.
   if (player.hasDrawn && player.drawnCardId && card.id !== player.drawnCardId) {
     send(player.socket, {
@@ -770,6 +829,7 @@ function drawNormal(room, player) {
 
 function drawPenalty(room, player) {
   if (room.pendingDraw > 0 && currentPlayer(room)?.id === player.id) {
+    clearPendingDrawTimer(room);
     // En mode empilement, piocher met fin au tour : l'empilement est terminé.
     applyPenaltyImmediately(room);
 
@@ -817,6 +877,7 @@ function challengeUno(room, player) {
 }
 
 function resetRound(room) {
+  clearPendingDrawTimer(room);
   room.status = "waiting";
   room.deck = [];
   room.discard = [];
@@ -1423,6 +1484,18 @@ function battleDisconnect(room, leaving) {
   sendBattleState(room);
 }
 
+const heartbeatInterval = setInterval(() => {
+  for (const socket of wss.clients) {
+    if (socket.readyState === WebSocket.OPEN) {
+      try {
+        socket.ping();
+      } catch {}
+    }
+  }
+}, 20000);
+
+wss.on("close", () => clearInterval(heartbeatInterval));
+
 wss.on("connection", socket => {
   socket.room = null;
   socket.playerId = null;
@@ -1432,6 +1505,11 @@ wss.on("connection", socket => {
     try {
       data = JSON.parse(raw.toString());
     } catch {
+      return;
+    }
+
+    if (data.type === "ping") {
+      send(socket, { type: "pong" });
       return;
     }
 
