@@ -12,6 +12,11 @@ const MAX_HAND_SIZE = 20;
 const COLORS = ["red", "yellow", "green", "blue"];
 const MAX_LOGS = 100;
 
+
+// ============================================================
+// SERVEUR HTTP
+// ============================================================
+
 const server = http.createServer((req, res) => {
   res.writeHead(200, {
     "Content-Type": "text/plain; charset=utf-8"
@@ -20,7 +25,14 @@ const server = http.createServer((req, res) => {
   res.end("Serveur UNO Jeux2Soirée opérationnel.");
 });
 
-const wss = new WebSocket.Server({ server });
+
+// ============================================================
+// WEBSOCKET
+// ============================================================
+
+const wss = new WebSocket.Server({
+  server
+});
 
 const rooms = new Map();
 
@@ -38,10 +50,12 @@ function makeRoomCode() {
   let code;
 
   do {
-    code = crypto.randomBytes(3)
+    code = crypto
+      .randomBytes(3)
       .toString("hex")
       .slice(0, 4)
       .toUpperCase();
+
   } while (rooms.has(code));
 
   return code;
@@ -49,7 +63,11 @@ function makeRoomCode() {
 
 
 function shuffle(deck) {
-  for (let i = deck.length - 1; i > 0; i--) {
+  for (
+    let i = deck.length - 1;
+    i > 0;
+    i--
+  ) {
     const j = crypto.randomInt(i + 1);
 
     [deck[i], deck[j]] = [
@@ -63,7 +81,7 @@ function shuffle(deck) {
 
 
 // ============================================================
-// PAQUET UNO
+// CREATION DU PAQUET UNO
 // ============================================================
 
 function createDeck() {
@@ -83,7 +101,11 @@ function createDeck() {
 
 
     // 1 à 9 : deux exemplaires
-    for (let value = 1; value <= 9; value++) {
+    for (
+      let value = 1;
+      value <= 9;
+      value++
+    ) {
 
       deck.push({
         id: makeId(),
@@ -101,8 +123,12 @@ function createDeck() {
     }
 
 
-    // +2 / Skip / Reverse
-    for (let i = 0; i < 2; i++) {
+    // Skip / Reverse / +2
+    for (
+      let i = 0;
+      i < 2;
+      i++
+    ) {
 
       deck.push({
         id: makeId(),
@@ -125,8 +151,12 @@ function createDeck() {
   }
 
 
-  // 4 jokers + 4 +4
-  for (let i = 0; i < 4; i++) {
+  // 4 Jokers + 4 +4
+  for (
+    let i = 0;
+    i < 4;
+    i++
+  ) {
 
     deck.push({
       id: makeId(),
@@ -154,7 +184,8 @@ function send(socket, data) {
 
   if (
     socket &&
-    socket.readyState === WebSocket.OPEN
+    socket.readyState ===
+      WebSocket.OPEN
   ) {
 
     socket.send(
@@ -166,7 +197,9 @@ function send(socket, data) {
 
 function broadcast(room, data) {
 
-  for (const player of room.players) {
+  for (
+    const player of room.players
+  ) {
 
     send(
       player.socket,
@@ -225,7 +258,7 @@ function addLog(room, text) {
 
 
 // ============================================================
-// TOURS
+// JOUEURS / TOURS
 // ============================================================
 
 function currentPlayer(room) {
@@ -390,7 +423,7 @@ function drawCards(
 
 
 // ============================================================
-// REGLES CARTES
+// REGLES DES CARTES
 // ============================================================
 
 function canPlayWild4(
@@ -485,20 +518,6 @@ function isPlayable(
   player,
   card
 ) {
-
-  /*
-    Le joueur doit toujours jouer
-    une carte légalement jouable.
-
-    La différence est que, après une
-    pénalité +2/+4, il peut choisir
-    N'IMPORTE QUELLE carte jouable
-    de sa main.
-
-    Après une pioche NORMALE,
-    la fonction playCard impose
-    la carte nouvellement piochée.
-  */
 
   return basePlayable(
     room,
@@ -684,9 +703,9 @@ function publicState(
         : null,
 
 
-    penaltyDecision:
-      null,
-
+    /*
+      Informations du joueur connecté.
+    */
 
     me:
       viewer
@@ -705,16 +724,12 @@ function publicState(
               viewer.hasDrawn,
 
             /*
-              IMPORTANT :
+              Pioche normale :
+              contient l'id de la carte piochée.
 
-              null après +2/+4
-              signifie que le joueur
-              peut choisir n'importe
-              quelle carte jouable.
-
-              Après une pioche normale,
-              cette valeur contient
-              l'id de la carte piochée.
+              Pénalité +2/+4 :
+              null = toutes les cartes
+              jouables sont autorisées.
             */
 
             drawnCardId:
@@ -743,7 +758,7 @@ function publicState(
 
 
 // ============================================================
-// ENVOI ETAT
+// ENVOI DE L'ETAT
 // ============================================================
 
 function sendState(room) {
@@ -800,7 +815,7 @@ function sendState(room) {
 
 
 // ============================================================
-// CREATION SALON
+// CREATION DU SALON
 // ============================================================
 
 function makeRoom(
@@ -866,9 +881,6 @@ function makeRoom(
     unoChallenge:
       null,
 
-    penaltyDecision:
-      null,
-
     settings: {
 
       stacking:
@@ -888,7 +900,7 @@ function makeRoom(
 
 
   // Mode téléphones :
-  // le créateur joue également.
+  // le créateur joue aussi.
 
   if (
     room.mode === "phones"
@@ -905,7 +917,10 @@ function makeRoom(
           "Créateur"
         )
         .trim()
-        .slice(0, 18) ||
+        .slice(
+          0,
+          18
+        ) ||
         "Créateur",
 
       socket:
@@ -963,7 +978,7 @@ function makeRoom(
 
 
 // ============================================================
-// DEMARRER PARTIE
+// DEMARRAGE DE PARTIE
 // ============================================================
 
 function startGame(room) {
@@ -1039,9 +1054,6 @@ function startGame(room) {
     "playing";
 
   room.unoChallenge =
-    null;
-
-  room.penaltyDecision =
     null;
 
 
@@ -1187,7 +1199,7 @@ function startGame(room) {
 
 
 // ============================================================
-// FLAGS
+// FLAGS DE TOUR
 // ============================================================
 
 function resetPlayerTurnFlags(
@@ -1203,7 +1215,116 @@ function resetPlayerTurnFlags(
 
 
 // ============================================================
-// EFFETS CARTES
+// PENALITE +2 / +4
+// ============================================================
+
+function applyPenaltyImmediately(
+  room
+) {
+
+  const target =
+    currentPlayer(room);
+
+
+  const amount =
+    room.pendingDraw;
+
+
+  if (
+    !target ||
+    !amount
+  ) {
+
+    return;
+  }
+
+
+  // Pioche obligatoire
+  const drawn =
+    drawCards(
+      room,
+      target,
+      amount
+    );
+
+
+  // La pénalité est consommée.
+  room.pendingDraw =
+    0;
+
+
+  /*
+    IMPORTANT :
+
+    Le joueur garde son tour.
+
+    hasDrawn = true
+    => il ne peut pas refaire
+       une pioche normale.
+
+    drawnCardId = null
+    => aucune carte précise
+       n'est imposée.
+
+    Il peut donc jouer N'IMPORTE
+    QUELLE carte jouable de sa main.
+  */
+
+  target.hasDrawn =
+    true;
+
+  target.drawnCardId =
+    null;
+
+
+  addLog(
+    room,
+    `⚠️ ${target.name} pioche ${drawn} carte(s) de pénalité (+${amount}) et garde son tour.`
+  );
+
+
+  /*
+    Si aucune carte n'est jouable
+    après la pénalité, on évite de
+    bloquer la partie.
+  */
+
+  const canPlaySomething =
+    target.hand.some(
+      card =>
+        basePlayable(
+          room,
+          target,
+          card
+        )
+    );
+
+
+  if (
+    !canPlaySomething
+  ) {
+
+    resetPlayerTurnFlags(
+      target
+    );
+
+
+    addLog(
+      room,
+      `➡️ ${target.name} n'a aucune carte jouable après la pénalité : son tour est terminé.`
+    );
+
+
+    nextPlayer(
+      room,
+      1
+    );
+  }
+}
+
+
+// ============================================================
+// EFFETS DES CARTES
 // ============================================================
 
 function advanceAfterCard(
@@ -1256,6 +1377,7 @@ function advanceAfterCard(
 
       room.direction *= -1;
 
+
       nextPlayer(
         room,
         1
@@ -1278,16 +1400,8 @@ function advanceAfterCard(
     card.type === "draw2"
   ) {
 
-    if (
-      room.settings.stacking
-    ) {
-
-      room.pendingDraw += 2;
-
-    } else {
-
-      room.pendingDraw = 2;
-    }
+    room.pendingDraw =
+      2;
 
 
     nextPlayer(
@@ -1296,9 +1410,13 @@ function advanceAfterCard(
     );
 
 
-    addLog(
-      room,
-      `⚠️ ${currentPlayer(room).name} doit piocher ${room.pendingDraw} carte(s). Après la pioche, il gardera son tour.`
+    /*
+      La pioche est AUTOMATIQUE.
+      Le joueur garde ensuite son tour.
+    */
+
+    applyPenaltyImmediately(
+      room
     );
 
 
@@ -1321,9 +1439,13 @@ function advanceAfterCard(
     );
 
 
-    addLog(
-      room,
-      `⚠️ ${currentPlayer(room).name} doit piocher 4 cartes. Après la pioche, il gardera son tour.`
+    /*
+      La pioche est AUTOMATIQUE.
+      Le joueur garde ensuite son tour.
+    */
+
+    applyPenaltyImmediately(
+      room
     );
 
 
@@ -1390,9 +1512,6 @@ function finishRound(
 
   room.pendingDraw =
     0;
-
-  room.penaltyDecision =
-    null;
 
   room.unoChallenge =
     null;
@@ -1550,7 +1669,7 @@ function resolveUnoChallenge(
 
 
 // ============================================================
-// JOUER CARTE
+// JOUER UNE CARTE
 // ============================================================
 
 function playCard(
@@ -1616,38 +1735,6 @@ function playCard(
   }
 
 
-  /*
-    IMPORTANT :
-
-    S'il y a un +2/+4 en attente,
-    le joueur doit d'abord piocher
-    la pénalité.
-
-    Après la pioche, pendingDraw
-    passe à 0 et le joueur conserve
-    son tour.
-  */
-
-  if (
-    room.pendingDraw > 0
-  ) {
-
-    send(
-      player.socket,
-      {
-
-        type:
-          "error",
-
-        message:
-          `Tu dois d'abord piocher ${room.pendingDraw} carte(s) de pénalité.`
-      }
-    );
-
-    return;
-  }
-
-
   if (
     !Number.isInteger(index) ||
     index < 0 ||
@@ -1665,20 +1752,17 @@ function playCard(
   /*
     PIoche NORMALE
 
-    Si le joueur a pioché une carte
-    normalement, il doit jouer cette
-    carte et uniquement celle-ci.
+    Si une carte vient d'être
+    piochée normalement, seule
+    cette carte peut être jouée.
 
-    MAIS :
-
-    Après un +2/+4 :
+    Après +2/+4 :
 
       hasDrawn = true
       drawnCardId = null
 
-    donc cette condition ne s'applique
-    pas et il peut jouer n'importe quelle
-    carte jouable de sa main.
+    donc cette restriction
+    ne s'applique PAS.
   */
 
   if (
@@ -1704,10 +1788,6 @@ function playCard(
   }
 
 
-  /*
-    Vérification de la carte.
-  */
-
   if (
     !isPlayable(
       room,
@@ -1732,16 +1812,11 @@ function playCard(
   }
 
 
-  /*
-    Joker / +4
-  */
-
+  // Joker / +4
   if (
     (
-      card.type ===
-        "wild" ||
-      card.type ===
-        "wild4"
+      card.type === "wild" ||
+      card.type === "wild4"
     ) &&
     !COLORS.includes(
       chosenColor
@@ -1764,7 +1839,7 @@ function playCard(
   }
 
 
-  // Retirer carte
+  // Retirer la carte
   player.hand.splice(
     index,
     1
@@ -1776,7 +1851,7 @@ function playCard(
   );
 
 
-  // Ajouter défausse
+  // Défausse
   room.discard.push(
     card
   );
@@ -1804,10 +1879,7 @@ function playCard(
   );
 
 
-  /*
-    Victoire
-  */
-
+  // Victoire
   if (
     player.hand.length === 0
   ) {
@@ -1821,10 +1893,7 @@ function playCard(
   }
 
 
-  /*
-    UNO
-  */
-
+  // UNO
   if (
     player.hand.length === 1
   ) {
@@ -1838,10 +1907,7 @@ function playCard(
   }
 
 
-  /*
-    Effet carte
-  */
-
+  // Effet carte
   advanceAfterCard(
     room,
     card
@@ -1884,13 +1950,10 @@ function drawNormal(
 
 
   /*
-    Pioche NORMALE :
+    Pioche normale :
 
-    On mémorise précisément
+    on mémorise exactement
     la carte piochée.
-
-    Le joueur ne pourra jouer
-    que celle-ci.
   */
 
   player.hasDrawn =
@@ -1907,8 +1970,8 @@ function drawNormal(
 
 
   /*
-    Si elle n'est pas jouable :
-    tour suivant.
+    Si la carte n'est pas jouable :
+    le tour passe immédiatement.
   */
 
   if (
@@ -1949,82 +2012,7 @@ function drawNormal(
 
 
 // ============================================================
-// PIOCHE PENALITE +2 / +4
-// ============================================================
-
-function drawPenalty(
-  room,
-  player
-) {
-
-  const amount =
-    room.pendingDraw;
-
-
-  if (
-    !amount
-  ) {
-
-    return;
-  }
-
-
-  const drawn =
-    drawCards(
-      room,
-      player,
-      amount
-    );
-
-
-  /*
-    La pénalité est maintenant
-    complètement consommée.
-  */
-
-  room.pendingDraw =
-    0;
-
-  room.penaltyDecision =
-    null;
-
-
-  /*
-    IMPORTANT :
-
-    On NE passe PAS le tour.
-
-    hasDrawn = true :
-    empêche le joueur de refaire
-    une pioche normale.
-
-    drawnCardId = null :
-    aucune carte précise n'est imposée.
-
-    Il peut donc maintenant jouer
-    N'IMPORTE QUELLE carte JOUABLE
-    de sa main.
-  */
-
-  player.hasDrawn =
-    true;
-
-  player.drawnCardId =
-    null;
-
-
-  addLog(
-    room,
-    `⚠️ ${player.name} pioche ${drawn} carte(s) de pénalité (+${amount}) et garde son tour.`
-  );
-
-
-  sendState(room);
-}
-
-
-// ============================================================
-// PIOCHE
+// FONCTION PIOCHE
 // ============================================================
 
 function drawCard(
@@ -2088,26 +2076,26 @@ function drawCard(
 
 
   /*
-    Une pénalité doit être
-    consommée en priorité.
+    Sécurité au cas où une pénalité
+    serait encore présente.
   */
 
   if (
     room.pendingDraw > 0
   ) {
 
-    drawPenalty(
-      room,
-      player
+    applyPenaltyImmediately(
+      room
     );
+
+    sendState(room);
 
     return;
   }
 
 
   /*
-    Pioche normale interdite
-    une deuxième fois.
+    Une seule pioche normale.
   */
 
   if (
@@ -2189,9 +2177,6 @@ function resetRound(room) {
   room.unoChallenge =
     null;
 
-  room.penaltyDecision =
-    null;
-
   room.winner =
     null;
 
@@ -2252,7 +2237,7 @@ wss.on(
 
 
         // ====================================================
-        // CREATION
+        // CREER UN SALON
         // ====================================================
 
         if (
@@ -2420,7 +2405,6 @@ wss.on(
 
             drawnCardId:
               null
-
           };
 
 
@@ -2472,7 +2456,7 @@ wss.on(
 
 
         // ====================================================
-        // SALON
+        // RECUPERATION SALON
         // ====================================================
 
         const room =
@@ -2495,7 +2479,7 @@ wss.on(
 
 
         // ====================================================
-        // START
+        // DEMARRER
         // ====================================================
 
         if (
@@ -2518,7 +2502,7 @@ wss.on(
 
 
         // ====================================================
-        // PLAY
+        // JOUER
         // ====================================================
 
         if (
@@ -2543,7 +2527,7 @@ wss.on(
 
 
         // ====================================================
-        // DRAW
+        // PIOCHER
         // ====================================================
 
         if (
@@ -2564,7 +2548,7 @@ wss.on(
 
 
         // ====================================================
-        // UNO
+        // BUZZ UNO
         // ====================================================
 
         if (
@@ -2672,13 +2656,7 @@ wss.on(
           }
 
 
-          /*
-            Mode téléphones :
-
-            le premier joueur restant
-            devient créateur.
-          */
-
+          // Transfert du créateur
           if (
             socket ===
             room.host
@@ -2701,7 +2679,7 @@ wss.on(
 
             } else if (
               room.mode ===
-                "tv"
+              "tv"
             ) {
 
               rooms.delete(
@@ -2735,12 +2713,7 @@ wss.on(
           }
 
 
-          /*
-            Si le joueur dont c'était
-            le tour quitte :
-            passage au suivant.
-          */
-
+          // Si le joueur actuel part
           if (
             wasCurrent &&
             room.status ===
@@ -2789,7 +2762,7 @@ wss.on(
 
 
 // ============================================================
-// DEMARRAGE
+// DEMARRAGE SERVEUR
 // ============================================================
 
 server.listen(
