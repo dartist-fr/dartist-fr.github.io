@@ -2,75 +2,155 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+>
 
 <title>UNO • Jeux2Soirée</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* =========================================================
+   POLICES
+========================================================= */
+
+@import url(
+    'https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap'
+);
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
 
 :root{
+
     --bg:#08090d;
+
     --panel:#11131a;
+
     --panel2:#171a23;
-    --white:#fff;
+
+    --white:#ffffff;
+
     --red:#ed1740;
+
     --yellow:#ffd814;
+
     --green:#5aaa23;
+
     --blue:#0874c9;
+
 }
+
+
+/* =========================================================
+   BASE
+========================================================= */
 
 *{
+
     box-sizing:border-box;
+
     -webkit-tap-highlight-color:transparent;
+
 }
 
-html,body{
+
+html,
+body{
+
     margin:0;
+
     padding:0;
+
     width:100%;
+
     min-height:100%;
+
     background:var(--bg);
+
 }
+
 
 body{
+
     color:white;
-    font-family:'VT323',monospace;
+
+    font-family:'VT323', monospace;
+
     overflow-x:hidden;
+
     overscroll-behavior:none;
 
+
     background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+
+        linear-gradient(
+            rgba(255,255,255,.025)
+            1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025)
+            1px,
+            transparent 1px
+        );
+
     background-size:24px 24px;
+
 }
+
 
 body::after{
+
     content:"";
+
     position:fixed;
+
     inset:0;
+
     pointer-events:none;
+
     z-index:99999;
 
-    background:repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.018) 0px,
-        rgba(255,255,255,.018) 1px,
-        transparent 2px,
-        transparent 5px
-    );
+
+    background:
+
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 1px,
+            transparent 2px,
+            transparent 5px
+        );
+
 }
 
-button,input{
+
+button,
+input{
+
     font-family:inherit;
+
 }
+
 
 button{
+
     touch-action:manipulation;
+
 }
 
+
 .hidden{
+
     display:none!important;
+
 }
 
 
@@ -79,17 +159,24 @@ button{
 ========================================================= */
 
 #home{
+
     min-height:100vh;
+
     min-height:100dvh;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
-    padding:18px;
+    padding:15px;
+
 }
 
+
 .home-box{
+
     width:min(680px,100%);
 
     background:var(--panel);
@@ -101,39 +188,60 @@ button{
     text-align:center;
 
     box-shadow:7px 7px 0 #000;
+
 }
 
+
 .logo{
+
     font-family:'Press Start 2P';
 
-    font-size:clamp(32px,9vw,65px);
+    font-size:clamp(
+        32px,
+        9vw,
+        65px
+    );
 
     text-shadow:4px 4px 0 #000;
 
     margin-bottom:15px;
+
 }
+
 
 .logo span{
+
     color:#ed1740;
+
 }
 
+
 .subtitle{
+
     font-size:28px;
 
     margin-bottom:28px;
+
 }
+
 
 .menu{
+
     display:grid;
+
     gap:12px;
+
 }
 
+
 .main-btn{
+
     width:100%;
 
     min-height:62px;
 
     background:#171a23;
+
     color:white;
 
     border:3px solid white;
@@ -145,25 +253,42 @@ button{
     box-shadow:5px 5px 0 #000;
 
     cursor:pointer;
+
 }
+
 
 .main-btn:active{
-    transform:translate(2px,2px);
+
+    transform:translate(
+        2px,
+        2px
+    );
+
     box-shadow:2px 2px 0 #000;
+
 }
+
 
 .main-btn.create{
+
     background:#ed1740;
+
 }
 
+
 .form-box{
+
     display:grid;
+
     gap:10px;
 
     margin-top:20px;
+
 }
 
+
 input{
+
     width:100%;
 
     min-height:58px;
@@ -181,13 +306,19 @@ input{
     outline:none;
 
     padding:10px;
+
 }
+
 
 input:focus{
+
     border-color:#ffd814;
+
 }
 
+
 #message{
+
     min-height:28px;
 
     margin:14px 0 4px;
@@ -195,37 +326,52 @@ input:focus{
     font-size:22px;
 
     color:#ffd814;
+
 }
 
+
 .small{
+
     font-size:20px;
+
     opacity:.75;
+
 }
 
 
 /* =========================================================
-   APP
+   APPLICATION
 ========================================================= */
 
 #app{
+
     min-height:100vh;
+
     min-height:100dvh;
+
 }
 
+
 .topbar{
+
     position:sticky;
+
     top:0;
+
     z-index:500;
 
     min-height:62px;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
 
     gap:10px;
 
     padding:
+
         8px
         max(12px,env(safe-area-inset-right))
         8px
@@ -234,14 +380,21 @@ input:focus{
     background:#101219;
 
     border-bottom:3px solid white;
+
 }
+
 
 .top-title{
+
     font-family:'Press Start 2P';
+
     font-size:18px;
+
 }
 
+
 .room-code{
+
     border:2px solid white;
 
     padding:7px 10px;
@@ -249,19 +402,25 @@ input:focus{
     font-size:20px;
 
     white-space:nowrap;
+
 }
 
+
 #gameArea{
+
     width:100%;
+
     max-width:1250px;
 
     margin:auto;
 
     padding:
+
         18px
-        max(16px,env(safe-area-inset-right))
+        max(12px,env(safe-area-inset-right))
         30px
-        max(16px,env(safe-area-inset-left));
+        max(12px,env(safe-area-inset-left));
+
 }
 
 
@@ -270,33 +429,57 @@ input:focus{
 ========================================================= */
 
 #lobby{
+
     max-width:800px;
+
     margin:auto;
+
     text-align:center;
+
 }
 
+
 .big-room{
+
     font-family:'Press Start 2P';
 
     color:#ed1740;
 
-    font-size:clamp(38px,12vw,85px);
+    font-size:clamp(
+        38px,
+        12vw,
+        85px
+    );
 
     margin:30px 0 15px;
 
     text-shadow:
+
         5px 5px 0 #000,
-        0 0 25px rgba(237,23,64,.5);
+
+        0 0 25px rgba(
+            237,
+            23,
+            64,
+            .5
+        );
+
 }
 
+
 .lobby-players{
+
     display:grid;
+
     gap:8px;
 
     margin:25px 0;
+
 }
 
+
 .lobby-player{
+
     background:var(--panel2);
 
     border:2px solid #555;
@@ -304,18 +487,25 @@ input:focus{
     padding:12px;
 
     font-size:24px;
+
 }
+
 
 .lobby-player.host{
+
     border-color:#ffd814;
+
 }
 
+
 .start-btn{
+
     min-height:58px;
 
     border:3px solid white;
 
     background:white;
+
     color:#111;
 
     font-size:23px;
@@ -325,11 +515,19 @@ input:focus{
     box-shadow:5px 5px 0 #000;
 
     cursor:pointer;
+
 }
 
+
 .start-btn:active{
-    transform:translate(2px,2px);
+
+    transform:translate(
+        2px,
+        2px
+    );
+
     box-shadow:2px 2px 0 #000;
+
 }
 
 
@@ -338,23 +536,35 @@ input:focus{
 ========================================================= */
 
 #tvMode{
-    min-height:calc(100vh - 100px);
+
+    min-height:calc(
+        100vh - 100px
+    );
 
     display:flex;
+
     flex-direction:column;
+
 }
 
+
 .players{
+
     display:flex;
+
     justify-content:center;
+
     flex-wrap:wrap;
 
     gap:10px;
 
     margin-bottom:12px;
+
 }
 
+
 .player-box{
+
     min-width:120px;
 
     padding:9px 15px;
@@ -364,65 +574,100 @@ input:focus{
     border:2px solid #555;
 
     text-align:center;
+
 }
 
+
 .player-box.active{
+
     border-color:white;
 
     box-shadow:
-        0 0 18px rgba(255,255,255,.5);
+        0 0 18px
+        rgba(
+            255,
+            255,
+            255,
+            .5
+        );
 
     transform:translateY(-3px);
+
 }
+
 
 .player-name{
+
     font-size:23px;
+
 }
+
 
 .card-count{
+
     font-size:19px;
+
     opacity:.7;
+
 }
 
+
 .status{
+
     text-align:center;
 
     font-size:30px;
 
     margin:10px;
+
 }
 
+
 .table{
+
     flex:1;
 
     display:flex;
 
     justify-content:center;
+
     align-items:center;
 
     gap:70px;
 
     min-height:400px;
+
 }
+
 
 .deck-zone{
+
     text-align:center;
+
 }
 
+
 .zone-title{
+
     font-size:24px;
 
     margin-bottom:10px;
+
 }
 
+
 .deck{
+
     width:125px;
+
     height:178px;
 
     border:4px solid white;
+
     border-radius:15px;
 
     background:
+
         repeating-linear-gradient(
             45deg,
             #17191e 0,
@@ -434,13 +679,18 @@ input:focus{
     position:relative;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
     box-shadow:6px 6px 0 #000;
+
 }
 
+
 .deck::after{
+
     content:"UNO";
 
     font-family:'Press Start 2P';
@@ -456,29 +706,31 @@ input:focus{
     transform:rotate(-18deg);
 
     box-shadow:3px 3px 0 #000;
+
 }
 
-.tv-discard-card{
-    width:125px!important;
-    height:178px!important;
-}
 
 .tv-actions{
+
     text-align:center;
+
     padding:15px;
+
 }
 
 
 /* =========================================================
-   VRAIES CARTES
+   VRAIES CARTES PNG
 ========================================================= */
 
 .card{
+
     position:relative;
 
     flex:0 0 auto;
 
     width:85px;
+
     height:140px;
 
     border-radius:9px;
@@ -487,7 +739,14 @@ input:focus{
 
     background:#fff;
 
-    box-shadow:4px 4px 0 rgba(0,0,0,.45);
+    box-shadow:
+        3px 3px 0
+        rgba(
+            0,
+            0,
+            0,
+            .5
+        );
 
     cursor:pointer;
 
@@ -497,201 +756,436 @@ input:focus{
         transform .15s,
         box-shadow .15s,
         filter .15s;
+
 }
 
+
 .card img{
+
     display:block;
 
     width:100%;
+
     height:100%;
 
-    object-fit:cover;
+    object-fit:fill;
+
 }
+
 
 .card.playable{
-    box-shadow:
-        0 0 0 3px white,
-        0 0 18px 5px rgba(255,255,255,.8),
-        4px 4px 0 rgba(0,0,0,.45);
 
-    animation:cardGlow 1.3s infinite;
+    box-shadow:
+
+        0 0 0 3px white,
+
+        0 0 18px 4px
+        rgba(
+            255,
+            255,
+            255,
+            .85
+        ),
+
+        3px 3px 0
+        rgba(
+            0,
+            0,
+            0,
+            .5
+        );
+
+    animation:
+        cardGlow
+        1.4s
+        infinite;
+
 }
 
+
 @keyframes cardGlow{
-    0%,100%{
-        transform:translateY(0);
+
+    0%,
+    100%{
+
+        transform:
+            translateY(0);
+
     }
 
     50%{
-        transform:translateY(-7px);
+
+        transform:
+            translateY(-5px);
+
     }
+
 }
+
 
 .card.not-playable{
-    opacity:.58;
-    filter:saturate(.65);
+
+    opacity:.65;
+
 }
 
+
 .card:active{
-    transform:translateY(-12px) scale(1.03);
+
+    transform:
+        translateY(-8px)
+        scale(1.04);
+
     animation:none;
+
 }
 
 
 /* =========================================================
-   MAIN JOUEUR
+   JOUEUR
 ========================================================= */
 
 #playerMode{
+
     width:100%;
-    max-width:1100px;
+
+    max-width:1050px;
 
     margin:auto;
+
 }
+
 
 .player-info{
+
     text-align:center;
 
-    margin-bottom:8px;
+    margin-bottom:5px;
+
 }
 
+
 .player-turn{
+
     font-family:'Press Start 2P';
 
-    font-size:clamp(14px,3.5vw,22px);
+    font-size:clamp(
+        13px,
+        3.5vw,
+        22px
+    );
 
     line-height:1.5;
 
     min-height:34px;
+
 }
 
+
 .player-turn.my-turn{
+
     color:#ffd814;
 
     text-shadow:
-        0 0 14px rgba(255,216,20,.8);
+
+        0 0 14px
+        rgba(
+            255,
+            216,
+            20,
+            .8
+        );
+
 }
+
 
 .player-turn.other-turn{
+
     opacity:.75;
+
 }
 
+
 #currentColor{
+
     font-size:21px;
+
 }
 
 
 /* =========================================================
-   TABLE MOBILE
+   TABLE JOUEUR
 ========================================================= */
 
 .mobile-table{
+
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
-    gap:28px;
+    gap:35px;
 
-    margin:6px 0 12px;
+    margin:5px 0 12px;
+
 }
+
 
 .mobile-zone{
+
     text-align:center;
+
 }
+
 
 .mobile-zone-title{
-    font-size:19px;
 
-    margin-bottom:5px;
+    font-size:20px;
 
-    opacity:.75;
+    margin-bottom:6px;
+
+    opacity:.8;
+
 }
+
 
 .mobile-card{
-    width:75px!important;
-    height:110px!important;
+
+    width:82px!important;
+
+    height:135px!important;
 
     cursor:default;
+
 }
 
+
 .mobile-card:active{
+
     transform:none;
+
 }
 
 
 /* =========================================================
-   MAIN
+   DEFAUSSE
 ========================================================= */
 
-.hand-title{
+#mobileDiscard{
+
     display:flex;
 
     align-items:center;
-    justify-content:space-between;
 
-    font-size:23px;
+    justify-content:center;
 
-    margin:7px 0 5px;
 }
 
-.hand-count{
-    font-size:19px;
-    opacity:.65;
+
+#mobileDiscard .card{
+
+    width:82px;
+
+    height:135px;
+
 }
 
-.hand-wrapper{
-    width:100%;
 
-    overflow-x:auto;
-    overflow-y:hidden;
+#tvDiscard .card{
 
-    padding:
-        10px 5px 18px;
+    width:125px;
 
-    -webkit-overflow-scrolling:touch;
+    height:178px;
 
-    overscroll-behavior-x:contain;
-
-    scrollbar-width:thin;
 }
 
-.hand-wrapper::-webkit-scrollbar{
-    height:7px;
-}
 
-.hand-wrapper::-webkit-scrollbar-track{
-    background:#11141b;
-}
+/* =========================================================
+   TITRE MAIN
+========================================================= */
 
-.hand-wrapper::-webkit-scrollbar-thumb{
-    background:#555;
-    border-radius:10px;
-}
+.hand-title{
 
-.my-hand{
     display:flex;
 
-    align-items:flex-end;
+    align-items:center;
 
-    justify-content:flex-start;
+    justify-content:space-between;
 
-    gap:8px;
+    font-size:25px;
 
-    width:max-content;
+    margin:5px 0 8px;
 
-    min-width:100%;
+    padding:0 4px;
 
-    padding:5px 8px 8px;
 }
+
+
+.hand-count{
+
+    font-size:20px;
+
+    opacity:.65;
+
+}
+
+
+/* =========================================================
+   MAIN DU JOUEUR
+========================================================= */
+
+/*
+   IMPORTANT :
+
+   On n'utilise plus de scroll horizontal.
+
+   Les cartes sont réparties dans une grille.
+
+   Elles sont regroupées par couleur.
+*/
+
+.hand-groups{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+
+    width:100%;
+
+}
+
+
+.color-group{
+
+    width:100%;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .025
+        );
+
+    border-radius:8px;
+
+    padding:5px 4px 7px;
+
+}
+
+
+.color-group-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    font-size:18px;
+
+    margin-bottom:5px;
+
+    padding-left:3px;
+
+    opacity:.9;
+
+}
+
+
+.color-dot{
+
+    width:13px;
+
+    height:13px;
+
+    border-radius:50%;
+
+    border:1px solid white;
+
+    flex:0 0 auto;
+
+}
+
+
+.color-dot.red{
+
+    background:var(--red);
+
+}
+
+
+.color-dot.yellow{
+
+    background:var(--yellow);
+
+}
+
+
+.color-dot.green{
+
+    background:var(--green);
+
+}
+
+
+.color-dot.blue{
+
+    background:var(--blue);
+
+}
+
+
+.color-dot.wild{
+
+    background:
+        conic-gradient(
+            var(--red) 0 25%,
+            var(--yellow) 25% 50%,
+            var(--green) 50% 75%,
+            var(--blue) 75% 100%
+        );
+
+}
+
+
+.color-group-cards{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            8,
+            minmax(0,1fr)
+        );
+
+    gap:6px;
+
+    width:100%;
+
+}
+
 
 .hand-card{
-    width:82px;
-    height:135px;
+
+    width:100%;
+
+    height:auto;
+
+    aspect-ratio:85 / 140;
+
 }
 
-.hand-card:active{
-    transform:translateY(-15px) scale(1.04);
+
+.hand-card .card{
+
+    width:100%;
+
+    height:100%;
+
 }
 
 
@@ -700,21 +1194,27 @@ input:focus{
 ========================================================= */
 
 .controls{
+
     display:grid;
 
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap:10px;
 
-    margin:5px 0 8px;
+    margin:10px 0 5px;
+
 }
 
+
 .action-btn{
+
     min-height:62px;
 
     border:3px solid white;
 
     background:#171a23;
+
     color:white;
 
     font-size:24px;
@@ -722,28 +1222,47 @@ input:focus{
     box-shadow:4px 4px 0 #000;
 
     cursor:pointer;
+
 }
+
 
 .action-btn.uno{
+
     background:#ed1740;
+
 }
+
 
 .action-btn:active:not(:disabled){
-    transform:translate(2px,2px);
+
+    transform:
+        translate(
+            2px,
+            2px
+        );
+
     box-shadow:1px 1px 0 #000;
+
 }
+
 
 .action-btn:disabled{
+
     opacity:.3;
+
     cursor:not-allowed;
+
 }
 
+
 .mobile-help{
+
     text-align:center;
 
     font-size:18px;
 
     opacity:.65;
+
 }
 
 
@@ -752,24 +1271,38 @@ input:focus{
 ========================================================= */
 
 .modal{
+
     position:fixed;
 
     inset:0;
 
     z-index:10000;
 
-    background:rgba(0,0,0,.88);
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .88
+        );
 
     display:flex;
 
     justify-content:center;
+
     align-items:center;
 
     padding:15px;
+
 }
 
+
 .modal-box{
-    width:min(500px,100%);
+
+    width:min(
+        500px,
+        100%
+    );
 
     background:#101219;
 
@@ -780,27 +1313,42 @@ input:focus{
     text-align:center;
 
     box-shadow:7px 7px 0 #000;
+
 }
 
+
 .modal-box h2{
+
     font-family:'Press Start 2P';
 
-    font-size:clamp(16px,4vw,23px);
+    font-size:clamp(
+        16px,
+        4vw,
+        23px
+    );
 
     line-height:1.5;
 
-    margin:0 0 22px;
+    margin:
+        0 0 22px;
+
 }
+
 
 .color-buttons{
+
     display:grid;
 
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap:11px;
+
 }
 
+
 .color-btn{
+
     min-height:72px;
 
     border:3px solid white;
@@ -810,31 +1358,56 @@ input:focus{
     font-weight:bold;
 
     box-shadow:4px 4px 0 #000;
+
 }
+
 
 .color-btn:active{
-    transform:translate(2px,2px);
+
+    transform:
+        translate(
+            2px,
+            2px
+        );
+
     box-shadow:1px 1px 0 #000;
+
 }
+
 
 .red-btn{
+
     background:var(--red);
+
     color:white;
+
 }
+
 
 .yellow-btn{
+
     background:var(--yellow);
+
     color:#111;
+
 }
+
 
 .green-btn{
+
     background:var(--green);
+
     color:white;
+
 }
 
+
 .blue-btn{
+
     background:var(--blue);
+
     color:white;
+
 }
 
 
@@ -845,75 +1418,176 @@ input:focus{
 @media(max-width:600px){
 
     #home{
+
         padding:10px;
+
     }
+
 
     .home-box{
-        padding:24px 16px;
 
-        box-shadow:5px 5px 0 #000;
+        padding:
+            24px
+            16px;
+
+        box-shadow:
+            5px 5px 0 #000;
+
     }
+
 
     .subtitle{
+
         font-size:23px;
+
     }
+
 
     .main-btn{
+
         font-size:21px;
+
     }
+
 
     .topbar{
-        min-height:54px;
+
+        min-height:55px;
+
     }
+
 
     .top-title{
+
         font-size:13px;
+
     }
+
 
     .room-code{
+
         font-size:16px;
-        padding:6px 8px;
+
+        padding:
+            6px
+            8px;
+
     }
+
 
     #gameArea{
+
         padding:
+
             8px
-            max(9px,env(safe-area-inset-right))
-            18px
-            max(9px,env(safe-area-inset-left));
+            max(
+                7px,
+                env(
+                    safe-area-inset-right
+                )
+            )
+            15px
+            max(
+                7px,
+                env(
+                    safe-area-inset-left
+                )
+            );
+
     }
+
 
     .player-turn{
+
         font-size:14px;
+
     }
+
 
     #currentColor{
+
         font-size:18px;
+
     }
+
 
     .mobile-table{
-        gap:18px;
+
+        gap:20px;
+
     }
 
-    .mobile-card{
+
+    .mobile-card,
+    #mobileDiscard .card{
+
         width:70px!important;
-        height:103px!important;
+
+        height:auto!important;
+
+        aspect-ratio:85 / 140;
+
     }
+
 
     .hand-title{
-        font-size:20px;
+
+        font-size:21px;
+
+        margin-top:5px;
+
     }
 
-    .my-hand{
-        gap:7px;
+
+    /*
+       7 cartes par ligne.
+       Elles sont suffisamment grandes
+       pour distinguer la couleur et le symbole.
+    */
+
+    .color-group-cards{
+
+        grid-template-columns:
+            repeat(
+                7,
+                minmax(0,1fr)
+            );
+
+        gap:4px;
+
     }
 
-    .hand-card{
-        width:70px;
-        height:115px;
+
+    .color-group{
+
+        padding:
+            4px
+            3px
+            6px;
+
     }
+
+
+    .color-group-header{
+
+        font-size:16px;
+
+        margin-bottom:4px;
+
+    }
+
+
+    .color-dot{
+
+        width:11px;
+
+        height:11px;
+
+    }
+
 
     .controls{
+
         position:sticky;
 
         bottom:0;
@@ -921,89 +1595,180 @@ input:focus{
         z-index:100;
 
         padding:
-            10px 0
-            max(5px,env(safe-area-inset-bottom));
+            8px
+            0
+            max(
+                5px,
+                env(
+                    safe-area-inset-bottom
+                )
+            );
 
         background:
             linear-gradient(
                 to bottom,
                 transparent,
-                #08090d 20%
+                #08090d 25%
             );
+
     }
+
 
     .action-btn{
-        min-height:58px;
+
+        min-height:56px;
+
         font-size:21px;
+
     }
+
 
     .mobile-help{
+
         font-size:16px;
+
+        padding-bottom:3px;
+
     }
 
-    .color-btn{
-        min-height:68px;
-        font-size:20px;
-    }
 }
 
 
 /* =========================================================
-   PETIT TELEPHONE
+   PETITS TELEPHONES
 ========================================================= */
 
 @media(max-width:380px){
 
-    .hand-card{
-        width:62px;
-        height:103px;
+    .mobile-card,
+    #mobileDiscard .card{
+
+        width:62px!important;
+
     }
 
+
+    .color-group-cards{
+
+        grid-template-columns:
+            repeat(
+                7,
+                minmax(0,1fr)
+            );
+
+        gap:3px;
+
+    }
+
+
+    .color-group-header{
+
+        font-size:15px;
+
+    }
+
+
     .action-btn{
+
         font-size:19px;
+
     }
 
 }
 
 
 /* =========================================================
-   PAYSAGE MOBILE
+   TRÈS PETIT ÉCRAN
 ========================================================= */
 
-@media(max-height:520px) and (orientation:landscape){
+@media(max-width:340px){
+
+    .mobile-card,
+    #mobileDiscard .card{
+
+        width:56px!important;
+
+    }
+
+
+    .color-group-cards{
+
+        grid-template-columns:
+            repeat(
+                7,
+                minmax(0,1fr)
+            );
+
+        gap:2px;
+
+    }
+
+
+    .hand-title{
+
+        font-size:19px;
+
+    }
+
+}
+
+
+/* =========================================================
+   PAYSAGE
+========================================================= */
+
+@media(
+    max-height:520px
+) and (
+    orientation:landscape
+){
 
     .topbar{
+
         min-height:48px;
+
     }
+
 
     #gameArea{
+
         padding-top:5px;
+
     }
 
-    .player-info{
-        margin-bottom:0;
-    }
 
     .mobile-table{
-        margin:2px 0;
+
+        margin:
+            2px
+            0;
+
     }
 
-    .mobile-card{
-        width:58px!important;
-        height:85px!important;
+
+    .mobile-card,
+    #mobileDiscard .card{
+
+        width:55px!important;
+
     }
 
-    .hand-wrapper{
-        padding-bottom:7px;
+
+    .color-group-cards{
+
+        grid-template-columns:
+            repeat(
+                10,
+                minmax(0,1fr)
+            );
+
     }
 
-    .hand-card{
-        width:58px;
-        height:96px;
-    }
 
     .action-btn{
+
         min-height:45px;
+
     }
 
 }
@@ -1049,6 +1814,7 @@ input:focus{
 
         </div>
 
+
         <div
             id="joinForm"
             class="form-box hidden"
@@ -1078,6 +1844,7 @@ input:focus{
 
         </div>
 
+
         <div id="message"></div>
 
         <div class="small">
@@ -1098,6 +1865,7 @@ input:focus{
     id="app"
     class="hidden"
 >
+
 
     <header class="topbar">
 
@@ -1178,6 +1946,7 @@ input:focus{
 
             <div class="table">
 
+
                 <div class="deck-zone">
 
                     <div class="zone-title">
@@ -1187,6 +1956,7 @@ input:focus{
                     <div class="deck"></div>
 
                 </div>
+
 
                 <div class="deck-zone">
 
@@ -1198,7 +1968,9 @@ input:focus{
 
                 </div>
 
+
             </div>
+
 
             <div class="tv-actions">
 
@@ -1225,6 +1997,7 @@ input:focus{
             class="hidden"
         >
 
+
             <div class="player-info">
 
                 <div
@@ -1239,7 +2012,11 @@ input:focus{
             </div>
 
 
+
+            <!-- TABLE CENTRALE -->
+
             <div class="mobile-table">
+
 
                 <div class="mobile-zone">
 
@@ -1262,8 +2039,12 @@ input:focus{
 
                 </div>
 
+
             </div>
 
+
+
+            <!-- TITRE MAIN -->
 
             <div class="hand-title">
 
@@ -1281,15 +2062,22 @@ input:focus{
             </div>
 
 
-            <div class="hand-wrapper">
 
-                <div
-                    class="my-hand"
-                    id="myHand"
-                ></div>
+            <!--
+                NOUVELLE STRUCTURE :
 
-            </div>
+                Les cartes sont regroupées
+                par couleur.
+            -->
 
+            <div
+                id="handGroups"
+                class="hand-groups"
+            ></div>
+
+
+
+            <!-- BOUTONS -->
 
             <div class="controls">
 
@@ -1313,10 +2101,12 @@ input:focus{
 
 
             <div class="mobile-help">
-                👆 Fais glisser ta main pour voir toutes tes cartes
+                👆 Toutes tes cartes sont affichées à l'écran
             </div>
 
+
         </section>
+
 
     </main>
 
@@ -1325,7 +2115,7 @@ input:focus{
 
 
 <!-- ========================================================
-     CHOIX COULEUR
+     MODAL COULEUR
 ========================================================= -->
 
 <div
@@ -1407,11 +2197,13 @@ let pendingCardIndex = null;
 
 
 /* =========================================================
-   ELEMENT
+   RACCOURCI
 ========================================================= */
 
 function $(id){
+
     return document.getElementById(id);
+
 }
 
 
@@ -1420,7 +2212,10 @@ function $(id){
 ========================================================= */
 
 function showMessage(text){
-    $("message").textContent = text;
+
+    $("message").textContent =
+        text;
+
 }
 
 
@@ -1438,7 +2233,7 @@ function createRoom(){
 
 
 /* =========================================================
-   AFFICHER REJOINDRE
+   REJOINDRE
 ========================================================= */
 
 function showJoin(){
@@ -1448,7 +2243,9 @@ function showJoin(){
         .remove("hidden");
 
     setTimeout(
-        () => $("roomInput").focus(),
+        () => {
+            $("roomInput").focus();
+        },
         50
     );
 
@@ -1456,7 +2253,7 @@ function showJoin(){
 
 
 /* =========================================================
-   REJOINDRE
+   REJOINDRE SALON
 ========================================================= */
 
 function joinRoom(){
@@ -1466,6 +2263,7 @@ function joinRoom(){
             .value
             .trim()
             .toUpperCase();
+
 
     const name =
         $("nameInput")
@@ -1495,11 +2293,17 @@ function joinRoom(){
     }
 
 
-    room = roomValue;
+    room =
+        roomValue;
 
-    playerName = name;
 
-    mode = "player";
+    playerName =
+        name;
+
+
+    mode =
+        "player";
+
 
     connect();
 
@@ -1543,18 +2347,24 @@ function connect(){
         if(mode === "tv"){
 
             send({
-                type:"create_room"
+
+                type:
+                    "create_room"
+
             });
 
         }else{
 
             send({
 
-                type:"join_room",
+                type:
+                    "join_room",
 
-                room:room,
+                room:
+                    room,
 
-                name:playerName
+                name:
+                    playerName
 
             });
 
@@ -1563,59 +2373,65 @@ function connect(){
     };
 
 
-    socket.onmessage = event => {
+    socket.onmessage =
+        event => {
 
-        let data;
-
-
-        try{
-
-            data =
-                JSON.parse(
-                    event.data
-                );
-
-        }catch(error){
-
-            return;
-
-        }
+            let data;
 
 
-        handleMessage(data);
+            try{
 
-    };
+                data =
+                    JSON.parse(
+                        event.data
+                    );
+
+            }catch(error){
+
+                return;
+
+            }
 
 
-    socket.onerror = () => {
-
-        showMessage(
-            "Erreur de connexion au serveur."
-        );
-
-    };
-
-
-    socket.onclose = () => {
-
-        if(
-            !gameState ||
-            gameState.status !== "finished"
-        ){
-
-            showMessage(
-                "Connexion au serveur perdue."
+            handleMessage(
+                data
             );
 
-        }
+        };
 
-    };
+
+    socket.onerror =
+        () => {
+
+            showMessage(
+                "Erreur de connexion au serveur."
+            );
+
+        };
+
+
+    socket.onclose =
+        () => {
+
+            if(
+                !gameState ||
+                gameState.status !==
+                "finished"
+            ){
+
+                showMessage(
+                    "Connexion au serveur perdue."
+                );
+
+            }
+
+        };
 
 }
 
 
 /* =========================================================
-   ENVOI
+   ENVOYER
 ========================================================= */
 
 function send(data){
@@ -1627,7 +2443,9 @@ function send(data){
     ){
 
         socket.send(
-            JSON.stringify(data)
+            JSON.stringify(
+                data
+            )
         );
 
     }
@@ -1636,12 +2454,13 @@ function send(data){
 
 
 /* =========================================================
-   MESSAGES
+   RECEPTION
 ========================================================= */
 
 function handleMessage(data){
 
     switch(data.type){
+
 
         case "room_created":
 
@@ -1722,7 +2541,7 @@ function handleMessage(data){
 
 
 /* =========================================================
-   OUVERTURE
+   OUVRIR APP
 ========================================================= */
 
 function openApp(){
@@ -1753,7 +2572,7 @@ function openApp(){
 
 
 /* =========================================================
-   RENDER
+   RENDER GENERAL
 ========================================================= */
 
 function render(){
@@ -1774,13 +2593,16 @@ function render(){
             .classList
             .remove("hidden");
 
+
         $("tvMode")
             .classList
             .add("hidden");
 
+
         $("playerMode")
             .classList
             .add("hidden");
+
 
         renderLobby();
 
@@ -1800,9 +2622,11 @@ function render(){
             .classList
             .remove("hidden");
 
+
         $("playerMode")
             .classList
             .add("hidden");
+
 
         renderTV();
 
@@ -1812,9 +2636,11 @@ function render(){
             .classList
             .remove("hidden");
 
+
         $("tvMode")
             .classList
             .add("hidden");
+
 
         renderPlayer();
 
@@ -1833,7 +2659,8 @@ function renderLobby(){
         $("lobbyPlayers");
 
 
-    list.innerHTML = "";
+    list.innerHTML =
+        "";
 
 
     if(!gameState.players){
@@ -1905,7 +2732,8 @@ function renderTV(){
         $("tvPlayers");
 
 
-    list.innerHTML = "";
+    list.innerHTML =
+        "";
 
 
     if(gameState.players){
@@ -2018,8 +2846,10 @@ function renderPlayer(){
         turn.textContent =
             "🔥 À TOI DE JOUER !";
 
+
         turn.classList
             .add("my-turn");
+
 
         turn.classList
             .remove("other-turn");
@@ -2033,8 +2863,10 @@ function renderPlayer(){
                 "un joueur"
             );
 
+
         turn.classList
             .remove("my-turn");
+
 
         turn.classList
             .add("other-turn");
@@ -2052,11 +2884,22 @@ function renderPlayer(){
             : "";
 
 
-    renderHand(
+    /*
+       Nouvelle main :
+
+       on regroupe les cartes
+       par couleur.
+    */
+
+    renderGroupedHand(
         me.hand || [],
         myTurn
     );
 
+
+    /*
+       Défausse = vraie image PNG
+    */
 
     renderDiscard(
         $("mobileDiscard"),
@@ -2086,7 +2929,7 @@ function renderPlayer(){
 
 
 /* =========================================================
-   COMPTE MAIN
+   COMPTE CARTES
 ========================================================= */
 
 function updateHandCount(count){
@@ -2104,66 +2947,337 @@ function updateHandCount(count){
 
 
 /* =========================================================
-   MAIN
+   GROUPEMENT DES CARTES
 ========================================================= */
 
-function renderHand(
+function renderGroupedHand(
     hand,
     myTurn
 ){
 
     const container =
-        $("myHand");
+        $("handGroups");
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
-    hand.forEach(
-        (card,index) => {
+    /*
+       On garde l'index original.
 
-            const element =
-                createCardElement(
-                    card
+       Exemple :
+
+       carte réelle index 5
+       -> même index envoyé au serveur
+       même si elle est affichée
+       dans un autre groupe.
+    */
+
+    const cards =
+        hand.map(
+            (
+                card,
+                originalIndex
+            ) => {
+
+                return {
+
+                    card:
+                        card,
+
+                    index:
+                        originalIndex
+
+                };
+
+            }
+        );
+
+
+    const groups = {
+
+        red:[],
+
+        yellow:[],
+
+        green:[],
+
+        blue:[],
+
+        wild:[]
+
+    };
+
+
+    cards.forEach(
+        item => {
+
+            const group =
+                getCardGroup(
+                    item.card
                 );
 
 
-            element.classList
-                .add("hand-card");
-
-
             if(
-                myTurn &&
-                isPlayable(card)
+                groups[group]
             ){
 
-                element.classList
-                    .add("playable");
+                groups[group]
+                    .push(item);
 
-            }else if(myTurn){
+            }else{
 
-                element.classList
-                    .add("not-playable");
+                groups.wild
+                    .push(item);
+
+            }
+
+        }
+    );
+
+
+    const order = [
+
+        {
+            id:"red",
+            title:"ROUGE"
+        },
+
+        {
+            id:"yellow",
+            title:"JAUNE"
+        },
+
+        {
+            id:"green",
+            title:"VERT"
+        },
+
+        {
+            id:"blue",
+            title:"BLEU"
+        },
+
+        {
+            id:"wild",
+            title:"JOKERS"
+        }
+
+    ];
+
+
+    order.forEach(
+        groupInfo => {
+
+            const items =
+                groups[
+                    groupInfo.id
+                ];
+
+
+            if(!items.length){
+
+                return;
 
             }
 
 
-            element.addEventListener(
-                "click",
-                () => {
+            const section =
+                document.createElement(
+                    "div"
+                );
 
-                    playCard(index);
+
+            section.className =
+                "color-group";
+
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+
+            header.className =
+                "color-group-header";
+
+
+            header.innerHTML = `
+
+                <span
+                    class="color-dot ${groupInfo.id}"
+                ></span>
+
+                <span>
+                    ${groupInfo.title}
+                    •
+                    ${items.length}
+                </span>
+
+            `;
+
+
+            const cardsContainer =
+                document.createElement(
+                    "div"
+                );
+
+
+            cardsContainer.className =
+                "color-group-cards";
+
+
+            items.forEach(
+                item => {
+
+                    const wrapper =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    wrapper.className =
+                        "hand-card";
+
+
+                    const cardElement =
+                        createCardElement(
+                            item.card
+                        );
+
+
+                    if(
+                        myTurn &&
+                        isPlayable(
+                            item.card
+                        )
+                    ){
+
+                        cardElement
+                            .classList
+                            .add(
+                                "playable"
+                            );
+
+                    }else if(myTurn){
+
+                        cardElement
+                            .classList
+                            .add(
+                                "not-playable"
+                            );
+
+                    }
+
+
+                    cardElement
+                        .addEventListener(
+                            "click",
+                            () => {
+
+                                playCard(
+                                    item.index
+                                );
+
+                            }
+                        );
+
+
+                    wrapper.appendChild(
+                        cardElement
+                    );
+
+
+                    cardsContainer
+                        .appendChild(
+                            wrapper
+                        );
 
                 }
             );
 
 
+            section.appendChild(
+                header
+            );
+
+
+            section.appendChild(
+                cardsContainer
+            );
+
+
             container.appendChild(
-                element
+                section
             );
 
         }
     );
+
+}
+
+
+/* =========================================================
+   DETERMINER GROUPE
+========================================================= */
+
+function getCardGroup(card){
+
+    if(!card){
+
+        return "wild";
+
+    }
+
+
+    const color =
+        String(
+            card.color || ""
+        ).toLowerCase();
+
+
+    if(
+        color === "red" ||
+        color === "rouge"
+    ){
+
+        return "red";
+
+    }
+
+
+    if(
+        color === "yellow" ||
+        color === "jaune"
+    ){
+
+        return "yellow";
+
+    }
+
+
+    if(
+        color === "green" ||
+        color === "vert"
+    ){
+
+        return "green";
+
+    }
+
+
+    if(
+        color === "blue" ||
+        color === "bleu"
+    ){
+
+        return "blue";
+
+    }
+
+
+    return "wild";
 
 }
 
@@ -2184,7 +3298,8 @@ function renderDiscard(
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     if(!gameState.discard){
@@ -2194,7 +3309,7 @@ function renderDiscard(
     }
 
 
-    const card =
+    const cardElement =
         createCardElement(
             gameState.discard
         );
@@ -2202,183 +3317,340 @@ function renderDiscard(
 
     if(mobile){
 
-        card.classList
-            .add("mobile-card");
-
-    }else{
-
-        card.classList
-            .add("tv-discard-card");
+        cardElement
+            .classList
+            .add(
+                "mobile-card"
+            );
 
     }
 
 
     container.appendChild(
-        card
+        cardElement
     );
 
 }
 
 
 /* =========================================================
-   CHARGEMENT DES VRAIES IMAGES
+   IMAGES DES CARTES
 ========================================================= */
 
 /*
-    IMPORTANT :
+    Les fichiers présents dans ton GitHub
+    sont utilisés directement.
 
-    Les noms correspondent à ton dossier GitHub :
+    Exemples :
 
-    cards/
-        Green-0.png
-        Green-1.png
-        ...
-        Red-1.png
-        Blue-1.png
-        Yellow-1.png
+        Blue-7.png
+        Green-3.png
+        Red-9.png
+        Yellow-0.png
 
-    Pour les cartes spéciales :
+    Spéciales :
 
-        Green Draw2-1.png
-        Green Draw2-2.png
+        Blue Draw2-1.png
+        Blue Draw2-2.png
 
-        Green Reverse-1.png
-        Green Reverse-2.png
+        Blue Reverse-1.png
+        Blue Reverse-2.png
 
-        Green Skip-1.png
-        Green Skip-2.png
+        Blue Skip-1.png
+        Blue Skip-2.png
 
-    etc.
-
-    Pour les Wild :
+    Jokers :
 
         Wild-1.png
         Wild-2.png
         Wild-3.png
         Wild-4.png
 
-    Pour les +4 :
+    +4 :
 
         Wild Draw2-1.png
+        Wild Draw2-2.png
         etc.
-
-    Le code essaie plusieurs variantes.
 */
 
 
 function cardImageCandidates(card){
 
     const color =
-        capitalize(
-            card.color || ""
+        normalizeColor(
+            card.color
         );
 
 
     const candidates = [];
 
 
-    /* NUMEROS */
+    /*
+       NUMEROS
+    */
 
-    if(card.type === "number"){
+    if(
+        card.type === "number" ||
+        !card.type ||
+        (
+            card.value !== undefined &&
+            !isNaN(
+                Number(
+                    card.value
+                )
+            )
+        )
+    ){
 
-        candidates.push(
-            `cards/${color}-${card.value}.png`
-        );
+        const value =
+            card.value;
 
-        return candidates;
+
+        if(
+            value !== undefined &&
+            value !== null
+        ){
+
+            candidates.push(
+                `cards/${color}-${value}.png`
+            );
+
+        }
 
     }
 
 
-    /* +2 */
+    /*
+       +2
+    */
 
-    if(card.type === "draw2"){
+    if(
+        card.type === "draw2" ||
+        card.type === "draw_2" ||
+        card.type === "+2"
+    ){
 
         candidates.push(
+
             `cards/${color} Draw2-1.png`,
+
             `cards/${color} Draw2-2.png`,
+
             `cards/${color} Draw2-3.png`,
+
             `cards/${color} Draw2-4.png`
-        );
 
-        return candidates;
+        );
 
     }
 
 
-    /* INVERSION */
+    /*
+       INVERSION
+    */
 
-    if(card.type === "reverse"){
+    if(
+        card.type === "reverse" ||
+        card.type === "Reverse"
+    ){
 
         candidates.push(
+
             `cards/${color} Reverse-1.png`,
+
             `cards/${color} Reverse-2.png`,
+
             `cards/${color} Reverse-3.png`,
+
             `cards/${color} Reverse-4.png`
-        );
 
-        return candidates;
+        );
 
     }
 
 
-    /* PASSE */
+    /*
+       SKIP
+    */
 
-    if(card.type === "skip"){
+    if(
+        card.type === "skip" ||
+        card.type === "Skip"
+    ){
 
         candidates.push(
+
             `cards/${color} Skip-1.png`,
+
             `cards/${color} Skip-2.png`,
+
             `cards/${color} Skip-3.png`,
+
             `cards/${color} Skip-4.png`
-        );
 
-        return candidates;
+        );
 
     }
 
 
-    /* JOKER */
+    /*
+       JOKER
+    */
 
-    if(card.type === "wild"){
+    if(
+        card.type === "wild" ||
+        card.type === "Wild"
+    ){
 
         candidates.push(
+
             "cards/Wild-1.png",
+
             "cards/Wild-2.png",
-            "cards/Wild-3.png",
-            "cards/Wild-4.png"
-        );
 
-        return candidates;
+            "cards/Wild-3.png",
+
+            "cards/Wild-4.png"
+
+        );
 
     }
 
 
-    /* +4 */
+    /*
+       +4
 
-    if(card.type === "wild4"){
+       Certains serveurs appellent cette
+       carte "wild4", d'autres "draw4".
+    */
+
+    if(
+        card.type === "wild4" ||
+        card.type === "draw4" ||
+        card.type === "wild_draw4" ||
+        card.type === "+4"
+    ){
 
         candidates.push(
-            "cards/Wild Draw2-1.png",
-            "cards/Wild Draw2-2.png",
-            "cards/Wild Draw2-3.png",
-            "cards/Wild Draw2-4.png",
-            "cards/Wild-1.png",
-            "cards/Wild-2.png"
-        );
 
-        return candidates;
+            "cards/Wild Draw2-1.png",
+
+            "cards/Wild Draw2-2.png",
+
+            "cards/Wild Draw2-3.png",
+
+            "cards/Wild Draw2-4.png"
+
+        );
 
     }
 
 
-    return candidates;
+    /*
+       Au cas où le serveur utilise
+       directement le nom de la carte.
+    */
+
+    if(
+        typeof card.name === "string"
+    ){
+
+        const cleanName =
+            card.name
+                .replace(
+                    ".png",
+                    ""
+                );
+
+
+        candidates.push(
+            `cards/${cleanName}.png`
+        );
+
+    }
+
+
+    /*
+       Supprime les doublons.
+    */
+
+    return [
+        ...new Set(
+            candidates
+        )
+    ];
 
 }
 
 
 /* =========================================================
-   CREER CARTE
+   NORMALISATION COULEUR
+========================================================= */
+
+function normalizeColor(color){
+
+    if(!color){
+
+        return "";
+
+    }
+
+
+    const value =
+        String(
+            color
+        ).toLowerCase();
+
+
+    if(
+        value === "red" ||
+        value === "rouge"
+    ){
+
+        return "Red";
+
+    }
+
+
+    if(
+        value === "yellow" ||
+        value === "jaune"
+    ){
+
+        return "Yellow";
+
+    }
+
+
+    if(
+        value === "green" ||
+        value === "vert"
+    ){
+
+        return "Green";
+
+    }
+
+
+    if(
+        value === "blue" ||
+        value === "bleu"
+    ){
+
+        return "Blue";
+
+    }
+
+
+    return capitalize(
+        value
+    );
+
+}
+
+
+/* =========================================================
+   CREATION CARTE
 ========================================================= */
 
 function createCardElement(card){
@@ -2409,28 +3681,36 @@ function createCardElement(card){
         "Carte UNO";
 
 
-    let candidateIndex = 0;
+    /*
+       Si plusieurs variantes existent
+       pour la même carte, on choisit
+       la première image disponible.
+    */
+
+    let imageIndex = 0;
 
 
-    function tryNextImage(){
+    function loadNext(){
 
         if(
-            candidateIndex >=
+            imageIndex >=
             candidates.length
         ){
 
             /*
-                Si aucune image n'existe,
-                on affiche un fallback.
+               Si vraiment aucun fichier
+               n'est trouvé.
             */
 
             img.style.display =
                 "none";
 
+
             div.innerHTML +=
                 fallbackCard(
                     card
                 );
+
 
             return;
 
@@ -2440,18 +3720,18 @@ function createCardElement(card){
         img.src =
             encodeURI(
                 candidates[
-                    candidateIndex
+                    imageIndex
                 ]
             );
 
 
-        candidateIndex++;
+        imageIndex++;
 
     }
 
 
     img.onerror =
-        tryNextImage;
+        loadNext;
 
 
     img.onload = () => {
@@ -2469,12 +3749,18 @@ function createCardElement(card){
 
     if(candidates.length){
 
-        tryNextImage();
+        loadNext();
 
     }else{
 
+        img.style.display =
+            "none";
+
+
         div.innerHTML =
-            fallbackCard(card);
+            fallbackCard(
+                card
+            );
 
     }
 
@@ -2490,80 +3776,84 @@ function createCardElement(card){
 
 function fallbackCard(card){
 
-    let text = "?";
+    let text =
+        "?";
+
+
+    if(
+        card.value !== undefined &&
+        card.value !== null
+    ){
+
+        text =
+            card.value;
+
+    }
 
 
     switch(card.type){
 
-        case "number":
-            text =
-                card.value;
-            break;
-
         case "skip":
+
             text =
                 "⊘";
+
             break;
+
 
         case "reverse":
+
             text =
                 "↔";
+
             break;
+
 
         case "draw2":
+
             text =
                 "+2";
+
             break;
+
 
         case "wild":
+
             text =
                 "★";
+
             break;
 
+
         case "wild4":
+
             text =
                 "+4";
+
             break;
 
     }
 
 
     return `
-        <div style="
-            position:absolute;
-            inset:0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:#222;
-            color:white;
-            font-size:45px;
-            font-weight:bold;
-        ">
+
+        <div
+            style="
+                position:absolute;
+                inset:0;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:#222;
+                color:white;
+                font-size:35px;
+                font-weight:bold;
+            "
+        >
             ${escapeHtml(text)}
         </div>
+
     `;
-
-}
-
-
-/* =========================================================
-   CAPITALISATION
-========================================================= */
-
-function capitalize(value){
-
-    if(!value){
-
-        return "";
-
-    }
-
-
-    return (
-        value.charAt(0).toUpperCase() +
-        value.slice(1)
-    );
 
 }
 
@@ -2592,17 +3882,22 @@ function isPlayable(card){
     }
 
 
-    if(card.type === "wild"){
+    if(
+        card.type === "wild"
+    ){
 
         return true;
 
     }
 
 
-    if(card.type === "wild4"){
+    if(
+        card.type === "wild4"
+    ){
 
         return (
-            gameState.canPlayWild4 !== false
+            gameState.canPlayWild4 !==
+            false
         );
 
     }
@@ -2633,8 +3928,12 @@ function isPlayable(card){
     if(
         card.type === "number" &&
         discard.type === "number" &&
-        String(card.value) ===
-        String(discard.value)
+        String(
+            card.value
+        ) ===
+        String(
+            discard.value
+        )
     ){
 
         return true;
@@ -2648,7 +3947,7 @@ function isPlayable(card){
 
 
 /* =========================================================
-   JOUER
+   JOUER CARTE
 ========================================================= */
 
 function playCard(index){
@@ -2661,7 +3960,9 @@ function playCard(index){
 
 
     const card =
-        gameState.me.hand[index];
+        gameState.me.hand[
+            index
+        ];
 
 
     if(!card){
@@ -2699,9 +4000,11 @@ function playCard(index){
 
     send({
 
-        type:"play_card",
+        type:
+            "play_card",
 
-        index:index
+        index:
+            index
 
     });
 
@@ -2709,7 +4012,7 @@ function playCard(index){
 
 
 /* =========================================================
-   COULEUR
+   CHOIX COULEUR
 ========================================================= */
 
 function chooseColor(color){
@@ -2720,7 +4023,8 @@ function chooseColor(color){
 
 
     if(
-        pendingCardIndex === null
+        pendingCardIndex ===
+        null
     ){
 
         return;
@@ -2730,7 +4034,8 @@ function chooseColor(color){
 
     send({
 
-        type:"play_card",
+        type:
+            "play_card",
 
         index:
             pendingCardIndex,
@@ -2754,7 +4059,10 @@ function chooseColor(color){
 function drawCard(){
 
     send({
-        type:"draw"
+
+        type:
+            "draw"
+
     });
 
 }
@@ -2767,7 +4075,10 @@ function drawCard(){
 function callUno(){
 
     send({
-        type:"uno"
+
+        type:
+            "uno"
+
     });
 
 }
@@ -2780,7 +4091,10 @@ function callUno(){
 function startGame(){
 
     send({
-        type:"start_game"
+
+        type:
+            "start_game"
+
     });
 
 }
@@ -2789,38 +4103,75 @@ function startGame(){
 function newGame(){
 
     send({
-        type:"new_game"
+
+        type:
+            "new_game"
+
     });
 
 }
 
 
 /* =========================================================
-   COULEUR
+   NOM COULEUR
 ========================================================= */
 
 function colorName(color){
 
     const names = {
 
-        red:"ROUGE",
+        red:
+            "ROUGE",
 
-        yellow:"JAUNE",
+        yellow:
+            "JAUNE",
 
-        green:"VERT",
+        green:
+            "VERT",
 
-        blue:"BLEU"
+        blue:
+            "BLEU"
 
     };
 
 
-    return names[color] || "";
+    return (
+        names[color] ||
+        ""
+    );
 
 }
 
 
 /* =========================================================
-   SECURITE
+   CAPITALISATION
+========================================================= */
+
+function capitalize(value){
+
+    if(!value){
+
+        return "";
+
+    }
+
+
+    return (
+
+        value
+            .charAt(0)
+            .toUpperCase() +
+
+        value
+            .slice(1)
+
+    );
+
+}
+
+
+/* =========================================================
+   SECURITE HTML
 ========================================================= */
 
 function escapeHtml(text){
@@ -2856,7 +4207,7 @@ function escapeHtml(text){
 
 
 /* =========================================================
-   MODAL
+   FERMER MODAL
 ========================================================= */
 
 $("colorModal")
@@ -2873,6 +4224,7 @@ $("colorModal")
                     .classList
                     .add("hidden");
 
+
                 pendingCardIndex =
                     null;
 
@@ -2883,7 +4235,7 @@ $("colorModal")
 
 
 /* =========================================================
-   ENTREE CODE SALON
+   CODE SALON
 ========================================================= */
 
 $("roomInput")
@@ -2904,8 +4256,27 @@ $("roomInput")
 
 
 /* =========================================================
-   ENTER POUR REJOINDRE
+   ENTER
 ========================================================= */
+
+$("roomInput")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                event.key ===
+                "Enter"
+            ){
+
+                $("nameInput")
+                    .focus();
+
+            }
+
+        }
+    );
+
 
 $("nameInput")
     .addEventListener(
@@ -2913,7 +4284,8 @@ $("nameInput")
         event => {
 
             if(
-                event.key === "Enter"
+                event.key ===
+                "Enter"
             ){
 
                 joinRoom();
@@ -2922,24 +4294,6 @@ $("nameInput")
 
         }
     );
-
-
-$("roomInput")
-    .addEventListener(
-        "keydown",
-        event => {
-
-            if(
-                event.key === "Enter"
-            ){
-
-                $("nameInput").focus();
-
-            }
-
-        }
-    );
-
 
 </script>
 
