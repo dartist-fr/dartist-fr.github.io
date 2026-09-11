@@ -1,522 +1,577 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bataille navale — jeux2soiree</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bataille Navale • Jeux2Soirée</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
 :root{
-  --bg:#0b0616;
-  --panel:#160b29;
-  --pink:#ff2e88;
-  --cyan:#22e6ff;
-  --green:#4dffa6;
-  --yellow:#ffe14d;
-  --muted:#aa98c8;
+  --bg:#0d071b;
+  --panel:#130b24;
+  --panel2:#1a1031;
+  --cyan:#00f5ff;
+  --pink:#ff267f;
+  --yellow:#ffe44d;
+  --green:#4dff9a;
+  --purple:#9b7cff;
+  --text:#eee7ff;
+  --muted:#a99fc4;
+  --danger:#ff4d68;
+  --shadow:#05030b
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
-html,
-body{
+html,body{
   margin:0;
   min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:VT323,monospace;
+  font-size:22px
 }
 
 body{
-  background:var(--bg);
-  color:#fff;
-  font:23px VT323,monospace;
-  min-height:100vh;
   background-image:
-    linear-gradient(#7c3aed1b 1px,transparent 1px),
-    linear-gradient(90deg,#7c3aed1b 1px,transparent 1px),
-    radial-gradient(circle at 50% 0,#ff2e8827,transparent 45%);
-  background-size:40px 40px,40px 40px,100% 100%;
+    linear-gradient(rgba(0,245,255,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,245,255,.045) 1px,transparent 1px);
+  background-size:25px 25px
 }
 
-main{
-  max-width:1080px;
+.wrap{
+  width:min(1320px,94vw);
   margin:auto;
-  padding:25px 15px 55px;
+  padding:24px 0 40px
 }
 
-header,
-.panel{
-  background:#160b29ee;
-  border:2px solid var(--cyan);
-  box-shadow:
-    6px 6px #0009,
-    0 0 25px #22e6ff24;
+.top{
+  border:2px solid var(--pink);
+  background:rgba(19,11,36,.95);
+  padding:28px 30px;
+  margin-bottom:30px;
+  box-shadow:9px 9px 0 var(--shadow)
 }
 
-header{
-  border-color:var(--pink);
-  padding:25px;
-  margin-bottom:25px;
-}
-
-header span,
-h1,
-h2,
-button{
-  font-family:'Press Start 2P',monospace;
-}
-
-header span{
+.brand{
   color:var(--cyan);
-  font-size:11px;
-  letter-spacing:2px;
+  font-family:'Press Start 2P';
+  font-size:14px;
+  margin-bottom:24px
 }
 
-h1{
-  font-size:clamp(22px,5vw,42px);
-  line-height:1.35;
+.title{
+  font-family:'Press Start 2P';
+  font-size:clamp(28px,5vw,58px);
+  line-height:1.2;
   color:var(--pink);
-  text-shadow:4px 4px #55112f;
-  margin:16px 0;
+  text-shadow:6px 6px 0 #8a1450;
+  margin:0 0 22px
 }
 
-header p{
-  color:var(--muted);
-  margin:0;
+.subtitle{
+  font-size:28px;
+  color:#c5b8e5
 }
 
 .panel{
-  text-align:center;
-  padding:25px;
-}
-
-h2{
-  font-size:15px;
-  line-height:1.6;
-  color:var(--yellow);
-}
-
-button{
-  color:#fff;
-  background:#241143;
   border:2px solid var(--cyan);
-  padding:15px;
-  cursor:pointer;
-  font-size:11px;
-  line-height:1.55;
-  box-shadow:4px 4px #0009;
-  transition:.12s;
+  background:rgba(19,11,36,.96);
+  box-shadow:9px 9px 0 var(--shadow);
+  padding:30px;
+  margin-bottom:25px
 }
 
-button:hover:not(:disabled){
-  transform:translate(-2px,-2px);
-  box-shadow:
-    6px 6px #0009,
-    0 0 18px #22e6ff66;
-}
-
-button:disabled{
-  opacity:.35;
-  cursor:not-allowed;
-}
-
-.modes,
-.fleet{
-  display:flex;
-  gap:16px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.modes button{
-  min-width:220px;
-}
-
-.modes small{
-  font:22px VT323;
-  color:var(--muted);
-}
-
-.status{
-  margin-bottom:22px;
-  padding:14px;
-  border:2px solid var(--green);
-  background:#4dffa610;
+.section-title{
   text-align:center;
-  min-height:60px;
+  color:var(--yellow);
+  font-family:'Press Start 2P';
+  font-size:20px;
+  line-height:1.5;
+  margin:0 0 22px
 }
 
-.fleet{
-  margin:18px;
+.modes{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap
 }
 
-.ship{
-  position:relative;
+.mode{
+  width:280px;
+  min-height:105px;
+  border:2px solid var(--cyan);
+  background:#1e1238;
+  color:white;
+  padding:18px;
+  cursor:pointer;
+  font-family:'Press Start 2P';
+  font-size:14px;
+  box-shadow:5px 5px 0 #05030b
 }
 
-.ship.selected{
-  border-color:var(--green);
-  background:#4dffa622;
+.mode:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 #05030b
 }
 
-.ship.placed{
-  opacity:.32;
+.mode.active{
+  border-color:var(--pink);
+  background:#2a123d
 }
 
-.controls{
+.mode small{
+  display:block;
+  color:#b8acd5;
+  font-family:VT323;
+  font-size:24px;
+  margin-top:13px
+}
+
+.form{
+  max-width:760px;
+  margin:auto
+}
+
+.row{
   display:flex;
   gap:12px;
   justify-content:center;
+  flex-wrap:wrap
+}
+
+.input{
+  width:280px;
+  border:2px solid var(--cyan);
+  background:#090511;
+  color:var(--text);
+  font:24px VT323;
+  padding:13px 15px;
+  outline:none
+}
+
+.input:focus{
+  border-color:var(--pink)
+}
+
+button{
+  border:2px solid var(--cyan);
+  background:#1d1137;
+  color:#fff;
+  font:18px 'Press Start 2P';
+  padding:15px 18px;
+  cursor:pointer;
+  box-shadow:5px 5px 0 #05030b
+}
+
+button:hover{
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 #05030b
+}
+
+button.primary{
+  border-color:var(--pink);
+  background:#35102d
+}
+
+button.green{
+  border-color:var(--green)
+}
+
+button.yellow{
+  border-color:var(--yellow);
+  color:var(--yellow)
+}
+
+button:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:3px 3px 0 #05030b
+}
+
+.hint{
+  text-align:center;
+  color:var(--muted);
+  font-size:24px;
+  margin:15px 0
+}
+
+.hidden{
+  display:none!important
+}
+
+.room-code{
+  text-align:center;
+  margin:18px auto
+}
+
+.room-code .label{
+  color:var(--muted);
+  font-size:24px
+}
+
+.room-code strong{
+  display:block;
+  color:var(--green);
+  font:30px 'Press Start 2P';
+  letter-spacing:4px;
+  margin:10px
+}
+
+.status{
+  text-align:center;
+  border:2px solid var(--purple);
+  padding:14px;
+  background:#100920;
+  margin-bottom:20px
+}
+
+.status strong{
+  color:var(--yellow)
+}
+
+.players{
+  display:flex;
+  justify-content:center;
+  gap:12px;
   flex-wrap:wrap;
+  margin:15px 0
+}
+
+.player{
+  border:2px solid #4b3c69;
+  background:#180d2b;
+  padding:10px 14px
+}
+
+.player.me{
+  border-color:var(--cyan)
+}
+
+.player.ready{
+  border-color:var(--green)
 }
 
 .boards{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:26px;
-  margin-top:24px;
+  grid-template-columns:1fr 1fr;
+  gap:25px
+}
+
+.board-panel{
+  border:2px solid #4b3c69;
+  background:#100820;
+  padding:20px
+}
+
+.board-title{
+  font-family:'Press Start 2P';
+  font-size:16px;
+  color:var(--yellow);
   text-align:center;
+  line-height:1.5;
+  margin-bottom:15px
+}
+
+.board-sub{
+  text-align:center;
+  color:var(--muted);
+  margin:-7px 0 14px
 }
 
 .board{
   display:grid;
   grid-template-columns:repeat(10,1fr);
-  grid-template-rows:repeat(10,1fr);
-  gap:2px;
-  width:min(100%,490px);
-  aspect-ratio:1;
+  width:min(100%,620px);
   margin:auto;
-  padding:3px;
-  border:2px solid var(--cyan);
-  background:#090511;
-  user-select:none;
-  overflow:hidden;
+  border:2px solid var(--cyan)
 }
 
 .cell{
-  border:0;
-  box-shadow:none;
-  padding:0;
-  background:#191230;
-  min-width:0;
-  min-height:0;
-  overflow:hidden;
+  aspect-ratio:1;
+  border:1px solid #3b3150;
+  background:#111827;
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-family:VT323,monospace;
+  font-family:'Press Start 2P';
+  font-size:12px;
+  cursor:default
 }
 
-.cell:hover:not(:disabled){
-  background:#24315a;
-  transform:none;
-  box-shadow:none;
+.cell.water{
+  background:#0d1830
 }
 
-.cell.shipcell{
-  background:#8655cb;
-  box-shadow:inset 0 0 0 1px #b98cff;
+.cell.ship{
+  background:#304260
 }
 
 .cell.hit{
-  background:var(--pink);
+  background:#5b1833;
+  color:#ff8fb1
 }
 
 .cell.miss{
-  background:#16546e;
+  background:#20263b;
+  color:#8e9ab2
 }
 
-.cell.hit:after{
-  content:'✹';
-  font:clamp(10px,2vw,20px) VT323;
+.cell.sunk{
+  background:#8c1739;
+  color:#fff
 }
 
-.cell.miss:after{
-  content:'•';
-  color:var(--cyan);
-  font-size:24px;
-}
-
-.cell.preview{
-  background:#4dffa677;
-}
-
-.cell.bad{
-  background:#ff2e8866;
-}
-
-/* =========================
-   BATEAUX SUR LA GRILLE
-========================= */
-
-.board-wrap{
-  position:relative;
-  width:min(100%,490px);
-  aspect-ratio:1;
-  margin:auto;
-}
-
-.board-wrap .board{
-  width:100%;
-  height:100%;
-}
-
-.placed-ship{
-  position:absolute;
-  z-index:5;
-  background:#8655cb;
-  border:2px solid #b98cff;
-  box-shadow:
-    0 0 8px #8655cb99,
-    inset 0 0 8px #ffffff22;
+.cell.targetable{
   cursor:pointer;
+  border-color:#7668ff;
+  box-shadow:inset 0 0 0 2px #5e4dff
 }
 
-.placed-ship:hover{
-  border-color:var(--green);
-  z-index:20;
+.cell.targetable:hover{
+  background:#38206a
 }
 
-.ship-dots{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:space-around;
-  pointer-events:none;
+.cell.placing{
+  background:#31535d
 }
 
-.ship-dot{
-  width:7px;
-  height:7px;
-  background:#fff;
-  opacity:.7;
+.cell.preview-ok{
+  background:#225a62
 }
 
-.placed-ship.selected-ship{
-  border-color:var(--green);
-  box-shadow:
-    0 0 12px var(--green),
-    inset 0 0 8px #ffffff33;
+.cell.preview-bad{
+  background:#6a2038
 }
 
-.rotate-ship{
-  position:absolute;
-  width:30px;
-  height:30px;
-  padding:0;
-  right:-14px;
-  top:-14px;
-  background:#090511;
-  color:var(--yellow);
-  border:2px solid var(--yellow);
-  font-family:VT323,monospace;
-  font-size:20px;
-  line-height:20px;
-  box-shadow:3px 3px #000;
-  z-index:10;
-}
-
-.rotate-ship:hover{
-  color:#fff;
-  background:#2b1b42;
-  transform:none;
-  box-shadow:3px 3px #000;
-}
-
-.grid-frame{
+.coords{
   display:grid;
-  grid-template-columns:26px 1fr;
-  grid-template-rows:22px 1fr;
-  gap:4px;
-  width:min(100%,490px);
-  margin:auto;
+  grid-template-columns:26px repeat(10,1fr);
+  width:min(100%,620px);
+  margin:0 auto -2px
 }
 
-.corner{
-  grid-column:1;
-  grid-row:1;
-}
-
-.col-labels{
-  grid-column:2;
-  grid-row:1;
-  display:grid;
-  grid-template-columns:repeat(10,1fr);
-  align-items:center;
-  justify-items:center;
-  color:var(--cyan);
-  font-family:'Press Start 2P',monospace;
-  font-size:10px;
-}
-
-.row-labels{
-  grid-column:1;
-  grid-row:2;
-  display:grid;
-  grid-template-rows:repeat(10,1fr);
-  align-items:center;
-  justify-items:center;
-  color:var(--cyan);
-  font-family:'Press Start 2P',monospace;
-  font-size:10px;
-}
-
-.grid-frame .board-wrap{
-  grid-column:2;
-  grid-row:2;
-  width:100%;
-  margin:0;
-}
-
-.ship-label{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  color:#fff;
-  font-family:'Press Start 2P',monospace;
-  font-size:7px;
-  text-shadow:2px 2px #000;
-  pointer-events:none;
-  white-space:nowrap;
-}
-
-#screen{
-  position:fixed;
-  inset:0;
-  background:#0b0616f5;
-  display:grid;
-  place-items:center;
+.coords span{
   text-align:center;
-  padding:25px;
-  z-index:100;
-}
-
-/* CORRECTION DE L'ÉCRAN NOIR */
-#screen[hidden]{
-  display:none !important;
-}
-
-#screen .panel{
-  max-width:500px;
-  width:100%;
-}
-
-#screen h2{
-  font-size:22px;
-}
-
-#screen button{
-  margin-top:18px;
-}
-
-#toast{
-  position:fixed;
-  bottom:24px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:14px 20px;
-  background:#170b2b;
-  border:2px solid var(--yellow);
-  opacity:0;
-  transition:.2s;
-  pointer-events:none;
-  z-index:200;
-}
-
-#toast.show{
-  opacity:1;
-}
-
-.legend{
   color:var(--muted);
-  font-size:20px;
-  margin:8px 0;
+  font-size:17px
 }
 
-.network-code{
-  font-family:'Press Start 2P',monospace;
-  font-size:20px;
-  color:var(--green);
-  letter-spacing:3px;
-  margin:15px 0;
+.fleet{
+  display:grid;
+  gap:8px;
+  margin:15px 0
 }
 
-.fleet-status-grid{
+.ship-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border:2px solid #3b3150;
+  background:#160c29;
+  padding:10px 12px;
+  cursor:pointer
+}
+
+.ship-item.selected{
+  border-color:var(--yellow)
+}
+
+.ship-item.placed{
+  border-color:var(--green)
+}
+
+.ship-name{
+  font-family:'Press Start 2P';
+  font-size:11px
+}
+
+.ship-size{
+  color:var(--muted)
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px
+}
+
+.logs{
+  max-height:240px;
+  overflow:auto;
+  border:2px solid #3b3150;
+  background:#090511;
+  padding:12px
+}
+
+.log{
+  padding:5px 0;
+  border-bottom:1px dashed #302544
+}
+
+.log:last-child{
+  border-bottom:0
+}
+
+.error{
+  border:2px solid var(--danger);
+  background:#2a0d19;
+  color:#ff9bab;
+  padding:12px;
+  text-align:center;
+  margin:12px 0
+}
+
+.winner{
+  border:2px solid var(--yellow);
+  background:#21180c;
+  padding:25px;
+  text-align:center
+}
+
+.winner h2{
+  font-family:'Press Start 2P';
+  color:var(--yellow);
+  font-size:24px;
+  line-height:1.6
+}
+
+.tv-layout{
+  display:grid;
+  grid-template-columns:1fr 330px;
+  gap:20px
+}
+
+.tv-big{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:24px;
-  margin-top:6px;
+  gap:18px
 }
 
-.fleet-status-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-top:10px;
+.mini{
+  border:2px solid #3b3150;
+  padding:15px;
+  background:#0d071b
 }
 
-.fleet-status-item{
-  padding:9px 12px;
+.mini .board .cell{
+  cursor:default
+}
+
+.tv-code{
+  font:38px 'Press Start 2P';
+  color:var(--green);
+  text-align:center;
+  letter-spacing:5px;
+  margin:20px 0
+}
+
+.tv-side{
   border:2px solid var(--cyan);
-  background:#160b29;
-  font:18px VT323,monospace;
-  text-align:left;
-  color:#fff;
-  box-shadow:3px 3px #0009;
+  padding:18px;
+  background:#100820
 }
 
-.fleet-status-item.sunk{
-  border-color:var(--pink);
-  color:var(--muted);
-  text-decoration:line-through;
-  opacity:.55;
-  box-shadow:none;
+.tv-side h3{
+  font-family:'Press Start 2P';
+  font-size:14px;
+  color:var(--yellow);
+  line-height:1.5
 }
 
-@media(max-width:620px){
+.notice{
+  text-align:center;
+  color:var(--cyan);
+  font-size:27px;
+  padding:15px
+}
 
-  .fleet-status-grid{
-    grid-template-columns:1fr;
-    gap:14px;
+.back{
+  margin-bottom:20px
+}
+
+.footer{
+  text-align:center;
+  color:#6f6683;
+  font-size:18px;
+  margin-top:25px
+}
+
+@media(max-width:900px){
+  .boards,
+  .tv-layout,
+  .tv-big{
+    grid-template-columns:1fr
   }
 
-
-  main{
-    padding:15px 9px;
-  }
-
-  .boards{
-    grid-template-columns:1fr;
-    gap:18px;
+  .wrap{
+    width:96vw
   }
 
   .panel{
-    padding:16px;
+    padding:18px
   }
 
-  .modes button{
-    min-width:0;
-    width:100%;
+  .cell{
+    font-size:9px
   }
 
-  .fleet{
-    margin:12px 0;
+  .title{
+    font-size:31px
   }
 
-  .fleet button{
-    width:100%;
+  .mode{
+    width:min(100%,360px)
+  }
+}
+
+@media(max-width:520px){
+  body{
+    font-size:20px
   }
 
-  .board-wrap{
-    width:100%;
+  .top{
+    padding:20px 16px
+  }
+
+  .subtitle{
+    font-size:22px
+  }
+
+  .panel{
+    padding:12px
+  }
+
+  .section-title{
+    font-size:15px
+  }
+
+  .board-panel{
+    padding:10px
+  }
+
+  .coords span{
+    font-size:14px
+  }
+
+  .cell{
+    font-size:7px
+  }
+
+  button{
+    font-size:12px;
+    padding:13px 12px
+  }
+
+  .input{
+    width:100%
   }
 }
 </style>
@@ -524,887 +579,1178 @@ button:disabled{
 
 <body>
 
-<main>
+<div class="wrap">
 
-<header>
-  <span>jeux2soiree</span>
-  <h1>BATAILLE NAVALE</h1>
-  <p>Coule la flotte ennemie avant qu’elle ne coule la tienne.</p>
+<header class="top">
+  <div class="brand">jeux2soiree</div>
+
+  <h1 class="title">BATAILLE NAVALE</h1>
+
+  <div class="subtitle">
+    Coule la flotte ennemie avant qu’elle ne coule la tienne.
+  </div>
 </header>
 
-<!-- =========================
-     MENU
-========================= -->
+<section id="home" class="panel">
 
-<section id="menu" class="panel">
-
-  <h2>CHOISIS TON MODE</h2>
+  <h2 class="section-title">CHOISIS TON MODE</h2>
 
   <div class="modes">
 
-    <button onclick="newGame('solo')">
-      SOLO<br>
+    <button class="mode" data-mode="solo">
+      SOLO
       <small>contre l’ordinateur</small>
     </button>
 
-    <button onclick="newGame('duo')">
-      2 JOUEURS<br>
-      <small>sur le même écran</small>
+    <button class="mode" data-mode="online">
+      EN LIGNE
+      <small>2 téléphones</small>
     </button>
 
-    <button onclick="showNetwork()">
-      EN LIGNE<br>
-      <small>chacun son téléphone</small>
+    <button class="mode" data-mode="tv">
+      TV + 2 TÉLÉPHONES
+      <small>la TV affiche la partie</small>
     </button>
 
   </div>
 
-  <div id="networkMenu" hidden style="margin-top:22px">
+  <div id="setup" class="form hidden" style="margin-top:25px">
 
-    <h2>SALON PRIVÉ</h2>
+    <h2 id="setupTitle" class="section-title">
+      SALON PRIVÉ
+    </h2>
 
-    <input
-      id="roomInput"
-      maxlength="4"
-      placeholder="CODE DU SALON"
-      autocomplete="off"
-      style="
-        padding:12px;
-        text-align:center;
-        background:#090511;
-        color:#fff;
-        border:2px solid var(--cyan);
-        font:22px VT323;
-        width:220px;
-        text-transform:uppercase;
-      "
-    >
+    <div id="nameRow" class="row">
+      <input
+        id="nameInput"
+        class="input"
+        maxlength="18"
+        placeholder="Ton prénom"
+      >
+    </div>
 
-    <div class="controls" style="margin-top:12px">
+    <div id="joinCodeRow" class="row hidden" style="margin-top:12px">
+      <input
+        id="codeInput"
+        class="input"
+        maxlength="6"
+        placeholder="CODE DU SALON"
+        autocomplete="off"
+      >
+    </div>
 
-      <button onclick="hostOnline()">
+    <div class="row" style="margin-top:15px">
+
+      <button id="createBtn" class="primary">
         CRÉER UN SALON
       </button>
 
-      <button onclick="joinOnline()">
+      <button id="joinBtn">
         REJOINDRE
       </button>
 
     </div>
 
-    <p id="networkInfo" style="color:var(--muted);margin:12px 0 0"></p>
+    <div id="setupHint" class="hint">
+      En créant un salon, le code est généré automatiquement.
+    </div>
 
   </div>
 
 </section>
 
+<section id="game" class="hidden">
 
-<!-- =========================
-     JEU
-========================= -->
+  <div class="panel">
 
-<section id="game" hidden>
+    <button class="back" id="backBtn">
+      ← RETOUR
+    </button>
 
-  <div id="status" class="status"></div>
+    <div id="errorBox" class="error hidden"></div>
 
-  <!-- PLACEMENT -->
+    <div id="roomInfo" class="room-code hidden"></div>
 
-  <section id="setup" class="panel">
+    <div id="status" class="status"></div>
 
-    <h2 id="setupTitle">PLACE TA FLOTTE</h2>
+    <div id="players" class="players"></div>
 
-    <p id="help">
-      Touche un navire dans la liste pour le sélectionner, puis touche une case pour le placer.
-      Retouche-le pour le déplacer, ou utilise ↻ pour le faire pivoter.
-    </p>
+  </div>
 
-    <div id="fleet" class="fleet"></div>
+
+  <!-- =========================
+       PLACEMENT
+  ========================== -->
+
+  <div id="placement" class="panel hidden">
+
+    <h2 class="section-title">
+      PLACE TA FLOTTE
+    </h2>
+
+    <div class="notice">
+      Sélectionne un navire, puis clique sur le plateau.
+      Utilise ROTATION pour changer son sens.
+    </div>
+
+    <div class="boards">
+
+      <div class="board-panel">
+
+        <div class="board-title">
+          TON PLATEAU
+        </div>
+
+        <div id="ownBoardPlacement"></div>
+
+      </div>
+
+
+      <div class="board-panel">
+
+        <div class="board-title">
+          TES NAVIRES
+        </div>
+
+        <div id="fleet"></div>
+
+        <div class="controls">
+
+          <button id="rotateBtn" class="yellow">
+            ROTATION : H
+          </button>
+
+          <button id="randomBtn">
+            PLACEMENT ALÉATOIRE
+          </button>
+
+          <button id="readyBtn" class="green">
+            VALIDER MA FLOTTE
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       BATAILLE
+  ========================== -->
+
+  <div id="battle" class="panel hidden">
+
+    <div id="winnerBox" class="winner hidden"></div>
+
+    <div class="boards">
+
+      <div class="board-panel">
+
+        <div class="board-title">
+          MA FLOTTE
+        </div>
+
+        <div id="ownBoardBattle"></div>
+
+      </div>
+
+
+      <div class="board-panel">
+
+        <div class="board-title" id="enemyTitle">
+          FLOTTE ENNEMIE
+        </div>
+
+        <div id="enemyBoard"></div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="panel"
+      style="margin-top:20px;margin-bottom:0;padding:18px"
+    >
+
+      <h2
+        class="section-title"
+        style="font-size:15px"
+      >
+        JOURNAL DE BORD
+      </h2>
+
+      <div id="logs" class="logs"></div>
+
+    </div>
+
+
+    <div class="controls" style="margin-top:18px">
+
+      <button
+        id="newGameBtn"
+        class="primary hidden"
+      >
+        NOUVELLE PARTIE
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       MODE TV
+  ========================== -->
+
+  <div id="tv" class="panel hidden">
+
+    <div class="tv-layout">
+
+      <div>
+
+        <div class="status" id="tvStatus"></div>
+
+        <div id="tvBoards" class="tv-big"></div>
+
+      </div>
+
+
+      <aside class="tv-side">
+
+        <h3>
+          CODE DU SALON
+        </h3>
+
+        <div id="tvCode" class="tv-code">
+          ------
+        </div>
+
+        <div id="tvPlayers"></div>
+
+        <h3 style="margin-top:25px">
+          JOURNAL
+        </h3>
+
+        <div id="tvLogs" class="logs"></div>
+
+      </aside>
+
+    </div>
+
 
     <div class="controls">
 
-      <button onclick="rotateSelected()">
-        ↻ ROTATION
-      </button>
-
-      <button id="ready" disabled onclick="confirmFleet()">
-        FLOTTE PRÊTE
-      </button>
-
-      <button onclick="quitGame()">
-        QUITTER
+      <button
+        id="tvNewGameBtn"
+        class="primary hidden"
+      >
+        NOUVELLE PARTIE
       </button>
 
     </div>
-
-  </section>
-
-
-  <!-- GRILLES -->
-
-  <div class="boards">
-
-    <section>
-
-      <h2 id="ownTitle">TA FLOTTE</h2>
-
-      <div class="grid-frame">
-        <div class="corner"></div>
-        <div class="col-labels" id="ownColLabels"></div>
-        <div class="row-labels" id="ownRowLabels"></div>
-        <div class="board-wrap" id="ownWrap">
-          <div id="own" class="board"></div>
-        </div>
-      </div>
-
-    </section>
-
-
-    <section>
-
-      <h2 id="enemyTitle">ENNEMI</h2>
-
-      <div class="grid-frame">
-        <div class="corner"></div>
-        <div class="col-labels" id="enemyColLabels"></div>
-        <div class="row-labels" id="enemyRowLabels"></div>
-        <div class="board-wrap">
-          <div id="enemy" class="board"></div>
-        </div>
-      </div>
-
-    </section>
 
   </div>
 
-
-  <!-- SUIVI DES FLOTTES -->
-
-  <section id="fleetStatus" class="panel" hidden>
-
-    <div class="fleet-status-grid">
-
-      <div>
-        <h2>TA FLOTTE</h2>
-        <div id="ownFleetStatus" class="fleet-status-list"></div>
-      </div>
-
-      <div>
-        <h2>FLOTTE ENNEMIE</h2>
-        <div id="enemyFleetStatus" class="fleet-status-list"></div>
-      </div>
-
-    </div>
-
-  </section>
-
 </section>
 
-</main>
 
+<div class="footer">
+  Jeux2Soirée • Bataille Navale • 10 × 10 • 5 navires
+</div>
 
-<!-- =========================
-     ÉCRAN DE TRANSITION
-========================= -->
-
-<div id="screen" hidden></div>
-
-<div id="toast"></div>
+</div>
 
 
 <script>
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+const SERVER_URL =
+  "wss://uno-jeux2soiree.onrender.com";
 
-const FLEET = [
-  ['Porte-avions',5],
-  ['Croiseur',4],
-  ['Sous-marin',3],
-  ['Destroyer',3],
-  ['Torpilleur',2]
+const SIZE = 10;
+
+const SHIPS = [
+
+  {
+    type:"carrier",
+    name:"Porte-avions",
+    size:5
+  },
+
+  {
+    type:"battleship",
+    name:"Cuirassé",
+    size:4
+  },
+
+  {
+    type:"cruiser",
+    name:"Croiseur",
+    size:3
+  },
+
+  {
+    type:"submarine",
+    name:"Sous-marin",
+    size:3
+  },
+
+  {
+    type:"destroyer",
+    name:"Torpilleur",
+    size:2
+  }
+
 ];
 
+const LETTERS = "ABCDEFGHIJ";
 
-/* =========================================================
-   VARIABLES
-========================================================= */
-
+let ws = null;
 let mode = null;
+let roomCode = "";
+let myId = null;
+let state = null;
 
-let player = 0;
+let selectedShip = "carrier";
+let orientation = "horizontal";
 
-let turn = 0;
-
-let phase = 'place';
-
-let vertical = false;
-
-let selected = 0;
-
-let placements = [[],[]];
-
-let boards = [null,null];
-
-let shots = [new Set(),new Set()];
-
-let botShots = new Set();
-
-let botBoard = null;
-
-let peer = null;
-
-let connection = null;
+let solo = false;
 
 
-/* =========================================================
-   OUTILS
-========================================================= */
+const $ = id =>
+  document.getElementById(id);
 
-const $ = id => document.getElementById(id);
 
-const key = cell => cell.r + ',' + cell.c;
+const home =
+  $("home");
 
-function cells(){
+const game =
+  $("game");
 
-  return Array.from(
-    {length:100},
-    (_,i)=>({
-      r:Math.floor(i/10),
-      c:i%10
-    })
+const setup =
+  $("setup");
+
+const joinCodeRow =
+  $("joinCodeRow");
+
+
+function showError(msg){
+
+  const b =
+    $("errorBox");
+
+  b.textContent =
+    msg || "Une erreur est survenue.";
+
+  b.classList.remove("hidden");
+
+  setTimeout(
+    () => b.classList.add("hidden"),
+    5000
   );
-
 }
 
 
-function toast(text){
+function send(obj){
 
-  $('toast').textContent = text;
+  if(
+    ws &&
+    ws.readyState === WebSocket.OPEN
+  ){
 
-  $('toast').classList.add('show');
+    ws.send(
+      JSON.stringify(obj)
+    );
 
-  clearTimeout(toast.timer);
+  }else{
 
-  toast.timer = setTimeout(()=>{
-    $('toast').classList.remove('show');
-  },1800);
-
-}
-
-
-/* =========================================================
-   REPÈRES A-J / 1-10
-========================================================= */
-
-function renderLabels(){
-
-  const cols = 'ABCDEFGHIJ'.split('');
-
-  const rows =
-    Array.from({length:10},(_,i)=>i+1);
-
-
-  ['ownColLabels','enemyColLabels'].forEach(id=>{
-
-    const el = $(id);
-
-    el.innerHTML = '';
-
-    cols.forEach(letter=>{
-
-      const s = document.createElement('span');
-
-      s.textContent = letter;
-
-      el.appendChild(s);
-
-    });
-
-  });
-
-
-  ['ownRowLabels','enemyRowLabels'].forEach(id=>{
-
-    const el = $(id);
-
-    el.innerHTML = '';
-
-    rows.forEach(n=>{
-
-      const s = document.createElement('span');
-
-      s.textContent = n;
-
-      el.appendChild(s);
-
-    });
-
-  });
-
-}
-
-
-/* =========================================================
-   QUITTER
-========================================================= */
-
-function quitGame(){
-
-  if(connection){
-
-    try{
-      connection.close();
-    }catch(e){}
-
-  }
-
-  if(peer){
-
-    try{
-      peer.destroy();
-    }catch(e){}
-
-  }
-
-  location.reload();
-
-}
-
-
-/* =========================================================
-   RÉINITIALISER LA CONNEXION AVANT UN NOUVEL ESSAI
-========================================================= */
-
-function resetConnection(){
-
-  if(connection){
-
-    try{
-      connection.close();
-    }catch(e){}
-
-    connection = null;
-
-  }
-
-  if(peer){
-
-    try{
-      peer.destroy();
-    }catch(e){}
-
-    peer = null;
+    showError(
+      "Connexion au serveur indisponible."
+    );
 
   }
 
 }
 
 
-/* =========================================================
-   NOUVELLE PARTIE
-========================================================= */
+function esc(s){
 
-function newGame(m){
+  return String(s ?? "")
+    .replace(
+      /[&<>"']/g,
+      c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "\"":"&quot;",
+        "'":"&#039;"
+      }[c])
+    );
+
+}
+
+
+function setMode(m){
 
   mode = m;
 
-  player = 0;
-
-  turn = 0;
-
-  phase = 'place';
-
-  vertical = false;
-
-  selected = 0;
-
-  placements = [[],[]];
-
-  boards = [null,null];
-
-  shots = [new Set(),new Set()];
-
-  botShots = new Set();
-
-  botBoard = null;
-
-  $('menu').hidden = true;
-
-  $('game').hidden = false;
-
-  startPlace();
-
-}
-
-
-/* =========================================================
-   MENU EN LIGNE
-========================================================= */
-
-function showNetwork(){
-
-  $('networkMenu').hidden = !$('networkMenu').hidden;
-
-}
-
-
-function makeCode(){
-
-  /* On évite 0/O, 1/I/L pour ne pas confondre
-     les codes recopiés à la main entre deux téléphones. */
-
-  const chars =
-    '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
-
-  let code = '';
-
-  for(let i=0;i<4;i++){
-
-    code +=
-      chars[
-        Math.floor(
-          Math.random() * chars.length
+  document
+    .querySelectorAll(".mode")
+    .forEach(
+      b =>
+        b.classList.toggle(
+          "active",
+          b.dataset.mode === m
         )
-      ];
-
-  }
-
-  return code;
-
-}
-
-
-/* =========================================================
-   MESSAGES D'ERREUR RÉSEAU LISIBLES
-========================================================= */
-
-function friendlyPeerError(type){
-
-  const messages = {
-
-    'peer-unavailable':
-      'Salon introuvable. Vérifie le code (majuscules, sans espace) ou demande à l’hôte de recréer un salon.',
-
-    'network':
-      'Connexion réseau perdue. Vérifie ta connexion et réessaie.',
-
-    'disconnected':
-      'Déconnecté du serveur. Réessaie dans quelques secondes.',
-
-    'server-error':
-      'Le serveur de connexion est indisponible. Réessaie plus tard.',
-
-    'unavailable-id':
-      'Ce code est déjà utilisé, réessaie.',
-
-    'browser-incompatible':
-      'Ton navigateur ne supporte pas le jeu en ligne.'
-
-  };
-
-  return (
-    messages[type] ||
-    ('Erreur de connexion (' + type + '). Réessaie.')
-  );
-
-}
-
-
-/* =========================================================
-   HÔTE
-========================================================= */
-
-function hostOnline(){
-
-  if(!window.Peer){
-
-    toast('PeerJS ne s’est pas chargé.');
-
-    return;
-
-  }
-
-  resetConnection();
-
-  const id = makeCode();
-
-  $('networkInfo').textContent =
-    'Création du salon…';
-
-  peer = new Peer(id);
-
-  peer.on('open',()=>{
-
-    $('networkInfo').innerHTML =
-      'CODE DU SALON';
-
-    const code = document.createElement('div');
-
-    code.className = 'network-code';
-
-    code.textContent = id;
-
-    $('networkInfo').appendChild(code);
-
-    const info = document.createElement('div');
-
-    info.textContent =
-      'Partage ce code avec le joueur 2.';
-
-    $('networkInfo').appendChild(info);
-
-  });
-
-
-  peer.on('connection',c=>{
-
-    if(connection){
-
-      c.close();
-
-      return;
-
-    }
-
-    connection = c;
-
-    player = 0;
-
-    prepareConnection();
-
-  });
-
-
-  peer.on('error',e=>{
-
-    $('networkInfo').textContent =
-      friendlyPeerError(e.type);
-
-  });
-
-}
-
-
-/* =========================================================
-   JOINDRE
-========================================================= */
-
-function joinOnline(){
-
-  if(!window.Peer){
-
-    toast('PeerJS ne s’est pas chargé.');
-
-    return;
-
-  }
-
-  const id =
-    $('roomInput')
-      .value
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g,'');
-
-  if(!id){
-
-    toast('Entre le code du salon.');
-
-    return;
-
-  }
-
-  resetConnection();
-
-  player = 1;
-
-  $('networkInfo').textContent =
-    'Connexion au salon…';
-
-  peer = new Peer();
-
-  peer.on('open',()=>{
-
-    connection = peer.connect(id);
-
-    prepareConnection();
-
-  });
-
-
-  peer.on('error',e=>{
-
-    $('networkInfo').textContent =
-      friendlyPeerError(e.type);
-
-  });
-
-}
-
-
-/* =========================================================
-   CONNEXION
-========================================================= */
-
-function prepareConnection(){
-
-  connection.on('open',()=>{
-
-    if(player === 1){
-
-      mode = 'network';
-
-      $('menu').hidden = true;
-
-      $('game').hidden = false;
-
-      phase = 'place';
-
-      startPlace();
-
-      connection.send({
-        type:'joined'
-      });
-
-    }
-
-  });
-
-
-  connection.on('data',networkData);
-
-
-  connection.on('close',()=>{
-
-    toast('La connexion avec l’autre joueur est fermée.');
-
-  });
-
-}
-
-
-/* =========================================================
-   DONNÉES RÉSEAU
-========================================================= */
-
-function networkData(data){
-
-  if(!data) return;
-
-
-  /* Le joueur 2 vient de rejoindre */
-
-  if(data.type === 'joined'){
-
-    if(player === 0){
-
-      toast('Joueur 2 connecté !');
-
-      startPlace();
-
-    }
-
-    return;
-
-  }
-
-
-  /* L'hôte demande au joueur 2 de jouer */
-
-  if(data.type === 'place'){
-
-    player = 1;
-
-    phase = 'place';
-
-    startPlace();
-
-    return;
-
-  }
-
-
-  /* Joueur 2 a envoyé sa flotte */
-
-  if(data.type === 'fleet'){
-
-    boards[1] = data.fleet;
-
-    turn = 0;
-
-    phase = 'battle';
-
-    $('setup').hidden = true;
-
-    $('status').textContent =
-      'Les deux flottes sont prêtes ! Joueur 1 commence.';
-
-    renderBoards();
-
-    connection.send({
-      type:'battle',
-      boards:boards,
-      shots:shots.map(s=>[...s]),
-      turn:turn
-    });
-
-    return;
-
-  }
-
-
-  /* Tir du joueur 2 */
-
-  if(data.type === 'fire'){
-
-    if(player === 0){
-
-      hostFire(data.cell);
-
-    }
-
-    return;
-
-  }
-
-
-  /* Synchronisation */
-
-  if(data.type === 'battle' || data.type === 'state'){
-
-    boards = data.boards;
-
-    shots = data.shots.map(
-      a=>new Set(a)
     );
 
-    turn = data.turn;
+  setup.classList.remove("hidden");
 
-    phase = 'battle';
+  $("joinCodeRow")
+    .classList.toggle(
+      "hidden",
+      m !== "online"
+    );
 
-    $('setup').hidden = true;
+  $("createBtn")
+    .classList.toggle(
+      "hidden",
+      false
+    );
 
-    $('status').textContent =
-      turn === player
-        ? 'À toi de tirer !'
-        : 'Tour de l’adversaire…';
+  $("joinBtn")
+    .classList.toggle(
+      "hidden",
+      m !== "online"
+    );
 
-    renderBoards();
+  $("nameInput").placeholder =
+    m === "tv"
+      ? "Nom de la TV"
+      : "Ton prénom";
 
-    return;
+  $("setupTitle").textContent =
+    m === "tv"
+      ? "SALON TV + 2 TÉLÉPHONES"
+      : m === "online"
+        ? "SALON EN LIGNE"
+        : "MODE SOLO";
 
-  }
+  $("setupHint").textContent =
+    m === "tv"
+      ? "La TV crée le salon. Les 2 joueurs rejoignent avec le code affiché."
+      : m === "online"
+        ? "Créer génère automatiquement un code et te connecte immédiatement comme joueur 1."
+        : "La partie solo se joue sur cet écran.";
 
-
-  /* Fin */
-
-  if(data.type === 'end'){
-
-    end(data.winner === player);
-
-    return;
-
-  }
+  $("createBtn").textContent =
+    m === "solo"
+      ? "LANCER LE SOLO"
+      : "CRÉER UN SALON";
 
 }
 
 
-/* =========================================================
-   TIR DU JOUEUR 1 REÇU PAR L'HÔTE
-========================================================= */
-
-function hostFire(c){
-
-  if(
-    turn !== 1 ||
-    !c ||
-    shots[1].has(key(c))
-  ){
-
-    return;
-
-  }
-
-  shots[1].add(key(c));
-
-  const hit =
-    boards[0]
-      .flat()
-      .some(x=>key(x)===key(c));
-
-  toast(
-    hit
-      ? 'L’adversaire touche !'
-      : 'L’adversaire rate.'
+document
+  .querySelectorAll(".mode")
+  .forEach(
+    b =>
+      b.onclick =
+        () =>
+          setMode(
+            b.dataset.mode
+          )
   );
 
 
-  const defeated =
-    boards[0]
-      .flat()
-      .every(x=>shots[1].has(key(x)));
+/* =========================================================
+   CRÉATION DU SALON
+========================================================= */
 
+$("createBtn").onclick = () => {
 
-  if(defeated){
+  const name =
+    $("nameInput")
+      .value
+      .trim()
+      ||
+    (
+      mode === "tv"
+        ? "TV"
+        : "Joueur 1"
+    );
 
-    connection.send({
-      type:'end',
-      winner:1
-    });
+  if(mode === "solo"){
 
-    end(false);
+    startSolo(name);
 
     return;
+  }
+
+  connect(
+    () =>
+      send({
+        type:"create_room",
+        game:"battleship",
+        mode:
+          mode === "tv"
+            ? "tv"
+            : "phones",
+        name
+      })
+  );
+
+};
+
+
+/* =========================================================
+   REJOINDRE UN SALON
+========================================================= */
+
+$("joinBtn").onclick = () => {
+
+  const name =
+    $("nameInput")
+      .value
+      .trim()
+    ||
+    "Joueur";
+
+  const code =
+    $("codeInput")
+      .value
+      .trim()
+      .toUpperCase();
+
+  if(
+    !/^[A-Z0-9]{4,8}$/.test(code)
+  ){
+
+    showError(
+      "Entre un code de salon valide."
+    );
+
+    return;
+  }
+
+  connect(
+    () =>
+      send({
+        type:"join_battleship_room",
+        room:code,
+        name
+      })
+  );
+
+};
+
+
+/* =========================================================
+   RETOUR
+========================================================= */
+
+$("backBtn").onclick = () => {
+
+  if(ws){
+
+    try{
+      ws.close();
+    }catch(e){}
 
   }
 
+  ws = null;
+  state = null;
+  myId = null;
+  roomCode = "";
 
-  turn = 0;
+  game.classList.add("hidden");
+  home.classList.remove("hidden");
 
-  phase = 'battle';
+  $("setup")
+    .classList.add("hidden");
 
-  connection.send({
-    type:'battle',
-    boards:boards,
-    shots:shots.map(s=>[...s]),
-    turn:turn
+  document
+    .querySelectorAll(".mode")
+    .forEach(
+      b =>
+        b.classList.remove("active")
+    );
+
+  mode = null;
+
+};
+
+
+/* =========================================================
+   CONTRÔLES
+========================================================= */
+
+$("rotateBtn").onclick = () => {
+
+  orientation =
+    orientation === "horizontal"
+      ? "vertical"
+      : "horizontal";
+
+  $("rotateBtn").textContent =
+    "ROTATION : " +
+    (
+      orientation === "horizontal"
+        ? "H"
+        : "V"
+    );
+
+  renderPlacement();
+
+};
+
+
+$("randomBtn").onclick = () =>
+  send({
+    type:"battle_randomize"
   });
 
-  $('status').textContent =
-    'À toi de tirer !';
 
-  renderBoards();
+$("readyBtn").onclick = () =>
+  send({
+    type:"battle_ready"
+  });
+
+
+$("newGameBtn").onclick = () =>
+  send({
+    type:"battle_new_game"
+  });
+
+
+$("tvNewGameBtn").onclick = () =>
+  send({
+    type:"battle_new_game"
+  });
+
+
+/* =========================================================
+   WEBSOCKET
+========================================================= */
+
+function connect(after){
+
+  try{
+
+    ws =
+      new WebSocket(
+        SERVER_URL
+      );
+
+  }catch(e){
+
+    showError(
+      "Impossible d'ouvrir la connexion."
+    );
+
+    return;
+  }
+
+
+  ws.onopen =
+    () => after();
+
+
+  ws.onmessage =
+    e => {
+
+      let d;
+
+      try{
+
+        d =
+          JSON.parse(
+            e.data
+          );
+
+      }catch(_){
+
+        return;
+      }
+
+      handleMessage(d);
+
+    };
+
+
+  ws.onerror =
+    () =>
+      showError(
+        "Erreur de connexion au serveur."
+      );
+
+
+  ws.onclose =
+    () => {
+
+      if(
+        !solo &&
+        game &&
+        !game.classList.contains(
+          "hidden"
+        )
+      ){
+
+        showError(
+          "Connexion fermée. Reviens dans le salon pour rejouer."
+        );
+
+      }
+
+    };
 
 }
 
 
 /* =========================================================
-   SYNCHRONISATION
+   MESSAGES SERVEUR
 ========================================================= */
 
-function syncNet(){
+function handleMessage(d){
 
   if(
-    connection &&
-    connection.open
+    d.type ===
+      "battleship_room_created"
+    ||
+    d.type ===
+      "battleship_joined"
   ){
 
-    connection.send({
+    roomCode =
+      d.room || "";
 
-      type:'battle',
+    myId =
+      d.playerId || null;
 
-      boards:boards,
+    home.classList.add("hidden");
 
-      shots:shots.map(
-        s=>[...s]
-      ),
+    game.classList.remove("hidden");
 
-      turn:turn
+    renderRoomHeader();
 
-    });
+    return;
+  }
+
+
+  if(
+    d.type ===
+      "battleship_state"
+  ){
+
+    state =
+      d.state;
+
+    roomCode =
+      state.room ||
+      roomCode;
+
+    render();
+
+    return;
+  }
+
+
+  if(
+    d.type === "error"
+  ){
+
+    showError(
+      d.message
+    );
 
   }
+
+}
+
+
+/* =========================================================
+   ENTÊTE SALON
+========================================================= */
+
+function renderRoomHeader(){
+
+  $("roomInfo")
+    .classList
+    .remove("hidden");
+
+  $("roomInfo").innerHTML =
+    '<div class="label">CODE DU SALON</div>' +
+    '<strong>' +
+      esc(roomCode) +
+    '</strong>' +
+    '<div class="hint">' +
+      (
+        mode === "tv"
+          ? "Partage ce code avec les deux joueurs."
+          : "Partage ce code avec le deuxième joueur."
+      ) +
+    '</div>';
+
+}
+
+
+/* =========================================================
+   RENDER GLOBAL
+========================================================= */
+
+function render(){
+
+  if(!state)
+    return;
+
+  renderRoomHeader();
+
+  const isTv =
+    state.mode === "tv" &&
+    !state.me;
+
+  $("placement")
+    .classList
+    .toggle(
+      "hidden",
+      isTv ||
+      !(
+        state.status === "waiting" ||
+        state.status === "placement"
+      )
+    );
+
+  $("battle")
+    .classList
+    .toggle(
+      "hidden",
+      isTv ||
+      !(
+        state.status === "playing" ||
+        state.status === "finished"
+      )
+    );
+
+  $("tv")
+    .classList
+    .toggle(
+      "hidden",
+      !isTv
+    );
+
+  if(isTv){
+
+    renderTV();
+
+  }else{
+
+    renderPlayer();
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER JOUEUR
+========================================================= */
+
+function renderPlayer(){
+
+  const me =
+    state.me;
+
+  const enemy =
+    state.enemy;
+
+  $("status").innerHTML =
+    playerStatus();
+
+
+  $("players").innerHTML =
+    state.players
+      .map(
+        p =>
+          `<div class="player ${
+            p.id === myId
+              ? "me"
+              : ""
+          } ${
+            p.ready
+              ? "ready"
+              : ""
+          }">${
+            p.host
+              ? "👑 "
+              : ""
+          }${esc(p.name)}
+          ${
+            p.ready
+              ? "✓"
+              : "⏳"
+          }</div>`
+      )
+      .join("");
+
+
+  if(
+    state.status === "waiting" ||
+    state.status === "placement"
+  ){
+
+    renderPlacement();
+
+  }
+
+
+  if(
+    state.status === "playing" ||
+    state.status === "finished"
+  ){
+
+    renderBattle();
+
+  }
+
+}
+
+
+/* =========================================================
+   STATUT JOUEUR
+========================================================= */
+
+function playerStatus(){
+
+  if(
+    state.players.length < 2
+  ){
+
+    return `
+      <strong>
+        EN ATTENTE DU DEUXIÈME JOUEUR…
+      </strong>
+      <br>
+      Partage le code
+      <b style="color:var(--green)">
+        ${esc(state.room)}
+      </b>
+    `;
+
+  }
+
+
+  if(
+    state.status === "placement"
+  ){
+
+    return `
+      <strong>
+        PLACEMENT DES FLOTTES
+      </strong>
+      <br>
+      Chaque joueur doit placer
+      ses 5 navires puis valider.
+    `;
+
+  }
+
+
+  if(
+    state.status === "playing"
+  ){
+
+    return state.currentPlayer === myId
+
+      ? `
+        <strong>
+          À TOI DE TIRER !
+        </strong>
+        <br>
+        Choisis une case sur
+        le plateau ennemi.
+      `
+
+      : `
+        <strong>
+          TOUR DE ${
+            esc(
+              state.currentPlayerName ||
+              "L’ADVERSAIRE"
+            ).toUpperCase()
+          }
+        </strong>
+        <br>
+        Attends son tir.
+      `;
+
+  }
+
+
+  if(
+    state.status === "finished"
+  ){
+
+    return `
+      <strong>
+        PARTIE TERMINÉE
+      </strong>
+    `;
+
+  }
+
+
+  return "";
+
+}
+
+
+/* =========================================================
+   COORDONNÉES
+========================================================= */
+
+function makeCoords(){
+
+  return `
+    <div class="coords">
+      <span></span>
+      ${
+        [...LETTERS]
+          .map(
+            x =>
+              `<span>${x}</span>`
+          )
+          .join("")
+      }
+    </div>
+  `;
+
+}
+
+
+function boardShell(inner){
+
+  return (
+    makeCoords() +
+    '<div class="board">' +
+      inner +
+    '</div>'
+  );
+
+}
+
+
+function cellLabel(r,c){
+
+  return (
+    LETTERS[c] +
+    (r + 1)
+  );
+
+}
+
+
+/* =========================================================
+   PROPRE PLATEAU
+========================================================= */
+
+function renderOwnBoard(
+  targetId,
+  forPlacement
+){
+
+  const board =
+    state.me?.board ||
+    Array.from(
+      {
+        length:SIZE
+      },
+      () =>
+        Array(SIZE).fill(null)
+    );
+
+  const shots =
+    new Set(
+      (
+        state.me?.shots ||
+        []
+      )
+      .map(
+        x =>
+          x.row +
+          "," +
+          x.col
+      )
+    );
+
+
+  let html = "";
+
+
+  for(
+    let r=0;
+    r<SIZE;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<SIZE;
+      c++
+    ){
+
+      const v =
+        board[r]?.[c];
+
+      let cls =
+        "cell water";
+
+      let txt = "";
+
+
+      if(v){
+
+        cls =
+          "cell ship";
+
+      }
+
+
+      if(
+        shots.has(
+          r + "," + c
+        )
+      ){
+
+        cls +=
+          " hit";
+
+        txt =
+          "×";
+
+      }
+
+
+      html += `
+        <div
+          class="${cls}"
+          data-r="${r}"
+          data-c="${c}"
+        >
+          ${txt}
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  $(targetId).innerHTML =
+    boardShell(html);
 
 }
 
@@ -1413,1194 +1759,1213 @@ function syncNet(){
    PLACEMENT
 ========================================================= */
 
-function startPlace(){
+function renderPlacement(){
 
-  vertical = false;
-
-  selected = 0;
-
-  placements[player] = [];
-
-  $('setup').hidden = false;
-
-  $('setupTitle').textContent =
-    mode === 'duo'
-      ? 'JOUEUR ' + (player+1) + ' : PLACE TA FLOTTE'
-      : 'PLACE TA FLOTTE';
-
-
-  $('help').textContent =
-    'Clique sur un navire puis glisse-le sur la grille. Utilise ↻ sur un bateau pour le tourner.';
-
-
-  $('ready').disabled = true;
-
-
-  $('ownTitle').textContent =
-    mode === 'duo'
-      ? 'FLOTTE DU JOUEUR ' + (player+1)
-      : 'TA FLOTTE';
-
-
-  $('enemyTitle').textContent =
-    'ENNEMI';
-
-
-  $('status').textContent =
-    mode === 'duo'
-      ? 'Joueur ' + (player+1) + ', prépare ta flotte.'
-      : 'Prépare ta flotte.';
-
-
-  renderFleet();
-
-  renderBoards();
-
-}
-
-
-/* =========================================================
-   CELLULES D'UN NAVIRE
-========================================================= */
-
-function shipCells(start,size,v){
-
-  return Array.from(
-    {length:size},
-    (_,i)=>({
-
-      r:start.r + (v ? i : 0),
-
-      c:start.c + (v ? 0 : i)
-
-    })
+  renderOwnBoard(
+    "ownBoardPlacement",
+    true
   );
 
-}
+
+  const board =
+    state.me?.board || [];
+
+  const ships =
+    state.me?.ships || [];
 
 
-/* =========================================================
-   VÉRIFICATION
-========================================================= */
+  $("fleet").innerHTML =
+    '<div class="fleet">' +
 
-function good(add,ignoreIndex=-1){
+      SHIPS
+        .map(
+          s => {
 
-  return add.every(cell=>{
+            const p =
+              ships.find(
+                x =>
+                  x.type ===
+                  s.type
+              );
 
-    if(
-      cell.r < 0 ||
-      cell.r >= 10 ||
-      cell.c < 0 ||
-      cell.c >= 10
-    ){
+            return `
+              <div
+                class="ship-item ${
+                  selectedShip === s.type
+                    ? "selected"
+                    : ""
+                } ${
+                  p &&
+                  p.cells.length === s.size
+                    ? "placed"
+                    : ""
+                }"
+                data-ship="${s.type}"
+              >
 
-      return false;
+                <span class="ship-name">
+                  ${s.name}
+                </span>
 
-    }
+                <span class="ship-size">
+                  ${
+                    p &&
+                    p.cells.length === s.size
+                      ? "PLACÉ"
+                      : "(" + s.size + ")"
+                  }
+                </span>
 
+              </div>
+            `;
 
-    for(
-      let i=0;
-      i<placements[player].length;
-      i++
-    ){
-
-      if(i === ignoreIndex) continue;
-
-      const ship =
-        placements[player][i];
-
-      if(!ship) continue;
-
-      if(
-        ship.some(
-          x=>key(x)===key(cell)
+          }
         )
-      ){
+        .join("") +
 
-        return false;
+    '</div>';
+
+
+  document
+    .querySelectorAll(
+      ".ship-item"
+    )
+    .forEach(
+      el => {
+
+        el.onclick =
+          () => {
+
+            selectedShip =
+              el.dataset.ship;
+
+            renderPlacement();
+
+          };
 
       }
+    );
 
-    }
 
-    return true;
+  document
+    .querySelectorAll(
+      "#ownBoardPlacement .cell"
+    )
+    .forEach(
+      cell => {
 
-  });
+        cell.onclick =
+          () => {
+
+            send({
+              type:
+                "battle_place_ship",
+
+              shipType:
+                selectedShip,
+
+              row:
+                Number(
+                  cell.dataset.r
+                ),
+
+              col:
+                Number(
+                  cell.dataset.c
+                ),
+
+              orientation
+
+            });
+
+          };
+
+      }
+    );
+
+
+  $("readyBtn").textContent =
+    state.me?.ready
+      ? "ANNULER LA VALIDATION"
+      : "VALIDER MA FLOTTE";
+
+
+  $("readyBtn").disabled =
+    !state.me?.allPlaced;
 
 }
 
 
 /* =========================================================
-   LISTE DES NAVIRES
+   BATAILLE
 ========================================================= */
 
-function renderFleet(){
+function renderBattle(){
 
-  const f = $('fleet');
-
-  f.innerHTML = '';
-
-  FLEET.forEach(
-    ([name,size],i)=>{
-
-      const b =
-        document.createElement('button');
-
-      b.className =
-        'ship ' +
-        (i === selected ? 'selected ' : '') +
-        (placements[player][i] ? 'placed' : '');
-
-      b.textContent =
-        name + ' (' + size + ')' +
-        (placements[player][i] ? ' ✓' : '');
-
-      b.onclick = ()=>{
-
-        selected = i;
-
-        renderFleet();
-
-        renderBoards();
-
-      };
-
-      f.appendChild(b);
-
-    }
+  renderOwnBoard(
+    "ownBoardBattle",
+    false
   );
 
-}
+  renderEnemyBoard();
 
 
-/* =========================================================
-   GRILLE
-========================================================= */
+  const w =
+    $("winnerBox");
 
-function grid(el,fn){
-
-  el.innerHTML = '';
-
-  cells().forEach(cell=>{
-
-    const b =
-      document.createElement('button');
-
-    b.className = 'cell';
-
-    b.dataset.r = cell.r;
-
-    b.dataset.c = cell.c;
-
-    b.onclick = ()=>{
-      fn(cell);
-    };
-
-    el.appendChild(b);
-
-  });
-
-}
-
-
-/* =========================================================
-   DESSIN DE LA FLOTTE
-========================================================= */
-
-function drawOwn(){
-
-  const wrap = $('ownWrap');
-
-  const board = $('own');
-
-  grid(board,ownClick);
-
-  /* Affichage des bateaux classiques
-     uniquement pour le mode bataille */
 
   if(
-    phase !== 'place' &&
-    boards[player]
+    state.status === "finished"
   ){
 
-    boards[player]
-      .flat()
-      .forEach(cell=>{
-
-        const b =
-          board.children[
-            cell.r * 10 + cell.c
-          ];
-
-        if(b){
-
-          b.classList.add('shipcell');
-
-        }
-
-      });
-
-  }
+    w.classList.remove(
+      "hidden"
+    );
 
 
-  /* Placement interactif */
+    const winner =
+      state.players.find(
+        p =>
+          p.id ===
+          state.winner
+      );
 
-  if(phase === 'place'){
 
-    renderPlacedShips();
+    w.innerHTML =
+      '<h2>🏆 ' +
+      esc(
+        winner?.name ||
+        "Victoire"
+      ) +
+      ' GAGNE !</h2>' +
+
+      '<button id="inlineNew" class="primary">' +
+        'NOUVELLE PARTIE' +
+      '</button>';
+
+
+    $("inlineNew").onclick =
+      () =>
+        send({
+          type:
+            "battle_new_game"
+        });
 
   }else{
 
-    /* On retire les bateaux flottants du placement
-       pour laisser apparaître les cases touchées/ratées
-       en dessous, sans rien qui les cache. */
-
-    wrap
-      .querySelectorAll('.placed-ship')
-      .forEach(el=>el.remove());
+    w.classList.add(
+      "hidden"
+    );
 
   }
 
 
-  /* Tirs reçus */
+  $("newGameBtn")
+    .classList
+    .toggle(
+      "hidden",
+      !(
+        state.isHost &&
+        state.status ===
+          "finished"
+      )
+    );
 
-  if(phase === 'battle'){
 
-    const incoming =
-      shots[1-player];
+  renderLogs(
+    "logs"
+  );
 
-    incoming.forEach(k=>{
+}
 
-      const [r,c] =
-        k.split(',').map(Number);
 
-      const b =
-        board.children[
-          r * 10 + c
-        ];
+/* =========================================================
+   PLATEAU ENNEMI
+========================================================= */
 
-      if(!b) return;
+function renderEnemyBoard(){
 
-      const boat =
-        placements[player]
-          .flat()
-          .some(
-            x=>key(x)===k
-          ) ||
+  const shots =
+    new Set(
+      (
+        state.me?.shots ||
+        []
+      )
+      .map(
+        x =>
+          x.row +
+          "," +
+          x.col
+      )
+    );
+
+
+  const hitSet =
+    new Set();
+
+  const sunkSet =
+    new Set();
+
+
+  (
+    state.enemy?.ships ||
+    []
+  )
+  .forEach(
+    s => {
+
+      (
+        s.hits ||
+        []
+      )
+      .forEach(
+        h => {
+
+          hitSet.add(
+            h.row +
+            "," +
+            h.col
+          );
+
+        });
+
+
+      if(s.sunk){
+
         (
-          boards[player] &&
-          boards[player]
-            .flat()
-            .some(
-              x=>key(x)===k
+          s.hits ||
+          []
+        )
+        .forEach(
+          h =>
+            sunkSet.add(
+              h.row +
+              "," +
+              h.col
             )
         );
 
-      b.classList.remove('shipcell');
-
-      b.classList.add(
-        boat ? 'hit' : 'miss'
-      );
-
-    });
-
-  }
-
-}
-
-
-/* =========================================================
-   NAVIRES INTERACTIFS
-========================================================= */
-
-function renderPlacedShips(){
-
-  const wrap = $('ownWrap');
-
-  wrap
-    .querySelectorAll('.placed-ship')
-    .forEach(el=>el.remove());
-
-
-  const board = $('own');
-
-  const wrapRect =
-    wrap.getBoundingClientRect();
-
-
-  placements[player].forEach(
-    (ship,index)=>{
-
-      if(!ship || !ship.length)
-        return;
-
-
-      const minR =
-        Math.min(...ship.map(x=>x.r));
-
-      const minC =
-        Math.min(...ship.map(x=>x.c));
-
-      const maxR =
-        Math.max(...ship.map(x=>x.r));
-
-      const maxC =
-        Math.max(...ship.map(x=>x.c));
-
-
-      /* On mesure les vraies cases du DOM
-         pour un positionnement pixel-exact,
-         sans dérive au fil de la grille. */
-
-      const topLeftCell =
-        board.children[minR * 10 + minC];
-
-      const bottomRightCell =
-        board.children[maxR * 10 + maxC];
-
-      if(!topLeftCell || !bottomRightCell)
-        return;
-
-
-      const topLeftRect =
-        topLeftCell.getBoundingClientRect();
-
-      const bottomRightRect =
-        bottomRightCell.getBoundingClientRect();
-
-
-      const el =
-        document.createElement('div');
-
-      el.className =
-        'placed-ship' +
-        (index === selected ? ' selected-ship' : '');
-
-      el.dataset.index = index;
-
-
-      el.style.left =
-        (topLeftRect.left - wrapRect.left) + 'px';
-
-      el.style.top =
-        (topLeftRect.top - wrapRect.top) + 'px';
-
-      el.style.width =
-        (bottomRightRect.right - topLeftRect.left) + 'px';
-
-      el.style.height =
-        (bottomRightRect.bottom - topLeftRect.top) + 'px';
-
-
-      el.onclick = event=>{
-
-        if(event.target.classList.contains('rotate-ship'))
-          return;
-
-        selected = index;
-
-        renderFleet();
-
-        renderBoards();
-
-      };
-
-
-      /* Points du bateau */
-
-      const dots =
-        document.createElement('div');
-
-      dots.className =
-        'ship-dots';
-
-
-      for(let i=0;i<ship.length;i++){
-
-        const dot =
-          document.createElement('span');
-
-        dot.className =
-          'ship-dot';
-
-        dots.appendChild(dot);
-
       }
-
-      el.appendChild(dots);
-
-
-      /* Nom */
-
-      const label =
-        document.createElement('div');
-
-      label.className =
-        'ship-label';
-
-      label.textContent =
-        FLEET[index][0];
-
-      el.appendChild(label);
-
-
-      /* Bouton rotation directement sur le bateau */
-
-      const rotate =
-        document.createElement('button');
-
-      rotate.className =
-        'rotate-ship';
-
-      rotate.textContent =
-        '↻';
-
-      rotate.title =
-        'Tourner ce navire';
-
-      rotate.onclick = event=>{
-
-        event.stopPropagation();
-
-        selected = index;
-
-        rotateShip(index);
-
-      };
-
-      el.appendChild(rotate);
-
-
-      wrap.appendChild(el);
 
     }
   );
 
+
+  let html = "";
+
+
+  for(
+    let r=0;
+    r<SIZE;
+    r++
+  ){
+
+    for(
+      let c=0;
+      c<SIZE;
+      c++
+    ){
+
+      const key =
+        r +
+        "," +
+        c;
+
+      let cls =
+        "cell water";
+
+      let txt = "";
+
+
+      if(
+        sunkSet.has(key)
+      ){
+
+        cls +=
+          " sunk";
+
+        txt =
+          "×";
+
+      }else if(
+        hitSet.has(key)
+      ){
+
+        cls +=
+          " hit";
+
+        txt =
+          "×";
+
+      }else if(
+        shots.has(key)
+      ){
+
+        cls +=
+          " miss";
+
+        txt =
+          "•";
+
+      }
+
+
+      const can =
+        state.status ===
+          "playing" &&
+        state.currentPlayer ===
+          myId &&
+        !shots.has(key);
+
+
+      if(can){
+
+        cls +=
+          " targetable";
+
+      }
+
+
+      html += `
+        <div
+          class="${cls}"
+          data-r="${r}"
+          data-c="${c}"
+          title="${cellLabel(r,c)}"
+        >
+          ${txt}
+        </div>
+      `;
+
+    }
+
+  }
+
+
+  $("enemyBoard").innerHTML =
+    boardShell(html);
+
+
+  $("enemyTitle").textContent =
+    "FLOTTE DE " +
+    esc(
+      state.enemy?.name ||
+      "L’ENNEMI"
+    );
+
+
+  document
+    .querySelectorAll(
+      "#enemyBoard .targetable"
+    )
+    .forEach(
+      cell => {
+
+        cell.onclick =
+          () =>
+
+            send({
+              type:
+                "battle_shoot",
+
+              row:
+                Number(
+                  cell.dataset.r
+                ),
+
+              col:
+                Number(
+                  cell.dataset.c
+                )
+
+            });
+
+      }
+    );
+
 }
 
 
 /* =========================================================
-   ROTATION D'UN BATEAU
+   JOURNAL
 ========================================================= */
 
-function rotateShip(index){
+function renderLogs(id){
 
-  if(phase !== 'place') return;
+  const box =
+    $(id);
 
-  const ship =
-    placements[player][index];
+  box.innerHTML =
+    (
+      state.logs ||
+      []
+    )
+    .slice(-80)
+    .map(
+      x =>
+        `<div class="log">
+          ${esc(x)}
+        </div>`
+    )
+    .join("");
 
-  if(!ship) return;
+  box.scrollTop =
+    box.scrollHeight;
 
-
-  const first =
-    ship[0];
-
-  const size =
-    ship.length;
-
-
-  const isVertical =
-    ship.length > 1 &&
-    ship[1].r !== ship[0].r;
-
-
-  const newVertical =
-    !isVertical;
+}
 
 
-  let newShip;
+/* =========================================================
+   MODE TV
+========================================================= */
+
+function renderTV(){
+
+  $("tvStatus").innerHTML =
+    tvStatus();
+
+  $("tvCode").textContent =
+    state.room;
+
+
+  $("tvPlayers").innerHTML =
+    '<h3>JOUEURS</h3>' +
+
+    state.players
+      .map(
+        p =>
+          `<div class="player ${
+            p.ready
+              ? "ready"
+              : ""
+          }">
+            ${
+              p.ready
+                ? "✓"
+                : "⏳"
+            }
+            ${esc(p.name)}
+          </div>`
+      )
+      .join("");
+
+
+  const html =
+    state.players
+      .map(
+        p =>
+          tvMiniBoard(p)
+      )
+      .join("");
+
+
+  $("tvBoards").innerHTML =
+    html ||
+    '<div class="notice">En attente des joueurs…</div>';
+
+
+  renderLogs(
+    "tvLogs"
+  );
+
+
+  $("tvNewGameBtn")
+    .classList
+    .toggle(
+      "hidden",
+      !(
+        state.isHost &&
+        state.status ===
+          "finished"
+      )
+    );
+
+}
+
+
+function tvStatus(){
+
+  if(
+    state.players.length <
+    2
+  ){
+
+    return `
+      <strong>
+        EN ATTENTE DES 2 JOUEURS
+      </strong>
+      <br>
+      Donne le code affiché à gauche.
+    `;
+
+  }
+
+
+  if(
+    state.status ===
+    "placement"
+  ){
+
+    return `
+      <strong>
+        PLACEMENT DES FLOTTES
+      </strong>
+      <br>
+      Les deux joueurs préparent leurs
+      navires sur leurs téléphones.
+    `;
+
+  }
+
+
+  if(
+    state.status ===
+    "playing"
+  ){
+
+    return `
+      <strong>
+        TOUR DE ${
+          esc(
+            state.currentPlayerName ||
+            ""
+          ).toUpperCase()
+        }
+      </strong>
+    `;
+
+  }
+
+
+  if(
+    state.status ===
+    "finished"
+  ){
+
+    const w =
+      state.players.find(
+        p =>
+          p.id ===
+          state.winner
+      );
+
+
+    return `
+      <strong>
+        🏆 ${
+          esc(
+            w?.name ||
+            ""
+          )
+        }
+        REMPORTE LA PARTIE !
+      </strong>
+    `;
+
+  }
+
+
+  return "";
+
+}
+
+
+function tvMiniBoard(p){
+
+  const shots =
+    new Set(
+      (
+        p.shots ||
+        []
+      )
+      .map(
+        x =>
+          x.row +
+          "," +
+          x.col
+      )
+    );
+
+
+  let html = "";
 
 
   /*
-    On conserve le coin supérieur/gauche
-    du bateau pour rendre la rotation intuitive.
+    En mode TV, le serveur masque
+    volontairement les bateaux.
+
+    On affiche donc seulement
+    les tirs reçus/émis.
   */
 
-  const minR =
-    Math.min(...ship.map(x=>x.r));
-
-  const minC =
-    Math.min(...ship.map(x=>x.c));
-
-
-  newShip =
-    shipCells(
-      {
-        r:minR,
-        c:minC
-      },
-      size,
-      newVertical
-    );
-
-
-  if(!good(newShip,index)){
-
-    toast(
-      'Impossible de tourner ici.'
-    );
-
-    return;
-
-  }
-
-
-  placements[player][index] =
-    newShip;
-
-
-  renderFleet();
-
-  renderBoards();
-
-}
-
-
-/* =========================================================
-   ROTATION DU NAVIRE SÉLECTIONNÉ
-========================================================= */
-
-function rotateSelected(){
-
-  if(phase !== 'place') return;
-
-  const ship =
-    placements[player][selected];
-
-
-  if(ship){
-
-    rotateShip(selected);
-
-  }else{
-
-    vertical = !vertical;
-
-    toast(
-      vertical
-        ? 'Orientation verticale'
-        : 'Orientation horizontale'
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   CLIC / TAP SUR LA GRILLE
-   (place un nouveau navire, ou déplace le navire
-   sélectionné s'il est déjà placé)
-========================================================= */
-
-function ownClick(cell){
-
-  if(phase !== 'place') return;
-
-
-  const size =
-    FLEET[selected][1];
-
-  const ship =
-    placements[player][selected];
-
-
-  if(!ship){
-
-    const add =
-      shipCells(
-        cell,
-        size,
-        vertical
-      );
-
-
-    if(!good(add)){
-
-      toast(
-        'Impossible de placer ce navire ici.'
-      );
-
-      return;
-
-    }
-
-
-    placements[player][selected] =
-      add;
-
-
-    let next =
-      selected + 1;
-
-
-    while(
-      next < FLEET.length &&
-      placements[player][next]
-    ){
-
-      next++;
-
-    }
-
-
-    if(next < FLEET.length){
-
-      selected = next;
-
-    }
-
-  }else{
-
-    const isVertical =
-      ship.length > 1 &&
-      ship[1].r !== ship[0].r;
-
-
-    const add =
-      shipCells(
-        cell,
-        size,
-        isVertical
-      );
-
-
-    if(!good(add,selected)){
-
-      toast(
-        'Impossible de déplacer ce navire ici.'
-      );
-
-      return;
-
-    }
-
-
-    placements[player][selected] =
-      add;
-
-  }
-
-
-  renderFleet();
-
-  renderBoards();
-
-  checkReady();
-
-}
-
-
-/* =========================================================
-   PRÊT ?
-========================================================= */
-
-function checkReady(){
-
-  const ready =
-    placements[player]
-      .length === FLEET.length &&
-    placements[player]
-      .every(Boolean);
-
-
-  $('ready').disabled =
-    !ready;
-
-
-  if(ready){
-
-    $('help').textContent =
-      'Ta flotte est prête. Tu peux encore déplacer ou tourner les bateaux, puis valider.';
-
-  }
-
-}
-
-
-/* =========================================================
-   DESSIN ENNEMI
-========================================================= */
-
-function drawEnemy(){
-
-  grid(
-    $('enemy'),
-    fire
-  );
-
-
-  if(phase !== 'battle')
-    return;
-
-
-  const visible =
-    shots[player];
-
-
-  visible.forEach(k=>{
-
-    const [r,c] =
-      k.split(',').map(Number);
-
-
-    const b =
-      $('enemy').children[
-        r * 10 + c
-      ];
-
-
-    if(!b) return;
-
-
-    let target;
-
-
-    if(mode === 'solo'){
-
-      target = botBoard;
-
-    }else{
-
-      target =
-        boards[1-player];
-
-    }
-
-
-    const hit =
-      target &&
-      target
-        .flat()
-        .some(
-          x=>key(x)===k
-        );
-
-
-    b.classList.add(
-      hit ? 'hit' : 'miss'
-    );
-
-    b.disabled = true;
-
-  });
-
-
-  Array.from(
-    $('enemy').children
-  ).forEach(b=>{
-
-    if(
-      phase !== 'battle' ||
-      (
-        mode === 'network' &&
-        turn !== player
-      ) ||
-      b.disabled
-    ){
-
-      b.disabled = true;
-
-    }
-
-  });
-
-}
-
-
-/* =========================================================
-   AFFICHAGE
-========================================================= */
-
-function renderBoards(){
-
-  drawOwn();
-
-  drawEnemy();
-
-  renderFleetStatus();
-
-}
-
-
-/* =========================================================
-   SUIVI DES FLOTTES (navires coulés / restants)
-========================================================= */
-
-function shipSunk(ship,shotsSet){
-
-  return (
-    !!ship &&
-    ship.every(
-      cell => shotsSet.has(key(cell))
-    )
-  );
-
-}
-
-
-function renderFleetStatus(){
-
-  const panel = $('fleetStatus');
-
-
-  if(
-    phase === 'place' ||
-    phase === null
+  for(
+    let r=0;
+    r<SIZE;
+    r++
   ){
 
-    panel.hidden = true;
+    for(
+      let c=0;
+      c<SIZE;
+      c++
+    ){
 
-    return;
+      const k =
+        r +
+        "," +
+        c;
 
-  }
+      let cls =
+        "cell water";
 
-
-  panel.hidden = false;
-
-
-  const myBoard =
-    boards[player];
-
-  const enemyBoard =
-    mode === 'solo'
-      ? botBoard
-      : boards[1-player];
-
-  const shotsOnMe =
-    shots[1-player];
-
-  const myShots =
-    shots[player];
+      let txt = "";
 
 
-  const fill = (containerId,fleetBoard,shotsSet)=>{
+      if(
+        shots.has(k)
+      ){
 
-    const el = $(containerId);
+        cls +=
+          " miss";
 
-    el.innerHTML = '';
-
-    FLEET.forEach(
-      ([name,size],i)=>{
-
-        const ship =
-          fleetBoard
-            ? fleetBoard[i]
-            : null;
-
-        const sunk =
-          shipSunk(ship,shotsSet);
-
-        const item =
-          document.createElement('div');
-
-        item.className =
-          'fleet-status-item' +
-          (sunk ? ' sunk' : '');
-
-        item.textContent =
-          (sunk ? '☠ ' : '▮ ') +
-          name +
-          ' (' + size + ')';
-
-        el.appendChild(item);
-
-      }
-    );
-
-  };
-
-
-  fill('ownFleetStatus',myBoard,shotsOnMe);
-
-  fill('enemyFleetStatus',enemyBoard,myShots);
-
-}
-
-
-/* =========================================================
-   VALIDER LA FLOTTE
-========================================================= */
-
-function confirmFleet(){
-
-  if(
-    placements[player].length !== FLEET.length ||
-    !placements[player].every(Boolean)
-  ){
-
-    toast(
-      'Place tous les bateaux avant de commencer.'
-    );
-
-    return;
-
-  }
-
-
-  boards[player] =
-    placements[player].map(
-      ship =>
-        ship.map(
-          cell=>({...cell})
-        )
-    );
-
-
-  /* =========================
-     EN LIGNE
-  ========================= */
-
-  if(mode === 'network'){
-
-    phase = 'waiting';
-
-    $('setup').hidden = true;
-
-
-    if(player === 0){
-
-      $('status').textContent =
-        'Flotte prête. En attente du joueur 2…';
-
-      if(connection && connection.open){
-
-        connection.send({
-          type:'place'
-        });
+        txt =
+          "•";
 
       }
 
-    }else{
 
-      $('status').textContent =
-        'Flotte envoyée. En attente de l’hôte…';
-
-
-      if(connection && connection.open){
-
-        connection.send({
-          type:'fleet',
-          fleet:boards[1]
-        });
-
-      }
+      html += `
+        <div class="${cls}">
+          ${txt}
+        </div>
+      `;
 
     }
 
-
-    renderBoards();
-
-    return;
-
   }
 
 
-  /* =========================
-     SOLO
-  ========================= */
+  return `
+    <div class="mini">
 
-  if(mode === 'solo'){
+      <div class="board-title">
+        ${esc(p.name)}
+      </div>
 
-    botBoard =
-      randomFleet();
-
-    beginBattle();
-
-    return;
-
-  }
-
-
-  /* =========================
-     LOCAL 2 JOUEURS
-  ========================= */
-
-  if(player === 0){
-
-    player = 1;
-
-    showPassScreen(
-      'JOUEUR 2',
-      'Ne regarde pas la flotte du joueur 1.',
-      hideScreenAndPlace
-    );
-
-  }else{
-
-    player = 0;
-
-    beginBattle();
-
-  }
-
-}
-
-
-/* =========================================================
-   ÉCRAN JOUEUR SUIVANT
-========================================================= */
-
-function showPassScreen(title,text,onContinue){
-
-  window._screenContinue =
-    onContinue || hideScreenAndPlace;
-
-  $('screen').hidden = false;
-
-  $('screen').innerHTML = `
-
-    <div class="panel">
-
-      <h2>${title}</h2>
-
-      <p>${text}</p>
-
-      <button onclick="_screenContinue()">
-        À MON TOUR
-      </button>
+      ${boardShell(html)}
 
     </div>
-
   `;
 
 }
 
 
-function hideScreenAndPlace(){
+/* =========================================================
+   MODE SOLO LOCAL
+========================================================= */
 
-  $('screen').hidden = true;
+let soloState = null;
 
-  startPlace();
+
+function newSoloPlayer(name){
+
+  return {
+
+    name,
+
+    board:
+      Array.from(
+        {
+          length:SIZE
+        },
+        () =>
+          Array(
+            SIZE
+          ).fill(null)
+      ),
+
+    ships:
+      SHIPS.map(
+        s => ({
+          type:s.type,
+          name:s.name,
+          size:s.size,
+          cells:[],
+          hits:[],
+          sunk:false
+        })
+      ),
+
+    shots:
+      new Set()
+
+  };
 
 }
 
 
-/* =========================================================
-   FLOTTES ALÉATOIRES
-========================================================= */
+function startSolo(name){
 
-function randomFleet(){
+  solo = true;
 
-  const fleet = [];
+  home.classList.add(
+    "hidden"
+  );
+
+  game.classList.remove(
+    "hidden"
+  );
+
+  mode =
+    "solo";
+
+  roomCode =
+    "SOLO";
+
+  myId =
+    "solo";
+
+
+  soloState = {
+
+    status:
+      "placement",
+
+    player:
+      newSoloPlayer(name),
+
+    ai:
+      newSoloPlayer(
+        "Ordinateur"
+      ),
+
+    current:
+      "solo",
+
+    logs:[
+      "🚢 Partie solo créée."
+    ]
+
+  };
+
+
+  soloPlaceRandom(
+    soloState.ai
+  );
+
+
+  state = {
+
+    mode:"solo",
+
+    status:"placement",
+
+    room:"SOLO",
+
+    players:[
+
+      {
+        id:"solo",
+        name,
+        ready:false,
+        allPlaced:false,
+        host:true
+      },
+
+      {
+        id:"ai",
+        name:"Ordinateur",
+        ready:true,
+        allPlaced:true,
+        host:false
+      }
+
+    ],
+
+    currentPlayer:"solo",
+
+    currentPlayerName:name,
+
+    winner:null,
+
+    lastShot:null,
+
+    logs:
+      soloState.logs,
+
+    me:{
+
+      id:"solo",
+
+      name,
+
+      ready:false,
+
+      allPlaced:false,
+
+      ships:
+        soloState.player.ships,
+
+      board:
+        soloState.player.board,
+
+      shots:[]
+
+    },
+
+    enemy:{
+
+      id:"ai",
+
+      name:"Ordinateur",
+
+      ready:true,
+
+      allPlaced:true,
+
+      ships:
+        soloState.ai.ships.map(
+          s => ({
+            ...s,
+            cells:[],
+            hits:s.hits,
+            sunk:s.sunk
+          })
+        ),
+
+      shots:[]
+
+    },
+
+    isHost:true
+
+  };
+
+
+  renderRoomHeader();
+
+  render();
+
+}
+
+
+function soloCanPlace(
+  p,
+  s,
+  r,
+  c,
+  o
+){
+
+  const cells = [];
 
 
   for(
-    const [,size]
-    of FLEET
+    let i=0;
+    i<s.size;
+    i++
   ){
 
-    let ship;
+    const rr =
+      o === "vertical"
+        ? r + i
+        : r;
+
+    const cc =
+      o === "horizontal"
+        ? c + i
+        : c;
 
 
-    do{
+    if(
+      rr < 0 ||
+      rr >= SIZE ||
+      cc < 0 ||
+      cc >= SIZE ||
+      p.board[rr][cc]
+    ){
 
-      const start = {
+      return null;
 
-        r:
-          Math.floor(
-            Math.random()*10
-          ),
-
-        c:
-          Math.floor(
-            Math.random()*10
-          )
-
-      };
+    }
 
 
-      ship =
-        shipCells(
-          start,
-          size,
-          Math.random() < .5
-        );
+    cells.push({
+      row:rr,
+      col:cc
+    });
+
+  }
 
 
-    }while(
+  return cells;
 
-      !ship.every(
-        x=>
-          x.r >= 0 &&
-          x.r < 10 &&
-          x.c >= 0 &&
-          x.c < 10
-      )
+}
 
-      ||
 
-      fleet
-        .flat()
-        .some(
-          x=>
-            ship.some(
-              y=>
-                key(x)===key(y)
-            )
-        )
+function soloPlace(
+  p,
+  type,
+  r,
+  c,
+  o
+){
 
+  const s =
+    p.ships.find(
+      x =>
+        x.type ===
+        type
     );
 
 
-    fleet.push(ship);
+  if(!s)
+    return false;
+
+
+  for(
+    const row of
+    p.board
+  ){
+
+    for(
+      let i=0;
+      i<row.length;
+      i++
+    ){
+
+      if(
+        row[i] ===
+        type
+      ){
+
+        row[i] =
+          null;
+
+      }
+
+    }
 
   }
 
 
-  return fleet;
+  const cells =
+    soloCanPlace(
+      p,
+      s,
+      r,
+      c,
+      o
+    );
+
+
+  if(!cells)
+    return false;
+
+
+  s.cells =
+    cells;
+
+  s.hits =
+    [];
+
+  s.sunk =
+    false;
+
+
+  cells.forEach(
+    x =>
+      p.board[
+        x.row
+      ][
+        x.col
+      ] =
+        type
+  );
+
+
+  return true;
 
 }
 
 
-/* =========================================================
-   COMMENCER LA BATAILLE
-========================================================= */
+function soloPlaceRandom(p){
 
-function beginBattle(){
+  for(
+    const s of
+    p.ships
+  ){
 
-  phase = 'battle';
+    let ok =
+      false;
 
-  $('setup').hidden = true;
 
+    for(
+      let tries=0;
+      tries<100 &&
+      !ok;
+      tries++
+    ){
 
-  if(mode === 'solo'){
+      ok =
+        soloPlace(
+          p,
+          s.type,
+          Math.floor(
+            Math.random() *
+            SIZE
+          ),
+          Math.floor(
+            Math.random() *
+            SIZE
+          ),
+          Math.random() < .5
+            ? "horizontal"
+            : "vertical"
+        );
 
-    $('status').textContent =
-      'À toi de tirer !';
-
-    $('ownTitle').textContent =
-      'TA FLOTTE';
-
-  }else{
-
-    turn = 0;
-
-    $('status').textContent =
-      'Joueur 1 : à toi de tirer !';
-
-    $('ownTitle').textContent =
-      'FLOTTE JOUEUR ' + (player+1);
+    }
 
   }
 
+}
 
-  renderBoards();
+
+function soloAllPlaced(p){
+
+  return p.ships.every(
+    s =>
+      s.cells.length ===
+      s.size
+  );
 
 }
 
 
-/* =========================================================
-   TIR
-========================================================= */
+function syncSolo(){
 
-function fire(cell){
+  state.me = {
+
+    id:"solo",
+
+    name:
+      soloState.player.name,
+
+    ready:
+      soloState.player.ready ||
+      false,
+
+    allPlaced:
+      soloAllPlaced(
+        soloState.player
+      ),
+
+    ships:
+      soloState.player.ships,
+
+    board:
+      soloState.player.board,
+
+    shots:
+      [
+        ...soloState.player.shots
+      ]
+      .map(
+        k => {
+
+          const [
+            a,
+            b
+          ] =
+            k.split(",");
+
+          return {
+            row:+a,
+            col:+b
+          };
+
+        }
+      )
+
+  };
+
+
+  state.enemy = {
+
+    id:"ai",
+
+    name:"Ordinateur",
+
+    ready:true,
+
+    allPlaced:true,
+
+    ships:
+      soloState.ai.ships
+        .map(
+          s => ({
+            type:s.type,
+            name:s.name,
+            size:s.size,
+            sunk:s.sunk,
+            hits:s.hits
+          })
+        ),
+
+    shots:
+      [
+        ...soloState.ai.shots
+      ]
+      .map(
+        k => {
+
+          const [
+            a,
+            b
+          ] =
+            k.split(",");
+
+          return {
+            row:+a,
+            col:+b
+          };
+
+        }
+      )
+
+  };
+
+
+  state.status =
+    soloState.status;
+
+  state.currentPlayer =
+    soloState.current;
+
+  state.currentPlayerName =
+    soloState.current ===
+      "solo"
+
+      ? soloState.player.name
+      : "Ordinateur";
+
+  state.winner =
+    soloState.winner ||
+    null;
+
+  state.logs =
+    soloState.logs;
+
+}
+
+
+function soloShot(r,c){
 
   if(
-    phase !== 'battle' ||
-    shots[player].has(key(cell))
+    soloState.status !==
+      "playing" ||
+    soloState.current !==
+      "solo"
   ){
 
     return;
@@ -2608,319 +2973,627 @@ function fire(cell){
   }
 
 
-  /* =========================
-     EN LIGNE : JOUEUR 2
-  ========================= */
+  const k =
+    r +
+    "," +
+    c;
+
 
   if(
-    mode === 'network' &&
-    player === 1
+    soloState.player.shots
+      .has(k)
   ){
 
-    if(turn !== player){
+    return;
+
+  }
+
+
+  soloState.player.shots
+    .add(k);
+
+
+  const target =
+    soloState.ai;
+
+  const type =
+    target.board[r][c];
+
+  let result =
+    "💦";
+
+
+  if(type){
+
+    const s =
+      target.ships.find(
+        x =>
+          x.type ===
+          type
+      );
+
+
+    if(
+      s &&
+      !s.hits.some(
+        h =>
+          h.row === r &&
+          h.col === c
+      )
+    ){
+
+      s.hits.push({
+        row:r,
+        col:c
+      });
+
+
+      if(
+        s.hits.length ===
+        s.size
+      ){
+
+        s.sunk =
+          true;
+
+        result =
+          "🔥";
+
+      }else{
+
+        result =
+          "💥";
+
+      }
+
+    }
+
+  }
+
+
+  soloState.logs.push(
+    `${result} ${
+      soloState.player.name
+    } tire en ${
+      cellLabel(r,c)
+    }.`
+  );
+
+
+  if(
+    target.ships.every(
+      s =>
+        s.sunk
+    )
+  ){
+
+    soloState.status =
+      "finished";
+
+    soloState.winner =
+      "solo";
+
+    syncSolo();
+
+    render();
+
+    return;
+
+  }
+
+
+  soloState.current =
+    "ai";
+
+  syncSolo();
+
+  render();
+
+  setTimeout(
+    soloTurn,
+    500
+  );
+
+}
+
+
+function soloTurn(){
+
+  if(
+    soloState.status !==
+      "playing"
+  ){
+
+    return;
+
+  }
+
+
+  let r,c,k;
+
+  const available = [];
+
+
+  for(
+    let rr=0;
+    rr<SIZE;
+    rr++
+  ){
+
+    for(
+      let cc=0;
+      cc<SIZE;
+      cc++
+    ){
+
+      if(
+        !soloState.ai.shots
+          .has(
+            rr + "," + cc
+          )
+      ){
+
+        available.push([
+          rr,
+          cc
+        ]);
+
+      }
+
+    }
+
+  }
+
+
+  [
+    r,
+    c
+  ] =
+    available[
+      Math.floor(
+        Math.random() *
+        available.length
+      )
+    ];
+
+
+  k =
+    r +
+    "," +
+    c;
+
+
+  soloState.ai.shots
+    .add(k);
+
+
+  const type =
+    soloState.player.board[r][c];
+
+  let result =
+    "💦";
+
+
+  if(type){
+
+    const s =
+      soloState.player.ships.find(
+        x =>
+          x.type ===
+          type
+      );
+
+
+    if(
+      s &&
+      !s.hits.some(
+        h =>
+          h.row === r &&
+          h.col === c
+      )
+    ){
+
+      s.hits.push({
+        row:r,
+        col:c
+      });
+
+
+      if(
+        s.hits.length ===
+        s.size
+      ){
+
+        s.sunk =
+          true;
+
+        result =
+          "🔥";
+
+      }else{
+
+        result =
+          "💥";
+
+      }
+
+    }
+
+  }
+
+
+  soloState.logs.push(
+    `${result} Ordinateur tire en ${
+      cellLabel(r,c)
+    }.`
+  );
+
+
+  if(
+    soloState.player.ships.every(
+      s =>
+        s.sunk
+    )
+  ){
+
+    soloState.status =
+      "finished";
+
+    soloState.winner =
+      "ai";
+
+  }else{
+
+    soloState.current =
+      "solo";
+
+  }
+
+
+  syncSolo();
+
+  render();
+
+}
+
+
+/* =========================================================
+   HOOKS SOLO
+========================================================= */
+
+const oldRenderPlacement =
+  renderPlacement;
+
+
+renderPlacement =
+  function(){
+
+    if(solo){
+
+      renderSoloPlacement();
 
       return;
 
     }
 
+    oldRenderPlacement();
 
-    connection.send({
-
-      type:'fire',
-
-      cell:cell
-
-    });
+  };
 
 
-    phase = 'waiting';
-
-    $('status').textContent =
-      'Tir envoyé…';
-
-    renderBoards();
-
-    return;
-
-  }
+const oldRenderBattle =
+  renderBattle;
 
 
-  /* =========================
-     TIR NORMAL
-  ========================= */
+renderBattle =
+  function(){
 
-  shots[player].add(
-    key(cell)
-  );
+    if(solo){
 
+      renderSoloBattle();
 
-  const target =
-    mode === 'solo'
-      ? botBoard
-      : boards[1-player];
-
-
-  const hit =
-    target
-      .flat()
-      .some(
-        x=>key(x)===key(cell)
-      );
-
-
-  toast(
-    hit
-      ? 'TOUCHÉ !'
-      : 'À L’EAU !'
-  );
-
-
-  renderBoards();
-
-
-  const defeated =
-    target
-      .flat()
-      .every(
-        x=>
-          shots[player]
-            .has(key(x))
-      );
-
-
-  if(defeated){
-
-    if(mode === 'network'){
-
-      connection.send({
-        type:'end',
-        winner:player
-      });
+      return;
 
     }
 
-    end(true);
+    oldRenderBattle();
 
-    return;
-
-  }
+  };
 
 
-  /* =========================
-     ORDINATEUR
-  ========================= */
+function renderSoloPlacement(){
 
-  if(mode === 'solo'){
-
-    phase = 'wait';
-
-    setTimeout(
-      botFire,
-      650
-    );
-
-    return;
-
-  }
+  renderOwnBoard(
+    "ownBoardPlacement",
+    true
+  );
 
 
-  /* =========================
-     EN LIGNE
-  ========================= */
-
-  if(mode === 'network'){
-
-    turn = 1;
-
-    syncNet();
-
-    $('status').textContent =
-      'Tour de l’adversaire…';
-
-    renderBoards();
-
-    return;
-
-  }
+  const p =
+    soloState.player;
 
 
-  /* =========================
-     LOCAL
-  ========================= */
+  $("fleet").innerHTML =
+    '<div class="fleet">' +
 
-  player =
-    1-player;
+      SHIPS
+        .map(
+          s => {
 
-  passTurn();
+            const ps =
+              p.ships.find(
+                x =>
+                  x.type ===
+                  s.type
+              );
 
-}
 
+            return `
+              <div
+                class="ship-item ${
+                  selectedShip === s.type
+                    ? "selected"
+                    : ""
+                } ${
+                  ps.cells.length ===
+                  s.size
+                    ? "placed"
+                    : ""
+                }"
+                data-ship="${s.type}"
+              >
 
-/* =========================================================
-   ORDINATEUR
-========================================================= */
+                <span class="ship-name">
+                  ${s.name}
+                </span>
 
-function botFire(){
+                <span class="ship-size">
+                  ${
+                    ps.cells.length ===
+                    s.size
+                      ? "PLACÉ"
+                      : "(" +
+                        s.size +
+                        ")"
+                  }
+                </span>
 
-  const options =
-    cells().filter(
-      c=>
-        !botShots.has(
-          key(c)
+              </div>
+            `;
+
+          }
         )
+        .join("") +
+
+    '</div>';
+
+
+  document
+    .querySelectorAll(
+      ".ship-item"
+    )
+    .forEach(
+      el => {
+
+        el.onclick =
+          () => {
+
+            selectedShip =
+              el.dataset.ship;
+
+            renderSoloPlacement();
+
+          };
+
+      }
     );
 
 
-  if(!options.length)
-    return;
+  document
+    .querySelectorAll(
+      "#ownBoardPlacement .cell"
+    )
+    .forEach(
+      cell => {
+
+        cell.onclick =
+          () => {
+
+            if(
+              soloPlace(
+                p,
+                selectedShip,
+                +cell.dataset.r,
+                +cell.dataset.c,
+                orientation
+              )
+            ){
+
+              soloState.logs.push(
+                `🚢 ${
+                  p.name
+                } place son navire.`
+              );
+
+              syncSolo();
+
+              renderSoloPlacement();
+
+            }else{
+
+              showError(
+                "Position impossible : le navire sort du plateau ou chevauche un autre navire."
+              );
+
+            }
+
+          };
+
+      }
+    );
 
 
-  const cell =
-    options[
-      Math.floor(
-        Math.random()*options.length
-      )
-    ];
+  $("readyBtn").textContent =
+    soloState.player.ready
+      ? "ANNULER LA VALIDATION"
+      : "VALIDER MA FLOTTE";
 
 
-  botShots.add(
-    key(cell)
+  $("readyBtn").disabled =
+    !soloAllPlaced(p);
+
+}
+
+
+function renderSoloBattle(){
+
+  renderOwnBoard(
+    "ownBoardBattle",
+    false
   );
 
-
-  shots[1] =
-    botShots;
+  renderEnemyBoard();
 
 
-  const hit =
-    boards[0]
-      .flat()
-      .some(
-        x=>key(x)===key(cell)
-      );
+  const w =
+    $("winnerBox");
 
 
-  toast(
-    hit
-      ? 'L’ordinateur touche !'
-      : 'L’ordinateur rate.'
-  );
+  if(
+    state.status ===
+    "finished"
+  ){
+
+    w.classList.remove(
+      "hidden"
+    );
 
 
-  const defeated =
-    boards[0]
-      .flat()
-      .every(
-        x=>
-          botShots.has(
-            key(x)
-          )
-      );
+    w.innerHTML =
+      '<h2>🏆 ' +
+      (
+        state.winner ===
+          "solo"
+          ? "TU GAGNES !"
+          : "L’ORDINATEUR GAGNE !"
+      ) +
+      '</h2>' +
+
+      '<button id="inlineNew" class="primary">' +
+        'REJOUER' +
+      '</button>';
 
 
-  if(defeated){
+    $("inlineNew").onclick =
+      () =>
+        startSolo(
+          soloState.player.name
+        );
 
-    end(false);
+  }else{
 
-    return;
+    w.classList.add(
+      "hidden"
+    );
 
   }
 
 
-  phase = 'battle';
-
-  $('status').textContent =
-    'À toi de tirer !';
-
-  renderBoards();
-
-}
+  $("newGameBtn")
+    .classList
+    .add("hidden");
 
 
-/* =========================================================
-   TOUR JOUEUR LOCAL
-========================================================= */
-
-function passTurn(){
-
-  showPassScreen(
-    'JOUEUR ' + (player+1),
-    'Prends le contrôle. Ne regarde pas la grille précédente.',
-    resumeTurn
+  renderLogs(
+    "logs"
   );
 
 }
 
 
-/* =========================================================
-   REPRENDRE LE TOUR
-========================================================= */
-
-function resumeTurn(){
-
-  $('screen').hidden = true;
-
-  $('status').textContent =
-    'Joueur ' +
-    (player+1) +
-    ' : à toi de tirer !';
-
-  $('ownTitle').textContent =
-    'FLOTTE JOUEUR ' +
-    (player+1);
-
-  renderBoards();
-
-}
+const originalEnemyBoard =
+  renderEnemyBoard;
 
 
-/* =========================================================
-   FIN
-========================================================= */
+renderEnemyBoard =
+  function(){
 
-function end(win){
-
-  phase = 'end';
-
-  $('setup').hidden = true;
+    originalEnemyBoard();
 
 
-  $('status').textContent =
-    win
-      ? 'VICTOIRE — toute la flotte ennemie est coulée !'
-      : 'DÉFAITE — ta flotte a coulé.';
+    if(solo){
+
+      document
+        .querySelectorAll(
+          "#enemyBoard .targetable"
+        )
+        .forEach(
+          cell => {
+
+            cell.onclick =
+              () =>
+                soloShot(
+                  +cell.dataset.r,
+                  +cell.dataset.c
+                );
+
+          }
+        );
+
+    }
+
+  };
 
 
-  toast(
-    win
-      ? 'VICTOIRE !'
-      : 'DÉFAITE'
-  );
+$("readyBtn").addEventListener(
+  "click",
+  () => {
+
+    if(solo){
+
+      if(
+        !soloAllPlaced(
+          soloState.player
+        )
+      ){
+
+        return;
+
+      }
 
 
-  renderBoards();
+      soloState.player.ready =
+        !soloState.player.ready;
 
-}
+
+      if(
+        soloState.player.ready
+      ){
+
+        soloState.status =
+          "playing";
+
+        soloState.current =
+          "solo";
+
+        soloState.logs.push(
+          "⚔️ Les flottes sont prêtes. À toi de commencer !"
+        );
+
+      }
 
 
-/* =========================================================
-   INITIALISATION
-========================================================= */
+      syncSolo();
 
-/*
-   IMPORTANT :
-   On ne montre PAS #screen au démarrage.
-   La règle CSS #screen[hidden] garantit qu'il
-   reste complètement invisible.
-*/
+      render();
 
-$('screen').hidden = true;
+    }
 
-$('game').hidden = true;
+  }
+);
 
-$('menu').hidden = false;
 
-renderLabels();
+// Start with no mode selected.
 
 </script>
 
