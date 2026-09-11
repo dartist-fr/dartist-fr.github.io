@@ -2,619 +2,316 @@ const http = require("http");
 const WebSocket = require("ws");
 const crypto = require("crypto");
 
-
-const PORT =
-  process.env.PORT || 10000;
-
-
-const server =
-  http.createServer(
-    (req,res) => {
-
-      res.writeHead(
-        200,
-        {
-          "Content-Type":
-            "text/plain; charset=utf-8"
-        }
-      );
-
-      res.end(
-        "UNO Jeux2Soirée server OK"
-      );
-
-    }
-  );
-
-
-const wss =
-  new WebSocket.Server({
-    server
-  });
-
-
-const rooms =
-  new Map();
-
-
+const PORT = process.env.PORT || 10000;
 const MAX_PLAYERS = 10;
 
+const DEFAULT_HAND_SIZE = 7;
+const MIN_HAND_SIZE = 1;
+const MAX_HAND_SIZE = 20;
 
-const COLORS = [
-  "red",
-  "yellow",
-  "green",
-  "blue"
-];
+const COLORS = ["red", "yellow", "green", "blue"];
+const MAX_LOGS = 100;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/plain; charset=utf-8"
+  });
+
+  res.end("Serveur UNO Jeux2Soirée opérationnel.");
+});
+
+const wss = new WebSocket.Server({ server });
+
+const rooms = new Map();
 
 
-/* =========================
-   COMMUNICATION
-========================= */
+// ============================================================
+// UTILITAIRES
+// ============================================================
 
-function send(
-  socket,
-  data
-){
+function makeId() {
+  return crypto.randomBytes(8).toString("hex");
+}
 
-  if(
+
+function makeRoomCode() {
+  let code;
+
+  do {
+    code = crypto.randomBytes(3)
+      .toString("hex")
+      .slice(0, 4)
+      .toUpperCase();
+  } while (rooms.has(code));
+
+  return code;
+}
+
+
+function shuffle(deck) {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = crypto.randomInt(i + 1);
+
+    [deck[i], deck[j]] = [
+      deck[j],
+      deck[i]
+    ];
+  }
+
+  return deck;
+}
+
+
+// ============================================================
+// PAQUET UNO
+// ============================================================
+
+function createDeck() {
+
+  const deck = [];
+
+
+  for (const color of COLORS) {
+
+    // 0
+    deck.push({
+      id: makeId(),
+      color,
+      type: "number",
+      value: 0
+    });
+
+
+    // 1 à 9 : deux exemplaires
+    for (let value = 1; value <= 9; value++) {
+
+      deck.push({
+        id: makeId(),
+        color,
+        type: "number",
+        value
+      });
+
+      deck.push({
+        id: makeId(),
+        color,
+        type: "number",
+        value
+      });
+    }
+
+
+    // +2 / Skip / Reverse
+    for (let i = 0; i < 2; i++) {
+
+      deck.push({
+        id: makeId(),
+        color,
+        type: "skip"
+      });
+
+      deck.push({
+        id: makeId(),
+        color,
+        type: "reverse"
+      });
+
+      deck.push({
+        id: makeId(),
+        color,
+        type: "draw2"
+      });
+    }
+  }
+
+
+  // 4 jokers + 4 +4
+  for (let i = 0; i < 4; i++) {
+
+    deck.push({
+      id: makeId(),
+      color: null,
+      type: "wild"
+    });
+
+    deck.push({
+      id: makeId(),
+      color: null,
+      type: "wild4"
+    });
+  }
+
+
+  return deck;
+}
+
+
+// ============================================================
+// WEBSOCKET
+// ============================================================
+
+function send(socket, data) {
+
+  if (
     socket &&
-    socket.readyState ===
-    WebSocket.OPEN
-  ){
+    socket.readyState === WebSocket.OPEN
+  ) {
 
     socket.send(
       JSON.stringify(data)
     );
-
   }
-
 }
 
 
-function broadcast(
-  room,
-  data
-){
+function broadcast(room, data) {
 
-  room.players.forEach(
-    player => {
+  for (const player of room.players) {
 
-      send(
-        player.socket,
-        data
-      );
-
-    }
-  );
+    send(
+      player.socket,
+      data
+    );
+  }
 
 
-  /*
-    En mode TV, la TV n'est pas
-    dans room.players.
-  */
+  const hostIsPlayer =
+    room.players.some(
+      player =>
+        player.socket ===
+        room.host
+    );
 
-  if(
-    room.mode === "tv"
-  ){
+
+  if (!hostIsPlayer) {
 
     send(
       room.host,
       data
     );
-
   }
-
 }
 
 
-/* =========================
-   CODE SALON
-========================= */
+// ============================================================
+// LOGS
+// ============================================================
 
-function randomRoomCode(){
+function addLog(room, text) {
 
-  const chars =
-    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  room.logs.push({
+
+    time:
+      new Date().toLocaleTimeString(
+        "fr-FR",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      ),
+
+    text
+  });
 
 
-  let code;
+  if (
+    room.logs.length >
+    MAX_LOGS
+  ) {
 
-
-  do{
-
-    code = "";
-
-
-    for(
-      let i=0;
-      i<4;
-      i++
-    ){
-
-      code +=
-        chars[
-          crypto.randomInt(
-            chars.length
-          )
-        ];
-
-    }
-
+    room.logs.shift();
   }
-  while(
-    rooms.has(code)
-  );
-
-
-  return code;
-
 }
 
 
-/* =========================
-   MELANGE
-========================= */
+// ============================================================
+// TOURS
+// ============================================================
 
-function shuffle(array){
+function currentPlayer(room) {
 
-  const result =
-    [...array];
-
-
-  /*
-    Fisher-Yates + crypto.randomInt
-    pour un mélange propre.
-  */
-
-  for(
-    let i=result.length - 1;
-    i>0;
-    i--
-  ){
-
-    const j =
-      crypto.randomInt(
-        i + 1
-      );
-
-
-    [
-      result[i],
-      result[j]
-    ] =
-    [
-      result[j],
-      result[i]
-    ];
-
-  }
-
-
-  return result;
-
+  return room.players.find(
+    player =>
+      player.id ===
+      room.currentPlayerId
+  ) || null;
 }
 
 
-/* =========================
-   PAQUET UNO 108 CARTES
-========================= */
-
-function createDeck(){
-
-  const deck = [];
-
-
-  COLORS.forEach(
-    color => {
-
-      /*
-        0
-      */
-
-      deck.push({
-
-        color,
-
-        type:"number",
-
-        value:0
-
-      });
-
-
-      /*
-        1 à 9 en double
-      */
-
-      for(
-        let n=1;
-        n<=9;
-        n++
-      ){
-
-        deck.push({
-
-          color,
-
-          type:"number",
-
-          value:n
-
-        });
-
-
-        deck.push({
-
-          color,
-
-          type:"number",
-
-          value:n
-
-        });
-
-      }
-
-
-      /*
-        2 Skip
-        2 Reverse
-        2 +2
-      */
-
-      for(
-        let i=0;
-        i<2;
-        i++
-      ){
-
-        deck.push({
-
-          color,
-
-          type:"skip"
-
-        });
-
-
-        deck.push({
-
-          color,
-
-          type:"reverse"
-
-        });
-
-
-        deck.push({
-
-          color,
-
-          type:"draw2"
-
-        });
-
-      }
-
-    }
-  );
-
-
-  /*
-    4 Wild
-    4 Wild +4
-  */
-
-  for(
-    let i=0;
-    i<4;
-    i++
-  ){
-
-    deck.push({
-
-      color:null,
-
-      type:"wild"
-
-    });
-
-
-    deck.push({
-
-      color:null,
-
-      type:"wild4"
-
-    });
-
-  }
-
-
-  return deck;
-
-}
-
-
-/* =========================
-   JOUEUR
-========================= */
-
-function makePlayer(
-  socket,
-  name
-){
-
-  return {
-
-    id:
-      crypto.randomUUID(),
-
-    socket,
-
-    name:
-      String(
-        name || "Joueur"
-      )
-      .trim()
-      .slice(0,18),
-
-    hand:[],
-
-    hasDrawn:false,
-
-    uno:false,
-
-    score:0
-
-  };
-
-}
-
-
-/* =========================
-   CREATION SALON
-========================= */
-
-function createRoom(
-  socket,
-  mode,
-  name,
-  stacking
-){
-
-  const roomCode =
-    randomRoomCode();
-
-
-  const room = {
-
-    room:
-      roomCode,
-
-    mode,
-
-    host:
-      socket,
-
-    players:[],
-
-    status:
-      "waiting",
-
-    deck:[],
-
-    discard:[],
-
-    currentPlayer:null,
-
-    currentColor:null,
-
-    direction:1,
-
-    pendingDraw:0,
-
-    winner:null,
-
-    settings:{
-
-      stacking:
-        Boolean(stacking)
-
-    }
-
-  };
-
-
-  /*
-    MODE TELEPHONES :
-    LE CREATEUR EST AUSSI JOUEUR.
-  */
-
-  if(
-    mode === "phones"
-  ){
-
-    const player =
-      makePlayer(
-        socket,
-        name
-      );
-
-
-    room.players.push(
-      player
-    );
-
-
-    socket.playerId =
-      player.id;
-
-  }
-
-
-  socket.room =
-    roomCode;
-
-
-  rooms.set(
-    roomCode,
-    room
-  );
-
-
-  return room;
-
-}
-
-
-/* =========================
-   JOUEUR ACTUEL
-========================= */
-
-function currentPlayer(room){
-
-  if(
-    !room.currentPlayer
-  ){
-
-    return null;
-
-  }
-
-
-  return (
-    room.players.find(
-      p =>
-        p.id ===
-        room.currentPlayer
-    )
-    || null
-  );
-
-}
-
-
-/* =========================
-   JOUEUR SUIVANT
-========================= */
-
-function nextPlayerId(
+function getNextPlayer(
   room,
-  steps=1
-){
+  steps = 1
+) {
 
-  if(
+  if (
     !room.players.length
-  ){
+  ) {
 
     return null;
-
   }
 
 
   const currentIndex =
     room.players.findIndex(
-      p =>
-        p.id ===
-        room.currentPlayer
+      player =>
+        player.id ===
+        room.currentPlayerId
     );
 
 
-  let index =
-    currentIndex;
+  if (
+    currentIndex < 0
+  ) {
 
-
-  for(
-    let i=0;
-    i<steps;
-    i++
-  ){
-
-    index =
-      (
-        index +
-        room.direction +
-        room.players.length
-      )
-      %
-      room.players.length;
-
+    return room.players[0];
   }
 
 
-  return room.players[
-    index
-  ].id;
+  const index =
+    (
+      currentIndex +
+      room.direction *
+        steps +
+      room.players.length *
+        1000
+    ) %
+    room.players.length;
 
+
+  return room.players[index];
 }
 
 
-/* =========================
-   AVANCER TOUR
-========================= */
-
-function advance(
+function nextPlayer(
   room,
-  steps=1
-){
+  steps = 1
+) {
 
-  room.currentPlayer =
-    nextPlayerId(
+  const next =
+    getNextPlayer(
       room,
       steps
     );
 
 
-  room.players.forEach(
-    player => {
-
-      player.hasDrawn =
-        false;
-
-    }
-  );
-
+  room.currentPlayerId =
+    next
+      ? next.id
+      : null;
 }
 
 
-/* =========================
-   JOUEUR SUIVANT OBJET
-========================= */
+// ============================================================
+// PIOCHE
+// ============================================================
 
-function getNextPlayer(room){
+function refillDeck(room) {
 
-  const id =
-    nextPlayerId(
-      room,
-      1
-    );
-
-
-  return (
-    room.players.find(
-      p =>
-        p.id === id
-    )
-    || null
-  );
-
-}
-
-
-/* =========================
-   RECYCLAGE
-========================= */
-
-function refillDeck(room){
-
-  if(
+  if (
     room.discard.length <= 1
-  ){
+  ) {
 
     return;
-
   }
 
 
@@ -635,75 +332,85 @@ function refillDeck(room){
   room.discard.push(
     top
   );
-
 }
 
 
-/* =========================
-   PIOCHE UNE CARTE
-========================= */
+function drawOne(room) {
 
-function drawOne(room){
-
-  if(
+  if (
     !room.deck.length
-  ){
+  ) {
 
     refillDeck(room);
-
   }
 
 
   return (
-    room.deck.pop()
-    || null
+    room.deck.pop() ||
+    null
   );
-
 }
 
-
-/* =========================
-   PIOCHE PLUSIEURS
-========================= */
 
 function drawCards(
   room,
   player,
   amount
-){
+) {
 
-  for(
-    let i=0;
-    i<amount;
+  let count = 0;
+
+
+  for (
+    let i = 0;
+    i < amount;
     i++
-  ){
+  ) {
 
     const card =
       drawOne(room);
 
 
-    if(card){
-
-      player.hand.push(
-        card
-      );
-
+    if (!card) {
+      break;
     }
 
+
+    player.hand.push(
+      card
+    );
+
+
+    count++;
   }
 
+
+  return count;
 }
 
 
-/* =========================
-   CARTE JOUABLE
-========================= */
+// ============================================================
+// REGLES CARTES
+// ============================================================
 
-function isPlayable(
+function canPlayWild4(
+  room,
+  player
+) {
+
+  return !player.hand.some(
+    card =>
+      card.color ===
+      room.currentColor
+  );
+}
+
+
+function basePlayable(
   room,
   player,
   card
-){
+) {
 
   const top =
     room.discard[
@@ -711,171 +418,184 @@ function isPlayable(
     ];
 
 
-  if(!top){
-
+  if (!top) {
     return true;
-
   }
 
 
-  /*
-    PENALITE EN COURS
-  */
-
-  if(
-    room.pendingDraw > 0
-  ){
-
-    return (
-      room.settings.stacking &&
-      card.type === "draw2"
-    );
-
-  }
-
-
-  /*
-    WILD
-  */
-
-  if(
+  // Joker
+  if (
     card.type === "wild"
-  ){
+  ) {
 
     return true;
-
   }
 
 
-  /*
-    +4
-  */
-
-  if(
+  // +4
+  if (
     card.type === "wild4"
-  ){
+  ) {
 
-    /*
-      Le +4 est autorisé seulement
-      si aucune carte de la couleur
-      actuelle n'est dans la main.
-    */
-
-    return !player.hand.some(
-      c =>
-        c.color ===
-        room.currentColor
+    return canPlayWild4(
+      room,
+      player
     );
-
   }
 
 
-  /*
-    MEME COULEUR
-  */
-
-  if(
+  // Même couleur
+  if (
     card.color ===
     room.currentColor
-  ){
+  ) {
 
     return true;
-
   }
 
 
-  /*
-    MEME TYPE
-  */
-
-  if(
-    card.type !== "number" &&
-    card.type === top.type
-  ){
-
-    return true;
-
-  }
-
-
-  /*
-    MEME NUMERO
-  */
-
-  if(
+  // Même chiffre
+  if (
     card.type === "number" &&
     top.type === "number" &&
-    card.value === top.value
-  ){
+    card.value ===
+      top.value
+  ) {
 
     return true;
+  }
 
+
+  // Même symbole
+  if (
+    card.type !== "number" &&
+    card.type === top.type
+  ) {
+
+    return true;
   }
 
 
   return false;
-
 }
 
 
-/* =========================
-   ETAT PUBLIC
-========================= */
+function isPlayable(
+  room,
+  player,
+  card
+) {
+
+  /*
+    Le joueur doit toujours jouer
+    une carte légalement jouable.
+
+    La différence est que, après une
+    pénalité +2/+4, il peut choisir
+    N'IMPORTE QUELLE carte jouable
+    de sa main.
+
+    Après une pioche NORMALE,
+    la fonction playCard impose
+    la carte nouvellement piochée.
+  */
+
+  return basePlayable(
+    room,
+    player,
+    card
+  );
+}
+
+
+// ============================================================
+// SCORE
+// ============================================================
+
+function cardPoints(card) {
+
+  if (
+    card.type === "number"
+  ) {
+
+    return card.value;
+  }
+
+
+  if (
+    [
+      "skip",
+      "reverse",
+      "draw2"
+    ].includes(card.type)
+  ) {
+
+    return 20;
+  }
+
+
+  return 50;
+}
+
+
+function cardLabel(card) {
+
+  if (
+    card.type === "number"
+  ) {
+
+    return String(
+      card.value
+    );
+  }
+
+
+  return {
+
+    skip: "PASS",
+
+    reverse: "REVERSE",
+
+    draw2: "+2",
+
+    wild: "CHANGEMENT DE COULEUR",
+
+    wild4: "+4"
+
+  }[
+    card.type
+  ] || card.type;
+}
+
+
+// ============================================================
+// ETAT PUBLIC
+// ============================================================
 
 function publicState(
   room,
   viewerId
-){
+) {
+
+  const viewer =
+    room.players.find(
+      player =>
+        player.id ===
+        viewerId
+    ) || null;
+
 
   const current =
     currentPlayer(room);
 
 
-  const mePlayer =
-    viewerId
-      ? room.players.find(
-          p =>
-            p.id ===
-            viewerId
-        )
-      : null;
-
-
-  /*
-    CORRECTION IMPORTANTE :
-
-    TV :
-      viewerId = null
-      mais la TV est quand même l'hôte.
-
-    TELEPHONE :
-      le créateur possède son playerId
-      et devient hôte.
-  */
-
-  const isHost =
-    room.mode === "tv"
-      ? true
-      : Boolean(
-          mePlayer &&
-          mePlayer.socket ===
-          room.host
-        );
-
-
   return {
-
-    status:
-      room.status,
 
     mode:
       room.mode,
 
-    isHost,
-
-
-    settings:
-      room.settings,
+    status:
+      room.status,
 
 
     players:
@@ -891,12 +611,12 @@ function publicState(
           cardCount:
             player.hand.length,
 
+          score:
+            player.score,
+
           host:
             player.socket ===
-            room.host,
-
-          score:
-            player.score
+            room.host
 
         })
       ),
@@ -905,8 +625,7 @@ function publicState(
     discard:
       room.discard[
         room.discard.length - 1
-      ]
-      || null,
+      ] || null,
 
 
     deckCount:
@@ -937,126 +656,363 @@ function publicState(
       room.pendingDraw,
 
 
+    settings:
+      room.settings,
+
+
+    logs:
+      room.logs,
+
+
+    winner:
+      room.winner,
+
+
+    unoChallenge:
+      room.unoChallenge
+        ? {
+
+            targetId:
+              room.unoChallenge
+                .targetId,
+
+            targetName:
+              room.unoChallenge
+                .targetName
+
+          }
+        : null,
+
+
+    penaltyDecision:
+      null,
+
+
     me:
-      mePlayer
+      viewer
         ? {
 
             id:
-              mePlayer.id,
+              viewer.id,
 
             name:
-              mePlayer.name,
+              viewer.name,
 
             hand:
-              mePlayer.hand,
+              viewer.hand,
 
             hasDrawn:
-              mePlayer.hasDrawn,
+              viewer.hasDrawn,
 
-            uno:
-              mePlayer.uno
+            /*
+              IMPORTANT :
+
+              null après +2/+4
+              signifie que le joueur
+              peut choisir n'importe
+              quelle carte jouable.
+
+              Après une pioche normale,
+              cette valeur contient
+              l'id de la carte piochée.
+            */
+
+            drawnCardId:
+              viewer.drawnCardId
 
           }
-        : null
+        : null,
 
+
+    canPlayWild4:
+      viewer
+        ? canPlayWild4(
+            room,
+            viewer
+          )
+        : false,
+
+
+    isHost:
+      viewer
+        ? viewer.socket ===
+          room.host
+        : true
   };
-
 }
 
 
-/* =========================
-   ENVOI ETAT
-========================= */
+// ============================================================
+// ENVOI ETAT
+// ============================================================
 
-function sendState(room){
+function sendState(room) {
 
-  /*
-    TELEPHONES :
-    chacun reçoit uniquement
-    sa propre main.
-  */
+  for (
+    const player of room.players
+  ) {
 
-  room.players.forEach(
-    player => {
+    send(
+      player.socket,
+      {
 
-      send(
-        player.socket,
-        {
+        type:
+          "state",
 
-          type:"state",
-
-          state:
-            publicState(
-              room,
-              player.id
-            )
-
-        }
-      );
-
-    }
-  );
+        state:
+          publicState(
+            room,
+            player.id
+          )
+      }
+    );
+  }
 
 
-  /*
-    TV :
-    reçoit l'état général.
-  */
+  const hostIsPlayer =
+    room.players.some(
+      player =>
+        player.socket ===
+        room.host
+    );
 
-  if(
-    room.mode === "tv"
-  ){
+
+  if (
+    !hostIsPlayer
+  ) {
 
     send(
       room.host,
       {
 
-        type:"state",
+        type:
+          "state",
 
         state:
           publicState(
             room,
             null
           )
-
       }
     );
-
   }
-
 }
 
 
-/* =========================
-   DEMARRER PARTIE
-========================= */
+// ============================================================
+// CREATION SALON
+// ============================================================
 
-function startGame(room){
+function makeRoom(
+  hostSocket,
+  mode,
+  hostName,
+  stacking,
+  handSize
+) {
 
-  if(
+  const safeHandSize =
+    Math.max(
+      MIN_HAND_SIZE,
+
+      Math.min(
+        MAX_HAND_SIZE,
+
+        Number(handSize) ||
+          DEFAULT_HAND_SIZE
+      )
+    );
+
+
+  const room = {
+
+    room:
+      makeRoomCode(),
+
+    host:
+      hostSocket,
+
+    mode:
+      mode === "phones"
+        ? "phones"
+        : "tv",
+
+    players: [],
+
+    deck: [],
+
+    discard: [],
+
+    currentPlayerId:
+      null,
+
+    direction:
+      1,
+
+    currentColor:
+      null,
+
+    pendingDraw:
+      0,
+
+    status:
+      "waiting",
+
+    winner:
+      null,
+
+    logs: [],
+
+    unoChallenge:
+      null,
+
+    penaltyDecision:
+      null,
+
+    settings: {
+
+      stacking:
+        !!stacking,
+
+      handSize:
+        safeHandSize
+
+    }
+  };
+
+
+  rooms.set(
+    room.room,
+    room
+  );
+
+
+  // Mode téléphones :
+  // le créateur joue également.
+
+  if (
+    room.mode === "phones"
+  ) {
+
+    const player = {
+
+      id:
+        makeId(),
+
+      name:
+        String(
+          hostName ||
+          "Créateur"
+        )
+        .trim()
+        .slice(0, 18) ||
+        "Créateur",
+
+      socket:
+        hostSocket,
+
+      hand: [],
+
+      score:
+        0,
+
+      hasDrawn:
+        false,
+
+      drawnCardId:
+        null
+
+    };
+
+
+    room.players.push(
+      player
+    );
+
+
+    hostSocket.playerId =
+      player.id;
+  }
+
+
+  addLog(
+    room,
+    "🏠 Salon créé."
+  );
+
+
+  addLog(
+    room,
+    `⚙️ ${safeHandSize} carte(s) au départ par joueur.`
+  );
+
+
+  addLog(
+    room,
+
+    room.settings.stacking
+
+      ? "➕ Empilement des +2 activé."
+
+      : "➖ Empilement des +2 désactivé."
+  );
+
+
+  return room;
+}
+
+
+// ============================================================
+// DEMARRER PARTIE
+// ============================================================
+
+function startGame(room) {
+
+  if (
     room.players.length < 2
-  ){
+  ) {
 
     send(
       room.host,
       {
 
-        type:"error",
+        type:
+          "error",
 
         message:
           "Il faut au moins 2 joueurs."
-
       }
     );
 
     return;
-
   }
 
 
-  /*
-    Nouveau paquet mélangé.
-  */
+  const needed =
+    room.players.length *
+      room.settings.handSize +
+    1;
+
+
+  if (
+    needed > 108
+  ) {
+
+    send(
+      room.host,
+      {
+
+        type:
+          "error",
+
+        message:
+          `Impossible : ${room.settings.handSize} cartes × ${room.players.length} joueurs dépassent le paquet de 108 cartes.`
+      }
+    );
+
+    return;
+  }
+
 
   room.deck =
     shuffle(
@@ -1070,305 +1026,635 @@ function startGame(room){
 
   room.direction = 1;
 
-  room.winner = null;
+  room.currentPlayerId =
+    null;
 
+  room.currentColor =
+    null;
 
-  room.players.forEach(
-    player => {
+  room.winner =
+    null;
 
-      player.hand = [];
+  room.status =
+    "playing";
 
-      player.hasDrawn =
-        false;
+  room.unoChallenge =
+    null;
 
-      player.uno =
-        false;
-
-    }
-  );
-
-
-  /*
-    7 cartes par joueur.
-    Distribution tour par tour.
-  */
-
-  for(
-    let i=0;
-    i<7;
-    i++
-  ){
-
-    room.players.forEach(
-      player => {
-
-        const card =
-          drawOne(room);
-
-
-        if(card){
-
-          player.hand.push(
-            card
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /*
-    Première carte :
-    on choisit une carte numérique.
-  */
-
-  let first =
+  room.penaltyDecision =
     null;
 
 
-  while(
+  for (
+    const player of room.players
+  ) {
+
+    player.hand = [];
+
+    player.hasDrawn =
+      false;
+
+    player.drawnCardId =
+      null;
+  }
+
+
+  // Distribution
+  for (
+    let round = 0;
+    round <
+      room.settings.handSize;
+    round++
+  ) {
+
+    for (
+      const player of room.players
+    ) {
+
+      const card =
+        drawOne(room);
+
+
+      if (card) {
+
+        player.hand.push(
+          card
+        );
+      }
+    }
+  }
+
+
+  // Première carte numérique
+  let first =
+    null;
+
+  const rejected =
+    [];
+
+
+  while (
     room.deck.length
-  ){
+  ) {
 
     const card =
       drawOne(room);
 
 
-    if(
-      card &&
-      card.type === "number"
-    ){
+    if (!card) {
+      break;
+    }
+
+
+    if (
+      card.type ===
+      "number"
+    ) {
 
       first =
         card;
 
       break;
-
     }
 
 
-    if(card){
-
-      room.deck.unshift(
-        card
-      );
-
-    }
-
-  }
-
-
-  if(!first){
-
-    send(
-      room.host,
-      {
-
-        type:"error",
-
-        message:
-          "Impossible de préparer le paquet."
-
-      }
+    rejected.push(
+      card
     );
-
-    return;
-
   }
 
 
-  room.discard.push(
-    first
+  for (
+    const card of rejected
+  ) {
+
+    room.deck.push(
+      card
+    );
+  }
+
+
+  shuffle(
+    room.deck
   );
 
 
-  room.currentColor =
-    first.color;
+  if (!first) {
+
+    first =
+      drawOne(room);
+  }
 
 
-  room.currentPlayer =
-    room.players[0].id;
+  if (first) {
+
+    room.discard.push(
+      first
+    );
+
+    room.currentColor =
+      first.color;
+  }
 
 
-  room.status =
-    "playing";
+  // Premier joueur aléatoire
+  const starter =
+    room.players[
+      crypto.randomInt(
+        room.players.length
+      )
+    ];
+
+
+  room.currentPlayerId =
+    starter.id;
+
+
+  addLog(
+    room,
+    `🎲 ${starter.name} commence la partie (tirage aléatoire).`
+  );
+
+
+  addLog(
+    room,
+    `🃏 ${room.settings.handSize} carte(s) distribuée(s) à chaque joueur.`
+  );
 
 
   sendState(room);
-
 }
 
 
-/* =========================
-   POINTS
-========================= */
+// ============================================================
+// FLAGS
+// ============================================================
 
-function cardPoints(card){
+function resetPlayerTurnFlags(
+  player
+) {
 
-  if(
-    card.type === "number"
-  ){
+  player.hasDrawn =
+    false;
 
-    return card.value;
-
-  }
-
-
-  if(
-    [
-      "skip",
-      "reverse",
-      "draw2"
-    ].includes(
-      card.type
-    )
-  ){
-
-    return 20;
-
-  }
-
-
-  return 50;
-
+  player.drawnCardId =
+    null;
 }
 
 
-/* =========================
-   FIN MANCHE
-========================= */
+// ============================================================
+// EFFETS CARTES
+// ============================================================
 
-function endRound(
+function advanceAfterCard(
+  room,
+  card
+) {
+
+  // PASS
+  if (
+    card.type === "skip"
+  ) {
+
+    nextPlayer(
+      room,
+      2
+    );
+
+
+    addLog(
+      room,
+      "⛔ Le tour est passé."
+    );
+
+
+    return;
+  }
+
+
+  // REVERSE
+  if (
+    card.type === "reverse"
+  ) {
+
+    if (
+      room.players.length === 2
+    ) {
+
+      nextPlayer(
+        room,
+        2
+      );
+
+
+      addLog(
+        room,
+        "↔ Reverse à 2 joueurs : le joueur suivant est passé."
+      );
+
+    } else {
+
+      room.direction *= -1;
+
+      nextPlayer(
+        room,
+        1
+      );
+
+
+      addLog(
+        room,
+        "↔ Sens de jeu inversé."
+      );
+    }
+
+
+    return;
+  }
+
+
+  // +2
+  if (
+    card.type === "draw2"
+  ) {
+
+    if (
+      room.settings.stacking
+    ) {
+
+      room.pendingDraw += 2;
+
+    } else {
+
+      room.pendingDraw = 2;
+    }
+
+
+    nextPlayer(
+      room,
+      1
+    );
+
+
+    addLog(
+      room,
+      `⚠️ ${currentPlayer(room).name} doit piocher ${room.pendingDraw} carte(s). Après la pioche, il gardera son tour.`
+    );
+
+
+    return;
+  }
+
+
+  // +4
+  if (
+    card.type === "wild4"
+  ) {
+
+    room.pendingDraw =
+      4;
+
+
+    nextPlayer(
+      room,
+      1
+    );
+
+
+    addLog(
+      room,
+      `⚠️ ${currentPlayer(room).name} doit piocher 4 cartes. Après la pioche, il gardera son tour.`
+    );
+
+
+    return;
+  }
+
+
+  // Carte normale
+  nextPlayer(
+    room,
+    1
+  );
+}
+
+
+// ============================================================
+// FIN DE MANCHE
+// ============================================================
+
+function finishRound(
   room,
   winner
-){
+) {
 
-  let points = 0;
+  let points =
+    0;
 
 
-  room.players.forEach(
-    player => {
+  for (
+    const player of room.players
+  ) {
 
-      if(
-        player.id !==
-        winner.id
-      ){
+    if (
+      player.id ===
+      winner.id
+    ) {
 
-        player.hand.forEach(
-          card => {
-
-            points +=
-              cardPoints(card);
-
-          }
-        );
-
-      }
-
+      continue;
     }
-  );
+
+
+    for (
+      const card of player.hand
+    ) {
+
+      points +=
+        cardPoints(card);
+    }
+  }
 
 
   winner.score +=
     points;
 
 
+  room.winner =
+    winner.id;
+
   room.status =
     "finished";
 
+  room.currentPlayerId =
+    null;
 
-  room.winner =
-    winner.id;
+  room.pendingDraw =
+    0;
+
+  room.penaltyDecision =
+    null;
+
+  room.unoChallenge =
+    null;
+
+
+  addLog(
+    room,
+    `🏆 ${winner.name} remporte la manche et gagne ${points} point(s).`
+  );
 
 
   broadcast(
     room,
     {
 
-      type:"round_end",
+      type:
+        "round_end",
 
       winner:
         winner.name,
-
-      winnerId:
-        winner.id,
 
       points,
 
       score:
         winner.score
-
     }
   );
 
 
   sendState(room);
-
 }
 
 
-/* =========================
-   JOUER CARTE
-========================= */
+// ============================================================
+// UNO
+// ============================================================
+
+function beginUnoChallenge(
+  room,
+  player
+) {
+
+  room.unoChallenge = {
+
+    targetId:
+      player.id,
+
+    targetName:
+      player.name,
+
+    resolved:
+      false
+  };
+
+
+  addLog(
+    room,
+    `🚨 ${player.name} n'a plus qu'une carte ! Premier à buzzer : arbitre le UNO.`
+  );
+
+
+  sendState(room);
+}
+
+
+function resolveUnoChallenge(
+  room,
+  claimedById
+) {
+
+  const challenge =
+    room.unoChallenge;
+
+
+  if (
+    !challenge ||
+    challenge.resolved
+  ) {
+
+    return;
+  }
+
+
+  challenge.resolved =
+    true;
+
+
+  const target =
+    room.players.find(
+      player =>
+        player.id ===
+        challenge.targetId
+    );
+
+
+  const claimedBy =
+    room.players.find(
+      player =>
+        player.id ===
+        claimedById
+    );
+
+
+  if (!target) {
+
+    room.unoChallenge =
+      null;
+
+    sendState(room);
+
+    return;
+  }
+
+
+  if (
+    claimedBy &&
+    claimedBy.id ===
+      target.id
+  ) {
+
+    addLog(
+      room,
+      `📣 ${target.name} a buzzé UNO en premier : aucun malus.`
+    );
+
+  } else {
+
+    const drawn =
+      drawCards(
+        room,
+        target,
+        2
+      );
+
+
+    addLog(
+      room,
+      `🚨 ${claimedBy ? claimedBy.name : "Un joueur"} a buzzé en premier : ${target.name} pioche ${drawn} carte(s).`
+    );
+  }
+
+
+  room.unoChallenge =
+    null;
+
+
+  nextPlayer(
+    room,
+    1
+  );
+
+
+  sendState(room);
+}
+
+
+// ============================================================
+// JOUER CARTE
+// ============================================================
 
 function playCard(
   room,
   player,
   index,
   chosenColor
-){
+) {
 
-  if(
+  if (
     room.status !==
     "playing"
-  ){
+  ) {
 
     return;
-
   }
 
 
-  /*
-    Vérifier le tour.
-  */
-
-  if(
-    room.currentPlayer !==
-    player.id
-  ){
+  // UNO en attente
+  if (
+    room.unoChallenge
+  ) {
 
     send(
       player.socket,
       {
 
-        type:"error",
+        type:
+          "error",
 
         message:
-          "Ce n'est pas ton tour."
-
+          "Buzzez d'abord !"
       }
     );
 
     return;
+  }
 
+
+  const current =
+    currentPlayer(room);
+
+
+  if (
+    !current ||
+    current.id !==
+      player.id
+  ) {
+
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          "Ce n'est pas ton tour."
+      }
+    );
+
+    return;
   }
 
 
   /*
-    Vérifier index.
+    IMPORTANT :
+
+    S'il y a un +2/+4 en attente,
+    le joueur doit d'abord piocher
+    la pénalité.
+
+    Après la pioche, pendingDraw
+    passe à 0 et le joueur conserve
+    son tour.
   */
 
-  if(
+  if (
+    room.pendingDraw > 0
+  ) {
+
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          `Tu dois d'abord piocher ${room.pendingDraw} carte(s) de pénalité.`
+      }
+    );
+
+    return;
+  }
+
+
+  if (
     !Number.isInteger(index) ||
     index < 0 ||
     index >= player.hand.length
-  ){
+  ) {
 
     return;
-
   }
 
 
@@ -1377,158 +1663,161 @@ function playCard(
 
 
   /*
-    Vérifier jouabilité.
+    PIoche NORMALE
+
+    Si le joueur a pioché une carte
+    normalement, il doit jouer cette
+    carte et uniquement celle-ci.
+
+    MAIS :
+
+    Après un +2/+4 :
+
+      hasDrawn = true
+      drawnCardId = null
+
+    donc cette condition ne s'applique
+    pas et il peut jouer n'importe quelle
+    carte jouable de sa main.
   */
 
-  if(
+  if (
+    player.hasDrawn &&
+    player.drawnCardId &&
+    card.id !==
+      player.drawnCardId
+  ) {
+
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          "Après une pioche normale, tu peux seulement jouer la carte que tu viens de piocher."
+      }
+    );
+
+    return;
+  }
+
+
+  /*
+    Vérification de la carte.
+  */
+
+  if (
     !isPlayable(
       room,
       player,
       card
     )
-  ){
+  ) {
 
     send(
       player.socket,
       {
 
-        type:"error",
+        type:
+          "error",
 
         message:
-          "Cette carte ne peut pas être jouée."
-
+          "Cette carte ne peut pas être jouée ici."
       }
     );
 
     return;
-
   }
 
 
   /*
-    Wild / +4 :
-    couleur obligatoire.
+    Joker / +4
   */
 
-  if(
+  if (
     (
-      card.type === "wild" ||
-      card.type === "wild4"
+      card.type ===
+        "wild" ||
+      card.type ===
+        "wild4"
     ) &&
     !COLORS.includes(
       chosenColor
     )
-  ){
+  ) {
 
     send(
       player.socket,
       {
 
-        type:"color_required",
+        type:
+          "color_required",
 
         cardIndex:
           index
-
       }
     );
 
     return;
-
   }
 
 
-  /*
-    Retirer la carte.
-  */
-
+  // Retirer carte
   player.hand.splice(
     index,
     1
   );
 
 
-  /*
-    Ajouter à la défausse.
-  */
+  resetPlayerTurnFlags(
+    player
+  );
 
+
+  // Ajouter défausse
   room.discard.push(
     card
   );
 
 
-  /*
-    Couleur.
-  */
-
-  if(
+  // Couleur
+  if (
     card.type === "wild" ||
     card.type === "wild4"
-  ){
+  ) {
 
     room.currentColor =
       chosenColor;
 
-  }
-  else{
+  } else {
 
     room.currentColor =
       card.color;
-
   }
 
 
-  player.hasDrawn =
-    false;
+  addLog(
+    room,
+    `🃏 ${player.name} joue ${cardLabel(card)}${chosenColor ? ` → ${chosenColor.toUpperCase()}` : ""}.`
+  );
 
 
   /*
-    =========================
-    +2
-    =========================
+    Victoire
   */
 
-  if(
-    room.pendingDraw > 0 &&
-    card.type === "draw2" &&
-    room.settings.stacking
-  ){
-
-    room.pendingDraw += 2;
-
-  }
-
-  else if(
-    card.type === "draw2"
-  ){
-
-    room.pendingDraw =
-      2;
-
-  }
-
-  else{
-
-    room.pendingDraw =
-      0;
-
-  }
-
-
-  /*
-    VICTOIRE
-  */
-
-  if(
+  if (
     player.hand.length === 0
-  ){
+  ) {
 
-    endRound(
+    finishRound(
       room,
       player
     );
 
     return;
-
   }
 
 
@@ -1536,226 +1825,151 @@ function playCard(
     UNO
   */
 
-  if(
+  if (
     player.hand.length === 1
-  ){
+  ) {
 
-    player.uno =
-      false;
+    beginUnoChallenge(
+      room,
+      player
+    );
 
-  }
-
-
-  let steps = 1;
-
-
-  /*
-    SKIP
-  */
-
-  if(
-    card.type === "skip"
-  ){
-
-    steps = 2;
-
+    return;
   }
 
 
   /*
-    REVERSE
+    Effet carte
   */
 
-  else if(
-    card.type === "reverse"
-  ){
-
-    /*
-      À deux joueurs,
-      Reverse agit comme Skip.
-    */
-
-    if(
-      room.players.length === 2
-    ){
-
-      steps = 2;
-
-    }
-    else{
-
-      room.direction *= -1;
-
-    }
-
-  }
-
-
-  /*
-    +2 SANS EMPILEMENT
-  */
-
-  else if(
-    card.type === "draw2" &&
-    !room.settings.stacking
-  ){
-
-    const target =
-      getNextPlayer(room);
-
-
-    if(target){
-
-      drawCards(
-        room,
-        target,
-        2
-      );
-
-    }
-
-
-    room.pendingDraw =
-      0;
-
-
-    steps = 2;
-
-  }
-
-
-  /*
-    +4
-  */
-
-  else if(
-    card.type === "wild4"
-  ){
-
-    const target =
-      getNextPlayer(room);
-
-
-    if(target){
-
-      drawCards(
-        room,
-        target,
-        4
-      );
-
-    }
-
-
-    room.pendingDraw =
-      0;
-
-
-    steps = 2;
-
-  }
-
-
-  /*
-    Passage du tour.
-  */
-
-  advance(
+  advanceAfterCard(
     room,
-    steps
+    card
   );
 
 
   sendState(room);
-
 }
 
 
-/* =========================
-   PIOCHE
-========================= */
+// ============================================================
+// PIOCHE NORMALE
+// ============================================================
 
-function playerDraw(
+function drawNormal(
   room,
   player
-){
+) {
 
-  if(
-    room.status !==
-    "playing"
-  ){
-
-    return;
-
-  }
+  const card =
+    drawOne(room);
 
 
-  /*
-    Vérifier tour.
-  */
+  if (!card) {
 
-  if(
-    room.currentPlayer !==
-    player.id
-  ){
-
-    send(
-      player.socket,
-      {
-
-        type:"error",
-
-        message:
-          "Ce n'est pas ton tour."
-
-      }
+    nextPlayer(
+      room,
+      1
     );
 
-    return;
+    sendState(room);
 
+    return;
   }
 
 
+  player.hand.push(
+    card
+  );
+
+
   /*
-    Une pioche maximum
-    par tour normal.
+    Pioche NORMALE :
+
+    On mémorise précisément
+    la carte piochée.
+
+    Le joueur ne pourra jouer
+    que celle-ci.
   */
 
-  if(
-    player.hasDrawn
-  ){
+  player.hasDrawn =
+    true;
 
-    send(
-      player.socket,
-      {
+  player.drawnCardId =
+    card.id;
 
-        type:"error",
 
-        message:
-          "Tu as déjà pioché."
+  addLog(
+    room,
+    `🃏 ${player.name} pioche une carte.`
+  );
 
-      }
+
+  /*
+    Si elle n'est pas jouable :
+    tour suivant.
+  */
+
+  if (
+    !basePlayable(
+      room,
+      player,
+      card
+    )
+  ) {
+
+    resetPlayerTurnFlags(
+      player
     );
 
-    return;
 
+    addLog(
+      room,
+      `➡️ La carte piochée n'est pas jouable : le tour de ${player.name} est terminé.`
+    );
+
+
+    nextPlayer(
+      room,
+      1
+    );
+
+  } else {
+
+    addLog(
+      room,
+      `✨ ${player.name} peut jouer la carte qu'il vient de piocher.`
+    );
   }
 
 
-  /*
-    =========================
-    PENALITE +2
-    =========================
-  */
-
-  if(
-    room.pendingDraw > 0
-  ){
-
-    const amount =
-      room.pendingDraw;
+  sendState(room);
+}
 
 
+// ============================================================
+// PIOCHE PENALITE +2 / +4
+// ============================================================
+
+function drawPenalty(
+  room,
+  player
+) {
+
+  const amount =
+    room.pendingDraw;
+
+
+  if (
+    !amount
+  ) {
+
+    return;
+  }
+
+
+  const drawn =
     drawCards(
       room,
       player,
@@ -1763,196 +1977,248 @@ function playerDraw(
     );
 
 
-    room.pendingDraw =
-      0;
+  /*
+    La pénalité est maintenant
+    complètement consommée.
+  */
 
+  room.pendingDraw =
+    0;
 
-    player.hasDrawn =
-      false;
-
-
-    /*
-      IMPORTANT :
-      le joueur qui prend la pénalité
-      perd son tour.
-    */
-
-    advance(
-      room,
-      1
-    );
-
-
-    sendState(room);
-
-    return;
-
-  }
+  room.penaltyDecision =
+    null;
 
 
   /*
-    =========================
-    PIOCHE NORMALE
-    =========================
+    IMPORTANT :
+
+    On NE passe PAS le tour.
+
+    hasDrawn = true :
+    empêche le joueur de refaire
+    une pioche normale.
+
+    drawnCardId = null :
+    aucune carte précise n'est imposée.
+
+    Il peut donc maintenant jouer
+    N'IMPORTE QUELLE carte JOUABLE
+    de sa main.
   */
-
-  const card =
-    drawOne(room);
-
-
-  if(card){
-
-    player.hand.push(
-      card
-    );
-
-  }
-
 
   player.hasDrawn =
     true;
 
+  player.drawnCardId =
+    null;
 
-  /*
-    =========================
-    CORRECTION DU BLOCAGE
-    =========================
 
-    Carte non jouable :
-      -> tour suivant.
-
-    Carte jouable :
-      -> le joueur garde son tour.
-      -> il peut cliquer dessus.
-  */
-
-  if(!card){
-
-    advance(
-      room,
-      1
-    );
-
-  }
-
-  else if(
-    !isPlayable(
-      room,
-      player,
-      card
-    )
-  ){
-
-    advance(
-      room,
-      1
-    );
-
-  }
+  addLog(
+    room,
+    `⚠️ ${player.name} pioche ${drawn} carte(s) de pénalité (+${amount}) et garde son tour.`
+  );
 
 
   sendState(room);
-
 }
 
 
-/* =========================
-   UNO
-========================= */
+// ============================================================
+// PIOCHE
+// ============================================================
 
-function callUno(
+function drawCard(
   room,
   player
-){
+) {
 
-  if(
+  if (
     room.status !==
     "playing"
-  ){
+  ) {
 
     return;
-
   }
 
 
-  if(
-    room.currentPlayer !==
-    player.id
-  ){
+  if (
+    room.unoChallenge
+  ) {
+
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          "Buzzez d'abord !"
+      }
+    );
 
     return;
-
   }
 
 
-  if(
-    player.hand.length === 1
-  ){
-
-    player.uno =
-      true;
+  const current =
+    currentPlayer(room);
 
 
-    sendState(room);
+  if (
+    !current ||
+    current.id !==
+      player.id
+  ) {
 
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          "Ce n'est pas ton tour."
+      }
+    );
+
+    return;
   }
 
+
+  /*
+    Une pénalité doit être
+    consommée en priorité.
+  */
+
+  if (
+    room.pendingDraw > 0
+  ) {
+
+    drawPenalty(
+      room,
+      player
+    );
+
+    return;
+  }
+
+
+  /*
+    Pioche normale interdite
+    une deuxième fois.
+  */
+
+  if (
+    player.hasDrawn
+  ) {
+
+    send(
+      player.socket,
+      {
+
+        type:
+          "error",
+
+        message:
+          "Tu as déjà pioché."
+      }
+    );
+
+    return;
+  }
+
+
+  drawNormal(
+    room,
+    player
+  );
 }
 
 
-/* =========================
-   NOUVELLE MANCHE
-========================= */
+// ============================================================
+// BUZZ UNO
+// ============================================================
 
-function newGame(room){
+function challengeUno(
+  room,
+  player
+) {
+
+  if (
+    !room.unoChallenge
+  ) {
+
+    return;
+  }
+
+
+  resolveUnoChallenge(
+    room,
+    player.id
+  );
+}
+
+
+// ============================================================
+// NOUVELLE MANCHE
+// ============================================================
+
+function resetRound(room) {
 
   room.status =
     "waiting";
-
 
   room.deck = [];
 
   room.discard = [];
 
-  room.currentPlayer =
+  room.currentPlayerId =
     null;
 
   room.currentColor =
     null;
 
+  room.direction =
+    1;
+
   room.pendingDraw =
     0;
+
+  room.unoChallenge =
+    null;
+
+  room.penaltyDecision =
+    null;
 
   room.winner =
     null;
 
-  room.direction =
-    1;
+
+  for (
+    const player of room.players
+  ) {
+
+    resetPlayerTurnFlags(
+      player
+    );
+  }
 
 
-  room.players.forEach(
-    player => {
-
-      player.hand = [];
-
-      player.hasDrawn =
-        false;
-
-      player.uno =
-        false;
-
-    }
+  addLog(
+    room,
+    "🔄 Nouvelle manche prête."
   );
 
 
   sendState(room);
-
 }
 
 
-/* =========================
-   WEBSOCKET
-========================= */
+// ============================================================
+// CONNEXIONS
+// ============================================================
 
 wss.on(
   "connection",
@@ -1972,58 +2238,55 @@ wss.on(
         let data;
 
 
-        try{
+        try {
 
           data =
             JSON.parse(
               raw.toString()
             );
 
-        }
-        catch{
+        } catch {
 
           return;
-
         }
 
 
-        /*
-          =========================
-          CREER SALON
-          =========================
-        */
+        // ====================================================
+        // CREATION
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "create_room"
-        ){
-
-          const mode =
-            data.mode === "phones"
-              ? "phones"
-              : "tv";
-
+        ) {
 
           const room =
-            createRoom(
+            makeRoom(
               socket,
-              mode,
+              data.mode,
               data.name,
-              data.stacking
+              data.stacking,
+              data.handSize
             );
+
+
+          socket.room =
+            room.room;
 
 
           send(
             socket,
             {
 
-              type:"room_created",
+              type:
+                "room_created",
 
               room:
                 room.room,
 
               playerId:
-                socket.playerId,
+                socket.playerId ||
+                null,
 
               mode:
                 room.mode
@@ -2032,28 +2295,28 @@ wss.on(
           );
 
 
-          sendState(room);
+          sendState(
+            room
+          );
 
 
           return;
-
         }
 
 
-        /*
-          =========================
-          REJOINDRE
-          =========================
-        */
+        // ====================================================
+        // REJOINDRE
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "join_room"
-        ){
+        ) {
 
           const code =
             String(
-              data.room || ""
+              data.room ||
+              ""
             )
             .trim()
             .toUpperCase();
@@ -2065,74 +2328,100 @@ wss.on(
             );
 
 
-          if(!room){
+          if (!room) {
 
             send(
               socket,
               {
 
-                type:"error",
+                type:
+                  "error",
 
                 message:
                   "Salon introuvable."
-
               }
             );
 
             return;
-
           }
 
 
-          if(
+          if (
             room.status !==
             "waiting"
-          ){
+          ) {
 
             send(
               socket,
               {
 
-                type:"error",
+                type:
+                  "error",
 
                 message:
                   "La partie a déjà commencé."
-
               }
             );
 
             return;
-
           }
 
 
-          if(
+          if (
             room.players.length >=
             MAX_PLAYERS
-          ){
+          ) {
 
             send(
               socket,
               {
 
-                type:"error",
+                type:
+                  "error",
 
                 message:
                   "Salon complet."
-
               }
             );
 
             return;
-
           }
 
 
-          const player =
-            makePlayer(
-              socket,
-              data.name
-            );
+          const name =
+            String(
+              data.name ||
+              "Joueur"
+            )
+            .trim()
+            .slice(
+              0,
+              18
+            ) ||
+            "Joueur";
+
+
+          const player = {
+
+            id:
+              makeId(),
+
+            name,
+
+            socket,
+
+            hand: [],
+
+            score:
+              0,
+
+            hasDrawn:
+              false,
+
+            drawnCardId:
+              null
+
+          };
 
 
           room.players.push(
@@ -2143,16 +2432,22 @@ wss.on(
           socket.room =
             room.room;
 
-
           socket.playerId =
             player.id;
+
+
+          addLog(
+            room,
+            `👋 ${player.name} rejoint le salon.`
+          );
 
 
           send(
             socket,
             {
 
-              type:"joined",
+              type:
+                "joined",
 
               room:
                 room.room,
@@ -2167,17 +2462,18 @@ wss.on(
           );
 
 
-          sendState(room);
+          sendState(
+            room
+          );
 
 
           return;
-
         }
 
 
-        /*
-          Trouver salon.
-        */
+        // ====================================================
+        // SALON
+        // ====================================================
 
         const room =
           rooms.get(
@@ -2185,10 +2481,8 @@ wss.on(
           );
 
 
-        if(!room){
-
+        if (!room) {
           return;
-
         }
 
 
@@ -2200,170 +2494,124 @@ wss.on(
           );
 
 
-        /*
-          =========================
-          START
-          =========================
-        */
+        // ====================================================
+        // START
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "start_game"
-        ){
+        ) {
 
-          /*
-            En TV :
-              socket === room.host
-
-            En téléphone :
-              socket === room.host
-              et le créateur est joueur.
-          */
-
-          if(
-            socket !==
+          if (
+            socket ===
             room.host
-          ){
+          ) {
 
-            return;
-
+            startGame(
+              room
+            );
           }
 
-
-          startGame(room);
-
-
           return;
-
         }
 
 
-        /*
-          =========================
-          JOUER CARTE
-          =========================
-        */
+        // ====================================================
+        // PLAY
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "play_card"
-        ){
+        ) {
 
-          if(!player){
+          if (player) {
 
-            return;
-
+            playCard(
+              room,
+              player,
+              Number(
+                data.index
+              ),
+              data.color
+            );
           }
 
-
-          playCard(
-            room,
-            player,
-            Number(
-              data.index
-            ),
-            data.color
-          );
-
-
           return;
-
         }
 
 
-        /*
-          =========================
-          PIOCHER
-          =========================
-        */
+        // ====================================================
+        // DRAW
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "draw"
-        ){
+        ) {
 
-          if(!player){
+          if (player) {
 
-            return;
-
+            drawCard(
+              room,
+              player
+            );
           }
 
-
-          playerDraw(
-            room,
-            player
-          );
-
-
           return;
-
         }
 
 
-        /*
-          =========================
-          UNO
-          =========================
-        */
+        // ====================================================
+        // UNO
+        // ====================================================
 
-        if(
+        if (
           data.type ===
-          "uno"
-        ){
+          "uno_challenge"
+        ) {
 
-          if(!player){
+          if (player) {
 
-            return;
-
+            challengeUno(
+              room,
+              player
+            );
           }
 
-
-          callUno(
-            room,
-            player
-          );
-
-
           return;
-
         }
 
 
-        /*
-          =========================
-          NOUVELLE MANCHE
-          =========================
-        */
+        // ====================================================
+        // NOUVELLE MANCHE
+        // ====================================================
 
-        if(
+        if (
           data.type ===
           "new_game"
-        ){
+        ) {
 
-          if(
-            socket !==
+          if (
+            socket ===
             room.host
-          ){
+          ) {
 
-            return;
-
+            resetRound(
+              room
+            );
           }
 
-
-          newGame(room);
-
-
           return;
-
         }
-
       }
     );
 
 
-    /* =========================
-       DECONNEXION
-    ========================= */
+    // ========================================================
+    // DECONNEXION
+    // ========================================================
 
     socket.on(
       "close",
@@ -2375,14 +2623,12 @@ wss.on(
           );
 
 
-        if(!room){
-
+        if (!room) {
           return;
-
         }
 
 
-        const idx =
+        const index =
           room.players.findIndex(
             player =>
               player.socket ===
@@ -2390,177 +2636,161 @@ wss.on(
           );
 
 
-        const leavingId =
-          idx >= 0
-            ? room.players[idx].id
-            : null;
+        if (
+          index !== -1
+        ) {
+
+          const leaving =
+            room.players[index];
 
 
-        if(
-          idx >= 0
-        ){
+          const wasCurrent =
+            leaving.id ===
+            room.currentPlayerId;
+
 
           room.players.splice(
-            idx,
+            index,
             1
           );
 
-        }
+
+          addLog(
+            room,
+            `🚪 ${leaving.name} quitte le salon.`
+          );
 
 
-        /*
-          =========================
-          L'HOTE QUITTE
-          =========================
-        */
+          if (
+            room.unoChallenge &&
+            room.unoChallenge.targetId ===
+              leaving.id
+          ) {
 
-        if(
-          socket ===
-          room.host
-        ){
-
-          /*
-            TELEPHONES :
-            un autre joueur devient hôte.
-          */
-
-          if(
-            room.mode === "phones" &&
-            room.players.length
-          ){
-
-            room.host =
-              room.players[0].socket;
-
+            room.unoChallenge =
+              null;
           }
 
 
           /*
-            TV :
-            la partie dépend de la TV.
+            Mode téléphones :
+
+            le premier joueur restant
+            devient créateur.
           */
 
-          else if(
-            room.mode === "tv"
-          ){
+          if (
+            socket ===
+            room.host
+          ) {
+
+            if (
+              room.mode ===
+                "phones" &&
+              room.players.length
+            ) {
+
+              room.host =
+                room.players[0].socket;
+
+
+              addLog(
+                room,
+                `👑 ${room.players[0].name} devient créateur.`
+              );
+
+            } else if (
+              room.mode ===
+                "tv"
+            ) {
+
+              rooms.delete(
+                room.room
+              );
+
+              return;
+
+            } else if (
+              !room.players.length
+            ) {
+
+              rooms.delete(
+                room.room
+              );
+
+              return;
+            }
+          }
+
+
+          if (
+            !room.players.length
+          ) {
 
             rooms.delete(
               room.room
             );
 
-
-            room.players.forEach(
-              player => {
-
-                send(
-                  player.socket,
-                  {
-
-                    type:"error",
-
-                    message:
-                      "La TV a quitté le salon."
-
-                  }
-                );
-
-              }
-            );
-
-
             return;
-
           }
 
-        }
+
+          /*
+            Si le joueur dont c'était
+            le tour quitte :
+            passage au suivant.
+          */
+
+          if (
+            wasCurrent &&
+            room.status ===
+              "playing"
+          ) {
+
+            const nextIndex =
+              Math.min(
+                index,
+                room.players.length - 1
+              );
 
 
-        /*
-          Plus aucun joueur.
-        */
+            room.currentPlayerId =
+              room.players[
+                nextIndex
+              ].id;
 
-        if(
-          !room.players.length
-        ){
+
+            addLog(
+              room,
+              `➡️ Le tour passe à ${currentPlayer(room).name}.`
+            );
+          }
+
+
+          sendState(
+            room
+          );
+
+        } else if (
+          socket ===
+            room.host &&
+          room.mode ===
+            "tv"
+        ) {
 
           rooms.delete(
             room.room
           );
-
-          return;
-
         }
-
-
-        /*
-          Le joueur dont c'était le tour
-          vient de partir.
-        */
-
-        if(
-          room.status === "playing" &&
-          leavingId ===
-          room.currentPlayer
-        ){
-
-          room.currentPlayer =
-            room.players[0].id;
-
-
-          room.players.forEach(
-            player => {
-
-              player.hasDrawn =
-                false;
-
-            }
-          );
-
-        }
-
-
-        /*
-          Sécurité supplémentaire :
-          si currentPlayer n'existe plus.
-        */
-
-        else if(
-          room.currentPlayer &&
-          !room.players.some(
-            player =>
-              player.id ===
-              room.currentPlayer
-          )
-        ){
-
-          room.currentPlayer =
-            room.players[0].id;
-
-
-          room.players.forEach(
-            player => {
-
-              player.hasDrawn =
-                false;
-
-            }
-          );
-
-        }
-
-
-        sendState(room);
-
       }
     );
-
   }
 );
 
 
-/* =========================
-   SERVEUR
-========================= */
+// ============================================================
+// DEMARRAGE
+// ============================================================
 
 server.listen(
   PORT,
@@ -2569,6 +2799,5 @@ server.listen(
     console.log(
       `UNO server lancé sur le port ${PORT}`
     );
-
   }
 );
