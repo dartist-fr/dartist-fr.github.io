@@ -453,13 +453,39 @@ function advanceAfterCard(room, card) {
     return;
   }
 
-  // +2 : la pénalité est appliquée immédiatement.
+  // +2 : si l'empilement est activé, la pénalité reste en attente
+  // et le joueur suivant peut répondre avec un autre +2.
   if (card.type === "draw2") {
     const actor = currentPlayer(room);
-    room.pendingDraw = room.settings.stacking
-      ? Math.max(2, room.pendingDraw + 2)
-      : 2;
-    const penaltyAmount = room.pendingDraw;
+
+    if (room.settings.stacking) {
+      room.pendingDraw = Math.max(2, room.pendingDraw + 2);
+      const penaltyAmount = room.pendingDraw;
+
+      nextPlayer(room, 1);
+      const target = currentPlayer(room);
+
+      if (actor && target) {
+        addLog(room, `➕ ${target.name} doit prendre +${penaltyAmount}, mais peut empiler un +2.`);
+        broadcast(room, {
+          type: "action_effect",
+          effect: {
+            type: "draw2",
+            actorId: actor.id,
+            actorName: actor.name,
+            targetId: target.id,
+            targetName: target.name,
+            amount: penaltyAmount,
+            stacking: true
+          }
+        });
+      }
+      return;
+    }
+
+    // Empilement désactivé : le +2 est appliqué immédiatement.
+    room.pendingDraw = 2;
+    const penaltyAmount = 2;
 
     nextPlayer(room, 1);
     const target = currentPlayer(room);
@@ -475,7 +501,8 @@ function advanceAfterCard(room, card) {
           actorName: actor.name,
           targetId: target.id,
           targetName: target.name,
-          amount: penaltyAmount
+          amount: penaltyAmount,
+          stacking: false
         }
       });
     }
@@ -666,6 +693,16 @@ function playCard(room, player, index, chosenColor) {
     return;
   }
 
+  // En mode empilement, lorsqu'une pénalité +2 est en attente,
+  // seul un autre +2 peut être joué. Sinon le joueur doit piocher.
+  if (room.settings.stacking && room.pendingDraw > 0 && card.type !== "draw2") {
+    send(player.socket, {
+      type: "error",
+      message: `Tu dois jouer un +2 pour empiler ou piocher ${room.pendingDraw} carte(s).`
+    });
+    return;
+  }
+
   if (!isPlayable(room, player, card)) {
     send(player.socket, { type: "error", message: "Cette carte ne peut pas être jouée ici." });
     return;
@@ -732,10 +769,15 @@ function drawNormal(room, player) {
 }
 
 function drawPenalty(room, player) {
-  // Les pénalités sont normalement appliquées automatiquement
-  // au moment où le +2/+4 est joué.
   if (room.pendingDraw > 0 && currentPlayer(room)?.id === player.id) {
+    // En mode empilement, piocher met fin au tour : l'empilement est terminé.
     applyPenaltyImmediately(room);
+
+    if (room.settings.stacking && currentPlayer(room)?.id === player.id) {
+      resetPlayerTurnFlags(player);
+      nextPlayer(room, 1);
+    }
+
     sendState(room);
   }
 }
@@ -754,10 +796,9 @@ function drawCard(room, player) {
     return;
   }
 
-  // Sécurité : si une pénalité est encore en attente, on l'applique.
+  // Si une pénalité est en attente, le joueur choisit de la subir.
   if (room.pendingDraw > 0) {
-    applyPenaltyImmediately(room);
-    sendState(room);
+    drawPenalty(room, player);
     return;
   }
 
