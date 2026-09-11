@@ -1,71 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>UNO • Jeux2Soirée</title>
-
 
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
-
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box
 }
-
 
 html,
-body {
-  margin: 0;
-  min-height: 100%;
-
-  background: #090b12;
-
-  color: #fff;
-
-  font-family: 'VT323', monospace;
-
-  overflow-x: hidden;
+body{
+  margin:0;
+  min-height:100%;
+  background:#090b12;
+  color:#fff;
+  font-family:'VT323',monospace;
+  overflow-x:hidden
 }
 
-
-body {
-
+body{
   background:
-    linear-gradient(
-      rgba(255,255,255,.025) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,.025) 1px,
-      transparent 1px
-    ),
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
     #090b12;
-
-  background-size: 25px 25px;
+  background-size:25px 25px
 }
 
-
-body:after {
-
-  content: "";
-
-  position: fixed;
-
-  inset: 0;
-
-  pointer-events: none;
-
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
   background:
     repeating-linear-gradient(
       to bottom,
@@ -74,532 +44,332 @@ body:after {
       transparent 2px,
       transparent 5px
     );
-
-  z-index: 999;
+  z-index:999
 }
-
 
 button,
-input {
-  font-family: inherit;
+input{
+  font-family:inherit
 }
 
-
-button {
-  cursor: pointer;
+button{
+  cursor:pointer
 }
 
-
-.hidden {
-  display: none !important;
+.hidden{
+  display:none!important
 }
 
 
 /* ============================================================
    ACCUEIL
-============================================================ */
+   ============================================================ */
 
-#home {
-
-  min-height: 100vh;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  padding: 20px;
+#home{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px
 }
 
-
-.home-box {
-
-  width: 100%;
-
-  max-width: 720px;
-
-  text-align: center;
-
-  padding: 30px;
-
-  border: 3px solid #fff;
-
-  box-shadow: 8px 8px 0 #000;
-
-  background: #10131d;
+.home-box{
+  width:100%;
+  max-width:720px;
+  text-align:center;
+  padding:30px;
+  border:3px solid #fff;
+  box-shadow:8px 8px 0 #000;
+  background:#10131d
 }
 
-
-.logo {
-
-  font-family: 'Press Start 2P';
-
-  font-size:
-    clamp(
-      30px,
-      7vw,
-      58px
-    );
-
-  margin-bottom: 10px;
-
-  text-shadow: 4px 4px #000;
+.logo{
+  font-family:'Press Start 2P';
+  font-size:clamp(30px,7vw,58px);
+  margin-bottom:10px;
+  text-shadow:4px 4px #000
 }
 
-
-.logo span {
-  color: #ff305f;
+.logo span{
+  color:#ff305f
 }
 
-
-.subtitle {
-
-  font-size: 27px;
-
-  margin-bottom: 25px;
+.subtitle{
+  font-size:27px;
+  margin-bottom:25px
 }
 
-
-.menu {
-
-  display: grid;
-
-  gap: 12px;
+.menu{
+  display:grid;
+  gap:12px
 }
 
-
-.main-btn {
-
-  border: 3px solid #fff;
-
-  background: #171b28;
-
-  color: #fff;
-
-  padding: 16px;
-
-  font-size: 25px;
-
-  box-shadow: 5px 5px #000;
+.main-btn{
+  border:3px solid #fff;
+  background:#171b28;
+  color:#fff;
+  padding:16px;
+  font-size:25px;
+  box-shadow:5px 5px #000
 }
 
-
-.main-btn:hover {
-
-  transform:
-    translate(-3px,-3px);
-
-  background: #fff;
-
-  color: #111;
+.main-btn:hover{
+  transform:translate(-3px,-3px);
+  background:#fff;
+  color:#111
 }
 
-
-.main-btn.create {
-  background: #e92852;
-}
-
-
-.setup {
-
-  margin-top: 20px;
-
-  border: 2px solid #555;
-
-  padding: 18px;
-
-  background: #0c0f18;
-
-  text-align: left;
-}
-
-
-.setup h2 {
-
-  font-family: 'Press Start 2P';
-
-  font-size: 16px;
-
-  text-align: center;
-
-  margin:
-    5px 0 18px;
-}
-
-
-.setup-label {
-
-  font-size: 23px;
-
-  margin:
-    12px 0 7px;
-}
-
-
-input {
-
-  width: 100%;
-
-  padding: 13px;
-
-  background: #080a10;
-
-  border: 3px solid #fff;
-
-  color: #fff;
-
-  font-size: 24px;
-
-  outline: none;
-}
-
-
-input:focus {
-  border-color: #ff315e;
-}
-
-
-.mode-choice {
-
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 10px;
-}
-
-
-.mode-btn {
-
-  padding: 14px;
-
-  border: 3px solid #777;
-
-  background: #171b28;
-
-  color: #fff;
-
-  font-size: 20px;
-}
-
-
-.mode-btn.active {
-
-  border-color: #fff;
-
-  background: #e92852;
-}
-
-
-.check-row {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  font-size: 23px;
-
-  padding: 10px 0;
-}
-
-
-.check-row input {
-
-  width: 22px;
-
-  height: 22px;
-}
-
-
-.small {
-
-  font-size: 20px;
-
-  opacity: .8;
-}
-
-
-.message {
-
-  text-align: center;
-
-  font-size: 24px;
-
-  margin: 12px 0;
-
-  min-height: 26px;
+.main-btn.create{
+  background:#e92852
 }
 
 
 /* ============================================================
-   APPLICATION
-============================================================ */
+   CONFIGURATION
+   ============================================================ */
 
-#app {
+.setup{
+  margin-top:20px;
+  border:2px solid #555;
+  padding:18px;
+  background:#0c0f18;
+  text-align:left
+}
 
-  min-height: 100vh;
+.setup h2{
+  font-family:'Press Start 2P';
+  font-size:16px;
+  text-align:center;
+  margin:5px 0 18px
+}
 
-  display: flex;
+.setup-label{
+  font-size:23px;
+  margin:12px 0 7px
+}
 
-  flex-direction: column;
+input{
+  width:100%;
+  padding:13px;
+  background:#080a10;
+  border:3px solid #fff;
+  color:#fff;
+  font-size:24px;
+  outline:none
+}
+
+input:focus{
+  border-color:#ff315e
+}
+
+.mode-choice{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.mode-btn{
+  padding:14px;
+  border:3px solid #777;
+  background:#171b28;
+  color:#fff;
+  font-size:20px
+}
+
+.mode-btn.active{
+  border-color:#fff;
+  background:#e92852
+}
+
+.check-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:23px;
+  padding:10px 0
+}
+
+.check-row input{
+  width:22px;
+  height:22px
+}
+
+.small{
+  font-size:20px;
+  opacity:.8
+}
+
+.message{
+  text-align:center;
+  font-size:24px;
+  margin:12px 0;
+  min-height:26px
 }
 
 
-.topbar {
+/* ============================================================
+   APP
+   ============================================================ */
 
-  height: 65px;
-
-  border-bottom: 3px solid #fff;
-
-  background: #10131d;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  padding: 0 15px;
+#app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column
 }
 
-
-.top-title {
-
-  font-family: 'Press Start 2P';
-
-  font-size: 18px;
+.topbar{
+  height:65px;
+  border-bottom:3px solid #fff;
+  background:#10131d;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 15px
 }
 
-
-.room-code {
-
-  border: 2px solid #fff;
-
-  padding: 7px 12px;
-
-  font-size: 23px;
+.top-title{
+  font-family:'Press Start 2P';
+  font-size:18px
 }
 
+.room-code{
+  border:2px solid #fff;
+  padding:7px 12px;
+  font-size:23px
+}
 
-#gameArea {
-
-  flex: 1;
-
-  padding: 15px;
+#gameArea{
+  flex:1;
+  padding:15px
 }
 
 
 /* ============================================================
    LOBBY
-============================================================ */
+   ============================================================ */
 
-#lobby {
-
-  text-align: center;
-
-  max-width: 800px;
-
-  margin: auto;
+#lobby{
+  text-align:center;
+  max-width:800px;
+  margin:auto
 }
 
-
-.big-room {
-
-  font-family: 'Press Start 2P';
-
-  font-size:
-    clamp(
-      40px,
-      10vw,
-      80px
-    );
-
-  margin: 25px;
+.big-room{
+  font-family:'Press Start 2P';
+  font-size:clamp(40px,10vw,80px);
+  margin:25px
 }
 
-
-.lobby-players {
-
-  display: grid;
-
-  gap: 8px;
-
-  margin: 18px 0;
+.lobby-players{
+  display:grid;
+  gap:8px;
+  margin:18px 0
 }
 
-
-.lobby-player {
-
-  background: #151925;
-
-  border: 2px solid #555;
-
-  padding: 10px;
-
-  font-size: 24px;
+.lobby-player{
+  background:#151925;
+  border:2px solid #555;
+  padding:10px;
+  font-size:24px
 }
 
-
-.lobby-player.host {
-
-  border-color: #ffd928;
+.lobby-player.host{
+  border-color:#ffd928
 }
 
-
-.lobby-settings {
-
-  border: 2px solid #555;
-
-  padding: 12px;
-
-  margin: 15px 0;
-
-  background: #10131d;
-
-  font-size: 22px;
+.lobby-settings{
+  border:2px solid #555;
+  padding:12px;
+  margin:15px 0;
+  background:#10131d;
+  font-size:22px
 }
 
 
 /* ============================================================
    TV
-============================================================ */
+   ============================================================ */
 
-#tvMode {
-
-  display: flex;
-
-  flex-direction: column;
-
-  min-height:
-    calc(100vh - 95px);
+#tvMode{
+  display:flex;
+  flex-direction:column;
+  min-height:calc(100vh - 95px)
 }
 
-
-.players {
-
-  display: flex;
-
-  gap: 10px;
-
-  justify-content: center;
-
-  flex-wrap: wrap;
+.players{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap
 }
 
-
-.player-box {
-
-  background: #121622;
-
-  border: 2px solid #666;
-
-  padding:
-    9px 16px;
-
-  min-width: 125px;
-
-  text-align: center;
+.player-box{
+  background:#121622;
+  border:2px solid #666;
+  padding:9px 16px;
+  min-width:125px;
+  text-align:center
 }
 
-
-.player-box.active {
-
-  border-color: #fff;
-
-  box-shadow:
-    0 0 15px
-    rgba(255,255,255,.5);
-
-  transform:
-    translateY(-3px);
+.player-box.active{
+  border-color:#fff;
+  box-shadow:0 0 15px rgba(255,255,255,.5);
+  transform:translateY(-3px)
 }
 
-
-.player-name {
-
-  font-size: 22px;
+.player-name{
+  font-size:22px
 }
 
-
-.card-count {
-
-  font-size: 19px;
-
-  opacity: .75;
+.card-count{
+  font-size:19px;
+  opacity:.75
 }
 
-
-.status {
-
-  text-align: center;
-
-  font-size: 30px;
-
-  margin: 12px;
+.status{
+  text-align:center;
+  font-size:30px;
+  margin:12px
 }
-
 
 .table,
-.phone-table {
+.phone-table{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:35px;
+  min-height:330px
+}
 
-  display: flex;
+.zone{
+  text-align:center
+}
 
-  justify-content: center;
-
-  align-items: center;
-
-  gap: 35px;
-
-  min-height: 330px;
+.zone-title{
+  font-size:24px;
+  margin-bottom:8px
 }
 
 
-.zone {
-  text-align: center;
-}
-
-
-.zone-title {
-
-  font-size: 24px;
-
-  margin-bottom: 8px;
-}
-
+/* ============================================================
+   CARTES
+   ============================================================ */
 
 .deck,
-.card {
-
-  width: 105px;
-
-  height: 150px;
-
-  border-radius: 12px;
-
-  border: 4px solid #fff;
-
-  position: relative;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  box-shadow:
-    5px 5px
-    rgba(0,0,0,.5);
-
-  overflow: hidden;
+.card{
+  width:105px;
+  height:150px;
+  border-radius:12px;
+  border:4px solid #fff;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:5px 5px rgba(0,0,0,.5);
+  overflow:hidden
 }
 
-
-.deck {
-
+.deck{
   background:
     repeating-linear-gradient(
       45deg,
@@ -607,981 +377,684 @@ input:focus {
       #161b28 8px,
       #252c3c 8px,
       #252c3c 16px
-    );
+    )
 }
 
-
-.deck:after {
-
-  content: "UNO";
-
-  color: #ff305f;
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 18px;
-
-  transform:
-    rotate(-25deg);
+.deck:after{
+  content:"UNO";
+  color:#ff305f;
+  font-family:'Press Start 2P';
+  font-size:18px;
+  transform:rotate(-25deg)
 }
-
 
 .card img,
-.hand-card img {
+.hand-card img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:fill
+}
 
-  display: block;
+.card .symbol{
+  font-family:'Press Start 2P';
+  font-size:16px;
+  text-align:center
+}
 
-  width: 100%;
+.card.red{
+  background:#ed214e
+}
 
-  height: 100%;
+.card.yellow{
+  background:#ffd928;
+  color:#111
+}
 
-  object-fit: fill;
+.card.green{
+  background:#20bd63
+}
+
+.card.blue{
+  background:#2075e8
+}
+
+.card.black{
+  background:#151820
 }
 
 
-.card .symbol {
+/* ============================================================
+   BOUTONS
+   ============================================================ */
 
-  font-family:
-    'Press Start 2P';
-
-  font-size: 16px;
-
-  text-align: center;
+.tv-actions{
+  text-align:center;
+  padding:12px
 }
 
-
-.card.red {
-  background: #ed214e;
-}
-
-
-.card.yellow {
-
-  background: #ffd928;
-
-  color: #111;
-}
-
-
-.card.green {
-  background: #20bd63;
-}
-
-
-.card.blue {
-  background: #2075e8;
-}
-
-
-.card.black {
-  background: #151820;
-}
-
-
-.tv-actions {
-
-  text-align: center;
-
-  padding: 12px;
-}
-
-
-.start-btn {
-
-  padding:
-    14px 28px;
-
-  background: #fff;
-
-  color: #111;
-
-  border: 3px solid #fff;
-
-  font-size: 24px;
+.start-btn{
+  padding:14px 28px;
+  background:#fff;
+  color:#111;
+  border:3px solid #fff;
+  font-size:24px
 }
 
 
 /* ============================================================
    TELEPHONE
-============================================================ */
+   ============================================================ */
 
-#playerMode {
-
-  max-width: 1050px;
-
-  margin: auto;
+#playerMode{
+  max-width:1050px;
+  margin:auto
 }
 
-
-.player-info {
-
-  text-align: center;
-
-  margin-bottom: 8px;
+.player-info{
+  text-align:center;
+  margin-bottom:8px
 }
 
-
-.player-turn {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 18px;
-
-  margin: 8px;
+.player-turn{
+  font-family:'Press Start 2P';
+  font-size:18px;
+  margin:8px
 }
 
-
-.current-color {
-
-  font-size: 22px;
+.current-color{
+  font-size:22px
 }
 
-
-.penalty {
-
-  font-size: 25px;
-
-  color: #ffd928;
-
-  min-height: 30px;
+.penalty{
+  font-size:25px;
+  color:#ffd928;
+  min-height:30px
 }
 
-
-.phone-table {
-
-  min-height: 190px;
-
-  gap: 22px;
-
-  margin: 8px 0;
+.phone-table{
+  min-height:190px;
+  gap:22px;
+  margin:8px 0
 }
-
 
 .phone-table .deck,
-.phone-table .card {
-
-  width: 78px;
-
-  height: 112px;
+.phone-table .card{
+  width:78px;
+  height:112px
 }
 
 
 /* ============================================================
    MAIN DES CARTES
-============================================================ */
+   ============================================================ */
 
-.my-hand {
+.my-hand{
+  display:grid;
 
-  display: grid;
+  /*
+    7 cartes par ligne sur écran large.
+    Les cartes ont une vraie largeur minimale,
+    donc elles ne se superposent pas.
+  */
 
   grid-template-columns:
-    repeat(
-      7,
-      minmax(0,1fr)
-    );
+    repeat(7,minmax(78px,1fr));
 
-  gap: 10px;
+  gap:14px;
 
-  justify-content: center;
+  justify-content:center;
 
-  margin:
-    16px auto;
+  margin:20px auto;
 
-  max-width: 760px;
+  max-width:900px;
 
-  padding:
-    12px 8px;
+  padding:20px 10px 30px;
 
-  overflow: visible;
+  overflow:visible
 }
 
-
-.hand-card {
-
-  width: 100%;
-
-  aspect-ratio: 2 / 3;
-
-  min-width: 0;
-
-  cursor: pointer;
+.hand-card{
+  width:100%;
+  aspect-ratio:2/3;
+  min-width:0;
+  cursor:pointer;
 
   transition:
     transform .14s,
     filter .14s,
     box-shadow .14s;
 
-  position: relative;
+  position:relative;
 
-  z-index: 1;
+  z-index:1;
 
-  overflow: visible;
+  overflow:visible
 }
 
-
-.hand-card:hover {
-
+.hand-card:hover{
   transform:
-    translateY(-8px)
-    scale(1.03);
+    translateY(-4px)
+    scale(1.01);
 
-  z-index: 10;
+  z-index:10
 }
 
 
 /* ============================================================
-   CARTES JOUABLES : GROSSE SURBRILLANCE
-============================================================ */
+   CARTE JOUABLE
+   ============================================================ */
 
-.hand-card.playable {
+.hand-card.playable{
+
+  /*
+    Surbrillance volontairement plus légère
+    pour éviter que les cartes se touchent.
+  */
 
   transform:
-    translateY(-10px)
-    scale(1.08);
+    translateY(-4px)
+    scale(1.015);
 
-  border:
-    4px solid #fff;
+  border:3px solid #fff;
 
-  outline:
-    4px solid #ffe600;
+  outline:3px solid #ffe600;
 
   box-shadow:
-
-    0 0 0 4px #ff2d55,
-
-    0 0 20px 7px #ffe600,
-
-    0 0 42px 13px
-      rgba(255,255,0,.9),
-
-    0 12px 22px
-      rgba(0,0,0,.8);
+    0 0 0 2px #ff2d55,
+    0 0 10px 3px rgba(255,230,0,.65),
+    0 8px 15px rgba(0,0,0,.8);
 
   filter:
-    brightness(1.2);
+    brightness(1.06);
 
   animation:
-    playablePulse .8s
-    infinite alternate;
+    playablePulse .9s infinite alternate;
 
-  z-index: 20;
+  z-index:20
 }
 
+.hand-card.playable:before{
 
-/* Badge JOUABLE */
+  content:"JOUABLE";
 
-.hand-card.playable:before {
+  position:absolute;
 
-  content: "JOUABLE";
-
-  position: absolute;
-
-  left: 50%;
-
-  top: -18px;
+  left:50%;
+  top:-15px;
 
   transform:
     translateX(-50%);
 
-  background: #ffe600;
+  background:#ffe600;
 
-  color: #090b12;
+  color:#090b12;
 
-  border:
-    3px solid #fff;
+  border:2px solid #fff;
 
-  padding:
-    4px 7px;
+  padding:4px 6px;
 
-  font-family:
-    'Press Start 2P';
+  font-family:'Press Start 2P';
 
-  font-size: 8px;
+  font-size:7px;
 
-  line-height: 1;
+  line-height:1;
 
-  z-index: 30;
+  z-index:30;
 
-  white-space: nowrap;
+  white-space:nowrap;
 
-  box-shadow:
-    3px 3px #000;
+  box-shadow:2px 2px #000;
 
-  pointer-events: none;
+  pointer-events:none
 }
 
+.hand-card.playable:after{
 
-/* Cercle lumineux */
+  content:"";
 
-.hand-card.playable:after {
+  position:absolute;
 
-  content: "";
+  inset:-4px;
 
-  position: absolute;
-
-  inset: -7px;
-
-  border:
-    3px dashed #fff;
+  border:2px dashed #fff;
 
   box-shadow:
-    0 0 18px 5px #ffe600;
+    0 0 8px 2px
+    rgba(255,230,0,.5);
 
   animation:
-    playableRing .7s
-    linear infinite;
+    playableRing .8s linear infinite;
 
-  pointer-events: none;
+  pointer-events:none;
 
-  z-index: 25;
+  z-index:25
 }
 
 
 /* Cartes non jouables */
-.hand-card.not-playable {
+
+.hand-card.not-playable{
 
   filter:
     brightness(.48)
     saturate(.6);
 
-  opacity: .68;
+  opacity:.68
+}
+
+.hand-card img{
+  border-radius:8px
 }
 
 
-.hand-card img {
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 
-  border-radius: 8px;
-}
+@keyframes playableRing{
 
-
-@keyframes playableRing {
-
-  from {
-
+  from{
     transform:
-      scale(.98)
+      scale(.99)
       rotate(0deg);
 
-    opacity: .75;
+    opacity:.6
   }
 
-  to {
-
+  to{
     transform:
-      scale(1.04)
-      rotate(1deg);
+      scale(1.02)
+      rotate(.5deg);
 
-    opacity: 1;
+    opacity:.9
   }
 }
 
 
-@keyframes playablePulse {
+@keyframes playablePulse{
 
-  from {
+  from{
 
     transform:
-      translateY(-8px)
-      scale(1.06);
+      translateY(-3px)
+      scale(1.01);
 
     box-shadow:
-
-      0 0 0 4px #ff2d55,
-
-      0 0 18px 5px #ffe600,
-
-      0 0 32px 9px
-        rgba(255,255,0,.65);
+      0 0 0 2px #ff2d55,
+      0 0 8px 2px
+        rgba(255,230,0,.5),
+      0 7px 14px
+        rgba(0,0,0,.75)
   }
 
-  to {
+  to{
 
     transform:
-      translateY(-13px)
-      scale(1.1);
+      translateY(-5px)
+      scale(1.02);
 
     box-shadow:
-
-      0 0 0 6px #fff,
-
-      0 0 25px 9px #ffe600,
-
-      0 0 50px 16px
-        rgba(255,255,0,.95);
+      0 0 0 3px #fff,
+      0 0 12px 3px
+        rgba(255,230,0,.68),
+      0 9px 16px
+        rgba(0,0,0,.8)
   }
 }
 
 
 /* ============================================================
-   BOUTONS
-============================================================ */
+   CONTROLES
+   ============================================================ */
 
-.controls {
-
-  display: flex;
-
-  gap: 10px;
-
-  justify-content: center;
-
-  flex-wrap: wrap;
-
-  margin: 14px 0;
+.controls{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:14px 0
 }
 
-
-.action-btn {
-
-  padding:
-    13px 20px;
-
-  background: #161a26;
-
-  border:
-    2px solid #fff;
-
-  color: #fff;
-
-  font-size: 22px;
+.action-btn{
+  padding:13px 20px;
+  background:#161a26;
+  border:2px solid #fff;
+  color:#fff;
+  font-size:22px
 }
 
-
-.action-btn:hover {
-
-  background: #fff;
-
-  color: #000;
+.action-btn:hover{
+  background:#fff;
+  color:#000
 }
 
-
-.action-btn.uno {
-
-  background: #e92852;
+.action-btn.uno{
+  background:#e92852
 }
 
-
-.action-btn:disabled {
-
-  opacity: .35;
-
-  cursor: not-allowed;
+.action-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed
 }
 
 
 /* ============================================================
    LOGS
-============================================================ */
+   ============================================================ */
 
-.logs-panel {
-
-  max-width: 1050px;
-
-  margin:
-    18px auto 0;
-
-  border:
-    3px solid #555;
-
-  background: #090c14;
-
-  box-shadow:
-    5px 5px #000;
+.logs-panel{
+  max-width:1050px;
+  margin:18px auto 0;
+  border:3px solid #555;
+  background:#090c14;
+  box-shadow:5px 5px #000
 }
 
-
-.logs-title {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 13px;
-
-  padding: 12px;
-
-  border-bottom:
-    2px solid #555;
-
-  background: #151925;
+.logs-title{
+  font-family:'Press Start 2P';
+  font-size:13px;
+  padding:12px;
+  border-bottom:2px solid #555;
+  background:#151925
 }
 
-
-.logs-list {
-
-  height: 150px;
-
-  overflow-y: auto;
-
-  padding:
-    8px 12px;
+.logs-list{
+  height:150px;
+  overflow-y:auto;
+  padding:8px 12px
 }
 
-
-.log-row {
-
-  font-size: 19px;
-
-  line-height: 1.15;
-
-  padding: 3px 0;
-
-  border-bottom:
-    1px dashed #292e3a;
+.log-row{
+  font-size:19px;
+  line-height:1.15;
+  padding:3px 0;
+  border-bottom:1px dashed #292e3a
 }
 
-
-.log-time {
-
-  display: inline-block;
-
-  min-width: 50px;
-
-  color: #ffd928;
-
-  margin-right: 8px;
+.log-time{
+  display:inline-block;
+  min-width:50px;
+  color:#ffd928;
+  margin-right:8px
 }
 
 
 /* ============================================================
    MODALES
-============================================================ */
+   ============================================================ */
 
-.modal {
-
-  position: fixed;
-
-  inset: 0;
-
-  background:
-    rgba(0,0,0,.86);
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  z-index: 1000;
-
-  padding: 20px;
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.86);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  padding:20px
 }
 
-
-.modal-box {
-
-  width: 100%;
-
-  max-width: 560px;
-
-  background: #10131d;
-
-  border:
-    3px solid #fff;
-
-  padding: 28px;
-
-  text-align: center;
-
-  box-shadow:
-    8px 8px #000;
+.modal-box{
+  width:100%;
+  max-width:560px;
+  background:#10131d;
+  border:3px solid #fff;
+  padding:28px;
+  text-align:center;
+  box-shadow:8px 8px #000
 }
 
-
-.modal-box h2 {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 20px;
-
-  line-height: 1.5;
-
-  margin:
-    0 0 12px;
+.modal-box h2{
+  font-family:'Press Start 2P';
+  font-size:20px;
+  line-height:1.5;
+  margin:0 0 12px
 }
 
-
-.modal-box p {
-
-  font-size: 27px;
-
-  margin: 10px;
+.modal-box p{
+  font-size:27px;
+  margin:10px
 }
 
 
 /* ============================================================
-   CHOIX COULEUR
-============================================================ */
+   COULEURS
+   ============================================================ */
 
-.color-buttons {
-
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 10px;
-
-  margin-top: 18px;
+.color-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px
 }
 
-
-.color-btn {
-
-  padding: 18px;
-
-  border:
-    3px solid #fff;
-
-  font-size: 24px;
+.color-btn{
+  padding:18px;
+  border:3px solid #fff;
+  font-size:24px
 }
 
-
-.red-btn {
-
-  background: #ed214e;
-
-  color: #fff;
+.red-btn{
+  background:#ed214e;
+  color:#fff
 }
 
-
-.yellow-btn {
-
-  background: #ffd928;
-
-  color: #111;
+.yellow-btn{
+  background:#ffd928;
+  color:#111
 }
 
-
-.green-btn {
-
-  background: #20bd63;
-
-  color: #fff;
+.green-btn{
+  background:#20bd63;
+  color:#fff
 }
 
-
-.blue-btn {
-
-  background: #2075e8;
-
-  color: #fff;
+.blue-btn{
+  background:#2075e8;
+  color:#fff
 }
 
 
 /* ============================================================
    VICTOIRE
-============================================================ */
+   ============================================================ */
 
-.winner-name {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 22px;
-
-  color: #ffd928;
-
-  margin: 15px 0;
+.winner-name{
+  font-family:'Press Start 2P';
+  font-size:22px;
+  color:#ffd928;
+  margin:15px 0
 }
 
-
-.winner-points {
-
-  font-size: 30px;
+.winner-points{
+  font-size:30px
 }
 
-
-.modal-actions {
-
-  margin-top: 20px;
+.modal-actions{
+  margin-top:20px
 }
 
 
 /* ============================================================
    UNO
-============================================================ */
+   ============================================================ */
 
-.uno-box {
-
-  max-width: 620px;
-
-  border:
-    5px solid #ffe600;
-
+.uno-box{
+  max-width:620px;
+  border:5px solid #ffe600;
   box-shadow:
-
     0 0 30px #ffe600,
-
-    10px 10px #000;
+    10px 10px #000
 }
 
-
-.uno-big {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size:
-    clamp(
-      35px,
-      9vw,
-      70px
-    );
-
-  color: #ff305f;
-
+.uno-big{
+  font-family:'Press Start 2P';
+  font-size:clamp(35px,9vw,70px);
+  color:#ff305f;
   text-shadow:
-
     4px 4px #fff,
-
     8px 8px #000;
-
-  margin: 12px;
+  margin:12px
 }
 
-
-.uno-target {
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 22px;
-
-  color: #ffe600;
+.uno-target{
+  font-family:'Press Start 2P';
+  font-size:22px;
+  color:#ffe600
 }
 
-
-.buzz-btn {
-
-  width: 100%;
-
-  padding: 20px;
-
-  background: #e92852;
-
-  color: #fff;
-
-  border:
-    4px solid #fff;
-
-  font-family:
-    'Press Start 2P';
-
-  font-size: 22px;
-
-  box-shadow:
-    6px 6px #000;
+.buzz-btn{
+  width:100%;
+  padding:20px;
+  background:#e92852;
+  color:#fff;
+  border:4px solid #fff;
+  font-family:'Press Start 2P';
+  font-size:22px;
+  box-shadow:6px 6px #000
 }
 
-
-.buzz-btn:hover {
-
+.buzz-btn:hover{
   transform:
     translate(-2px,-2px);
 
   filter:
-    brightness(1.2);
-}
-
-
-/* ============================================================
-   PENALITE
-============================================================ */
-
-.decision-buttons {
-
-  display: grid;
-
-  grid-template-columns:
-    1fr 1fr;
-
-  gap: 12px;
-
-  margin-top: 20px;
-}
-
-
-.decision-buttons .action-btn {
-
-  padding: 18px;
-}
-
-
-.danger {
-
-  background: #e92852;
-}
-
-
-.success {
-
-  background: #20bd63;
+    brightness(1.2)
 }
 
 
 /* ============================================================
    MOBILE
-============================================================ */
+   ============================================================ */
 
-@media (max-width: 600px) {
+@media(max-width:600px){
 
-  #home {
-    padding: 10px;
+  #home{
+    padding:10px
   }
 
-
-  .home-box {
-    padding:
-      20px 14px;
+  .home-box{
+    padding:20px 14px
   }
 
-
-  .subtitle {
-    font-size: 23px;
+  .subtitle{
+    font-size:23px
   }
 
-
-  .mode-choice {
-    grid-template-columns: 1fr;
+  .mode-choice{
+    grid-template-columns:1fr
   }
 
-
-  .setup h2 {
-    font-size: 14px;
+  .setup h2{
+    font-size:14px
   }
 
-
-  .topbar {
-    height: 58px;
+  .topbar{
+    height:58px
   }
 
-
-  .top-title {
-    font-size: 12px;
+  .top-title{
+    font-size:12px
   }
 
-
-  .room-code {
-
-    font-size: 17px;
-
-    padding:
-      6px 9px;
+  .room-code{
+    font-size:17px;
+    padding:6px 9px
   }
 
-
-  #gameArea {
-    padding: 8px;
+  #gameArea{
+    padding:8px
   }
 
-
-  .table {
-
-    gap: 12px;
-
-    min-height: 250px;
+  .table{
+    gap:12px;
+    min-height:250px
   }
-
 
   .deck,
-  .card {
-
-    width: 80px;
-
-    height: 115px;
+  .card{
+    width:80px;
+    height:115px
   }
 
-
-  .player-box {
-    min-width: 100px;
+  .player-box{
+    min-width:100px
   }
 
-
-  .player-name {
-    font-size: 18px;
+  .player-name{
+    font-size:18px
   }
 
-
-  .phone-table {
-
-    min-height: 145px;
-
-    gap: 15px;
+  .phone-table{
+    min-height:145px;
+    gap:15px
   }
-
 
   .phone-table .deck,
-  .phone-table .card {
-
-    width: 68px;
-
-    height: 98px;
+  .phone-table .card{
+    width:68px;
+    height:98px
   }
 
 
-  .my-hand {
+  /*
+    5 cartes par ligne sur téléphone.
+    Cela évite totalement le chevauchement.
+  */
 
-    gap: 7px;
-
-    padding:
-      12px 4px;
-  }
-
-
-  .player-turn {
-    font-size: 14px;
-  }
-
-
-  .action-btn {
-
-    font-size: 20px;
-
-    padding:
-      11px 16px;
-  }
-
-
-  .winner-name {
-    font-size: 18px;
-  }
-
-
-  .logs-list {
-    height: 125px;
-  }
-
-
-  .log-row {
-    font-size: 17px;
-  }
-
-
-  .decision-buttons {
+  .my-hand{
 
     grid-template-columns:
-      1fr;
+      repeat(5,minmax(60px,1fr));
+
+    gap:10px;
+
+    padding:
+      20px
+      4px
+      28px;
+
+    max-width:100%
   }
 
 
-  .uno-target {
-    font-size: 17px;
+  .player-turn{
+    font-size:14px
+  }
+
+  .action-btn{
+    font-size:20px;
+    padding:11px 16px
+  }
+
+  .winner-name{
+    font-size:18px
+  }
+
+  .logs-list{
+    height:125px
+  }
+
+  .log-row{
+    font-size:17px
+  }
+
+  .uno-target{
+    font-size:17px
   }
 }
 
 </style>
-
 </head>
 
 
 <body>
 
 
-<!-- ============================================================
+<!-- ==========================================================
      ACCUEIL
-============================================================ -->
+     ========================================================== -->
 
 <section id="home">
 
@@ -1600,25 +1073,28 @@ input:focus {
 
       <button
         class="main-btn create"
-        onclick="showSetup('tv')"
-      >
+        onclick="showSetup('tv')">
+
         🖥️ CRÉER • TV + TÉLÉPHONES
+
       </button>
 
 
       <button
         class="main-btn"
-        onclick="showSetup('phones')"
-      >
+        onclick="showSetup('phones')">
+
         📱 CRÉER • TÉLÉPHONES UNIQUEMENT
+
       </button>
 
 
       <button
         class="main-btn"
-        onclick="showJoin()"
-      >
+        onclick="showJoin()">
+
         ↗ REJOINDRE UN SALON
+
       </button>
 
     </div>
@@ -1628,8 +1104,7 @@ input:focus {
 
     <div
       id="setup"
-      class="setup hidden"
-    >
+      class="setup hidden">
 
       <h2>
         CONFIGURATION DE LA PARTIE
@@ -1646,18 +1121,20 @@ input:focus {
         <button
           id="modeTvBtn"
           class="mode-btn"
-          onclick="selectMode('tv')"
-        >
+          onclick="selectMode('tv')">
+
           🖥️ TV + TÉLÉPHONES
+
         </button>
 
 
         <button
           id="modePhonesBtn"
           class="mode-btn"
-          onclick="selectMode('phones')"
-        >
+          onclick="selectMode('phones')">
+
           📱 TÉLÉPHONES UNIQUEMENT
+
         </button>
 
       </div>
@@ -1665,60 +1142,46 @@ input:focus {
 
       <div
         id="creatorNameBox"
-        class="hidden"
-      >
+        class="hidden">
 
         <div class="setup-label">
           TON PRÉNOM
         </div>
 
-
         <input
           id="creatorNameInput"
           maxlength="18"
-          placeholder="TON PRÉNOM"
-        >
-
+          placeholder="TON PRÉNOM">
 
         <div class="small">
-          En mode téléphones,
-          le créateur joue aussi.
+          En mode téléphones, le créateur joue aussi.
         </div>
 
       </div>
 
 
-      <!-- NOMBRE DE CARTES -->
-
       <div class="setup-label">
         CARTES AU DÉPART
       </div>
-
 
       <input
         id="handSizeInput"
         type="number"
         min="1"
         max="20"
-        value="7"
-      >
-
+        value="7">
 
       <div class="small">
         Choisis le nombre de cartes.
-        Le serveur vérifie que le paquet
-        de 108 cartes suffit.
+        Le serveur vérifie que le paquet de 108 cartes suffit.
       </div>
 
-
-      <!-- STACKING -->
 
       <label class="check-row">
 
         <input
           id="stackingInput"
-          type="checkbox"
-        >
+          type="checkbox">
 
         <span>
           Autoriser l'empilement des +2
@@ -1728,8 +1191,7 @@ input:focus {
 
 
       <div class="small">
-        Avec cette option :
-        +2 → +2 → +4, etc.
+        Option conservée pour les manches futures.
       </div>
 
 
@@ -1737,17 +1199,19 @@ input:focus {
 
         <button
           class="action-btn"
-          onclick="createConfiguredRoom()"
-        >
+          onclick="createConfiguredRoom()">
+
           ▶ CRÉER LA PARTIE
+
         </button>
 
 
         <button
           class="action-btn"
-          onclick="cancelSetup()"
-        >
+          onclick="cancelSetup()">
+
           RETOUR
+
         </button>
 
       </div>
@@ -1759,8 +1223,7 @@ input:focus {
 
     <div
       id="joinForm"
-      class="setup hidden"
-    >
+      class="setup hidden">
 
       <h2>
         REJOINDRE UN SALON
@@ -1771,41 +1234,39 @@ input:focus {
         CODE
       </div>
 
-
       <input
         id="roomInput"
         maxlength="6"
-        placeholder="CODE DU SALON"
-      >
+        placeholder="CODE DU SALON">
 
 
       <div class="setup-label">
         TON PRÉNOM
       </div>
 
-
       <input
         id="nameInput"
         maxlength="18"
-        placeholder="TON PRÉNOM"
-      >
+        placeholder="TON PRÉNOM">
 
 
       <div class="controls">
 
         <button
           class="action-btn"
-          onclick="joinRoom()"
-        >
+          onclick="joinRoom()">
+
           ↗ REJOINDRE
+
         </button>
 
 
         <button
           class="action-btn"
-          onclick="cancelJoin()"
-        >
+          onclick="cancelJoin()">
+
           RETOUR
+
         </button>
 
       </div>
@@ -1815,8 +1276,8 @@ input:focus {
 
     <div
       id="message"
-      class="message"
-    ></div>
+      class="message">
+    </div>
 
 
     <div class="small">
@@ -1828,14 +1289,14 @@ input:focus {
 </section>
 
 
-<!-- ============================================================
+<!-- ==========================================================
      APPLICATION
-============================================================ -->
+     ========================================================== -->
 
 <section
   id="app"
-  class="hidden"
->
+  class="hidden">
+
 
   <header class="topbar">
 
@@ -1860,17 +1321,18 @@ input:focus {
   <main id="gameArea">
 
 
-    <!-- ========================================================
+    <!-- ======================================================
          LOBBY
-    ========================================================= -->
+         ====================================================== -->
 
     <section id="lobby">
 
       <div
         class="big-room"
-        id="lobbyCode"
-      >
+        id="lobbyCode">
+
         ----
+
       </div>
 
 
@@ -1881,29 +1343,30 @@ input:focus {
 
       <div
         class="small"
-        id="modeLabel"
-      ></div>
+        id="modeLabel">
+      </div>
 
 
       <div
         class="lobby-settings"
-        id="lobbySettings"
-      ></div>
+        id="lobbySettings">
+      </div>
 
 
       <div
         class="lobby-players"
-        id="lobbyPlayers"
-      ></div>
+        id="lobbyPlayers">
+      </div>
 
 
       <div id="hostControls">
 
         <button
           class="start-btn"
-          onclick="startGame()"
-        >
+          onclick="startGame()">
+
           ▶ COMMENCER LA PARTIE
+
         </button>
 
       </div>
@@ -1911,30 +1374,32 @@ input:focus {
     </section>
 
 
-    <!-- ========================================================
+    <!-- ======================================================
          MODE TV
-    ========================================================= -->
+         ====================================================== -->
 
     <section
       id="tvMode"
-      class="hidden"
-    >
+      class="hidden">
+
 
       <div
         class="players"
-        id="tvPlayers"
-      ></div>
+        id="tvPlayers">
+      </div>
 
 
       <div
         class="status"
-        id="tvStatus"
-      >
+        id="tvStatus">
+
         En attente...
+
       </div>
 
 
       <div class="table">
+
 
         <div class="zone">
 
@@ -1946,8 +1411,8 @@ input:focus {
 
           <div
             class="small"
-            id="tvDeckCount"
-          ></div>
+            id="tvDeckCount">
+          </div>
 
         </div>
 
@@ -1962,6 +1427,7 @@ input:focus {
 
         </div>
 
+
       </div>
 
 
@@ -1970,50 +1436,51 @@ input:focus {
         <button
           id="newGameBtn"
           class="start-btn hidden"
-          onclick="newGame()"
-        >
+          onclick="newGame()">
+
           🔄 NOUVELLE MANCHE
+
         </button>
 
       </div>
 
+
     </section>
 
 
-    <!-- ========================================================
+    <!-- ======================================================
          MODE TELEPHONE
-    ========================================================= -->
+         ====================================================== -->
 
     <section
       id="playerMode"
-      class="hidden"
-    >
+      class="hidden">
+
 
       <div class="player-info">
 
         <div
           class="player-turn"
-          id="playerTurn"
-        ></div>
+          id="playerTurn">
+        </div>
 
 
         <div
           class="current-color"
-          id="currentColor"
-        ></div>
+          id="currentColor">
+        </div>
 
 
         <div
           class="penalty"
-          id="penaltyInfo"
-        ></div>
+          id="penaltyInfo">
+        </div>
 
       </div>
 
 
-      <!-- PIOCHE + DEFAUSSE VISIBLES -->
-
       <div class="phone-table">
+
 
         <div class="zone">
 
@@ -2025,8 +1492,8 @@ input:focus {
 
           <div
             class="small"
-            id="phoneDeckCount"
-          ></div>
+            id="phoneDeckCount">
+          </div>
 
         </div>
 
@@ -2041,21 +1508,23 @@ input:focus {
 
         </div>
 
+
       </div>
 
 
       <div
         class="small"
-        style="text-align:center"
-      >
+        style="text-align:center">
+
         TES CARTES
+
       </div>
 
 
       <div
         class="my-hand"
-        id="myHand"
-      ></div>
+        id="myHand">
+      </div>
 
 
       <div class="controls">
@@ -2063,31 +1532,35 @@ input:focus {
         <button
           id="drawBtn"
           class="action-btn"
-          onclick="drawCard()"
-        >
+          onclick="drawCard()">
+
           🃏 PIOCHER
+
         </button>
 
       </div>
 
+
     </section>
 
 
-    <!-- ========================================================
+    <!-- ======================================================
          LOGS
-    ========================================================= -->
+         ====================================================== -->
 
     <section class="logs-panel">
 
       <div class="logs-title">
+
         📜 DÉROULÉ DE LA PARTIE
+
       </div>
 
 
       <div
         class="logs-list"
-        id="gameLogs"
-      ></div>
+        id="gameLogs">
+      </div>
 
     </section>
 
@@ -2097,14 +1570,13 @@ input:focus {
 </section>
 
 
-<!-- ============================================================
-     MODAL CHOIX COULEUR
-============================================================ -->
+<!-- ==========================================================
+     MODALE COULEUR
+     ========================================================== -->
 
 <div
   id="colorModal"
-  class="modal hidden"
->
+  class="modal hidden">
 
   <div class="modal-box">
 
@@ -2122,33 +1594,37 @@ input:focus {
 
       <button
         class="color-btn red-btn"
-        onclick="chooseColor('red')"
-      >
+        onclick="chooseColor('red')">
+
         🔴 ROUGE
+
       </button>
 
 
       <button
         class="color-btn yellow-btn"
-        onclick="chooseColor('yellow')"
-      >
+        onclick="chooseColor('yellow')">
+
         🟡 JAUNE
+
       </button>
 
 
       <button
         class="color-btn green-btn"
-        onclick="chooseColor('green')"
-      >
+        onclick="chooseColor('green')">
+
         🟢 VERT
+
       </button>
 
 
       <button
         class="color-btn blue-btn"
-        onclick="chooseColor('blue')"
-      >
+        onclick="chooseColor('blue')">
+
         🔵 BLEU
+
       </button>
 
     </div>
@@ -2158,9 +1634,10 @@ input:focus {
 
       <button
         class="action-btn"
-        onclick="cancelColorChoice()"
-      >
+        onclick="cancelColorChoice()">
+
         ↩ ANNULER
+
       </button>
 
     </div>
@@ -2170,16 +1647,16 @@ input:focus {
 </div>
 
 
-<!-- ============================================================
-     MODAL UNO
-============================================================ -->
+<!-- ==========================================================
+     UNO
+     ========================================================== -->
 
 <div
   id="unoModal"
-  class="modal hidden"
->
+  class="modal hidden">
 
-  <div class="modal-box uno-box">
+  <div
+    class="modal-box uno-box">
 
     <div class="uno-big">
       UNO !
@@ -2188,9 +1665,10 @@ input:focus {
 
     <div
       class="uno-target"
-      id="unoTarget"
-    >
+      id="unoTarget">
+
       JOUEUR
+
     </div>
 
 
@@ -2206,9 +1684,10 @@ input:focus {
 
     <button
       class="buzz-btn"
-      onclick="buzzUno()"
-    >
+      onclick="buzzUno()">
+
       📣 BUZZER UNO !
+
     </button>
 
   </div>
@@ -2216,71 +1695,13 @@ input:focus {
 </div>
 
 
-<!-- ============================================================
-     MODAL PENALITE
-============================================================ -->
-
-<div
-  id="penaltyModal"
-  class="modal hidden"
->
-
-  <div class="modal-box">
-
-    <h2>
-      ⚠️ +
-
-      <span id="penaltyAmount">
-        2
-      </span>
-
-      À RÉSOUDRE
-    </h2>
-
-
-    <p id="penaltyTarget">
-      C'est ton tour.
-    </p>
-
-
-    <p>
-      Tu peux jouer une carte jouable
-      pour répondre, ou prendre la pénalité.
-    </p>
-
-
-    <div class="decision-buttons">
-
-      <button
-        class="action-btn success"
-        onclick="choosePenaltyPlay()"
-      >
-        🛡️ JOUER UNE CARTE
-      </button>
-
-
-      <button
-        class="action-btn danger"
-        onclick="takePenalty()"
-      >
-        🃏 PRENDRE LA PÉNALITÉ
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ============================================================
-     MODAL VICTOIRE
-============================================================ -->
+<!-- ==========================================================
+     VICTOIRE
+     ========================================================== -->
 
 <div
   id="winnerModal"
-  class="modal hidden"
->
+  class="modal hidden">
 
   <div class="modal-box">
 
@@ -2291,22 +1712,27 @@ input:focus {
 
     <div
       class="winner-name"
-      id="winnerName"
-    >
+      id="winnerName">
+
       Joueur
+
     </div>
 
 
     <div
       class="winner-points"
-      id="winnerPoints"
-    >
+      id="winnerPoints">
+
       +0 points
+
     </div>
 
 
-    <p id="winnerScore">
+    <p
+      id="winnerScore">
+
       Score total : 0 points
+
     </p>
 
 
@@ -2315,17 +1741,19 @@ input:focus {
       <button
         id="winnerNewGameBtn"
         class="start-btn"
-        onclick="newGame()"
-      >
+        onclick="newGame()">
+
         🔄 NOUVELLE MANCHE
+
       </button>
 
 
       <p
         id="winnerWaiting"
-        class="small hidden"
-      >
+        class="small hidden">
+
         En attente du créateur...
+
       </p>
 
     </div>
@@ -2337,22 +1765,12 @@ input:focus {
 
 <script>
 
-
-// ============================================================
-// CONFIGURATION
-// ============================================================
-
 const SERVER_URL =
   "wss://uno-jeux2soiree.onrender.com";
-
 
 const CARD_BASE =
   "cards/";
 
-
-// ============================================================
-// VARIABLES
-// ============================================================
 
 let socket = null;
 
@@ -2371,33 +1789,30 @@ let gameState = null;
 let pendingCardIndex = null;
 
 
-// ============================================================
-// UTILITAIRE DOM
-// ============================================================
-
 const $ =
   id =>
     document.getElementById(id);
 
 
 // ============================================================
-// MESSAGES
+// UTILITAIRES
 // ============================================================
 
-function showMessage(text) {
+function showMessage(t){
 
   $("message").textContent =
-    text || "";
+    t || "";
 }
 
 
 // ============================================================
-// CONFIGURATION
+// MENU
 // ============================================================
 
-function showSetup(m) {
+function showSetup(m){
 
-  setupMode = m;
+  setupMode =
+    m;
 
   $("homeMenu")
     .classList
@@ -2415,7 +1830,7 @@ function showSetup(m) {
 }
 
 
-function cancelSetup() {
+function cancelSetup(){
 
   $("setup")
     .classList
@@ -2429,9 +1844,10 @@ function cancelSetup() {
 }
 
 
-function selectMode(m) {
+function selectMode(m){
 
-  setupMode = m;
+  setupMode =
+    m;
 
   $("modeTvBtn")
     .classList
@@ -2440,14 +1856,12 @@ function selectMode(m) {
       m === "tv"
     );
 
-
   $("modePhonesBtn")
     .classList
     .toggle(
       "active",
       m === "phones"
     );
-
 
   $("creatorNameBox")
     .classList
@@ -2459,10 +1873,10 @@ function selectMode(m) {
 
 
 // ============================================================
-// CREER PARTIE
+// CREATION SALON
 // ============================================================
 
-function createConfiguredRoom() {
+function createConfiguredRoom(){
 
   const handSize =
     Math.max(
@@ -2481,18 +1895,14 @@ function createConfiguredRoom() {
     $("stackingInput").checked;
 
 
-  let name = null;
+  let name =
+    null;
 
-
-  /*
-    En mode téléphone,
-    le créateur doit donner son prénom.
-  */
 
   if (
     setupMode ===
     "phones"
-  ) {
+  ){
 
     name =
       $("creatorNameInput")
@@ -2500,16 +1910,14 @@ function createConfiguredRoom() {
         .trim();
 
 
-    if (!name) {
+    if (!name){
 
       showMessage(
         "Entre ton prénom pour créer la partie."
       );
 
-
       $("creatorNameInput")
         .focus();
-
 
       return;
     }
@@ -2541,6 +1949,7 @@ function createConfiguredRoom() {
     stacking,
 
     handSize
+
   });
 }
 
@@ -2549,7 +1958,7 @@ function createConfiguredRoom() {
 // REJOINDRE
 // ============================================================
 
-function showJoin() {
+function showJoin(){
 
   $("homeMenu")
     .classList
@@ -2568,7 +1977,7 @@ function showJoin() {
 }
 
 
-function cancelJoin() {
+function cancelJoin(){
 
   $("joinForm")
     .classList
@@ -2582,7 +1991,7 @@ function cancelJoin() {
 }
 
 
-function joinRoom() {
+function joinRoom(){
 
   const r =
     $("roomInput")
@@ -2597,7 +2006,7 @@ function joinRoom() {
       .trim();
 
 
-  if (!r) {
+  if (!r){
 
     showMessage(
       "Entre le code du salon."
@@ -2607,7 +2016,7 @@ function joinRoom() {
   }
 
 
-  if (!n) {
+  if (!n){
 
     showMessage(
       "Entre ton prénom."
@@ -2617,11 +2026,14 @@ function joinRoom() {
   }
 
 
-  room = r;
+  room =
+    r;
 
-  playerName = n;
+  playerName =
+    n;
 
-  mode = "player";
+  mode =
+    "player";
 
 
   connect({
@@ -2629,18 +2041,21 @@ function joinRoom() {
     type:
       "join_room",
 
-    room: r,
+    room:
+      r,
 
-    name: n
+    name:
+      n
+
   });
 }
 
 
 // ============================================================
-// WEBSOCKET
+// CONNEXION
 // ============================================================
 
-function connect(message) {
+function connect(message){
 
   showMessage(
     "Connexion..."
@@ -2654,7 +2069,7 @@ function connect(message) {
         SERVER_URL
       );
 
-  } catch (error) {
+  } catch(e){
 
     showMessage(
       "Impossible de se connecter au serveur."
@@ -2672,20 +2087,20 @@ function connect(message) {
   };
 
 
-  socket.onmessage = event => {
+  socket.onmessage = e => {
 
     try {
 
       handleMessage(
         JSON.parse(
-          event.data
+          e.data
         )
       );
 
-    } catch (error) {
+    } catch(err){
 
       console.error(
-        error
+        err
       );
     }
   };
@@ -2705,7 +2120,7 @@ function connect(message) {
       !$("app")
         .classList
         .contains("hidden")
-    ) {
+    ){
 
       showMessage(
         "Connexion au serveur perdue."
@@ -2715,16 +2130,18 @@ function connect(message) {
 }
 
 
-function send(data) {
+function send(data){
 
   if (
     socket &&
     socket.readyState ===
       WebSocket.OPEN
-  ) {
+  ){
 
     socket.send(
-      JSON.stringify(data)
+      JSON.stringify(
+        data
+      )
     );
   }
 }
@@ -2734,13 +2151,12 @@ function send(data) {
 // MESSAGES SERVEUR
 // ============================================================
 
-function handleMessage(data) {
+function handleMessage(data){
 
-  // Salon créé
   if (
     data.type ===
     "room_created"
-  ) {
+  ){
 
     room =
       data.room;
@@ -2753,18 +2169,16 @@ function handleMessage(data) {
       data.mode ||
       mode;
 
-
     openApp();
 
     return;
   }
 
 
-  // Salon rejoint
   if (
     data.type ===
     "joined"
-  ) {
+  ){
 
     room =
       data.room;
@@ -2774,10 +2188,9 @@ function handleMessage(data) {
 
     mode =
       data.mode ===
-      "phones"
+        "phones"
         ? "phones"
         : "player";
-
 
     openApp();
 
@@ -2785,15 +2198,13 @@ function handleMessage(data) {
   }
 
 
-  // Etat complet
   if (
     data.type ===
     "state"
-  ) {
+  ){
 
     gameState =
       data.state;
-
 
     render();
 
@@ -2801,11 +2212,10 @@ function handleMessage(data) {
   }
 
 
-  // Erreur
   if (
     data.type ===
     "error"
-  ) {
+  ){
 
     showMessage(
       data.message ||
@@ -2816,32 +2226,28 @@ function handleMessage(data) {
   }
 
 
-  // Choix couleur demandé
   if (
     data.type ===
     "color_required"
-  ) {
+  ){
 
     pendingCardIndex =
       Number(
         data.cardIndex
       );
 
-
     $("colorModal")
       .classList
       .remove("hidden");
-
 
     return;
   }
 
 
-  // Fin de manche
   if (
     data.type ===
     "round_end"
-  ) {
+  ){
 
     showWinner(
       data
@@ -2853,15 +2259,14 @@ function handleMessage(data) {
 
 
 // ============================================================
-// OUVRIR APP
+// OUVERTURE APP
 // ============================================================
 
-function openApp() {
+function openApp(){
 
   $("home")
     .classList
     .add("hidden");
-
 
   $("app")
     .classList
@@ -2870,14 +2275,14 @@ function openApp() {
 
   $("roomCodeDisplay")
     .textContent =
-    room ||
-    "----";
+      room ||
+      "----";
 
 
   $("lobbyCode")
     .textContent =
-    room ||
-    "----";
+      room ||
+      "----";
 
 
   render();
@@ -2888,9 +2293,9 @@ function openApp() {
 // RENDER GLOBAL
 // ============================================================
 
-function render() {
+function render(){
 
-  if (!gameState) {
+  if (!gameState){
     return;
   }
 
@@ -2898,29 +2303,22 @@ function render() {
   renderLogs();
 
 
-  /*
-    LOBBY
-  */
-
   if (
     gameState.status ===
     "waiting"
-  ) {
+  ){
 
     $("lobby")
       .classList
       .remove("hidden");
 
-
     $("tvMode")
       .classList
       .add("hidden");
 
-
     $("playerMode")
       .classList
       .add("hidden");
-
 
     renderLobby();
 
@@ -2935,30 +2333,24 @@ function render() {
     .add("hidden");
 
 
-  /*
-    Mode joueur :
-    - téléphone uniquement
-    - téléphone d'un joueur
-  */
-
   const playerView =
     gameState.mode ===
       "phones" ||
-    mode === "player" ||
-    mode === "phones";
+    mode ===
+      "player" ||
+    mode ===
+      "phones";
 
 
-  if (playerView) {
+  if (playerView){
 
     $("playerMode")
       .classList
       .remove("hidden");
 
-
     $("tvMode")
       .classList
       .add("hidden");
-
 
     renderPlayer();
 
@@ -2968,11 +2360,9 @@ function render() {
       .classList
       .remove("hidden");
 
-
     $("playerMode")
       .classList
       .add("hidden");
-
 
     renderTV();
   }
@@ -2986,81 +2376,70 @@ function render() {
 // LOBBY
 // ============================================================
 
-function renderLobby() {
+function renderLobby(){
 
   const list =
     $("lobbyPlayers");
 
 
-  list.innerHTML = "";
+  list.innerHTML =
+    "";
 
 
   $("modeLabel")
     .textContent =
       gameState.mode ===
-      "phones"
+        "phones"
 
         ? "📱 Mode téléphones • le créateur joue aussi"
 
         : "🖥️ Mode TV + téléphones";
 
 
-  const settings =
+  const s =
     gameState.settings ||
     {};
 
 
   $("lobbySettings")
     .textContent =
-      `🃏 ${settings.handSize || 7} cartes au départ • ${
-        settings.stacking
-          ? "➕ +2 empilables"
-          : "➖ +2 non empilables"
-      }`;
+      `🃏 ${s.handSize || 7} cartes au départ • ${s.stacking ? "➕ +2 activé" : "➖ +2 standard"}`;
 
 
   gameState.players
-    .forEach(player => {
+    .forEach(
+      p => {
 
-      const div =
-        document.createElement(
-          "div"
+        const d =
+          document.createElement(
+            "div"
+          );
+
+
+        d.className =
+          "lobby-player" +
+          (
+            p.host
+              ? " host"
+              : ""
+          );
+
+
+        d.textContent =
+          p.name +
+          (
+            p.host
+              ? " 👑"
+              : ""
+          );
+
+
+        list.appendChild(
+          d
         );
+      }
+    );
 
-
-      div.className =
-        "lobby-player" +
-        (
-          player.host
-            ? " host"
-            : ""
-        );
-
-
-      div.textContent =
-        player.name +
-        (
-          player.host
-            ? " 👑"
-            : ""
-        );
-
-
-      list.appendChild(
-        div
-      );
-    });
-
-
-  /*
-    IMPORTANT :
-
-    On utilise isHost envoyé
-    par le serveur.
-
-    Cela fonctionne aussi en mode TV
-    où le host n'est pas joueur.
-  */
 
   $("hostControls")
     .classList
@@ -3075,59 +2454,66 @@ function renderLobby() {
 // TV
 // ============================================================
 
-function renderTV() {
+function renderTV(){
 
   const list =
     $("tvPlayers");
 
 
-  list.innerHTML = "";
+  list.innerHTML =
+    "";
 
 
   gameState.players
-    .forEach(player => {
+    .forEach(
+      p => {
 
-      const div =
-        document.createElement(
-          "div"
+        const d =
+          document.createElement(
+            "div"
+          );
+
+
+        d.className =
+          "player-box" +
+          (
+            p.id ===
+            gameState.currentPlayer
+              ? " active"
+              : ""
+          );
+
+
+        d.innerHTML = `
+
+          <div class="player-name">
+            ${escapeHtml(p.name)}
+          </div>
+
+          <div class="card-count">
+            ${p.cardCount}
+            carte${p.cardCount > 1 ? "s" : ""}
+            •
+            ${p.score}
+            pts
+          </div>
+
+        `;
+
+
+        list.appendChild(
+          d
         );
-
-
-      div.className =
-        "player-box" +
-        (
-          player.id ===
-          gameState.currentPlayer
-            ? " active"
-            : ""
-        );
-
-
-      div.innerHTML =
-
-        `<div class="player-name">
-          ${escapeHtml(player.name)}
-        </div>
-
-        <div class="card-count">
-          ${player.cardCount}
-          carte${player.cardCount > 1 ? "s" : ""}
-          •
-          ${player.score}
-          pts
-        </div>`;
-
-
-      list.appendChild(
-        div
-      );
-    });
+      }
+    );
 
 
   $("tvStatus")
     .textContent =
       gameState.currentPlayerName
+
         ? `Tour de ${gameState.currentPlayerName}`
+
         : "Partie terminée";
 
 
@@ -3153,16 +2539,16 @@ function renderTV() {
 
 
 // ============================================================
-// JOUEUR
+// TELEPHONE
 // ============================================================
 
-function renderPlayer() {
+function renderPlayer(){
 
   const me =
     gameState.me;
 
 
-  if (!me) {
+  if (!me){
     return;
   }
 
@@ -3175,7 +2561,9 @@ function renderPlayer() {
   $("playerTurn")
     .textContent =
       myTurn
+
         ? "🔥 À TOI DE JOUER !"
+
         : "⏳ Tour de " +
           (
             gameState.currentPlayerName ||
@@ -3186,27 +2574,39 @@ function renderPlayer() {
   $("currentColor")
     .textContent =
       gameState.currentColor
+
         ? "Couleur : " +
           colorName(
             gameState.currentColor
           )
+
         : "";
 
 
   /*
-    Texte de pénalité
+    Après un +2/+4 :
+    drawnCardId = null
+    et le joueur garde son tour.
   */
 
   $("penaltyInfo")
     .textContent =
-      gameState.pendingDraw > 0
-        ? `⚠️ +${gameState.pendingDraw} en jeu • tu peux répondre avec une carte ou prendre la pénalité`
+      (
+        me.hasDrawn &&
+        me.drawnCardId ===
+          null &&
+        myTurn
+      )
+
+        ? "✨ Pénalité prise : tu gardes ton tour. Tu peux jouer n'importe quelle carte jouable de ta main."
+
         : "";
 
 
   renderHand(
     me.hand,
-    myTurn
+    myTurn,
+    me
   );
 
 
@@ -3220,6 +2620,28 @@ function renderPlayer() {
   );
 
 
+  /*
+    Après une pénalité :
+    le bouton reste désactivé car
+    la pioche a déjà été effectuée.
+
+    Le joueur joue directement
+    une carte de sa main.
+  */
+
+  $("drawBtn")
+    .textContent =
+      (
+        me.hasDrawn &&
+        me.drawnCardId ===
+          null
+      )
+
+        ? "🃏 PÉNALITÉ PRISE"
+
+        : "🃏 PIOCHER";
+
+
   $("drawBtn")
     .disabled =
       !myTurn ||
@@ -3229,71 +2651,255 @@ function renderPlayer() {
 
 
 // ============================================================
-// AFFICHAGE DES CARTES
+// MAIN DES CARTES
 // ============================================================
 
 function renderHand(
   hand,
-  myTurn
-) {
+  myTurn,
+  me
+){
 
-  const container =
+  const c =
     $("myHand");
 
 
-  container.innerHTML =
+  c.innerHTML =
     "";
 
 
-  hand.forEach(
-    (card, index) => {
+  /*
+    ORDRE DES COULEURS
 
-      const element =
+    1. Rouge
+    2. Jaune
+    3. Vert
+    4. Bleu
+    5. Jokers
+  */
+
+  const colorOrder = {
+
+    red:
+      0,
+
+    yellow:
+      1,
+
+    green:
+      2,
+
+    blue:
+      3
+  };
+
+
+  const typeOrder = {
+
+    number:
+      0,
+
+    skip:
+      1,
+
+    reverse:
+      2,
+
+    draw2:
+      3,
+
+    wild:
+      4,
+
+    wild4:
+      5
+  };
+
+
+  /*
+    On garde l'index original
+    pour envoyer le bon index
+    au serveur.
+  */
+
+  const sorted =
+    hand
+      .map(
+        (card,index) => ({
+          card,
+          index
+        })
+      )
+      .sort(
+        (a,b) => {
+
+          const ca =
+            a.card.color === null
+
+              ? 4
+
+              : (
+                  colorOrder[
+                    a.card.color
+                  ] ??
+                  4
+                );
+
+
+          const cb =
+            b.card.color === null
+
+              ? 4
+
+              : (
+                  colorOrder[
+                    b.card.color
+                  ] ??
+                  4
+                );
+
+
+          if (
+            ca !== cb
+          ){
+
+            return ca - cb;
+          }
+
+
+          const ta =
+            typeOrder[
+              a.card.type
+            ] ??
+            9;
+
+
+          const tb =
+            typeOrder[
+              b.card.type
+            ] ??
+            9;
+
+
+          if (
+            ta !== tb
+          ){
+
+            return ta - tb;
+          }
+
+
+          if (
+            a.card.type ===
+              "number" &&
+            b.card.type ===
+              "number"
+          ){
+
+            return (
+              a.card.value -
+              b.card.value
+            );
+          }
+
+
+          return (
+            a.index -
+            b.index
+          );
+        }
+      );
+
+
+  /*
+    Affichage
+  */
+
+  sorted.forEach(
+    ({
+      card,
+      index
+    }) => {
+
+      const el =
         createCardElement(
           card
         );
 
 
-      element.classList
-        .add("hand-card");
+      el.classList.add(
+        "hand-card"
+      );
 
 
       /*
-        JOUABLE :
+        CAS 1 :
+        Pioche normale.
 
-        énorme mise en avant.
+        Seule la carte piochée
+        est réellement jouable.
 
-        NON JOUABLE :
+        CAS 2 :
+        +2 / +4.
 
-        assombrie.
+        drawnCardId = null.
+        Toutes les cartes jouables
+        sont autorisées.
       */
 
-      if (
-        myTurn &&
-        isPlayable(card)
-      ) {
+      const onlyDrawnCard =
+        !!(
+          me &&
+          me.hasDrawn &&
+          me.drawnCardId
+        );
 
-        element.classList
-          .add("playable");
+
+      const allowedAfterDraw =
+        !onlyDrawnCard ||
+        card.id ===
+          me.drawnCardId;
+
+
+      const playableNow =
+        myTurn &&
+        allowedAfterDraw &&
+        isPlayable(card);
+
+
+      if (
+        playableNow
+      ){
+
+        el.classList.add(
+          "playable"
+        );
 
       } else if (
         myTurn
-      ) {
+      ){
 
-        element.classList
-          .add(
-            "not-playable"
-          );
+        el.classList.add(
+          "not-playable"
+        );
       }
 
 
-      element.onclick =
+      /*
+        L'index envoyé au serveur
+        reste celui de la main
+        originale.
+      */
+
+      el.onclick =
         () =>
-          playCard(index);
+          playCard(
+            index
+          );
 
 
-      container.appendChild(
-        element
+      c.appendChild(
+        el
       );
     }
   );
@@ -3304,21 +2910,21 @@ function renderHand(
 // DEFAUSSE
 // ============================================================
 
-function renderDiscardInto(id) {
+function renderDiscardInto(id){
 
-  const container =
+  const c =
     $(id);
 
 
-  container.innerHTML =
+  c.innerHTML =
     "";
 
 
   if (
     gameState.discard
-  ) {
+  ){
 
-    container.appendChild(
+    c.appendChild(
       createCardElement(
         gameState.discard
       )
@@ -3331,7 +2937,7 @@ function renderDiscardInto(id) {
 // LOGS
 // ============================================================
 
-function renderLogs() {
+function renderLogs(){
 
   const box =
     $("gameLogs");
@@ -3340,7 +2946,8 @@ function renderLogs() {
   if (
     !box ||
     !gameState
-  ) {
+  ){
+
     return;
   }
 
@@ -3352,40 +2959,38 @@ function renderLogs() {
   (
     gameState.logs ||
     []
-  )
-  .forEach(log => {
+  ).forEach(
+    log => {
 
-    const row =
-      document.createElement(
-        "div"
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "log-row";
+
+
+      row.innerHTML = `
+
+        <span class="log-time">
+          ${escapeHtml(log.time)}
+        </span>
+
+        <span>
+          ${escapeHtml(log.text)}
+        </span>
+
+      `;
+
+
+      box.appendChild(
+        row
       );
+    }
+  );
 
-
-    row.className =
-      "log-row";
-
-
-    row.innerHTML =
-
-      `<span class="log-time">
-        ${escapeHtml(log.time)}
-      </span>
-
-      <span>
-        ${escapeHtml(log.text)}
-      </span>`;
-
-
-    box.appendChild(
-      row
-    );
-  });
-
-
-  /*
-    Toujours descendre
-    jusqu'au dernier événement.
-  */
 
   box.scrollTop =
     box.scrollHeight;
@@ -3396,25 +3001,21 @@ function renderLogs() {
 // MODALES
 // ============================================================
 
-function renderSpecialModals() {
+function renderSpecialModals(){
 
-  /*
-    UNO
-  */
-
-  const challenge =
+  const uc =
     gameState.unoChallenge;
 
 
   if (
-    challenge &&
+    uc &&
     gameState.status ===
       "playing"
-  ) {
+  ){
 
     $("unoTarget")
       .textContent =
-      challenge.targetName;
+        uc.targetName;
 
 
     $("unoModal")
@@ -3428,56 +3029,11 @@ function renderSpecialModals() {
       .add("hidden");
   }
 
-
-  /*
-    PENALITE
-
-    Seul le joueur concerné
-    voit la décision.
-  */
-
-  const penalty =
-    gameState.penaltyDecision;
-
-
-  if (
-    penalty &&
-    penalty.targetId ===
-      playerId &&
-    gameState.status ===
-      "playing"
-  ) {
-
-    $("penaltyAmount")
-      .textContent =
-      penalty.amount;
-
-
-    $("penaltyTarget")
-      .textContent =
-      "C'est à toi de décider.";
-
-
-    $("penaltyModal")
-      .classList
-      .remove("hidden");
-
-  } else {
-
-    $("penaltyModal")
-      .classList
-      .add("hidden");
-  }
-
-
-  /*
-    VICTOIRE
-  */
 
   if (
     gameState.status !==
     "finished"
-  ) {
+  ){
 
     $("winnerModal")
       .classList
@@ -3485,23 +3041,17 @@ function renderSpecialModals() {
   }
 
 
-  /*
-    Si la partie n'est plus en cours
-    ou si ce n'est plus notre tour,
-    on ferme le choix de couleur.
-  */
-
   if (
     gameState.status !==
       "playing" ||
+
     gameState.currentPlayer !==
       playerId
-  ) {
+  ){
 
     $("colorModal")
       .classList
       .add("hidden");
-
 
     pendingCardIndex =
       null;
@@ -3510,10 +3060,10 @@ function renderSpecialModals() {
 
 
 // ============================================================
-// BUZZER UNO
+// UNO
 // ============================================================
 
-function buzzUno() {
+function buzzUno(){
 
   send({
     type:
@@ -3523,176 +3073,109 @@ function buzzUno() {
 
 
 // ============================================================
-// DECISION PENALITE
+// IMAGES CARTES
 // ============================================================
 
-function choosePenaltyPlay() {
+function cardCandidates(card){
 
-  /*
-    On dit au serveur :
+  const map = {
 
-    "Je ne prends pas la pénalité.
-     Je veux jouer une carte."
+    red:
+      "Red",
 
-    La pénalité reste dans l'état du serveur
-    tant qu'une vraie carte n'est pas jouée.
-  */
+    yellow:
+      "Yellow",
 
-  send({
-    type:
-      "penalty_cancel"
-  });
+    green:
+      "Green",
 
-
-  $("penaltyModal")
-    .classList
-    .add("hidden");
-
-
-  showMessage(
-    "Choisis maintenant une carte jouable."
-  );
-}
-
-
-function takePenalty() {
-
-  send({
-    type:
-      "penalty_draw"
-  });
-
-
-  $("penaltyModal")
-    .classList
-    .add("hidden");
-}
-
-
-// ============================================================
-// IMAGES DES CARTES
-// ============================================================
-
-function cardCandidates(card) {
-
-  const mapping = {
-
-    red: "Red",
-
-    yellow: "Yellow",
-
-    green: "Green",
-
-    blue: "Blue"
+    blue:
+      "Blue"
   };
 
 
-  const prefix =
-    mapping[
+  const p =
+    map[
       card.color
     ];
 
 
-  /*
-    NUMEROS
-  */
-
   if (
     card.type ===
     "number"
-  ) {
+  ){
 
     return [
 
-      `${CARD_BASE}${prefix}- ${card.value}.png`,
+      `${CARD_BASE}${p}- ${card.value}.png`,
 
-      `${CARD_BASE}${prefix}-${card.value}.png`
+      `${CARD_BASE}${p}-${card.value}.png`
 
     ];
   }
 
-
-  /*
-    +2
-
-    On privilégie Draw2- 2.png
-    car le fichier Yellow Draw2- 1.png
-    peut être un export incorrect.
-  */
 
   if (
     card.type ===
     "draw2"
-  ) {
+  ){
 
     return [
 
-      `${CARD_BASE}${prefix} Draw2- 2.png`,
+      `${CARD_BASE}${p} Draw2- 2.png`,
 
-      `${CARD_BASE}${prefix} Draw2- 1.png`,
+      `${CARD_BASE}${p} Draw2- 1.png`,
 
-      `${CARD_BASE}${prefix} Draw2-2.png`,
+      `${CARD_BASE}${p} Draw2-2.png`,
 
-      `${CARD_BASE}${prefix} Draw2-1.png`
+      `${CARD_BASE}${p} Draw2-1.png`
 
     ];
   }
 
-
-  /*
-    PASS
-  */
 
   if (
     card.type ===
     "skip"
-  ) {
+  ){
 
     return [
 
-      `${CARD_BASE}${prefix} Skip- 1.png`,
+      `${CARD_BASE}${p} Skip- 1.png`,
 
-      `${CARD_BASE}${prefix} Skip- 2.png`,
+      `${CARD_BASE}${p} Skip- 2.png`,
 
-      `${CARD_BASE}${prefix} Skip-1.png`,
+      `${CARD_BASE}${p} Skip-1.png`,
 
-      `${CARD_BASE}${prefix} Skip-2.png`
+      `${CARD_BASE}${p} Skip-2.png`
 
     ];
   }
 
-
-  /*
-    REVERSE
-  */
 
   if (
     card.type ===
     "reverse"
-  ) {
+  ){
 
     return [
 
-      `${CARD_BASE}${prefix} Reverse- 1.png`,
+      `${CARD_BASE}${p} Reverse- 1.png`,
 
-      `${CARD_BASE}${prefix} Reverse- 2.png`,
+      `${CARD_BASE}${p} Reverse- 2.png`,
 
-      `${CARD_BASE}${prefix} Reverse-1.png`,
+      `${CARD_BASE}${p} Reverse-1.png`,
 
-      `${CARD_BASE}${prefix} Reverse-2.png`
+      `${CARD_BASE}${p} Reverse-2.png`
 
     ];
   }
 
 
-  /*
-    JOKER
-  */
-
   if (
     card.type ===
     "wild"
-  ) {
+  ){
 
     return [
 
@@ -3708,14 +3191,10 @@ function cardCandidates(card) {
   }
 
 
-  /*
-    +4
-  */
-
   if (
     card.type ===
     "wild4"
-  ) {
+  ){
 
     return [
 
@@ -3739,15 +3218,15 @@ function cardCandidates(card) {
 // CREATION CARTE
 // ============================================================
 
-function createCardElement(card) {
+function createCardElement(card){
 
-  const div =
+  const d =
     document.createElement(
       "div"
     );
 
 
-  div.className =
+  d.className =
     "card " +
     (
       card.color ||
@@ -3763,14 +3242,14 @@ function createCardElement(card) {
 
   if (
     !candidates.length
-  ) {
+  ){
 
     fallbackCard(
-      div,
+      d,
       card
     );
 
-    return div;
+    return d;
   }
 
 
@@ -3786,22 +3265,22 @@ function createCardElement(card) {
     );
 
 
-  let index =
+  let i =
     0;
 
 
-  const nextImage =
+  const next =
     () => {
 
       if (
-        index >=
+        i >=
         candidates.length
-      ) {
+      ){
 
         img.remove();
 
         fallbackCard(
-          div,
+          d,
           card
         );
 
@@ -3811,24 +3290,24 @@ function createCardElement(card) {
 
       img.src =
         candidates[
-          index++
+          i++
         ];
     };
 
 
   img.onerror =
-    nextImage;
+    next;
 
 
-  div.appendChild(
+  d.appendChild(
     img
   );
 
 
-  nextImage();
+  next();
 
 
-  return div;
+  return d;
 }
 
 
@@ -3837,41 +3316,41 @@ function createCardElement(card) {
 // ============================================================
 
 function fallbackCard(
-  div,
+  d,
   card
-) {
+){
 
-  const symbol =
+  const s =
     document.createElement(
       "div"
     );
 
 
-  symbol.className =
+  s.className =
     "symbol";
 
 
-  symbol.textContent =
+  s.textContent =
     cardLabel(
       card
     );
 
 
-  div.appendChild(
-    symbol
+  d.appendChild(
+    s
   );
 }
 
 
-function cardLabel(card) {
+function cardLabel(c){
 
   if (
-    card.type ===
+    c.type ===
     "number"
-  ) {
+  ){
 
     return String(
-      card.value
+      c.value
     );
   }
 
@@ -3894,40 +3373,25 @@ function cardLabel(card) {
       "+4"
 
   }[
-    card.type
-  ] || "?";
+    c.type
+  ] ||
+  "?";
 }
 
 
 // ============================================================
-// JOUER CARTE COTE CLIENT
+// JOUER CARTE
 // ============================================================
 
-function playCard(index) {
+function playCard(index){
 
   if (
-    !gameState.me
-  ) {
-    return;
-  }
-
-
-  if (
+    !gameState.me ||
     gameState.currentPlayer !==
-    playerId
-  ) {
-    return;
-  }
-
-
-  /*
-    Tant que le buzzer UNO
-    n'est pas résolu.
-  */
-
-  if (
+      playerId ||
     gameState.unoChallenge
-  ) {
+  ){
+
     return;
   }
 
@@ -3938,35 +3402,55 @@ function playCard(index) {
     ];
 
 
-  if (!card) {
+  if (
+    !card
+  ){
+
     return;
   }
 
 
   /*
-    Vérification visuelle client.
-    Le serveur reverifie toujours.
+    Même règle visuelle que le serveur :
+    après une pioche normale,
+    seule la carte piochée est autorisée.
+
+    Après +2/+4 :
+    drawnCardId = null,
+    donc toute carte jouable est autorisée.
   */
+
+  const onlyDrawnCard =
+    !!(
+      gameState.me.hasDrawn &&
+      gameState.me.drawnCardId
+    );
+
+
+  if (
+    onlyDrawnCard &&
+    card.id !==
+      gameState.me.drawnCardId
+  ){
+
+    return;
+  }
+
 
   if (
     !isPlayable(card)
-  ) {
+  ){
+
     return;
   }
 
-
-  /*
-    Joker ou +4 :
-
-    ouvrir le choix de couleur.
-  */
 
   if (
     card.type ===
       "wild" ||
     card.type ===
       "wild4"
-  ) {
+  ){
 
     pendingCardIndex =
       index;
@@ -3987,6 +3471,7 @@ function playCard(index) {
       "play_card",
 
     index
+
   });
 }
 
@@ -3995,23 +3480,22 @@ function playCard(index) {
 // CHOIX COULEUR
 // ============================================================
 
-function chooseColor(color) {
+function chooseColor(
+  color
+){
 
   if (
     pendingCardIndex ===
-    null
-  ) {
+      null
+  ){
+
     return;
   }
 
 
-  const index =
+  const i =
     pendingCardIndex;
 
-
-  /*
-    Fermer AVANT d'envoyer.
-  */
 
   $("colorModal")
     .classList
@@ -4027,9 +3511,11 @@ function chooseColor(color) {
     type:
       "play_card",
 
-    index,
+    index:
+      i,
 
     color
+
   });
 }
 
@@ -4038,16 +3524,7 @@ function chooseColor(color) {
 // ANNULER CHOIX COULEUR
 // ============================================================
 
-function cancelColorChoice() {
-
-  /*
-    IMPORTANT :
-
-    Aucun message n'est envoyé
-    au serveur.
-
-    Donc la carte n'est PAS jouée.
-  */
+function cancelColorChoice(){
 
   pendingCardIndex =
     null;
@@ -4063,7 +3540,7 @@ function cancelColorChoice() {
 // ACTIONS
 // ============================================================
 
-function drawCard() {
+function drawCard(){
 
   send({
     type:
@@ -4072,7 +3549,7 @@ function drawCard() {
 }
 
 
-function startGame() {
+function startGame(){
 
   send({
     type:
@@ -4081,7 +3558,7 @@ function startGame() {
 }
 
 
-function newGame() {
+function newGame(){
 
   $("winnerModal")
     .classList
@@ -4099,12 +3576,13 @@ function newGame() {
 // VERIFICATION CARTE JOUABLE
 // ============================================================
 
-function isPlayable(card) {
+function isPlayable(card){
 
   if (
     !gameState ||
     !gameState.discard
-  ) {
+  ){
+
     return true;
   }
 
@@ -4116,7 +3594,7 @@ function isPlayable(card) {
   if (
     card.type ===
     "wild"
-  ) {
+  ){
 
     return true;
   }
@@ -4124,15 +3602,12 @@ function isPlayable(card) {
 
   /*
     +4
-
-    seulement s'il n'y a pas
-    de carte de la couleur actuelle.
   */
 
   if (
     card.type ===
     "wild4"
-  ) {
+  ){
 
     return !!gameState.canPlayWild4;
   }
@@ -4145,7 +3620,7 @@ function isPlayable(card) {
   if (
     card.color ===
     gameState.currentColor
-  ) {
+  ){
 
     return true;
   }
@@ -4158,9 +3633,10 @@ function isPlayable(card) {
   if (
     card.type !==
       "number" &&
+
     card.type ===
       gameState.discard.type
-  ) {
+  ){
 
     return true;
   }
@@ -4173,11 +3649,13 @@ function isPlayable(card) {
   if (
     card.type ===
       "number" &&
+
     gameState.discard.type ===
       "number" &&
+
     card.value ===
       gameState.discard.value
-  ) {
+  ){
 
     return true;
   }
@@ -4191,7 +3669,7 @@ function isPlayable(card) {
 // COULEURS
 // ============================================================
 
-function colorName(color) {
+function colorName(c){
 
   return {
 
@@ -4208,7 +3686,7 @@ function colorName(color) {
       "BLEU"
 
   }[
-    color
+    c
   ] || "";
 }
 
@@ -4217,31 +3695,34 @@ function colorName(color) {
 // SECURITE HTML
 // ============================================================
 
-function escapeHtml(text) {
+function escapeHtml(t){
 
-  return String(
-    text
-  )
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
-  .replaceAll(
-    ">",
-    "&gt;"
-  )
-  .replaceAll(
-    '"',
-    "&quot;"
-  )
-  .replaceAll(
-    "'",
-    "&#039;"
-  );
+  return String(t)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 }
 
 
@@ -4249,7 +3730,9 @@ function escapeHtml(text) {
 // VICTOIRE
 // ============================================================
 
-function showWinner(data) {
+function showWinner(
+  data
+){
 
   $("winnerName")
     .textContent =
@@ -4290,16 +3773,16 @@ function showWinner(data) {
 
 
 // ============================================================
-// ENTREES CLAVIER
+// EVENEMENTS CLAVIER
 // ============================================================
 
 $("roomInput")
   .addEventListener(
     "input",
-    event => {
+    e => {
 
-      event.target.value =
-        event.target.value
+      e.target.value =
+        e.target.value
           .toUpperCase()
           .replace(
             /[^A-Z0-9]/g,
@@ -4312,12 +3795,12 @@ $("roomInput")
 $("roomInput")
   .addEventListener(
     "keydown",
-    event => {
+    e => {
 
       if (
-        event.key ===
+        e.key ===
         "Enter"
-      ) {
+      ){
 
         $("nameInput")
           .focus();
@@ -4329,12 +3812,12 @@ $("roomInput")
 $("nameInput")
   .addEventListener(
     "keydown",
-    event => {
+    e => {
 
       if (
-        event.key ===
+        e.key ===
         "Enter"
-      ) {
+      ){
 
         joinRoom();
       }
@@ -4345,12 +3828,12 @@ $("nameInput")
 $("creatorNameInput")
   .addEventListener(
     "keydown",
-    event => {
+    e => {
 
       if (
-        event.key ===
+        e.key ===
         "Enter"
-      ) {
+      ){
 
         createConfiguredRoom();
       }
@@ -4360,5 +3843,4 @@ $("creatorNameInput")
 </script>
 
 </body>
-
 </html>
