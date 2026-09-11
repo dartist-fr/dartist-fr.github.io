@@ -122,7 +122,7 @@ button,input{font-family:inherit}button{cursor:pointer}.hidden{display:none!impo
 <script>
 const SERVER_URL="wss://uno-jeux2soiree.onrender.com";
 const CARD_BASE="cards/";
-let socket=null,room=null,playerId=null,playerName=null,mode="tv",setupMode="tv",gameState=null,pendingCardIndex=null;
+let socket=null,room=null,playerId=null,playerName=null,mode="tv",setupMode="tv",gameState=null,pendingCardIndex=null,socketHeartbeatTimer=null;
 const $=id=>document.getElementById(id);
 function showMessage(t){$("message").textContent=t||""}
 function showSetup(m){setupMode=m;$("homeMenu").classList.add("hidden");$("joinForm").classList.add("hidden");$("setup").classList.remove("hidden");selectMode(m)}
