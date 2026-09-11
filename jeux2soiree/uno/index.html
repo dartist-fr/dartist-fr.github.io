@@ -132,7 +132,7 @@ function createConfiguredRoom(){const handSize=Math.max(1,Math.min(20,parseInt($
 function showJoin(){$("homeMenu").classList.add("hidden");$("setup").classList.add("hidden");$("joinForm").classList.remove("hidden");$("roomInput").focus()}
 function cancelJoin(){$("joinForm").classList.add("hidden");$("homeMenu").classList.remove("hidden");showMessage("")}
 function joinRoom(){const r=$("roomInput").value.trim().toUpperCase(),n=$("nameInput").value.trim();if(!r)return showMessage("Entre le code du salon.");if(!n)return showMessage("Entre ton prénom.");room=r;playerName=n;mode="player";connect({type:"join_room",room,name:n})}
-function connect(message){showMessage("Connexion...");try{socket=new WebSocket(SERVER_URL)}catch(e){showMessage("Impossible de se connecter au serveur.");return}socket.onopen=()=>{showMessage("");send(message)};socket.onmessage=e=>{try{handleMessage(JSON.parse(e.data))}catch(err){console.error(err)}};socket.onerror=()=>showMessage("Erreur de connexion au serveur.");socket.onclose=()=>{if(!$('app').classList.contains('hidden'))showMessage("Connexion au serveur perdue.")}}
+function connect(message){showMessage("Connexion...");if(socketHeartbeatTimer){clearInterval(socketHeartbeatTimer);socketHeartbeatTimer=null}try{socket=new WebSocket(SERVER_URL)}catch(e){showMessage("Impossible de se connecter au serveur.");return}socket.onopen=()=>{showMessage("");send(message);socketHeartbeatTimer=setInterval(()=>{if(socket&&socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:"ping"}))},15000)};socket.onmessage=e=>{try{handleMessage(JSON.parse(e.data))}catch(err){console.error(err)}};socket.onerror=()=>showMessage("Erreur de connexion au serveur.");socket.onclose=()=>{if(socketHeartbeatTimer){clearInterval(socketHeartbeatTimer);socketHeartbeatTimer=null}if(!$('app').classList.contains('hidden'))showMessage("Connexion au serveur perdue. Recharge la page pour te reconnecter.")}}
 function send(data){if(socket&&socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify(data))}
 function handleMessage(data){if(data.type==="room_created"){room=data.room;playerId=data.playerId||null;mode=data.mode||mode;openApp();return}if(data.type==="joined"){room=data.room;playerId=data.playerId;mode=data.mode==="phones"?"phones":"player";openApp();return}if(data.type==="state"){gameState=data.state;render();return}if(data.type==="error"){showMessage(data.message||"Erreur.");return}if(data.type==="color_required"){pendingCardIndex=Number(data.cardIndex);$("colorModal").classList.remove("hidden");return}if(data.type==="round_end"){showWinner(data);return}if(data.type==="action_effect"){showActionEffect(data.effect||{});return}}
 function showActionEffect(effect){
@@ -174,9 +174,15 @@ function showActionEffect(effect){
   $("actionEffectDetail").innerHTML=detail;
 
   clearTimeout(window.actionEffectTimer);
+  clearTimeout(window.actionEffectResetTimer);
+  const effectToken=(window.actionEffectToken||0)+1;
+  window.actionEffectToken=effectToken;
   window.actionEffectTimer=setTimeout(()=>{
+    if(window.actionEffectToken!==effectToken)return;
     box.classList.remove("show");
-    setTimeout(()=>{box.className="action-effect"},100);
+    window.actionEffectResetTimer=setTimeout(()=>{
+      if(window.actionEffectToken===effectToken)box.className="action-effect";
+    },100);
   },1750);
 }
 
