@@ -1,8 +1,9 @@
 const http = require("http");
 const WebSocket = require("ws");
+const crypto = require("crypto");
 
 const PORT =
-    process.env.PORT || 8080;
+    process.env.PORT || 10000;
 
 
 /* =========================================================
@@ -12,7 +13,7 @@ const PORT =
 const server =
     http.createServer((req,res) => {
 
-        res.writeHead(200, {
+        res.writeHead(200,{
             "Content-Type":
                 "text/plain; charset=utf-8"
         });
@@ -41,10 +42,12 @@ const wss =
 const rooms =
     new Map();
 
-
-const COLORS =
-    ["red","yellow","green","blue"];
-
+const COLORS = [
+    "red",
+    "yellow",
+    "green",
+    "blue"
+];
 
 const MAX_PLAYERS = 10;
 
@@ -53,28 +56,31 @@ const MAX_PLAYERS = 10;
    ID
 ========================================================= */
 
-function id() {
+function makeId(){
 
-    return Math.random()
-        .toString(36)
-        .substring(2,10);
+    return crypto
+        .randomBytes(8)
+        .toString("hex");
 
 }
 
 
-function roomCode() {
+function makeRoomCode(){
 
     let code;
 
-    do {
+    do{
 
         code =
-            Math.random()
-            .toString(36)
-            .substring(2,6)
-            .toUpperCase();
+            crypto
+                .randomBytes(3)
+                .toString("hex")
+                .substring(0,4)
+                .toUpperCase();
 
-    } while(rooms.has(code));
+    }while(
+        rooms.has(code)
+    );
 
     return code;
 
@@ -82,61 +88,110 @@ function roomCode() {
 
 
 /* =========================================================
-   PAQUET 108 CARTES
+   PAQUET
 ========================================================= */
 
-function createDeck() {
+function createDeck(){
 
     const deck = [];
 
-
-    for (
+    for(
         const color of COLORS
-    ) {
+    ){
+
+        /*
+         * 0 = 1 exemplaire
+         */
 
         deck.push({
+            id:makeId(),
             color,
-            type: "number",
-            value: 0
+            type:"number",
+            value:0
         });
 
 
-        for (
+        /*
+         * 1 à 9 = 2 exemplaires
+         */
+
+        for(
             let value = 1;
             value <= 9;
             value++
-        ) {
+        ){
 
-            deck.push({
-                color,
-                type: "number",
-                value
-            });
+            for(
+                let copy = 1;
+                copy <= 2;
+                copy++
+            ){
 
-            deck.push({
-                color,
-                type: "number",
-                value
-            });
+                deck.push({
+
+                    id:makeId(),
+
+                    color,
+
+                    type:"number",
+
+                    value,
+
+                    copy
+
+                });
+
+            }
 
         }
 
 
-        for(let i=0;i<2;i++) {
+        /*
+         * Skip / Reverse / +2
+         */
+
+        for(
+            let copy = 1;
+            copy <= 2;
+            copy++
+        ){
 
             deck.push({
+
+                id:makeId(),
+
                 color,
-                type: "skip"
+
+                type:"skip",
+
+                copy
+
             });
 
-            deck.push({
-                color,
-                type: "reverse"
-            });
 
             deck.push({
+
+                id:makeId(),
+
                 color,
-                type: "draw2"
+
+                type:"reverse",
+
+                copy
+
+            });
+
+
+            deck.push({
+
+                id:makeId(),
+
+                color,
+
+                type:"draw2",
+
+                copy
+
             });
 
         }
@@ -144,16 +199,40 @@ function createDeck() {
     }
 
 
-    for(let i=0;i<4;i++) {
+    /*
+     * 4 Wild
+     * 4 Wild +4
+     */
+
+    for(
+        let copy = 1;
+        copy <= 4;
+        copy++
+    ){
 
         deck.push({
-            color: null,
-            type: "wild"
+
+            id:makeId(),
+
+            color:null,
+
+            type:"wild",
+
+            copy
+
         });
 
+
         deck.push({
-            color: null,
-            type: "wild4"
+
+            id:makeId(),
+
+            color:null,
+
+            type:"wild4",
+
+            copy
+
         });
 
     }
@@ -168,24 +247,29 @@ function createDeck() {
    MÉLANGE
 ========================================================= */
 
-function shuffle(deck) {
+function shuffle(deck){
 
-    for (
+    /*
+     * Fisher-Yates avec crypto.randomInt
+     * pour un mélange beaucoup plus propre.
+     */
+
+    for(
         let i = deck.length - 1;
         i > 0;
         i--
-    ) {
+    ){
 
         const j =
-            Math.floor(
-                Math.random() * (i + 1)
+            crypto.randomInt(
+                0,
+                i + 1
             );
 
         [
             deck[i],
             deck[j]
-        ] =
-        [
+        ] = [
             deck[j],
             deck[i]
         ];
@@ -198,43 +282,62 @@ function shuffle(deck) {
 
 
 /* =========================================================
-   ROOM
+   CREATION SALON
 ========================================================= */
 
-function createRoom(hostSocket) {
+function createRoom(
+    hostSocket,
+    displayMode,
+    stacking
+){
 
-    const room =
-        roomCode();
-
-
-    rooms.set(room, {
-
-        room,
-
-        host: hostSocket,
-
-        players: [],
-
-        deck: [],
-
-        discard: [],
-
-        currentPlayer: 0,
-
-        direction: 1,
-
-        currentColor: null,
-
-        status: "waiting",
-
-        lastAction: null,
-
-        winner: null
-
-    });
+    const code =
+        makeRoomCode();
 
 
-    return rooms.get(room);
+    const room = {
+
+        room:code,
+
+        host:hostSocket,
+
+        displayMode,
+
+        settings:{
+
+            stacking:
+                Boolean(stacking)
+
+        },
+
+        players:[],
+
+        deck:[],
+
+        discard:[],
+
+        currentPlayerId:null,
+
+        direction:1,
+
+        currentColor:null,
+
+        pendingDraw:0,
+
+        status:"waiting",
+
+        winner:null
+
+    };
+
+
+    rooms.set(
+        code,
+        room
+    );
+
+
+    return room;
 
 }
 
@@ -243,13 +346,16 @@ function createRoom(hostSocket) {
    ENVOI
 ========================================================= */
 
-function send(socket,data) {
+function send(
+    socket,
+    data
+){
 
-    if (
+    if(
         socket &&
         socket.readyState ===
         WebSocket.OPEN
-    ) {
+    ){
 
         socket.send(
             JSON.stringify(data)
@@ -264,7 +370,10 @@ function send(socket,data) {
    BROADCAST
 ========================================================= */
 
-function broadcast(room,data) {
+function broadcast(
+    room,
+    data
+){
 
     room.players.forEach(
         player => {
@@ -278,10 +387,344 @@ function broadcast(room,data) {
     );
 
 
-    send(
-        room.host,
-        data
+    /*
+     * En mode TV,
+     * le host n'est pas joueur.
+     */
+
+    if(
+        room.displayMode === "tv"
+    ){
+
+        send(
+            room.host,
+            data
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   JOUEUR COURANT
+========================================================= */
+
+function currentPlayer(room){
+
+    return room.players.find(
+        player =>
+            player.id ===
+            room.currentPlayerId
+    ) || null;
+
+}
+
+
+/* =========================================================
+   PROCHAIN JOUEUR
+========================================================= */
+
+function getNextPlayer(
+    room,
+    steps = 1
+){
+
+    if(
+        room.players.length === 0
+    ){
+
+        return null;
+
+    }
+
+
+    const index =
+        room.players.findIndex(
+            player =>
+                player.id ===
+                room.currentPlayerId
+        );
+
+
+    if(index === -1)
+        return room.players[0];
+
+
+    const total =
+        room.players.length;
+
+
+    const nextIndex =
+        (
+            index +
+            room.direction *
+            steps +
+            total * 100
+        ) % total;
+
+
+    return room.players[
+        nextIndex
+    ];
+
+}
+
+
+/* =========================================================
+   PASSER TOUR
+========================================================= */
+
+function nextPlayer(
+    room,
+    steps = 1
+){
+
+    const next =
+        getNextPlayer(
+            room,
+            steps
+        );
+
+
+    if(next){
+
+        room.currentPlayerId =
+            next.id;
+
+        next.hasDrawn =
+            false;
+
+        next.drawnCardId =
+            null;
+
+    }
+
+}
+
+
+/* =========================================================
+   REFILL
+========================================================= */
+
+function refillDeck(room){
+
+    if(
+        room.discard.length <= 1
+    ){
+
+        return;
+
+    }
+
+
+    const top =
+        room.discard.pop();
+
+
+    const recycled =
+        room.discard.splice(
+            0,
+            room.discard.length
+        );
+
+
+    room.deck =
+        shuffle(
+            recycled
+        );
+
+
+    room.discard.push(
+        top
     );
+
+}
+
+
+/* =========================================================
+   PIOCHE UNE CARTE
+========================================================= */
+
+function drawOne(room){
+
+    if(
+        room.deck.length === 0
+    ){
+
+        refillDeck(room);
+
+    }
+
+
+    return room.deck.pop() ||
+        null;
+
+}
+
+
+/* =========================================================
+   PIOCHE PLUSIEURS
+========================================================= */
+
+function drawCards(
+    room,
+    player,
+    amount
+){
+
+    for(
+        let i = 0;
+        i < amount;
+        i++
+    ){
+
+        const card =
+            drawOne(room);
+
+
+        if(card){
+
+            player.hand.push(
+                card
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CARTE JOUABLE
+========================================================= */
+
+function isPlayable(
+    room,
+    player,
+    card
+){
+
+    const top =
+        room.discard[
+            room.discard.length - 1
+        ];
+
+
+    if(!top)
+        return true;
+
+
+    /*
+     * EMPILEMENT +2
+     */
+
+    if(
+        room.pendingDraw > 0
+    ){
+
+        if(
+            room.settings.stacking
+        ){
+
+            return (
+                card.type ===
+                "draw2"
+            );
+
+        }
+
+        return false;
+
+    }
+
+
+    /*
+     * WILD
+     */
+
+    if(
+        card.type === "wild"
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * +4
+     */
+
+    if(
+        card.type === "wild4"
+    ){
+
+        /*
+         * Un +4 n'est jouable
+         * que si le joueur n'a
+         * aucune carte de la couleur
+         * actuelle.
+         */
+
+        return !player.hand.some(
+            other =>
+                other.id !== card.id &&
+                other.color ===
+                room.currentColor
+        );
+
+    }
+
+
+    /*
+     * Même couleur
+     */
+
+    if(
+        card.color ===
+        room.currentColor
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * Même symbole
+     */
+
+    if(
+        card.type ===
+        top.type &&
+        card.type !==
+        "number"
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * Même chiffre
+     */
+
+    if(
+        card.type === "number" &&
+        top.type === "number" &&
+        card.value ===
+        top.value
+    ){
+
+        return true;
+
+    }
+
+
+    return false;
 
 }
 
@@ -290,15 +733,18 @@ function broadcast(room,data) {
    ÉTAT PUBLIC
 ========================================================= */
 
-function publicState(room, viewer) {
+function publicState(
+    room,
+    viewerId
+){
 
     const players =
         room.players.map(
             player => ({
 
-                id: player.id,
+                id:player.id,
 
-                name: player.name,
+                name:player.name,
 
                 cardCount:
                     player.hand.length,
@@ -311,30 +757,38 @@ function publicState(room, viewer) {
         );
 
 
+    const current =
+        currentPlayer(room);
+
+
     let me = null;
 
 
-    if(viewer) {
+    if(viewerId){
 
         const player =
             room.players.find(
-                p => p.id === viewer
+                p =>
+                    p.id ===
+                    viewerId
             );
 
 
-        if(player) {
+        if(player){
 
             me = {
 
-                id: player.id,
+                id:player.id,
 
-                name: player.name,
+                name:player.name,
 
-                hand:
-                    player.hand,
+                hand:player.hand,
 
                 hasDrawn:
                     player.hasDrawn,
+
+                drawnCardId:
+                    player.drawnCardId,
 
                 uno:
                     player.uno
@@ -346,27 +800,24 @@ function publicState(room, viewer) {
     }
 
 
-    const current =
-        room.players[
-            room.currentPlayer
-        ];
+    let canPlayWild4 =
+        false;
 
 
-    let canPlayWild4 = false;
+    if(viewerId){
 
-
-    if(viewer) {
-
-        const p =
+        const player =
             room.players.find(
-                p => p.id === viewer
+                p =>
+                    p.id ===
+                    viewerId
             );
 
 
-        if(p) {
+        if(player){
 
             canPlayWild4 =
-                !p.hand.some(
+                !player.hand.some(
                     card =>
                         card.color ===
                         room.currentColor
@@ -381,6 +832,12 @@ function publicState(room, viewer) {
 
         status:
             room.status,
+
+        displayMode:
+            room.displayMode,
+
+        settings:
+            room.settings,
 
         players,
 
@@ -405,9 +862,25 @@ function publicState(room, viewer) {
         direction:
             room.direction,
 
+        pendingDraw:
+            room.pendingDraw,
+
         me,
 
-        canPlayWild4
+        canPlayWild4,
+
+        isHost:
+            viewerId
+                ? (
+                    room.players.some(
+                        p =>
+                            p.id ===
+                            viewerId &&
+                            p.socket ===
+                            room.host
+                    )
+                )
+                : false
 
     };
 
@@ -415,10 +888,10 @@ function publicState(room, viewer) {
 
 
 /* =========================================================
-   ENVOI ÉTAT
+   ENVOYER ÉTAT
 ========================================================= */
 
-function sendState(room) {
+function sendState(room){
 
     room.players.forEach(
         player => {
@@ -426,12 +899,15 @@ function sendState(room) {
             send(
                 player.socket,
                 {
-                    type: "state",
+
+                    type:"state",
+
                     state:
                         publicState(
                             room,
                             player.id
                         )
+
                 }
             );
 
@@ -439,179 +915,69 @@ function sendState(room) {
     );
 
 
-    send(
-        room.host,
-        {
-            type: "state",
-            state:
-                publicState(room,null)
-        }
-    );
+    /*
+     * TV reçoit l'état complet
+     */
 
-}
+    if(
+        room.displayMode === "tv"
+    ){
 
+        send(
+            room.host,
+            {
 
-/* =========================================================
-   PIOCHE
-========================================================= */
+                type:"state",
 
-function refillDeck(room) {
+                state:
+                    publicState(
+                        room,
+                        null
+                    )
 
-    if (
-        room.discard.length <= 1
-    ) {
-
-        return;
-
-    }
-
-
-    const top =
-        room.discard.pop();
-
-
-    const recycled =
-        room.discard.splice(
-            0,
-            room.discard.length
-        );
-
-
-    room.deck =
-        shuffle(recycled);
-
-
-    room.discard.push(top);
-
-}
-
-
-/* =========================================================
-   PIOCHER
-========================================================= */
-
-function drawOne(room) {
-
-    if(room.deck.length === 0) {
-
-        refillDeck(room);
-
-    }
-
-
-    return room.deck.pop();
-
-}
-
-
-/* =========================================================
-   PROCHAIN JOUEUR
-========================================================= */
-
-function nextPlayer(room,steps=1) {
-
-    const total =
-        room.players.length;
-
-
-    room.currentPlayer =
-        (
-            room.currentPlayer +
-            room.direction * steps +
-            total * 100
-        ) % total;
-
-}
-
-
-/* =========================================================
-   CARTE JOUABLE
-========================================================= */
-
-function isPlayable(
-    room,
-    player,
-    card
-) {
-
-    const top =
-        room.discard[
-            room.discard.length - 1
-        ];
-
-
-    if(!top)
-        return true;
-
-
-    if(card.type === "wild")
-        return true;
-
-
-    if(card.type === "wild4") {
-
-        return !player.hand.some(
-            c =>
-                c.color ===
-                room.currentColor
+            }
         );
 
     }
 
-
-    if(
-        card.color ===
-        room.currentColor
-    )
-        return true;
-
-
-    if(
-        card.type === top.type &&
-        card.type !== "number"
-    )
-        return true;
-
-
-    if(
-        card.type === "number" &&
-        top.type === "number" &&
-        card.value === top.value
-    )
-        return true;
-
-
-    return false;
-
 }
 
 
 /* =========================================================
-   SCORE
+   FIN MANCHE
 ========================================================= */
 
-function cardPoints(card) {
+function cardPoints(card){
 
-    if(card.type === "number")
+    if(
+        card.type === "number"
+    ){
+
         return card.value;
+
+    }
+
 
     if(
         card.type === "skip" ||
         card.type === "reverse" ||
         card.type === "draw2"
-    )
+    ){
+
         return 20;
+
+    }
+
 
     return 50;
 
 }
 
 
-/* =========================================================
-   FIN DE MANCHE
-========================================================= */
-
-function endRound(room,winner) {
+function endRound(
+    room,
+    winner
+){
 
     let points = 0;
 
@@ -620,16 +986,22 @@ function endRound(room,winner) {
         player => {
 
             if(
-                player.id === winner.id
-            )
+                player.id ===
+                winner.id
+            ){
+
                 return;
+
+            }
 
 
             player.hand.forEach(
                 card => {
 
                     points +=
-                        cardPoints(card);
+                        cardPoints(
+                            card
+                        );
 
                 }
             );
@@ -638,11 +1010,13 @@ function endRound(room,winner) {
     );
 
 
-    winner.score += points;
+    winner.score +=
+        points;
 
 
     room.status =
         "finished";
+
 
     room.winner =
         winner.id;
@@ -651,7 +1025,8 @@ function endRound(room,winner) {
     broadcast(
         room,
         {
-            type: "round_end",
+
+            type:"round_end",
 
             winner:
                 winner.name,
@@ -674,18 +1049,21 @@ function endRound(room,winner) {
    DÉMARRER PARTIE
 ========================================================= */
 
-function startGame(room) {
+function startGame(room){
 
     if(
         room.players.length < 2
-    ) {
+    ){
 
         send(
             room.host,
             {
-                type: "error",
+
+                type:"error",
+
                 message:
                     "Il faut au moins 2 joueurs."
+
             }
         );
 
@@ -693,6 +1071,10 @@ function startGame(room) {
 
     }
 
+
+    /*
+     * Nouveau paquet.
+     */
 
     room.deck =
         shuffle(
@@ -702,30 +1084,54 @@ function startGame(room) {
 
     room.discard = [];
 
+    room.pendingDraw = 0;
+
+    room.direction = 1;
+
+    room.winner = null;
+
 
     room.players.forEach(
         player => {
 
             player.hand = [];
 
-            player.hasDrawn = false;
+            player.hasDrawn =
+                false;
 
-            player.uno = false;
+            player.drawnCardId =
+                null;
+
+            player.uno =
+                false;
 
         }
     );
 
 
-    /* 7 cartes chacun */
+    /*
+     * 7 cartes chacun.
+     */
 
-    for(let i=0;i<7;i++) {
+    for(
+        let i = 0;
+        i < 7;
+        i++
+    ){
 
         room.players.forEach(
             player => {
 
-                player.hand.push(
-                    drawOne(room)
-                );
+                const card =
+                    drawOne(room);
+
+                if(card){
+
+                    player.hand.push(
+                        card
+                    );
+
+                }
 
             }
         );
@@ -733,44 +1139,82 @@ function startGame(room) {
     }
 
 
-    /* Première carte */
+    /*
+     * Première carte :
+     * uniquement une carte chiffre.
+     */
 
-    let first;
+    let first = null;
 
-    do {
+
+    while(
+        room.deck.length > 0
+    ){
 
         first =
             drawOne(room);
 
-        if(
-            first.type !==
-            "number"
-        ) {
 
-            room.deck.unshift(first);
+        if(
+            first &&
+            first.type ===
+            "number"
+        ){
+
+            break;
 
         }
 
-    } while(
-        first.type !==
-        "number"
+
+        if(first){
+
+            room.deck.unshift(
+                first
+            );
+
+        }
+
+    }
+
+
+    if(!first){
+
+        send(
+            room.host,
+            {
+
+                type:"error",
+
+                message:
+                    "Impossible de démarrer la partie."
+
+            }
+        );
+
+        return;
+
+    }
+
+
+    room.discard.push(
+        first
     );
 
-
-    room.discard.push(first);
 
     room.currentColor =
         first.color;
 
 
-    room.currentPlayer = 0;
+    /*
+     * Premier joueur.
+     */
 
-    room.direction = 1;
+    room.currentPlayerId =
+        room.players[0].id;
+
 
     room.status =
         "playing";
-
-    room.winner = null;
 
 
     sendState(room);
@@ -779,7 +1223,7 @@ function startGame(room) {
 
 
 /* =========================================================
-   JOUER UNE CARTE
+   JOUER CARTE
 ========================================================= */
 
 function playCard(
@@ -787,30 +1231,37 @@ function playCard(
     player,
     index,
     chosenColor
-) {
+){
 
     if(
-        room.status !== "playing"
-    )
+        room.status !==
+        "playing"
+    ){
+
         return;
+
+    }
 
 
     const current =
-        room.players[
-            room.currentPlayer
-        ];
+        currentPlayer(room);
 
 
     if(
-        current.id !== player.id
-    ) {
+        !current ||
+        current.id !==
+        player.id
+    ){
 
         send(
             player.socket,
             {
-                type: "error",
+
+                type:"error",
+
                 message:
                     "Ce n'est pas ton tour."
+
             }
         );
 
@@ -821,29 +1272,41 @@ function playCard(
 
     if(
         index < 0 ||
-        index >= player.hand.length
-    )
+        index >=
+        player.hand.length
+    ){
+
         return;
+
+    }
 
 
     const card =
         player.hand[index];
 
 
+    /*
+     * Après pioche :
+     * seule la carte piochée
+     * peut être jouée.
+     */
+
     if(
-        !isPlayable(
-            room,
-            player,
-            card
-        )
-    ) {
+        player.hasDrawn &&
+        player.drawnCardId &&
+        card.id !==
+        player.drawnCardId
+    ){
 
         send(
             player.socket,
             {
-                type: "error",
+
+                type:"error",
+
                 message:
-                    "Cette carte ne peut pas être jouée."
+                    "Après avoir pioché, tu peux jouer uniquement la carte piochée."
+
             }
         );
 
@@ -853,22 +1316,51 @@ function playCard(
 
 
     if(
+        !isPlayable(
+            room,
+            player,
+            card
+        )
+    ){
+
+        send(
+            player.socket,
+            {
+
+                type:"error",
+
+                message:
+                    "Cette carte ne peut pas être jouée."
+
+            }
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * WILD / +4 :
+     * couleur obligatoire.
+     */
+
+    if(
         card.type === "wild" ||
         card.type === "wild4"
-    ) {
+    ){
 
         if(
-            !chosenColor ||
             !COLORS.includes(
                 chosenColor
             )
-        ) {
+        ){
 
             send(
                 player.socket,
                 {
-                    type:
-                        "color_required",
+
+                    type:"color_required",
 
                     cardIndex:
                         index
@@ -883,20 +1375,35 @@ function playCard(
     }
 
 
-    player.hand.splice(index,1);
+    /*
+     * Retirer la carte.
+     */
 
-    room.discard.push(card);
+    player.hand.splice(
+        index,
+        1
+    );
 
+
+    room.discard.push(
+        card
+    );
+
+
+    /*
+     * Couleur actuelle.
+     */
 
     if(
         card.type === "wild" ||
         card.type === "wild4"
-    ) {
+    ){
 
         room.currentColor =
             chosenColor;
 
-    } else {
+    }
+    else{
 
         room.currentColor =
             card.color;
@@ -904,13 +1411,53 @@ function playCard(
     }
 
 
+    /*
+     * Si un +2 est posé,
+     * le compteur augmente.
+     */
+
+    if(
+        card.type === "draw2" &&
+        room.settings.stacking
+    ){
+
+        room.pendingDraw += 2;
+
+    }
+    else if(
+        card.type !== "draw2"
+    ){
+
+        /*
+         * Une carte normale
+         * annule tout compteur.
+         */
+
+        if(
+            room.pendingDraw > 0
+        ){
+
+            room.pendingDraw = 0;
+
+        }
+
+    }
+
+
     player.hasDrawn =
         false;
 
+    player.drawnCardId =
+        null;
+
+
+    /*
+     * Victoire.
+     */
 
     if(
         player.hand.length === 0
-    ) {
+    ){
 
         endRound(
             room,
@@ -923,14 +1470,12 @@ function playCard(
 
 
     /*
-       UNO :
-       le joueur doit annoncer UNO
-       lorsqu'il n'a plus qu'une carte.
-    */
+     * UNO.
+     */
 
     if(
         player.hand.length === 1
-    ) {
+    ){
 
         player.uno =
             false;
@@ -938,10 +1483,14 @@ function playCard(
     }
 
 
+    /*
+     * Effets des cartes.
+     */
+
     let steps = 1;
 
 
-    switch(card.type) {
+    switch(card.type){
 
         case "skip":
 
@@ -952,18 +1501,14 @@ function playCard(
 
         case "reverse":
 
-            /*
-               À 2 joueurs,
-               Reverse agit comme Skip.
-            */
-
             if(
                 room.players.length === 2
-            ) {
+            ){
 
                 steps = 2;
 
-            } else {
+            }
+            else{
 
                 room.direction *= -1;
 
@@ -974,18 +1519,44 @@ function playCard(
 
         case "draw2":
 
-            const target =
-                getNextPlayer(
-                    room
-                );
+            /*
+             * Si stacking activé,
+             * on ne fait PAS piocher
+             * immédiatement le joueur suivant.
+             *
+             * Le prochain joueur pourra
+             * ajouter un +2.
+             */
 
-            drawCards(
-                room,
-                target,
-                2
-            );
+            if(
+                room.settings.stacking
+            ){
 
-            steps = 2;
+                steps = 1;
+
+            }
+            else{
+
+                const target =
+                    getNextPlayer(
+                        room
+                    );
+
+
+                if(target){
+
+                    drawCards(
+                        room,
+                        target,
+                        2
+                    );
+
+                }
+
+
+                steps = 2;
+
+            }
 
             break;
 
@@ -997,11 +1568,17 @@ function playCard(
                     room
                 );
 
-            drawCards(
-                room,
-                target4,
-                4
-            );
+
+            if(target4){
+
+                drawCards(
+                    room,
+                    target4,
+                    4
+                );
+
+            }
+
 
             steps = 2;
 
@@ -1022,83 +1599,43 @@ function playCard(
 
 
 /* =========================================================
-   JOUEUR SUIVANT SANS LE MODIFIER
+   PIOCHE
 ========================================================= */
 
-function getNextPlayer(room) {
-
-    const total =
-        room.players.length;
-
-
-    const index =
-        (
-            room.currentPlayer +
-            room.direction +
-            total
-        ) % total;
-
-
-    return room.players[index];
-
-}
-
-
-/* =========================================================
-   PIOCHER PLUSIEURS
-========================================================= */
-
-function drawCards(
+function playerDraw(
     room,
-    player,
-    amount
-) {
-
-    for(
-        let i=0;
-        i<amount;
-        i++
-    ) {
-
-        const card =
-            drawOne(room);
-
-        if(card)
-            player.hand.push(card);
-
-    }
-
-}
-
-
-/* =========================================================
-   PIOCHER UNE CARTE
-========================================================= */
-
-function playerDraw(room,player) {
+    player
+){
 
     if(
-        room.status !== "playing"
-    )
+        room.status !==
+        "playing"
+    ){
+
         return;
+
+    }
 
 
     const current =
-        room.players[
-            room.currentPlayer
-        ];
+        currentPlayer(room);
 
 
     if(
-        current.id !== player.id
-    ) {
+        !current ||
+        current.id !==
+        player.id
+    ){
 
         send(
             player.socket,
             {
-                type: "error",
+
+                type:"error",
+
                 message:
                     "Ce n'est pas ton tour."
+
             }
         );
 
@@ -1107,14 +1644,19 @@ function playerDraw(room,player) {
     }
 
 
-    if(player.hasDrawn) {
+    if(
+        player.hasDrawn
+    ){
 
         send(
             player.socket,
             {
-                type: "error",
+
+                type:"error",
+
                 message:
                     "Tu as déjà pioché."
+
             }
         );
 
@@ -1122,27 +1664,135 @@ function playerDraw(room,player) {
 
     }
 
+
+    /*
+     * CAS EMPILAGE +2
+     */
+
+    if(
+        room.pendingDraw > 0
+    ){
+
+        /*
+         * Le joueur ne peut pas empiler.
+         *
+         * Il prend toute la pénalité.
+         */
+
+        const amount =
+            room.pendingDraw;
+
+
+        drawCards(
+            room,
+            player,
+            amount
+        );
+
+
+        room.pendingDraw =
+            0;
+
+
+        player.hasDrawn =
+            false;
+
+        player.drawnCardId =
+            null;
+
+
+        /*
+         * Le tour passe immédiatement.
+         */
+
+        nextPlayer(
+            room,
+            1
+        );
+
+
+        sendState(room);
+
+        return;
+
+    }
+
+
+    /*
+     * PIOCHE NORMALE
+     */
 
     const card =
         drawOne(room);
 
 
-    if(card) {
+    if(!card){
 
-        player.hand.push(card);
+        send(
+            player.socket,
+            {
+
+                type:"error",
+
+                message:
+                    "La pioche est vide."
+
+            }
+        );
+
+        return;
 
     }
+
+
+    player.hand.push(
+        card
+    );
 
 
     player.hasDrawn =
         true;
 
 
+    player.drawnCardId =
+        card.id;
+
+
     /*
-       Selon les règles classiques :
-       si la carte piochée est jouable,
-       le joueur peut la jouer.
-    */
+     * CORRECTION PRINCIPALE :
+     *
+     * Si la carte piochée n'est PAS jouable,
+     * le tour passe immédiatement.
+     *
+     * Si elle est jouable,
+     * le joueur reste actif et peut
+     * cliquer dessus pour la jouer.
+     */
+
+    const playable =
+        isPlayable(
+            room,
+            player,
+            card
+        );
+
+
+    if(!playable){
+
+        player.hasDrawn =
+            false;
+
+        player.drawnCardId =
+            null;
+
+
+        nextPlayer(
+            room,
+            1
+        );
+
+    }
+
 
     sendState(room);
 
@@ -1153,13 +1803,17 @@ function playerDraw(room,player) {
    UNO
 ========================================================= */
 
-function callUno(room,player) {
+function callUno(
+    room,
+    player
+){
 
     if(
         player.hand.length === 1
-    ) {
+    ){
 
-        player.uno = true;
+        player.uno =
+            true;
 
         sendState(room);
 
@@ -1172,7 +1826,7 @@ function callUno(room,player) {
    NOUVELLE MANCHE
 ========================================================= */
 
-function newGame(room) {
+function newGame(room){
 
     room.status =
         "waiting";
@@ -1184,14 +1838,32 @@ function newGame(room) {
 
     room.discard = [];
 
+    room.currentPlayerId =
+        null;
+
+    room.currentColor =
+        null;
+
+    room.pendingDraw =
+        0;
+
+    room.direction =
+        1;
+
+
     room.players.forEach(
         player => {
 
             player.hand = [];
 
-            player.hasDrawn = false;
+            player.hasDrawn =
+                false;
 
-            player.uno = false;
+            player.drawnCardId =
+                null;
+
+            player.uno =
+                false;
 
         }
     );
@@ -1222,32 +1894,43 @@ wss.on(
                 let data;
 
 
-                try {
+                try{
 
                     data =
                         JSON.parse(
                             raw.toString()
                         );
 
-                } catch(e) {
+                }catch(e){
 
                     return;
 
                 }
 
 
-                /* -----------------------------------------
+                /* =================================================
                    CRÉATION SALON
-                ----------------------------------------- */
+                ================================================= */
 
                 if(
                     data.type ===
                     "create_room"
-                ) {
+                ){
+
+                    const displayMode =
+                        data.mode ===
+                        "phones"
+                            ? "phones"
+                            : "tv";
+
 
                     const room =
                         createRoom(
-                            socket
+                            socket,
+                            displayMode,
+                            Boolean(
+                                data.stacking
+                            )
                         );
 
 
@@ -1255,50 +1938,160 @@ wss.on(
                         room.room;
 
 
-                    send(
-                        socket,
-                        {
-                            type:
-                                "room_created",
+                    /*
+                     * Mode téléphones :
+                     * le créateur est aussi joueur.
+                     */
 
-                            room:
-                                room.room
-                        }
-                    );
+                    if(
+                        displayMode ===
+                        "phones"
+                    ){
 
+                        const player = {
+
+                            id:
+                                makeId(),
+
+                            name:
+                                String(
+                                    data.name ||
+                                    "Joueur"
+                                )
+                                .trim()
+                                .substring(
+                                    0,
+                                    18
+                                ),
+
+                            socket,
+
+                            hand:[],
+
+                            score:0,
+
+                            hasDrawn:false,
+
+                            drawnCardId:null,
+
+                            uno:false
+
+                        };
+
+
+                        room.players.push(
+                            player
+                        );
+
+
+                        socket.playerId =
+                            player.id;
+
+
+                        send(
+                            socket,
+                            {
+
+                                type:
+                                    "room_created",
+
+                                room:
+                                    room.room,
+
+                                playerId:
+                                    player.id
+
+                            }
+                        );
+
+                    }
+                    else{
+
+                        /*
+                         * Mode TV :
+                         * le PC n'est pas joueur.
+                         */
+
+                        send(
+                            socket,
+                            {
+
+                                type:
+                                    "room_created",
+
+                                room:
+                                    room.room
+
+                            }
+                        );
+
+                    }
+
+
+                    sendState(room);
 
                     return;
 
                 }
 
 
-                /* -----------------------------------------
+                /* =================================================
                    REJOINDRE
-                ----------------------------------------- */
+                ================================================= */
 
                 if(
                     data.type ===
                     "join_room"
-                ) {
+                ){
+
+                    const code =
+                        String(
+                            data.room ||
+                            ""
+                        )
+                        .trim()
+                        .toUpperCase();
+
 
                     const room =
                         rooms.get(
-                            String(
-                                data.room
-                            ).toUpperCase()
+                            code
                         );
 
 
-                    if(!room) {
+                    if(!room){
 
                         send(
                             socket,
                             {
-                                type:
-                                    "error",
+
+                                type:"error",
 
                                 message:
                                     "Salon introuvable."
+
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    if(
+                        room.status !==
+                        "waiting"
+                    ){
+
+                        send(
+                            socket,
+                            {
+
+                                type:"error",
+
+                                message:
+                                    "La partie a déjà commencé."
+
                             }
                         );
 
@@ -1310,16 +2103,17 @@ wss.on(
                     if(
                         room.players.length >=
                         MAX_PLAYERS
-                    ) {
+                    ){
 
                         send(
                             socket,
                             {
-                                type:
-                                    "error",
+
+                                type:"error",
 
                                 message:
                                     "Salon complet."
+
                             }
                         );
 
@@ -1334,26 +2128,32 @@ wss.on(
                             "Joueur"
                         )
                         .trim()
-                        .substring(0,18);
+                        .substring(
+                            0,
+                            18
+                        );
 
 
                     const player = {
 
                         id:
-                            id(),
+                            makeId(),
 
                         name:
-                            name || "Joueur",
+                            name ||
+                            "Joueur",
 
                         socket,
 
-                        hand: [],
+                        hand:[],
 
-                        score: 0,
+                        score:0,
 
-                        hasDrawn: false,
+                        hasDrawn:false,
 
-                        uno: false
+                        drawnCardId:null,
+
+                        uno:false
 
                     };
 
@@ -1373,14 +2173,15 @@ wss.on(
                     send(
                         socket,
                         {
-                            type:
-                                "joined",
+
+                            type:"joined",
 
                             room:
                                 room.room,
 
                             playerId:
                                 player.id
+
                         }
                     );
 
@@ -1392,9 +2193,9 @@ wss.on(
                 }
 
 
-                /* -----------------------------------------
-                   ACTIONS
-                ----------------------------------------- */
+                /* =================================================
+                   SALON
+                ================================================= */
 
                 const room =
                     rooms.get(
@@ -1414,19 +2215,24 @@ wss.on(
                     );
 
 
+                /* =================================================
+                   START
+                ================================================= */
+
                 if(
                     data.type ===
                     "start_game"
-                ) {
+                ){
 
                     if(
                         socket !==
                         room.host
-                    ) {
+                    ){
 
                         return;
 
                     }
+
 
                     startGame(room);
 
@@ -1435,10 +2241,14 @@ wss.on(
                 }
 
 
+                /* =================================================
+                   JOUER
+                ================================================= */
+
                 if(
                     data.type ===
                     "play_card"
-                ) {
+                ){
 
                     if(!player)
                         return;
@@ -1458,10 +2268,14 @@ wss.on(
                 }
 
 
+                /* =================================================
+                   PIOCHER
+                ================================================= */
+
                 if(
                     data.type ===
                     "draw"
-                ) {
+                ){
 
                     if(!player)
                         return;
@@ -1477,10 +2291,14 @@ wss.on(
                 }
 
 
+                /* =================================================
+                   UNO
+                ================================================= */
+
                 if(
                     data.type ===
                     "uno"
-                ) {
+                ){
 
                     if(!player)
                         return;
@@ -1496,16 +2314,23 @@ wss.on(
                 }
 
 
+                /* =================================================
+                   NOUVELLE MANCHE
+                ================================================= */
+
                 if(
                     data.type ===
                     "new_game"
-                ) {
+                ){
 
                     if(
                         socket !==
                         room.host
-                    )
+                    ){
+
                         return;
+
+                    }
 
 
                     newGame(room);
@@ -1517,6 +2342,10 @@ wss.on(
             }
         );
 
+
+        /* =========================================================
+           DECONNEXION
+        ========================================================= */
 
         socket.on(
             "close",
@@ -1532,59 +2361,147 @@ wss.on(
                     return;
 
 
-                /*
-                   Le serveur garde le salon
-                   même si un joueur quitte.
-                */
-
-                const index =
+                const playerIndex =
                     room.players.findIndex(
-                        p =>
-                            p.socket ===
+                        player =>
+                            player.socket ===
                             socket
                     );
 
 
-                if(index !== -1) {
+                /*
+                 * Si le socket correspond
+                 * à un joueur.
+                 */
+
+                if(
+                    playerIndex !== -1
+                ){
+
+                    const leavingPlayer =
+                        room.players[
+                            playerIndex
+                        ];
+
+
+                    const wasCurrent =
+                        room.currentPlayerId ===
+                        leavingPlayer.id;
+
 
                     room.players.splice(
-                        index,
+                        playerIndex,
                         1
                     );
 
+
+                    if(
+                        room.players.length ===
+                        0
+                    ){
+
+                        rooms.delete(
+                            room.room
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Si c'était son tour,
+                     * on donne le tour au suivant.
+                     */
+
+                    if(
+                        wasCurrent &&
+                        room.status ===
+                        "playing"
+                    ){
+
+                        const next =
+                            room.players[
+                                playerIndex %
+                                room.players.length
+                            ];
+
+
+                        room.currentPlayerId =
+                            next.id;
+
+                    }
+
+
+                    /*
+                     * Si le host TV part,
+                     * supprimer le salon.
+                     */
+
+                    if(
+                        room.displayMode ===
+                        "tv" &&
+                        socket ===
+                        room.host
+                    ){
+
+                        rooms.delete(
+                            room.room
+                        );
+
+                        room.players.forEach(
+                            player => {
+
+                                send(
+                                    player.socket,
+                                    {
+
+                                        type:"error",
+
+                                        message:
+                                            "L'écran principal a quitté le salon."
+
+                                    }
+                                );
+
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Mode téléphone :
+                     * si le créateur part,
+                     * donner le host au premier joueur.
+                     */
+
+                    if(
+                        room.displayMode ===
+                        "phones" &&
+                        socket ===
+                        room.host
+                    ){
+
+                        if(
+                            room.players.length >
+                            0
+                        ){
+
+                            room.host =
+                                room.players[0]
+                                    .socket;
+
+                        }
+
+                    }
+
+
+                    sendState(room);
+
                 }
-
-
-                /*
-                   Si le joueur dont c'était
-                   le tour part, on remet
-                   l'index correctement.
-                */
-
-                if(
-                    room.players.length === 0
-                ) {
-
-                    rooms.delete(
-                        room.room
-                    );
-
-                    return;
-
-                }
-
-
-                if(
-                    room.currentPlayer >=
-                    room.players.length
-                ) {
-
-                    room.currentPlayer = 0;
-
-                }
-
-
-                sendState(room);
 
             }
         );
