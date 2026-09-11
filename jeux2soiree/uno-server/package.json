@@ -1,0 +1,12 @@
+{
+  "name": "uno-jeux2soiree",
+  "version": "1.0.0",
+  "description": "Serveur multijoueur UNO pour Jeux2Soirée",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
