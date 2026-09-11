@@ -8,7 +8,9 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
@@ -42,9 +44,23 @@ body:after{
   z-index:999;
 }
 
-button,input{font-family:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
+button,
+input{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+
+/* =========================
+   ACCUEIL
+========================= */
 
 #home{
   min-height:100vh;
@@ -71,7 +87,9 @@ button{cursor:pointer}
   text-shadow:4px 4px #000;
 }
 
-.logo span{color:#ff305f}
+.logo span{
+  color:#ff305f;
+}
 
 .subtitle{
   font-size:27px;
@@ -180,6 +198,11 @@ input:focus{
   min-height:26px;
 }
 
+
+/* =========================
+   APPLICATION
+========================= */
+
 #app{
   min-height:100vh;
   display:flex;
@@ -212,6 +235,11 @@ input:focus{
   padding:15px;
 }
 
+
+/* =========================
+   LOBBY
+========================= */
+
 #lobby{
   text-align:center;
   max-width:800px;
@@ -241,11 +269,14 @@ input:focus{
   border-color:#ffd928;
 }
 
-#tvMode{
-  display:flex;
-  flex-direction:column;
-  min-height:calc(100vh - 95px);
+#hostControls{
+  margin-top:20px;
 }
+
+
+/* =========================
+   JOUEURS
+========================= */
 
 .players{
   display:flex;
@@ -277,6 +308,11 @@ input:focus{
   opacity:.75;
 }
 
+
+/* =========================
+   TABLE
+========================= */
+
 .status{
   text-align:center;
   font-size:30px;
@@ -289,7 +325,16 @@ input:focus{
   justify-content:center;
   align-items:center;
   gap:35px;
+}
+
+.table{
   min-height:330px;
+}
+
+.phone-table{
+  min-height:190px;
+  gap:22px;
+  margin:8px 0;
 }
 
 .zone{
@@ -300,6 +345,11 @@ input:focus{
   font-size:24px;
   margin-bottom:8px;
 }
+
+
+/* =========================
+   CARTES
+========================= */
 
 .deck,
 .card{
@@ -341,17 +391,16 @@ input:focus{
   object-fit:fill;
 }
 
-.card .symbol{
-  font-family:'Press Start 2P';
-  font-size:16px;
-  text-align:center;
-}
 
-.card.red{background:#ed214e}
-.card.yellow{background:#ffd928;color:#111}
-.card.green{background:#20bd63}
-.card.blue{background:#2075e8}
-.card.black{background:#151820}
+/* =========================
+   MODE TV
+========================= */
+
+#tvMode{
+  display:flex;
+  flex-direction:column;
+  min-height:calc(100vh - 95px);
+}
 
 .tv-actions{
   text-align:center;
@@ -366,8 +415,19 @@ input:focus{
   font-size:24px;
 }
 
+.start-btn:hover{
+  background:#e92852;
+  color:#fff;
+}
+
+
+/* =========================
+   MODE TELEPHONE
+========================= */
+
 #playerMode{
   max-width:1050px;
+  width:100%;
   margin:auto;
 }
 
@@ -392,11 +452,10 @@ input:focus{
   min-height:30px;
 }
 
-.phone-table{
-  min-height:190px;
-  gap:22px;
-  margin:8px 0;
-}
+
+/* =========================
+   MAIN / DEFAUSSE TELEPHONE
+========================= */
 
 .phone-table .deck,
 .phone-table .card{
@@ -404,29 +463,76 @@ input:focus{
   height:112px;
 }
 
+
+/* =========================
+   MAIN DU JOUEUR
+========================= */
+
+/*
+  IMPORTANT :
+  on utilise une grille.
+  Ainsi les cartes ne se superposent
+  jamais et restent toutes visibles.
+*/
+
 .my-hand{
-  display:flex;
+  width:100%;
+  max-width:600px;
+  margin:15px auto;
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
   gap:7px;
-  flex-wrap:wrap;
   justify-content:center;
-  margin:12px auto;
-  max-width:1000px;
+  align-items:start;
 }
 
+
+/*
+  La carte prend toute la cellule
+  sans jamais dépasser.
+*/
+
 .hand-card{
-  width:68px;
-  height:102px;
+  width:100%;
+  aspect-ratio:2 / 3;
+  min-width:0;
+  position:relative;
   cursor:pointer;
   transition:.15s;
+  overflow:hidden;
+  border-radius:8px;
 }
+
+
+/*
+  CORRECTION PRINCIPALE :
+  les PNG ne gardent plus leur taille
+  originale gigantesque.
+*/
+
+.hand-card img{
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:fill;
+  border-radius:8px;
+}
+
 
 .hand-card:hover{
   transform:translateY(-8px);
 }
 
 .hand-card.playable{
-  box-shadow:0 0 18px #fff;
+  filter:drop-shadow(0 0 7px #fff);
 }
+
+
+/* =========================
+   BOUTONS
+========================= */
 
 .controls{
   display:flex;
@@ -457,6 +563,11 @@ input:focus{
   opacity:.35;
   cursor:not-allowed;
 }
+
+
+/* =========================
+   MODALES
+========================= */
 
 .modal{
   position:fixed;
@@ -504,10 +615,25 @@ input:focus{
   font-size:24px;
 }
 
-.red-btn{background:#ed214e;color:#fff}
-.yellow-btn{background:#ffd928;color:#111}
-.green-btn{background:#20bd63;color:#fff}
-.blue-btn{background:#2075e8;color:#fff}
+.red-btn{
+  background:#ed214e;
+  color:#fff;
+}
+
+.yellow-btn{
+  background:#ffd928;
+  color:#111;
+}
+
+.green-btn{
+  background:#20bd63;
+  color:#fff;
+}
+
+.blue-btn{
+  background:#2075e8;
+  color:#fff;
+}
 
 .winner-name{
   font-family:'Press Start 2P';
@@ -523,6 +649,11 @@ input:focus{
 .modal-actions{
   margin-top:20px;
 }
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:600px){
 
@@ -593,13 +724,23 @@ input:focus{
     height:98px;
   }
 
-  .hand-card{
-    width:58px;
-    height:87px;
-  }
+
+  /*
+    7 cartes tiennent sur l'écran.
+    Elles sont toutes visibles.
+  */
 
   .my-hand{
-    gap:5px;
+    width:100%;
+    max-width:520px;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:4px;
+    padding:0 3px;
+  }
+
+  .hand-card{
+    width:100%;
+    aspect-ratio:2 / 3;
   }
 
   .player-turn{
@@ -614,11 +755,40 @@ input:focus{
   .winner-name{
     font-size:18px;
   }
+
+}
+
+
+/*
+  Très petits téléphones
+*/
+
+@media(max-width:380px){
+
+  .my-hand{
+    gap:3px;
+  }
+
+  .phone-table{
+    gap:10px;
+  }
+
+  .phone-table .deck,
+  .phone-table .card{
+    width:62px;
+    height:90px;
+  }
+
 }
 </style>
 </head>
 
 <body>
+
+
+<!-- =========================
+     ACCUEIL
+========================= -->
 
 <section id="home">
 
@@ -632,35 +802,51 @@ input:focus{
       Jeux2Soirée • Multijoueur
     </div>
 
+
     <div id="homeMenu" class="menu">
 
       <button
         class="main-btn create"
         onclick="showSetup('tv')">
+
         🖥️ CRÉER • TV + TÉLÉPHONES
+
       </button>
+
 
       <button
         class="main-btn"
         onclick="showSetup('phones')">
+
         📱 CRÉER • TÉLÉPHONES UNIQUEMENT
+
       </button>
+
 
       <button
         class="main-btn"
         onclick="showJoin()">
+
         ↗ REJOINDRE UN SALON
+
       </button>
 
     </div>
 
+
+    <!-- CONFIGURATION -->
+
     <div id="setup" class="setup hidden">
 
-      <h2>CONFIGURATION DE LA PARTIE</h2>
+      <h2>
+        CONFIGURATION DE LA PARTIE
+      </h2>
+
 
       <div class="setup-label">
         MODE
       </div>
+
 
       <div class="mode-choice">
 
@@ -668,17 +854,23 @@ input:focus{
           id="modeTvBtn"
           class="mode-btn"
           onclick="selectMode('tv')">
+
           🖥️ TV + TÉLÉPHONES
+
         </button>
+
 
         <button
           id="modePhonesBtn"
           class="mode-btn"
           onclick="selectMode('phones')">
+
           📱 TÉLÉPHONES UNIQUEMENT
+
         </button>
 
       </div>
+
 
       <div id="creatorNameBox" class="hidden">
 
@@ -692,10 +884,11 @@ input:focus{
           placeholder="TON PRÉNOM">
 
         <div class="small">
-          En mode téléphones, le créateur joue aussi dans la partie.
+          Le créateur joue aussi dans la partie.
         </div>
 
       </div>
+
 
       <label class="check-row">
 
@@ -709,31 +902,48 @@ input:focus{
 
       </label>
 
+
       <div class="small">
-        Exemple : +2 → +2 → le suivant prend +4 s'il ne peut pas ajouter de +2.
+
+        Exemple :
+        +2 → +2 → le suivant prend +4
+        s'il ne peut pas ajouter de +2.
+
       </div>
+
 
       <div class="controls">
 
         <button
           class="action-btn"
           onclick="createConfiguredRoom()">
+
           ▶ CRÉER LA PARTIE
+
         </button>
+
 
         <button
           class="action-btn"
           onclick="cancelSetup()">
+
           RETOUR
+
         </button>
 
       </div>
 
     </div>
 
+
+    <!-- REJOINDRE -->
+
     <div id="joinForm" class="setup hidden">
 
-      <h2>REJOINDRE UN SALON</h2>
+      <h2>
+        REJOINDRE UN SALON
+      </h2>
+
 
       <div class="setup-label">
         CODE
@@ -744,6 +954,7 @@ input:focus{
         maxlength="6"
         placeholder="CODE DU SALON">
 
+
       <div class="setup-label">
         TON PRÉNOM
       </div>
@@ -753,25 +964,36 @@ input:focus{
         maxlength="18"
         placeholder="TON PRÉNOM">
 
+
       <div class="controls">
 
         <button
           class="action-btn"
           onclick="joinRoom()">
+
           ↗ REJOINDRE
+
         </button>
+
 
         <button
           class="action-btn"
           onclick="cancelJoin()">
+
           RETOUR
+
         </button>
 
       </div>
 
     </div>
 
-    <div id="message" class="message"></div>
+
+    <div
+      id="message"
+      class="message">
+    </div>
+
 
     <div class="small">
       2 à 10 joueurs
@@ -782,6 +1004,11 @@ input:focus{
 </section>
 
 
+
+<!-- =========================
+     APPLICATION
+========================= -->
+
 <section id="app" class="hidden">
 
   <header class="topbar">
@@ -790,38 +1017,67 @@ input:focus{
       UNO
     </div>
 
+
     <div class="room-code">
+
       SALON :
-      <strong id="roomCodeDisplay">----</strong>
+      <strong id="roomCodeDisplay">
+        ----
+      </strong>
+
     </div>
 
   </header>
 
+
   <main id="gameArea">
+
+
+    <!-- =========================
+         LOBBY
+    ========================= -->
 
     <section id="lobby">
 
-      <div class="big-room" id="lobbyCode">
+      <div
+        class="big-room"
+        id="lobbyCode">
+
         ----
+
       </div>
+
 
       <div class="small">
         Donnez ce code aux autres joueurs
       </div>
 
-      <div class="small" id="modeLabel"></div>
+
+      <div
+        class="small"
+        id="modeLabel">
+      </div>
+
 
       <div
         class="lobby-players"
         id="lobbyPlayers">
       </div>
 
+
+      <!--
+        Le serveur indique maintenant
+        correctement si ce client est l'hôte.
+      -->
+
       <div id="hostControls">
 
         <button
           class="start-btn"
           onclick="startGame()">
+
           ▶ COMMENCER LA PARTIE
+
         </button>
 
       </div>
@@ -829,18 +1085,29 @@ input:focus{
     </section>
 
 
-    <section id="tvMode" class="hidden">
+
+    <!-- =========================
+         TV
+    ========================= -->
+
+    <section
+      id="tvMode"
+      class="hidden">
 
       <div
         class="players"
         id="tvPlayers">
       </div>
 
+
       <div
         class="status"
         id="tvStatus">
+
         En attente...
+
       </div>
+
 
       <div class="table">
 
@@ -855,10 +1122,13 @@ input:focus{
           <div
             class="small"
             id="tvDeckCount">
+
             0 cartes
+
           </div>
 
         </div>
+
 
         <div class="zone">
 
@@ -875,13 +1145,16 @@ input:focus{
 
       </div>
 
+
       <div class="tv-actions">
 
         <button
           class="start-btn hidden"
           id="tvNewGameBtn"
           onclick="newGame()">
+
           ↻ NOUVELLE MANCHE
+
         </button>
 
       </div>
@@ -889,7 +1162,15 @@ input:focus{
     </section>
 
 
-    <section id="playerMode" class="hidden">
+
+    <!-- =========================
+         TELEPHONE
+    ========================= -->
+
+    <section
+      id="playerMode"
+      class="hidden">
+
 
       <div class="player-info">
 
@@ -898,10 +1179,12 @@ input:focus{
           id="playerTurn">
         </div>
 
+
         <div
           class="current-color"
           id="currentColor">
         </div>
+
 
         <div
           class="penalty"
@@ -910,6 +1193,8 @@ input:focus{
 
       </div>
 
+
+      <!-- PIOCHE + DEFAUSSE -->
 
       <div class="phone-table">
 
@@ -927,10 +1212,13 @@ input:focus{
           <div
             class="small"
             id="phoneDeckCount">
+
             0 cartes
+
           </div>
 
         </div>
+
 
         <div class="zone">
 
@@ -948,11 +1236,15 @@ input:focus{
       </div>
 
 
+      <!-- MAIN -->
+
       <div
         class="my-hand"
         id="myHand">
       </div>
 
+
+      <!-- BOUTONS -->
 
       <div class="controls">
 
@@ -960,14 +1252,19 @@ input:focus{
           id="drawBtn"
           class="action-btn"
           onclick="drawCard()">
+
           🃏 PIOCHER
+
         </button>
+
 
         <button
           id="unoBtn"
           class="action-btn uno"
           onclick="callUno()">
+
           UNO !
+
         </button>
 
       </div>
@@ -986,6 +1283,11 @@ input:focus{
 </section>
 
 
+
+<!-- =========================
+     CHOIX COULEUR
+========================= -->
+
 <div
   id="colorModal"
   class="modal hidden">
@@ -996,30 +1298,42 @@ input:focus{
       CHOISIS UNE COULEUR
     </h2>
 
+
     <div class="color-buttons">
 
       <button
         class="color-btn red-btn"
         onclick="chooseColor('red')">
+
         🔴 ROUGE
+
       </button>
+
 
       <button
         class="color-btn yellow-btn"
         onclick="chooseColor('yellow')">
+
         🟡 JAUNE
+
       </button>
+
 
       <button
         class="color-btn green-btn"
         onclick="chooseColor('green')">
+
         🟢 VERT
+
       </button>
+
 
       <button
         class="color-btn blue-btn"
         onclick="chooseColor('blue')">
+
         🔵 BLEU
+
       </button>
 
     </div>
@@ -1028,6 +1342,11 @@ input:focus{
 
 </div>
 
+
+
+<!-- =========================
+     VAINQUEUR
+========================= -->
 
 <div
   id="winnerModal"
@@ -1039,21 +1358,26 @@ input:focus{
       🏆 FIN DE LA MANCHE !
     </h2>
 
+
     <div
       class="winner-name"
       id="winnerName">
     </div>
 
+
     <p>
       remporte la manche !
     </p>
+
 
     <div
       class="winner-points"
       id="winnerPoints">
     </div>
 
+
     <p id="winnerScore"></p>
+
 
     <div class="modal-actions">
 
@@ -1061,13 +1385,18 @@ input:focus{
         id="winnerNewGameBtn"
         class="start-btn hidden"
         onclick="newGame()">
+
         ↻ NOUVELLE MANCHE
+
       </button>
+
 
       <div
         id="winnerWaiting"
         class="small hidden">
+
         En attente de l'hôte...
+
       </div>
 
     </div>
@@ -1077,91 +1406,161 @@ input:focus{
 </div>
 
 
+
 <script>
 
 const SERVER_URL =
   "wss://uno-jeux2soiree.onrender.com";
+
 
 let ws = null;
 let state = null;
 
 let roomCode = "";
 let myPlayerId = null;
+
 let selectedMode = "tv";
 let selectedCardIndex = null;
 
+
+/* =========================
+   UTILITAIRES
+========================= */
 
 const $ = id =>
   document.getElementById(id);
 
 
 function showMessage(text){
-  $("message").textContent = text;
+
+  $("message").textContent =
+    text;
+
 }
 
 
 function connect(){
 
-  if(ws && ws.readyState === WebSocket.OPEN){
+  if(
+    ws &&
+    ws.readyState === WebSocket.OPEN
+  ){
+
     return;
+
   }
 
-  ws = new WebSocket(SERVER_URL);
+
+  ws =
+    new WebSocket(
+      SERVER_URL
+    );
+
 
   ws.onopen = () => {
+
     showMessage("");
+
   };
+
 
   ws.onclose = () => {
-    showMessage("Connexion au serveur perdue.");
+
+    showMessage(
+      "Connexion au serveur perdue."
+    );
+
   };
 
+
   ws.onerror = () => {
-    showMessage("Impossible de contacter le serveur.");
+
+    showMessage(
+      "Impossible de contacter le serveur."
+    );
+
   };
+
 
   ws.onmessage = event => {
 
     let data;
 
+
     try{
-      data = JSON.parse(event.data);
+
+      data =
+        JSON.parse(
+          event.data
+        );
+
     }
     catch{
+
       return;
+
     }
+
 
     handleServerMessage(data);
 
   };
+
 }
 
 
 function send(data){
 
-  if(!ws || ws.readyState !== WebSocket.OPEN){
-    showMessage("Connexion au serveur...");
+  if(
+    !ws ||
+    ws.readyState !== WebSocket.OPEN
+  ){
+
+    showMessage(
+      "Connexion au serveur..."
+    );
+
     return;
+
   }
 
-  ws.send(JSON.stringify(data));
+
+  ws.send(
+    JSON.stringify(data)
+  );
+
 }
 
 
+/* =========================
+   SERVEUR
+========================= */
+
 function handleServerMessage(data){
 
-  if(data.type === "error"){
+  if(
+    data.type === "error"
+  ){
 
-    showMessage(data.message || "Erreur.");
+    showMessage(
+      data.message ||
+      "Erreur."
+    );
+
     return;
 
   }
 
 
-  if(data.type === "room_created"){
+  if(
+    data.type === "room_created"
+  ){
 
-    roomCode = data.room;
-    myPlayerId = data.playerId;
+    roomCode =
+      data.room;
+
+    myPlayerId =
+      data.playerId;
 
     openApp();
 
@@ -1170,10 +1569,15 @@ function handleServerMessage(data){
   }
 
 
-  if(data.type === "joined"){
+  if(
+    data.type === "joined"
+  ){
 
-    roomCode = data.room;
-    myPlayerId = data.playerId;
+    roomCode =
+      data.room;
+
+    myPlayerId =
+      data.playerId;
 
     openApp();
 
@@ -1182,20 +1586,29 @@ function handleServerMessage(data){
   }
 
 
-  if(data.type === "color_required"){
+  if(
+    data.type === "color_required"
+  ){
 
-    selectedCardIndex = data.cardIndex;
+    selectedCardIndex =
+      data.cardIndex;
 
-    $("colorModal").classList.remove("hidden");
+    $("colorModal")
+      .classList.remove(
+        "hidden"
+      );
 
     return;
 
   }
 
 
-  if(data.type === "state"){
+  if(
+    data.type === "state"
+  ){
 
-    state = data.state;
+    state =
+      data.state;
 
     renderState();
 
@@ -1204,7 +1617,9 @@ function handleServerMessage(data){
   }
 
 
-  if(data.type === "round_end"){
+  if(
+    data.type === "round_end"
+  ){
 
     showWinner(data);
 
@@ -1215,24 +1630,60 @@ function handleServerMessage(data){
 }
 
 
+/* =========================
+   OUVRIR APPLICATION
+========================= */
+
 function openApp(){
 
-  $("home").classList.add("hidden");
-  $("app").classList.remove("hidden");
+  $("home")
+    .classList.add(
+      "hidden"
+    );
 
-  $("roomCodeDisplay").textContent = roomCode;
-  $("lobbyCode").textContent = roomCode;
+  $("app")
+    .classList.remove(
+      "hidden"
+    );
+
+
+  $("roomCodeDisplay")
+    .textContent =
+      roomCode;
+
+
+  $("lobbyCode")
+    .textContent =
+      roomCode;
 
 }
 
 
+/* =========================
+   MENU
+========================= */
+
 function showSetup(mode){
 
-  selectedMode = mode;
+  selectedMode =
+    mode;
 
-  $("homeMenu").classList.add("hidden");
-  $("joinForm").classList.add("hidden");
-  $("setup").classList.remove("hidden");
+
+  $("homeMenu")
+    .classList.add(
+      "hidden"
+    );
+
+  $("joinForm")
+    .classList.add(
+      "hidden"
+    );
+
+  $("setup")
+    .classList.remove(
+      "hidden"
+    );
+
 
   selectMode(mode);
 
@@ -1241,57 +1692,99 @@ function showSetup(mode){
 
 function selectMode(mode){
 
-  selectedMode = mode;
+  selectedMode =
+    mode;
 
-  $("modeTvBtn").classList.toggle(
-    "active",
-    mode === "tv"
-  );
 
-  $("modePhonesBtn").classList.toggle(
-    "active",
-    mode === "phones"
-  );
+  $("modeTvBtn")
+    .classList.toggle(
+      "active",
+      mode === "tv"
+    );
 
-  $("creatorNameBox").classList.toggle(
-    "hidden",
-    mode !== "phones"
-  );
+
+  $("modePhonesBtn")
+    .classList.toggle(
+      "active",
+      mode === "phones"
+    );
+
+
+  $("creatorNameBox")
+    .classList.toggle(
+      "hidden",
+      mode !== "phones"
+    );
 
 }
 
 
 function cancelSetup(){
 
-  $("setup").classList.add("hidden");
-  $("homeMenu").classList.remove("hidden");
+  $("setup")
+    .classList.add(
+      "hidden"
+    );
+
+  $("homeMenu")
+    .classList.remove(
+      "hidden"
+    );
 
 }
 
 
 function showJoin(){
 
-  $("homeMenu").classList.add("hidden");
-  $("setup").classList.add("hidden");
-  $("joinForm").classList.remove("hidden");
+  $("homeMenu")
+    .classList.add(
+      "hidden"
+    );
+
+  $("setup")
+    .classList.add(
+      "hidden"
+    );
+
+  $("joinForm")
+    .classList.remove(
+      "hidden"
+    );
 
 }
 
 
 function cancelJoin(){
 
-  $("joinForm").classList.add("hidden");
-  $("homeMenu").classList.remove("hidden");
+  $("joinForm")
+    .classList.add(
+      "hidden"
+    );
+
+  $("homeMenu")
+    .classList.remove(
+      "hidden"
+    );
 
 }
 
 
+/* =========================
+   CREATION SALON
+========================= */
+
 function createConfiguredRoom(){
 
   const name =
-    $("creatorNameInput").value.trim();
+    $("creatorNameInput")
+      .value
+      .trim();
 
-  if(selectedMode === "phones" && !name){
+
+  if(
+    selectedMode === "phones" &&
+    !name
+  ){
 
     showMessage(
       "Entre ton prénom pour jouer."
@@ -1301,41 +1794,67 @@ function createConfiguredRoom(){
 
   }
 
+
   connect();
+
 
   const sendCreate = () => {
 
     send({
+
       type:"create_room",
+
       mode:selectedMode,
+
       name:name,
-      stacking:$("stackingInput").checked
+
+      stacking:
+        $("stackingInput").checked
+
     });
 
   };
 
 
-  if(ws.readyState === WebSocket.OPEN){
+  if(
+    ws.readyState ===
+    WebSocket.OPEN
+  ){
+
     sendCreate();
+
   }
   else{
+
     ws.addEventListener(
       "open",
       sendCreate,
       {once:true}
     );
+
   }
 
 }
 
 
+/* =========================
+   REJOINDRE
+========================= */
+
 function joinRoom(){
 
   const room =
-    $("roomInput").value.trim().toUpperCase();
+    $("roomInput")
+      .value
+      .trim()
+      .toUpperCase();
+
 
   const name =
-    $("nameInput").value.trim();
+    $("nameInput")
+      .value
+      .trim();
+
 
   if(!room){
 
@@ -1347,6 +1866,7 @@ function joinRoom(){
 
   }
 
+
   if(!name){
 
     showMessage(
@@ -1357,32 +1877,49 @@ function joinRoom(){
 
   }
 
+
   connect();
+
 
   const sendJoin = () => {
 
     send({
+
       type:"join_room",
+
       room,
+
       name
+
     });
 
   };
 
 
-  if(ws.readyState === WebSocket.OPEN){
+  if(
+    ws.readyState ===
+    WebSocket.OPEN
+  ){
+
     sendJoin();
+
   }
   else{
+
     ws.addEventListener(
       "open",
       sendJoin,
       {once:true}
     );
+
   }
 
 }
 
+
+/* =========================
+   ACTIONS
+========================= */
 
 function startGame(){
 
@@ -1395,7 +1932,11 @@ function startGame(){
 
 function newGame(){
 
-  $("winnerModal").classList.add("hidden");
+  $("winnerModal")
+    .classList.add(
+      "hidden"
+    );
+
 
   send({
     type:"new_game"
@@ -1424,38 +1965,73 @@ function callUno(){
 
 function chooseColor(color){
 
-  $("colorModal").classList.add("hidden");
+  $("colorModal")
+    .classList.add(
+      "hidden"
+    );
 
-  if(selectedCardIndex === null){
+
+  if(
+    selectedCardIndex === null
+  ){
+
     return;
+
   }
 
+
   send({
+
     type:"play_card",
-    index:selectedCardIndex,
+
+    index:
+      selectedCardIndex,
+
     color
+
   });
 
-  selectedCardIndex = null;
+
+  selectedCardIndex =
+    null;
 
 }
 
 
+/* =========================
+   JOUER CARTE
+========================= */
+
 function playCard(index){
 
-  if(!state || !state.me){
+  if(
+    !state ||
+    !state.me
+  ){
+
     return;
+
   }
 
-  if(state.currentPlayer !== myPlayerId){
+
+  if(
+    state.currentPlayer !==
+    myPlayerId
+  ){
+
     return;
+
   }
+
 
   const card =
     state.me.hand[index];
 
+
   if(!card){
+
     return;
+
   }
 
 
@@ -1464,9 +2040,15 @@ function playCard(index){
     card.type === "wild4"
   ){
 
-    selectedCardIndex = index;
+    selectedCardIndex =
+      index;
 
-    $("colorModal").classList.remove("hidden");
+
+    $("colorModal")
+      .classList.remove(
+        "hidden"
+      );
+
 
     return;
 
@@ -1474,45 +2056,61 @@ function playCard(index){
 
 
   send({
+
     type:"play_card",
+
     index
+
   });
 
 }
 
 
+/* =========================
+   RENDU GLOBAL
+========================= */
+
 function renderState(){
 
   if(!state){
+
     return;
+
   }
 
 
   const isTV =
     state.mode === "tv";
 
-  $("lobby").classList.toggle(
-    "hidden",
-    state.status !== "waiting"
-  );
 
-  $("tvMode").classList.toggle(
-    "hidden",
-    !isTV ||
-    state.status === "waiting"
-  );
-
-  $("playerMode").classList.toggle(
-    "hidden",
-    isTV ||
-    state.status === "waiting"
-  );
+  $("lobby")
+    .classList.toggle(
+      "hidden",
+      state.status !== "waiting"
+    );
 
 
-  $("modeLabel").textContent =
-    isTV
-      ? "🖥️ Mode TV + téléphones"
-      : "📱 Mode téléphones uniquement";
+  $("tvMode")
+    .classList.toggle(
+      "hidden",
+      !isTV ||
+      state.status === "waiting"
+    );
+
+
+  $("playerMode")
+    .classList.toggle(
+      "hidden",
+      isTV ||
+      state.status === "waiting"
+    );
+
+
+  $("modeLabel")
+    .textContent =
+      isTV
+        ? "🖥️ Mode TV + téléphones"
+        : "📱 Mode téléphones uniquement";
 
 
   renderLobby();
@@ -1522,116 +2120,178 @@ function renderState(){
 }
 
 
+/* =========================
+   LOBBY
+========================= */
+
 function renderLobby(){
 
   if(!state){
+
     return;
+
   }
+
 
   const container =
     $("lobbyPlayers");
 
+
   container.innerHTML = "";
 
 
-  state.players.forEach(player => {
+  state.players.forEach(
+    player => {
 
-    const div =
-      document.createElement("div");
-
-    div.className =
-      "lobby-player" +
-      (player.host ? " host" : "");
-
-    div.textContent =
-      (player.host ? "👑 " : "") +
-      player.name;
-
-    container.appendChild(div);
-
-  });
+      const div =
+        document.createElement(
+          "div"
+        );
 
 
-  const me =
-    state.players.find(
-      p => p.id === myPlayerId
-    );
+      div.className =
+        "lobby-player" +
+        (
+          player.host
+            ? " host"
+            : ""
+        );
 
-  const isHost =
-    me && me.host;
 
-  $("hostControls").classList.toggle(
-    "hidden",
-    !isHost
+      div.textContent =
+        (
+          player.host
+            ? "👑 "
+            : ""
+        ) +
+        player.name;
+
+
+      container.appendChild(
+        div
+      );
+
+    }
   );
+
+
+  /*
+    CORRECTION :
+    le serveur fournit directement
+    state.isHost.
+
+    TV :
+    la TV est l'hôte.
+
+    Téléphones :
+    le créateur est joueur + hôte.
+  */
+
+  $("hostControls")
+    .classList.toggle(
+      "hidden",
+      !state.isHost
+    );
 
 }
 
 
+/* =========================
+   TV
+========================= */
+
 function renderTV(){
 
   if(!state){
+
     return;
+
   }
 
 
   const container =
     $("tvPlayers");
 
+
   container.innerHTML = "";
 
 
-  state.players.forEach(player => {
+  state.players.forEach(
+    player => {
 
-    const div =
-      document.createElement("div");
+      const div =
+        document.createElement(
+          "div"
+        );
 
-    div.className =
-      "player-box" +
-      (
-        state.currentPlayer === player.id
-          ? " active"
-          : ""
+
+      div.className =
+        "player-box" +
+        (
+          state.currentPlayer ===
+          player.id
+            ? " active"
+            : ""
+        );
+
+
+      div.innerHTML = `
+
+        <div class="player-name">
+          ${escapeHtml(player.name)}
+        </div>
+
+        <div class="card-count">
+          ${player.cardCount}
+          carte${player.cardCount > 1 ? "s" : ""}
+        </div>
+
+      `;
+
+
+      container.appendChild(
+        div
       );
 
-    div.innerHTML = `
-      <div class="player-name">
-        ${escapeHtml(player.name)}
-      </div>
-      <div class="card-count">
-        ${player.cardCount} carte${player.cardCount > 1 ? "s" : ""}
-      </div>
-    `;
-
-    container.appendChild(div);
-
-  });
+    }
+  );
 
 
-  if(state.status === "playing"){
+  if(
+    state.status === "playing"
+  ){
 
     const current =
-      state.currentPlayerName || "";
+      state.currentPlayerName ||
+      "";
 
-    $("tvStatus").textContent =
-      "🎯 TOUR DE " + current +
-      (
-        state.pendingDraw > 0
-          ? " • +"+state.pendingDraw+" À PRENDRE"
-          : ""
-      );
+
+    $("tvStatus")
+      .textContent =
+        "🎯 TOUR DE " +
+        current +
+        (
+          state.pendingDraw > 0
+            ? " • +" +
+              state.pendingDraw +
+              " À PRENDRE"
+            : ""
+        );
 
   }
   else{
 
-    $("tvStatus").textContent =
-      "En attente...";
+    $("tvStatus")
+      .textContent =
+        "En attente...";
 
   }
 
 
-  $("tvDeckCount").textContent =
-    state.deckCount + " cartes";
+  $("tvDeckCount")
+    .textContent =
+      state.deckCount +
+      " cartes";
 
 
   renderCard(
@@ -1640,60 +2300,85 @@ function renderTV(){
   );
 
 
-  const me =
-    state.players.find(
-      p => p.id === myPlayerId
+  $("tvNewGameBtn")
+    .classList.toggle(
+      "hidden",
+      !state.isHost ||
+      state.status !== "finished"
     );
-
-  const isHost =
-    me && me.host;
-
-  $("tvNewGameBtn").classList.toggle(
-    "hidden",
-    !isHost || state.status !== "finished"
-  );
 
 }
 
 
+/* =========================
+   TELEPHONE
+========================= */
+
 function renderPlayer(){
 
-  if(!state || !state.me){
+  if(
+    !state ||
+    !state.me
+  ){
+
     return;
+
   }
 
 
   const myTurn =
-    state.currentPlayer === myPlayerId;
+    state.currentPlayer ===
+    myPlayerId;
 
 
-  $("playerTurn").textContent =
-    myTurn
-      ? "🎯 C'EST TON TOUR !"
-      : "⏳ TOUR DE " +
-        (state.currentPlayerName || "...");
+  $("playerTurn")
+    .textContent =
+      myTurn
+        ? "🎯 C'EST TON TOUR !"
+        : "⏳ TOUR DE " +
+          (
+            state.currentPlayerName ||
+            "..."
+          );
 
 
   const colors = {
+
     red:"🔴 ROUGE",
+
     yellow:"🟡 JAUNE",
+
     green:"🟢 VERT",
+
     blue:"🔵 BLEU"
+
   };
 
-  $("currentColor").textContent =
-    "Couleur : " +
-    (colors[state.currentColor] || "—");
+
+  $("currentColor")
+    .textContent =
+      "Couleur : " +
+      (
+        colors[
+          state.currentColor
+        ] ||
+        "—"
+      );
 
 
-  $("penalty").textContent =
-    state.pendingDraw > 0
-      ? "⚠️ +"+state.pendingDraw+" À PRENDRE"
-      : "";
+  $("penalty")
+    .textContent =
+      state.pendingDraw > 0
+        ? "⚠️ +" +
+          state.pendingDraw +
+          " À PRENDRE"
+        : "";
 
 
-  $("phoneDeckCount").textContent =
-    state.deckCount + " cartes";
+  $("phoneDeckCount")
+    .textContent =
+      state.deckCount +
+      " cartes";
 
 
   renderCard(
@@ -1705,113 +2390,183 @@ function renderPlayer(){
   renderHand();
 
 
-  $("drawBtn").disabled =
-    !myTurn ||
-    state.me.hasDrawn;
+  /*
+    Après une pioche non jouable,
+    le serveur change déjà de joueur.
+    Donc hasDrawn ne bloque plus
+    définitivement le téléphone.
+  */
+
+  $("drawBtn")
+    .disabled =
+      !myTurn ||
+      state.me.hasDrawn;
 
 
-  $("unoBtn").disabled =
-    !myTurn ||
-    state.me.hand.length !== 1;
+  $("unoBtn")
+    .disabled =
+      !myTurn ||
+      state.me.hand.length !== 1;
 
 
-  $("handInfo").textContent =
-    state.me.hand.length +
-    " carte" +
-    (
-      state.me.hand.length > 1
-        ? "s"
-        : ""
-    );
+  $("handInfo")
+    .textContent =
+      state.me.hand.length +
+      " carte" +
+      (
+        state.me.hand.length > 1
+          ? "s"
+          : ""
+      );
 
 }
 
+
+/* =========================
+   MAIN
+========================= */
 
 function renderHand(){
 
   const container =
     $("myHand");
 
+
   container.innerHTML = "";
 
 
   const hand =
-    state.me.hand || [];
+    state.me.hand ||
+    [];
 
+
+  /*
+    On garde l'ordre par couleur,
+    mais sans modifier la position
+    réelle des cartes dans la main.
+  */
 
   const groups = [
     "red",
     "yellow",
     "green",
     "blue",
-    "wild"
+    null
   ];
 
 
-  groups.forEach(color => {
+  groups.forEach(
+    color => {
 
-    hand.forEach((card,index) => {
+      hand.forEach(
+        (card,index) => {
 
-      if(card.color !== color){
-        return;
-      }
+          if(
+            color !== null &&
+            card.color !== color
+          ){
 
-      const wrapper =
-        document.createElement("div");
+            return;
 
-      wrapper.className =
-        "hand-card";
-
-
-      if(
-        state.currentPlayer === myPlayerId &&
-        isClientPlayable(card)
-      ){
-
-        wrapper.classList.add(
-          "playable"
-        );
-
-      }
+          }
 
 
-      const img =
-        createCardImage(card);
+          if(
+            color === null &&
+            (
+              card.color === "red" ||
+              card.color === "yellow" ||
+              card.color === "green" ||
+              card.color === "blue"
+            )
+          ){
 
-      if(img){
+            return;
 
-        wrapper.appendChild(img);
-
-      }
-      else{
-
-        wrapper.textContent =
-          cardLabel(card);
-
-      }
-
-
-      wrapper.onclick =
-        () => playCard(index);
+          }
 
 
-      container.appendChild(wrapper);
+          const wrapper =
+            document.createElement(
+              "div"
+            );
 
-    });
 
-  });
+          wrapper.className =
+            "hand-card";
+
+
+          if(
+            state.currentPlayer ===
+            myPlayerId &&
+            isClientPlayable(card)
+          ){
+
+            wrapper.classList.add(
+              "playable"
+            );
+
+          }
+
+
+          const img =
+            createCardImage(card);
+
+
+          if(img){
+
+            wrapper.appendChild(
+              img
+            );
+
+          }
+          else{
+
+            wrapper.textContent =
+              cardLabel(card);
+
+          }
+
+
+          wrapper.onclick =
+            () => playCard(index);
+
+
+          container.appendChild(
+            wrapper
+          );
+
+        }
+      );
+
+    }
+  );
 
 }
 
 
+/* =========================
+   JOUABILITE CLIENT
+========================= */
+
 function isClientPlayable(card){
 
   if(!state){
+
     return false;
+
   }
 
 
-  if(state.pendingDraw > 0){
+  /*
+    Pénalité +2 :
+    uniquement un +2 peut
+    être empilé si activé.
+  */
+
+  if(
+    state.pendingDraw > 0
+  ){
 
     return (
       state.settings &&
@@ -1822,33 +2577,50 @@ function isClientPlayable(card){
   }
 
 
-  if(card.type === "wild"){
+  if(
+    card.type === "wild"
+  ){
+
     return true;
+
   }
 
 
-  if(card.type === "wild4"){
+  if(
+    card.type === "wild4"
+  ){
 
     const hasCurrentColor =
       state.me.hand.some(
-        c => c.color === state.currentColor
+        c =>
+          c.color ===
+          state.currentColor
       );
+
 
     return !hasCurrentColor;
 
   }
 
 
-  if(card.color === state.currentColor){
+  if(
+    card.color ===
+    state.currentColor
+  ){
+
     return true;
+
   }
 
 
   const top =
     state.discard;
 
+
   if(!top){
+
     return true;
+
   }
 
 
@@ -1878,10 +2650,17 @@ function isClientPlayable(card){
 }
 
 
+/* =========================
+   IMAGES
+========================= */
+
 function createCardImage(card){
 
   const img =
-    document.createElement("img");
+    document.createElement(
+      "img"
+    );
+
 
   img.alt =
     cardLabel(card);
@@ -1890,117 +2669,170 @@ function createCardImage(card){
   let candidates = [];
 
 
-  if(card.type === "number"){
+  /*
+    CARTES NUMERIQUES
+  */
 
-    if(
-      card.color === "blue" &&
-      card.value === 2
-    ){
+  if(
+    card.type === "number"
+  ){
 
-      candidates = [
-        "cards/Blue- 12.png",
-        "cards/Blue- 2.png"
-      ];
-
-    }
-    else if(
-      card.color === "blue" &&
-      card.value === 3
-    ){
-
-      candidates = [
-        "cards/Blue- 13.png",
-        "cards/Blue- 3.png"
-      ];
-
-    }
-    else{
-
-      const prefix =
-        capitalize(card.color);
-
-      candidates = [
-        `cards/${prefix}- ${card.value}.png`,
-        `cards/${prefix}-${card.value}.png`
-      ];
-
-    }
-
-  }
-
-
-  else if(card.type === "draw2"){
+    /*
+      Tes fichiers bleus ont maintenant
+      les noms normaux Blue- 2.png
+      et Blue- 3.png dans ton dépôt.
+    */
 
     const prefix =
       capitalize(card.color);
 
+
     candidates = [
-      `cards/${prefix} Draw2- 2.png`,
+
+      `cards/${prefix}- ${card.value}.png`,
+
+      `cards/${prefix}-${card.value}.png`
+
+    ];
+
+  }
+
+
+  /*
+    +2
+  */
+
+  else if(
+    card.type === "draw2"
+  ){
+
+    const prefix =
+      capitalize(card.color);
+
+
+    candidates = [
+
       `cards/${prefix} Draw2- 1.png`,
-      `cards/${prefix}Draw2- 2.png`,
-      `cards/${prefix}Draw2- 1.png`
+
+      `cards/${prefix} Draw2- 2.png`,
+
+      `cards/${prefix}Draw2- 1.png`,
+
+      `cards/${prefix}Draw2- 2.png`
+
     ];
 
   }
 
 
-  else if(card.type === "reverse"){
+  /*
+    INVERSION
+  */
+
+  else if(
+    card.type === "reverse"
+  ){
 
     const prefix =
       capitalize(card.color);
 
+
     candidates = [
+
       `cards/${prefix} Reverse- 1.png`,
+
       `cards/${prefix} Reverse- 2.png`,
+
       `cards/${prefix}Reverse- 1.png`,
+
       `cards/${prefix}Reverse- 2.png`
+
     ];
 
   }
 
 
-  else if(card.type === "skip"){
+  /*
+    PASSAGE
+  */
+
+  else if(
+    card.type === "skip"
+  ){
 
     const prefix =
       capitalize(card.color);
 
+
     candidates = [
+
       `cards/${prefix} Skip- 1.png`,
+
       `cards/${prefix} Skip- 2.png`,
+
       `cards/${prefix} Skip- 3.png`,
+
       `cards/${prefix}Skip- 1.png`,
+
       `cards/${prefix}Skip- 2.png`
+
     ];
 
   }
 
 
-  else if(card.type === "wild"){
+  /*
+    WILD
+  */
+
+  else if(
+    card.type === "wild"
+  ){
 
     candidates = [
+
       "cards/Wild-1.png",
+
       "cards/Wild-2.png",
+
       "cards/Wild-3.png",
+
       "cards/Wild-4.png"
+
     ];
 
   }
 
 
-  else if(card.type === "wild4"){
+  /*
+    +4
+  */
+
+  else if(
+    card.type === "wild4"
+  ){
 
     candidates = [
+
       "cards/Draw4- 1.png",
+
       "cards/Draw4- 2.png",
+
       "cards/Draw4- 3.png",
+
       "cards/Draw4- 4.png"
+
     ];
 
   }
 
 
-  if(!candidates.length){
+  if(
+    !candidates.length
+  ){
+
     return null;
+
   }
 
 
@@ -2009,7 +2841,10 @@ function createCardImage(card){
 
   function tryNext(){
 
-    if(candidateIndex >= candidates.length){
+    if(
+      candidateIndex >=
+      candidates.length
+    ){
 
       img.remove();
 
@@ -2017,178 +2852,293 @@ function createCardImage(card){
 
     }
 
+
     img.src =
-      candidates[candidateIndex++];
+      candidates[
+        candidateIndex++
+      ];
 
   }
 
 
-  img.onerror = tryNext;
+  img.onerror =
+    tryNext;
+
 
   tryNext();
+
 
   return img;
 
 }
 
 
-function renderCard(element,card){
+/* =========================
+   CARTE DEFAUSSE
+========================= */
+
+function renderCard(
+  element,
+  card
+){
 
   element.innerHTML = "";
 
+
   if(!card){
+
     return;
+
   }
 
 
   const img =
     createCardImage(card);
 
+
   if(img){
 
-    element.appendChild(img);
+    element.appendChild(
+      img
+    );
 
   }
   else{
 
     element.innerHTML =
-      `<div class="symbol">${cardLabel(card)}</div>`;
-
-    element.className =
-      "card " + (card.color || "black");
+      `<div class="symbol">
+        ${cardLabel(card)}
+      </div>`;
 
   }
 
 }
 
 
+/* =========================
+   NOM CARTE
+========================= */
+
 function cardLabel(card){
 
   if(!card){
+
     return "";
+
   }
 
 
-  if(card.type === "number"){
-    return String(card.value);
+  if(
+    card.type === "number"
+  ){
+
+    return String(
+      card.value
+    );
+
   }
 
-  if(card.type === "skip"){
+
+  if(
+    card.type === "skip"
+  ){
+
     return "⊘";
+
   }
 
-  if(card.type === "reverse"){
+
+  if(
+    card.type === "reverse"
+  ){
+
     return "↔";
+
   }
 
-  if(card.type === "draw2"){
+
+  if(
+    card.type === "draw2"
+  ){
+
     return "+2";
+
   }
 
-  if(card.type === "wild"){
+
+  if(
+    card.type === "wild"
+  ){
+
     return "WILD";
+
   }
 
-  if(card.type === "wild4"){
+
+  if(
+    card.type === "wild4"
+  ){
+
     return "+4";
+
   }
+
 
   return "?";
 
 }
 
 
+/* =========================
+   CAPITALIZE
+========================= */
+
 function capitalize(value){
 
-  return value.charAt(0).toUpperCase() +
-         value.slice(1);
+  return (
+    value.charAt(0).toUpperCase() +
+    value.slice(1)
+  );
 
 }
 
+
+/* =========================
+   SECURITE HTML
+========================= */
 
 function escapeHtml(value){
 
   return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
 
+/* =========================
+   VAINQUEUR
+========================= */
+
 function showWinner(data){
 
   $("winnerModal")
-    .classList.remove("hidden");
-
-  $("winnerName").textContent =
-    "🏆 " + data.winner;
-
-  $("winnerPoints").textContent =
-    "+" + data.points + " points";
-
-  $("winnerScore").textContent =
-    "Score total : " +
-    data.score;
-
-
-  const me =
-    state &&
-    state.players &&
-    state.players.find(
-      p => p.id === myPlayerId
+    .classList.remove(
+      "hidden"
     );
 
 
-  const isHost =
-    me && me.host;
+  $("winnerName")
+    .textContent =
+      "🏆 " +
+      data.winner;
+
+
+  $("winnerPoints")
+    .textContent =
+      "+" +
+      data.points +
+      " points";
+
+
+  $("winnerScore")
+    .textContent =
+      "Score total : " +
+      data.score;
 
 
   $("winnerNewGameBtn")
     .classList.toggle(
       "hidden",
-      !isHost
+      !state.isHost
     );
+
 
   $("winnerWaiting")
     .classList.toggle(
       "hidden",
-      isHost
+      state.isHost
     );
 
 }
 
 
-$("roomInput").addEventListener(
-  "keydown",
-  e => {
-    if(e.key === "Enter"){
-      joinRoom();
+/* =========================
+   ENTER
+========================= */
+
+$("roomInput")
+  .addEventListener(
+    "keydown",
+    e => {
+
+      if(
+        e.key === "Enter"
+      ){
+
+        joinRoom();
+
+      }
+
     }
-  }
-);
+  );
 
 
-$("nameInput").addEventListener(
-  "keydown",
-  e => {
-    if(e.key === "Enter"){
-      joinRoom();
+$("nameInput")
+  .addEventListener(
+    "keydown",
+    e => {
+
+      if(
+        e.key === "Enter"
+      ){
+
+        joinRoom();
+
+      }
+
     }
-  }
-);
+  );
 
 
-$("creatorNameInput").addEventListener(
-  "keydown",
-  e => {
-    if(e.key === "Enter"){
-      createConfiguredRoom();
+$("creatorNameInput")
+  .addEventListener(
+    "keydown",
+    e => {
+
+      if(
+        e.key === "Enter"
+      ){
+
+        createConfiguredRoom();
+
+      }
+
     }
-  }
-);
+  );
 
 </script>
 
