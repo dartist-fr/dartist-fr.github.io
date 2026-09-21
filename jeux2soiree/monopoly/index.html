@@ -222,7 +222,7 @@ input:focus{border-color:var(--red)}
    <div class="layout">
     <div class="board-col">
      <div class="board" id="board">
-      <img src="Monopoly/Plateau-web.jpg" onerror="this.onerror=null;this.src='Monopoly/tableau_a_l_endroit.png'" alt="Plateau Monopoly">
+      <img src="images/plateau/Plateau-web.jpg" onerror="this.onerror=null;this.src='images/plateau/tableau_a_l_endroit.png'" alt="Plateau Monopoly">
       <div class="ov" id="cells"></div>
       <div class="ov" id="tokens"></div>
      </div>
@@ -266,16 +266,24 @@ input:focus{border-color:var(--red)}
    CONFIG
 ========================================================= */
 const SERVER_URL = "wss://uno-jeux2soiree.onrender.com";
-const ASSETS = "Monopoly/";
-const DIR = { chance:"cartes chance", community:"cartes caisse de communauté", rent:"cartes loyer", hyp:"cartes hypotheque", bills:"billets" };
+const ASSETS = "images/";   // ce fichier est dans monopoly/ → monopoly/images/...
+const DIR = { chance:"cartes chance", community:"cartes caisse de communauté", rent:"cartes loyer", hyp:"carte hypotheque", bills:"billets", tok:"figurines", houses:"maisons" };
 const img = (dir, file) => encodeURI(ASSETS + dir + "/" + file + ".png");
 const GC = { brown:"#955b37", lightblue:"#80d9ed", pink:"#e889c7", orange:"#e99042", red:"#e63c3c", yellow:"#f4dc35", green:"#32a85a", darkblue:"#4166c7", station:"#444", utility:"#999" };
 const GORD = Object.keys(GC);
 const BILLS = [10000, 5000, 1000, 500, 100, 50, 20, 10, 5, 1];
 const SKEY = "mono_session";
 const TOKENS = { voiture:"Voiture", bateau:"Bateau", bottes:"Botte", brouette:"Brouette", chapeau:"Chapeau", chien:"Chien", de:"Dé à coudre", fer:"Fer à repasser" };
-const tokSrc = id => encodeURI(ASSETS + "pions/" + id + ".png");
-const houseSrc = n => encodeURI(ASSETS + "maisons/" + (n === 5 ? "hotel" : n) + ".png");
+const TOKFILE = { de:"dé a coudre", fer:"fer a repasser" };   // noms de fichiers différents de l'identifiant
+const tokSrc = id => encodeURI(ASSETS + DIR.tok + "/" + (TOKFILE[id] || id) + ".png");
+const houseSrc = n => encodeURI(ASSETS + DIR.houses + "/" + (n === 5 ? "hotel" : n) + ".png");
+/* Si une image accentuée échoue (accents décomposés type macOS), on réessaie en NFD */
+document.addEventListener("error", e => {
+  const t = e.target;
+  if(t.tagName !== "IMG" || t._nfd) return;
+  t._nfd = 1;
+  try{ const alt = encodeURI(decodeURI(t.getAttribute("src")).normalize("NFD")); if(alt !== t.getAttribute("src")) t.src = alt; }catch(_){}
+}, true);
 const pion = p => p.token ? `<img class="pion" style="--c:${p.color}" src="${tokSrc(p.token)}" alt="">` : "";
 
 /* Géométrie du plateau (en % de l'image) */
