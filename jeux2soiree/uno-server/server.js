@@ -1979,2608 +1979,487 @@ function resetRound(room) {
 
 /* =========================================================
    =========================================================
-   MONOPOLY
+   MONOPOLY  (moteur complet — voir monopoly-server.js)
    =========================================================
 ========================================================= */
 
-/*
- * Monopoly Europe 2001 - France
- *
- * Positions :
- *
- * 0  Départ
- * 1  Vilnius
- * 2  Caisse de communauté
- * 3  Riga
- * 4  Impôt sur le revenu
- * 5  Aéroport Schiphol
- * 6  Sofia
- * 7  Chance
- * 8  Bucarest
- * 9  Varsovie
- * 10 Prison / Simple visite
- * 11 Budapest
- * 12 Parlement européen
- * 13 Berne
- * 14 Helsinki
- * 15 Aéroport de Francfort
- * 16 Stockholm
- * 17 Caisse de communauté
- * 18 Vienne
- * 19 Lisbonne
- * 20 Parc gratuit
- * 21 Madrid
- * 22 Chance
- * 23 Athènes
- * 24 Dublin
- * 25 Aéroport de Londres-Heathrow
- * 26 Londres
- * 27 Copenhague
- * 28 Cour européenne de justice
- * 29 Luxembourg
- * 30 Allez en prison
- * 31 Bruxelles
- * 32 Amsterdam
- * 33 Caisse de communauté
- * 34 Rome
- * 35 Aéroport Roissy-CDG
- * 36 Chance
- * 37 Berlin
- * 38 Taxe de luxe
- * 39 Paris
- */
+const monopolyEngine = (function () {
+'use strict';
+/* =========================================================
+   MONOPOLY • Jeux2Soirée — logique serveur (édition Europe)
+   Usage 1 : node monopoly-server.js         (serveur autonome, PORT)
+   Usage 2 : intégré à ton serveur ws existant :
+       const monopoly = require('./monopoly-server');
+       ws.on('message', raw => { const d = JSON.parse(raw);
+            if (monopoly.handle(ws, d)) return;   // messages "monopoly_*"
+            ...ton code existant... });
+       ws.on('close', () => monopoly.handleClose(ws));
+========================================================= */
+const crypto = require('crypto');
 
-const MONOPOLY_BOARD = [
+const START_MONEY = 1500, GO_SALARY = 200, JAIL_FINE = 50, MAX_PLAYERS = 8;
+const TOKENS = ['voiture', 'bateau', 'bottes', 'brouette', 'chapeau', 'chien', 'de', 'fer']; // pions (Monopoly/pions/<id>.png)
+const COLORS = ['#e92852', '#20bd63', '#2075e8', '#ffd928', '#b566ff', '#ff8a1f', '#20d9d9', '#ff6fb5'];
 
-  {
-    position: 0,
-    type: "start",
-    name: "Départ"
-  },
-
-  {
-    position: 1,
-    type: "property",
-    name: "Vilnius",
-    group: "brown",
-    price: 60,
-    rent: [2, 10, 30, 90, 160, 250]
-  },
-
-  {
-    position: 2,
-    type: "community",
-    name: "Caisse de communauté"
-  },
-
-  {
-    position: 3,
-    type: "property",
-    name: "Riga",
-    group: "brown",
-    price: 60,
-    rent: [4, 20, 60, 180, 320, 450]
-  },
-
-  {
-    position: 4,
-    type: "tax",
-    name: "Impôt sur le revenu",
-    amount: 200
-  },
-
-  {
-    position: 5,
-    type: "station",
-    name: "Aéroport Schiphol",
-    price: 200,
-    rent: [25, 50, 100, 200]
-  },
-
-  {
-    position: 6,
-    type: "property",
-    name: "Sofia",
-    group: "lightblue",
-    price: 100,
-    rent: [6, 30, 90, 270, 400, 550]
-  },
-
-  {
-    position: 7,
-    type: "chance",
-    name: "Chance"
-  },
-
-  {
-    position: 8,
-    type: "property",
-    name: "Bucarest",
-    group: "lightblue",
-    price: 100,
-    rent: [6, 30, 90, 270, 400, 550]
-  },
-
-  {
-    position: 9,
-    type: "property",
-    name: "Varsovie",
-    group: "lightblue",
-    price: 120,
-    rent: [8, 40, 100, 300, 450, 600]
-  },
-
-  {
-    position: 10,
-    type: "jail",
-    name: "Prison / Simple visite"
-  },
-
-  {
-    position: 11,
-    type: "property",
-    name: "Budapest",
-    group: "pink",
-    price: 140,
-    rent: [10, 50, 150, 450, 625, 750]
-  },
-
-  {
-    position: 12,
-    type: "utility",
-    name: "Parlement européen",
-    price: 150
-  },
-
-  {
-    position: 13,
-    type: "property",
-    name: "Berne",
-    group: "pink",
-    price: 140,
-    rent: [10, 50, 150, 450, 625, 750]
-  },
-
-  {
-    position: 14,
-    type: "property",
-    name: "Helsinki",
-    group: "pink",
-    price: 160,
-    rent: [12, 60, 180, 500, 700, 900]
-  },
-
-  {
-    position: 15,
-    type: "station",
-    name: "Aéroport de Francfort",
-    price: 200,
-    rent: [25, 50, 100, 200]
-  },
-
-  {
-    position: 16,
-    type: "property",
-    name: "Stockholm",
-    group: "orange",
-    price: 180,
-    rent: [14, 70, 200, 550, 750, 950]
-  },
-
-  {
-    position: 17,
-    type: "community",
-    name: "Caisse de communauté"
-  },
-
-  {
-    position: 18,
-    type: "property",
-    name: "Vienne",
-    group: "orange",
-    price: 180,
-    rent: [14, 70, 200, 550, 750, 950]
-  },
-
-  {
-    position: 19,
-    type: "property",
-    name: "Lisbonne",
-    group: "orange",
-    price: 200,
-    rent: [16, 80, 220, 600, 800, 1000]
-  },
-
-  {
-    position: 20,
-    type: "freeparking",
-    name: "Parc gratuit"
-  },
-
-  {
-    position: 21,
-    type: "property",
-    name: "Madrid",
-    group: "red",
-    price: 220,
-    rent: [18, 90, 250, 700, 875, 1050]
-  },
-
-  {
-    position: 22,
-    type: "chance",
-    name: "Chance"
-  },
-
-  {
-    position: 23,
-    type: "property",
-    name: "Athènes",
-    group: "red",
-    price: 220,
-    rent: [18, 90, 250, 700, 875, 1050]
-  },
-
-  {
-    position: 24,
-    type: "property",
-    name: "Dublin",
-    group: "red",
-    price: 240,
-    rent: [20, 100, 300, 750, 925, 1100]
-  },
-
-  {
-    position: 25,
-    type: "station",
-    name: "Aéroport de Londres-Heathrow",
-    price: 200,
-    rent: [25, 50, 100, 200]
-  },
-
-  {
-    position: 26,
-    type: "property",
-    name: "Londres",
-    group: "yellow",
-    price: 260,
-    rent: [22, 110, 330, 800, 975, 1150]
-  },
-
-  {
-    position: 27,
-    type: "property",
-    name: "Copenhague",
-    group: "yellow",
-    price: 260,
-    rent: [22, 110, 330, 800, 975, 1150]
-  },
-
-  {
-    position: 28,
-    type: "utility",
-    name: "Cour européenne de justice",
-    price: 150
-  },
-
-  {
-    position: 29,
-    type: "property",
-    name: "Luxembourg",
-    group: "yellow",
-    price: 280,
-    rent: [24, 120, 360, 850, 1025, 1200]
-  },
-
-  {
-    position: 30,
-    type: "gotojail",
-    name: "Allez en prison"
-  },
-
-  {
-    position: 31,
-    type: "property",
-    name: "Bruxelles",
-    group: "green",
-    price: 300,
-    rent: [26, 130, 390, 900, 1100, 1275]
-  },
-
-  {
-    position: 32,
-    type: "property",
-    name: "Amsterdam",
-    group: "green",
-    price: 300,
-    rent: [26, 130, 390, 900, 1100, 1275]
-  },
-
-  {
-    position: 33,
-    type: "community",
-    name: "Caisse de communauté"
-  },
-
-  {
-    position: 34,
-    type: "property",
-    name: "Rome",
-    group: "green",
-    price: 320,
-    rent: [28, 150, 450, 1000, 1200, 1400]
-  },
-
-  {
-    position: 35,
-    type: "station",
-    name: "Aéroport Roissy-Charles-de-Gaulle",
-    price: 200,
-    rent: [25, 50, 100, 200]
-  },
-
-  {
-    position: 36,
-    type: "chance",
-    name: "Chance"
-  },
-
-  {
-    position: 37,
-    type: "property",
-    name: "Berlin",
-    group: "darkblue",
-    price: 350,
-    rent: [35, 175, 500, 1100, 1300, 1500]
-  },
-
-  {
-    position: 38,
-    type: "tax",
-    name: "Taxe de luxe",
-    amount: 100
-  },
-
-  {
-    position: 39,
-    type: "property",
-    name: "Paris",
-    group: "darkblue",
-    price: 400,
-    rent: [50, 200, 600, 1400, 1700, 2000]
-  }
-
+/* ---------- Plateau ---------- */
+// pos, nom, groupe, prix, [loyer, loyer couleur complète, 1M, 2M, 3M, 4M, hôtel], prix maison, carte loyer, carte hypothèque
+const PROPS = [
+  [1, 'Vilnius', 'brown', 60, [2, 4, 10, 30, 90, 160, 250], 50, 'vilnius', 'hyp-vilnius'],
+  [3, 'Riga', 'brown', 60, [4, 8, 20, 60, 180, 320, 450], 50, 'riga', 'hyp-riga'],
+  [6, 'Sofia', 'lightblue', 100, [6, 12, 30, 90, 270, 400, 550], 50, 'sofia', 'hyp-sofia'],
+  [8, 'Bucarest', 'lightblue', 100, [6, 12, 30, 90, 270, 400, 550], 50, 'bucarest', 'hyp-bucarest'],
+  [9, 'Varsovie', 'lightblue', 120, [8, 16, 40, 100, 300, 450, 600], 50, 'varsovie', 'hyp-varsovie'],
+  [11, 'Budapest', 'pink', 140, [10, 20, 50, 150, 450, 625, 750], 100, 'budapest', 'hyp-budapest'],
+  [13, 'Berne', 'pink', 140, [10, 20, 50, 150, 450, 625, 750], 100, 'berne', 'hyp-berne'],
+  [14, 'Helsinki', 'pink', 160, [12, 24, 60, 180, 500, 700, 900], 100, 'helsinki', 'hyp-helsinki'],
+  [16, 'Stockholm', 'orange', 180, [14, 28, 70, 200, 550, 750, 950], 100, 'stockholm', 'hyp-stockholm'],
+  [18, 'Vienne', 'orange', 180, [14, 28, 70, 200, 550, 750, 950], 100, 'vienne', 'hyp-vienne'],
+  [19, 'Lisbonne', 'orange', 200, [16, 32, 80, 220, 600, 800, 1000], 100, 'lisbonne', 'hyp-lisbonne'],
+  [21, 'Madrid', 'red', 220, [18, 36, 90, 250, 700, 875, 1050], 150, 'madrid', 'hyp-madrid'],
+  [23, 'Athènes', 'red', 220, [18, 36, 90, 250, 700, 875, 1050], 150, 'athenes', 'hyp-athenes'],
+  [24, 'Dublin', 'red', 240, [20, 40, 100, 300, 750, 925, 1100], 150, 'dublin', 'hyp-dublin'],
+  [26, 'Londres', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'londres', 'Property Card-17'],
+  [27, 'Copenhague', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'copenhague', 'Property Card-18'],
+  [29, 'Luxembourg', 'yellow', 280, [24, 48, 120, 360, 850, 1025, 1200], 150, 'luxenbourg', 'Property Card-19'],
+  [31, 'Bruxelles', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'bruxelles', 'Property Card-21'],
+  [32, 'Amsterdam', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'amsterdam', 'Property Card-22'],
+  [34, 'Rome', 'green', 320, [28, 56, 150, 450, 1000, 1200, 1400], 200, 'rome', 'Property Card-23'],
+  [37, 'Berlin', 'darkblue', 350, [35, 70, 175, 500, 1100, 1300, 1500], 200, 'berlin', 'Property Card-24'],
+  [39, 'Paris', 'darkblue', 400, [50, 100, 200, 600, 1400, 1700, 2000], 200, 'paris', 'Property Card-25']
 ];
+const STATIONS = [
+  [5, 'Aéroport Schiphol', 'schiphol', 'hyp-schiphol'],
+  [15, 'Aéroport de Francfort', 'francfort', 'hyp-francfort'],
+  [25, 'Aéroport de Londres-Heathrow', 'londres-heathrow', 'hyp-londres-heathrow'],
+  [35, 'Aéroport Roissy-CDG', 'roissy', 'Property Card-20']
+];
+const UTILITIES = [
+  [12, 'Parlement européen', 'parlement', 'Property Card-26'],
+  [28, 'Cour européenne de justice', 'cour', 'Property Card-27']
+];
+const SPECIAL = {
+  0: ['Départ', 'start'], 2: ['Coffre de communauté', 'community'], 4: ['Taxe sur le revenu', 'tax', 150],
+  7: ['Chance', 'chance'], 10: ['Prison / Simple visite', 'jail'], 17: ['Coffre de communauté', 'community'],
+  20: ['Parc gratuit', 'free_parking'], 22: ['Chance', 'chance'], 30: ['Allez en prison', 'go_to_jail'],
+  33: ['Coffre de communauté', 'community'], 36: ['Chance', 'chance'], 38: ['Taxe de luxe', 'tax', 150]
+};
+const BOARD = [];
+for (let i = 0; i < 40; i++) BOARD[i] = { position: i };
+Object.entries(SPECIAL).forEach(([i, [name, type, price]]) => Object.assign(BOARD[i], { name, type, price }));
+PROPS.forEach(([position, name, group, price, rent, houseCost, img, hyp]) =>
+  Object.assign(BOARD[position], { name, type: 'property', group, price, rent, houseCost, img, hyp }));
+STATIONS.forEach(([position, name, img, hyp]) =>
+  Object.assign(BOARD[position], { name, type: 'station', group: 'station', price: 200, img, hyp }));
+UTILITIES.forEach(([position, name, img, hyp]) =>
+  Object.assign(BOARD[position], { name, type: 'utility', group: 'utility', price: 150, img, hyp }));
 
-const MONOPOLY_GROUPS = {
+const GROUPS = {};
+PROPS.forEach(p => (GROUPS[p[2]] = GROUPS[p[2]] || []).push(p[0]));
+const STATION_POS = STATIONS.map(s => s[0]), UTILITY_POS = UTILITIES.map(s => s[0]);
 
-  brown: [
-    1,
-    3
-  ],
+/* ---------- Cartes : [fichier, effet, a, b] ---------- */
+const CHANCE = [
+  ['cartes-chance_Allez_Prison_Direct', 'jail'],
+  ['cartes-chance_Amende_ExcesVitesse_15', 'pay', 15],
+  ['cartes-chance_Avancez_Aeroport', 'near', 'station'],
+  ['cartes-chance_Avancez_Aeroport_2', 'near', 'station'],
+  ['cartes-chance_Avancez_Budapest_200', 'go', 11],
+  ['cartes-chance_Avancez_Depart_200', 'go', 0],
+  ['cartes-chance_Avancez_Dublin_200', 'go', 24],
+  ['cartes-chance_Avancez_Paris', 'go', 39],
+  ['cartes-chance_Avancez_ServicePublic', 'near', 'utility'],
+  ['cartes-chance_Banque_Dividende_50', 'get', 50],
+  ['cartes-chance_Libere_Prison_Conservable', 'keep'],
+  ['cartes-chance_President_Conseil_Payez_50', 'payAll', 50],
+  ['cartes-chance_PretImmobilier_Echeance_150', 'get', 150],
+  ['cartes-chance_Reculez_3_cases', 'back', 3],
+  ['cartes-chance_Reparations_25_100', 'repair', 25, 100],
+  ['cartes-chance_Voyage_Schiphol_200', 'go', 5]
+];
+const COMMUNITY = [
+  ['caisse-commu_Allez_Prison_Direct', 'jail'],
+  ['caisse-commu_Anniversaire_Recevez_10', 'getAll', 10],
+  ['caisse-commu_AssuranceVie_Recevez_100', 'get', 100],
+  ['caisse-commu_Avancez_Depart_200', 'go', 0],
+  ['caisse-commu_ConcoursBeaute_Recevez_10', 'get', 10],
+  ['caisse-commu_ErreurBanque_Recevez_200', 'get', 200],
+  ['caisse-commu_FondsVacances_Recevez_100.png', 'get', 100], // le fichier s'appelle ...100.png.png
+  ['caisse-commu_FraisConsultance_Recevez_25', 'get', 25],
+  ['caisse-commu_FraisHopital_Payez_100', 'pay', 100],
+  ['caisse-commu_FraisMedecin_Payez_50', 'pay', 50],
+  ['caisse-commu_FraisScolarite_Payez_50', 'pay', 50],
+  ['caisse-commu_Heritage_Recevez_100', 'get', 100],
+  ['caisse-commu_Libere_Prison_Conservable', 'keep'],
+  ['caisse-commu_RemboursementImpot_20', 'get', 20],
+  ['caisse-commu_ReparationsVoirie_40_115', 'repair', 40, 115],
+  ['caisse-commu_VenteActions_Recevez_50', 'get', 50]
+];
+const DECKS = { chance: CHANCE, community: COMMUNITY };
+const JAILIDX = { chance: CHANCE.findIndex(c => c[1] === 'keep'), community: COMMUNITY.findIndex(c => c[1] === 'keep') };
+const cardLabel = c => ({
+  jail: () => 'Allez en prison', pay: () => `payez ${c[2]}`, get: () => `recevez ${c[2]}`, getAll: () => `recevez ${c[2]} de chaque joueur`,
+  payAll: () => `payez ${c[2]} à chaque joueur`, go: () => `avancez à ${BOARD[c[2]].name}`,
+  near: () => c[2] === 'station' ? "avancez à l'aéroport le plus proche" : 'avancez au service public le plus proche',
+  keep: () => 'Libéré de prison (conservable)', back: () => `reculez de ${c[2]} cases`, repair: () => `réparations (${c[2]}/maison, ${c[3]}/hôtel)`
+}[c[1]]());
 
-  lightblue: [
-    6,
-    8,
-    9
-  ],
-
-  pink: [
-    11,
-    13,
-    14
-  ],
-
-  orange: [
-    16,
-    18,
-    19
-  ],
-
-  red: [
-    21,
-    23,
-    24
-  ],
-
-  yellow: [
-    26,
-    27,
-    29
-  ],
-
-  green: [
-    31,
-    32,
-    34
-  ],
-
-  darkblue: [
-    37,
-    39
-  ]
-
+/* ---------- Utilitaires ---------- */
+// Intégré au serveur UNO : on réutilise sa Map monopolyRooms (sinon Map locale en mode autonome)
+const rooms = (typeof monopolyRooms !== 'undefined') ? monopolyRooms : new Map();
+const socketInfo = new WeakMap();
+const rid = n => crypto.randomBytes(n).toString('hex');
+const rint = n => crypto.randomInt(n);
+const clean = s => String(s || '').replace(/[<>&"'`]/g, '').trim().slice(0, 18);
+const hhmm = () => new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const byId = (r, id) => r.players.find(p => p.id === id);
+const cur = r => r.players[r.cur];
+const log = (r, text) => { r.logs.push({ time: hhmm(), text }); if (r.logs.length > 80) r.logs.shift(); };
+const unCost = s => Math.round(s.price / 2 * 1.1);
+const send = (ws, o) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); };
+const err = (ws, message, code) => send(ws, { type: 'monopoly_error', message, code });
+const genCode = () => {
+  const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; let c;
+  do { c = Array.from({ length: 5 }, () => a[rint(a.length)]).join(''); } while (rooms.has(c));
+  return c;
 };
 
-/* =========================================================
-   OUTILS MONOPOLY
-========================================================= */
-
-function monopolyBoardTile(position) {
-
-  return (
-    MONOPOLY_BOARD[position] ||
-    null
-  );
-
+/* ---------- Salon / partie ---------- */
+function newPlayer(r, id, name) {
+  return { id, name, token: null, color: COLORS[r.players.length % COLORS.length], money: START_MONEY, position: 0, jail: false, jailTurns: 0, cards: { chance: 0, community: 0 }, bankrupt: false };
 }
-
-function monopolyCreateRoom(
-  socket,
-  hostName
-) {
-
-  const room = {
-
-    room:
-      makeRoomCode(),
-
-    host:
-      socket,
-
-    players: [],
-
-    status:
-      "waiting",
-
-    currentPlayerId:
-      null,
-
-    turn:
-      0,
-
-    dice: null,
-
-    hasRolled:
-      false,
-
-    doubles:
-      0,
-
-    properties:
-      {},
-
-    logs: [],
-
-    winner:
-      null
-
-  };
-
-  monopolyRooms.set(
-    room.room,
-    room
-  );
-
-  const player = {
-
-    id:
-      makeId(),
-
-    name:
-      String(
-        hostName ||
-        "Créateur"
-      )
-      .trim()
-      .slice(0, 18) ||
-      "Créateur",
-
-    socket,
-
-    money:
-      MONOPOLY_START_MONEY,
-
-    position:
-      0,
-
-    bankrupt:
-      false,
-
-    inJail:
-      false,
-
-    jailTurns:
-      0
-
-  };
-
-  room.players.push(
-    player
-  );
-
-  socket.monopolyRoom =
-    room.room;
-
-  socket.monopolyPlayerId =
-    player.id;
-
-  monopolyAddLog(
-    room,
-    `🏠 Salon Monopoly créé par ${player.name}.`
-  );
-
-  return room;
-
-}
-
-function monopolyAddLog(
-  room,
-  text
-) {
-
-  room.logs.push({
-
-    time:
-      new Date().toLocaleTimeString(
-        "fr-FR",
-        {
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      ),
-
-    text
-
+function initGame(r) {
+  Object.assign(r, {
+    status: 'waiting', owners: {}, houses: {}, mortgaged: {}, cur: 0, hasRolled: false, extra: false, doubles: 0, canBuy: false,
+    dice: { one: 0, two: 0, total: 0 }, rollSeq: 0, debt: null, logs: [], winner: null, card: null, cardSeq: 0,
+    decks: { chance: shuffle(CHANCE.map((_, i) => i)), community: shuffle(COMMUNITY.map((_, i) => i)) }
   });
-
-  if (
-    room.logs.length >
-    MONOPOLY_MAX_LOGS
-  ) {
-
-    room.logs.shift();
-
-  }
-
+  r.players.forEach((p, i) => Object.assign(p, { color: COLORS[i % COLORS.length], money: START_MONEY, position: 0, jail: false, jailTurns: 0, cards: { chance: 0, community: 0 }, bankrupt: false }));
+}
+function attach(r, ws, pid) {
+  r.members.set(pid, ws);
+  socketInfo.set(ws, { room: r.code, pid });
+}
+function broadcast(r) {
+  r.touched = Date.now();
+  r.members.forEach((ws, pid) => send(ws, { type: 'monopoly_state', state: view(r, pid) }));
 }
 
-function monopolyCurrentPlayer(
-  room
-) {
+/* ---------- Règles ---------- */
+function supply(r) {
+  let used = 0, hotels = 0;
+  Object.values(r.houses).forEach(h => { if (h === 5) hotels++; else used += h; });
+  return { houses: 32 - used, hotels: 12 - hotels };
+}
+const countType = (r, pid, type) => Object.keys(r.owners).filter(k => r.owners[k] === pid && BOARD[k].type === type).length;
 
-  return room.players.find(
-    player =>
-      player.id ===
-      room.currentPlayerId
-  ) || null;
-
+function rentFor(r, pos, o = {}) {
+  const s = BOARD[pos], owner = r.owners[pos], total = o.total || r.dice.total;
+  if (s.type === 'station') return 25 * 2 ** (countType(r, owner, 'station') - 1) * (o.double ? 2 : 1);
+  if (s.type === 'utility') return (o.x10 || countType(r, owner, 'utility') === 2 ? 10 : 4) * total;
+  const h = r.houses[pos] || 0;
+  if (h > 0) return s.rent[1 + h];
+  return GROUPS[s.group].every(x => r.owners[x] === owner) ? s.rent[1] : s.rent[0];
 }
 
-function monopolyGetNextPlayer(
-  room,
-  fromId
-) {
-
-  const activePlayers =
-    room.players.filter(
-      player =>
-        !player.bankrupt
-    );
-
-  if (
-    activePlayers.length === 0
-  ) {
-
-    return null;
-
-  }
-
-  const index =
-    activePlayers.findIndex(
-      player =>
-        player.id === fromId
-    );
-
-  if (
-    index === -1
-  ) {
-
-    return activePlayers[0];
-
-  }
-
-  return activePlayers[
-    (index + 1) %
-    activePlayers.length
-  ];
-
-}
-
-function monopolySendState(
-  room
-) {
-
-  for (
-    const player of room.players
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_state",
-
-        state:
-          monopolyPublicState(
-            room,
-            player.id
-          )
-      }
-    );
-
-  }
-
-  if (
-    room.host &&
-    !room.players.some(
-      player =>
-        player.socket ===
-        room.host
-    )
-  ) {
-
-    send(
-      room.host,
-      {
-        type:
-          "monopoly_state",
-
-        state:
-          monopolyPublicState(
-            room,
-            null
-          )
-      }
-    );
-
-  }
-
-}
-
-function monopolyPublicState(
-  room,
-  viewerId
-) {
-
-  return {
-
-    room:
-      room.room,
-
-    status:
-      room.status,
-
-    players:
-      room.players.map(
-        player => ({
-
-          id:
-            player.id,
-
-          name:
-            player.name,
-
-          money:
-            player.money,
-
-          position:
-            player.position,
-
-          bankrupt:
-            player.bankrupt,
-
-          inJail:
-            player.inJail,
-
-          jailTurns:
-            player.jailTurns,
-
-          host:
-            player.socket ===
-            room.host
-
-        })
-      ),
-
-    currentPlayer:
-      room.currentPlayerId,
-
-    currentPlayerName:
-      monopolyCurrentPlayer(room)
-        ?.name || null,
-
-    dice:
-      room.dice,
-
-    hasRolled:
-      room.hasRolled,
-
-    doubles:
-      room.doubles,
-
-    properties:
-      room.properties,
-
-    logs:
-      room.logs,
-
-    winner:
-      room.winner,
-
-    me:
-      viewerId
-        ? room.players.find(
-            player =>
-              player.id ===
-              viewerId
-          ) || null
-        : null,
-
-    board:
-      MONOPOLY_BOARD
-
-  };
-
-}
-
-/* =========================================================
-   DÉMARRAGE MONOPOLY
-========================================================= */
-
-function monopolyStartGame(
-  room,
-  socket
-) {
-
-  if (
-    socket !==
-    room.host
-  ) {
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Seul le créateur peut démarrer la partie."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
-    room.players.length <
-    MONOPOLY_MIN_PLAYERS
-  ) {
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          `Il faut au moins ${MONOPOLY_MIN_PLAYERS} joueurs.`
-      }
-    );
-
-    return;
-
-  }
-
-  room.status =
-    "playing";
-
-  room.properties =
-    {};
-
-  room.dice =
-    null;
-
-  room.hasRolled =
-    false;
-
-  room.doubles =
-    0;
-
-  room.turn =
-    0;
-
-  room.winner =
-    null;
-
-  for (
-    const player of room.players
-  ) {
-
-    player.money =
-      MONOPOLY_START_MONEY;
-
-    player.position =
-      0;
-
-    player.bankrupt =
-      false;
-
-    player.inJail =
-      false;
-
-    player.jailTurns =
-      0;
-
-  }
-
-  const starter =
-    room.players[
-      crypto.randomInt(
-        room.players.length
-      )
-    ];
-
-  room.currentPlayerId =
-    starter.id;
-
-  monopolyAddLog(
-    room,
-    `🎲 ${starter.name} commence la partie.`
-  );
-
-  monopolyAddLog(
-    room,
-    `💰 Chaque joueur commence avec ${MONOPOLY_START_MONEY} €.`
-  );
-
-  monopolySendState(room);
-
-}
-
-/* =========================================================
-   LANCER LES DÉS MONOPOLY
-========================================================= */
-
-function monopolyRoll(
-  room,
-  player
-) {
-
-  if (
-    room.status !==
-    "playing"
-  ) {
-    return;
-  }
-
-  if (
-    !player ||
-    player.id !==
-    room.currentPlayerId
-  ) {
-
-    send(
-      player?.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Ce n'est pas ton tour."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
-    room.hasRolled
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Tu as déjà lancé les dés."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
-    player.bankrupt
-  ) {
-    return;
-  }
-
-  const die1 =
-    crypto.randomInt(1, 7);
-
-  const die2 =
-    crypto.randomInt(1, 7);
-
-  const total =
-    die1 + die2;
-
-  room.dice = {
-
-    one:
-      die1,
-
-    two:
-      die2,
-
-    total
-
-  };
-
-  room.hasRolled =
-    true;
-
-  if (
-    die1 === die2
-  ) {
-
-    room.doubles++;
-
-  } else {
-
-    room.doubles = 0;
-
-  }
-
-  /*
-   * Trois doubles :
-   * direction prison.
-   */
-
-  if (
-    room.doubles >= 3
-  ) {
-
-    player.position =
-      10;
-
-    player.inJail =
-      true;
-
-    player.jailTurns =
-      0;
-
-    room.doubles = 0;
-
-    monopolyAddLog(
-      room,
-      `🚔 ${player.name} fait trois doubles et va en prison.`
-    );
-
-    monopolyFinishTurn(
-      room,
-      player,
-      false
-    );
-
-    return;
-
-  }
-
-  const oldPosition =
-    player.position;
-
-  const newPosition =
-    (
-      oldPosition +
-      total
-    ) % 40;
-
-  if (
-    oldPosition +
-    total >=
-    40
-  ) {
-
-    player.money += 200;
-
-    monopolyAddLog(
-      room,
-      `💶 ${player.name} passe par Départ et reçoit 200 €.`
-    );
-
-  }
-
-  player.position =
-    newPosition;
-
-  const tile =
-    monopolyBoardTile(
-      newPosition
-    );
-
-  monopolyAddLog(
-    room,
-    `🎲 ${player.name} fait ${die1} + ${die2} = ${total} et arrive sur ${tile.name}.`
-  );
-
-  monopolyResolveLanding(
-    room,
-    player,
-    tile
-  );
-
-  monopolySendState(room);
-
-}
-
-/* =========================================================
-   ARRIVÉE SUR UNE CASE
-========================================================= */
-
-function monopolyResolveLanding(
-  room,
-  player,
-  tile
-) {
-
-  if (!tile) {
-    return;
-  }
-
-  switch (
-    tile.type
-  ) {
-
-    case "start":
-
-      player.money += 200;
-
-      monopolyAddLog(
-        room,
-        `💶 ${player.name} reçoit 200 € sur Départ.`
-      );
-
-      break;
-
-    case "property":
-    case "station":
-    case "utility":
-
-      monopolyHandleBuyable(
-        room,
-        player,
-        tile
-      );
-
-      break;
-
-    case "tax":
-
-      player.money -=
-        tile.amount;
-
-      monopolyAddLog(
-        room,
-        `🧾 ${player.name} paie ${tile.amount} € de ${tile.name}.`
-      );
-
-      monopolyCheckBankruptcy(
-        room,
-        player
-      );
-
-      break;
-
-    case "gotojail":
-
-      player.position =
-        10;
-
-      player.inJail =
-        true;
-
-      player.jailTurns =
-        0;
-
-      monopolyAddLog(
-        room,
-        `🚔 ${player.name} va directement en prison.`
-      );
-
-      break;
-
-    case "jail":
-
-      if (
-        player.position === 10 &&
-        player.inJail
-      ) {
-
-        monopolyAddLog(
-          room,
-          `🚔 ${player.name} est en prison.`
-        );
-
-      } else {
-
-        monopolyAddLog(
-          room,
-          `👀 ${player.name} est simplement en visite.`
-        );
-
-      }
-
-      break;
-
-    case "chance":
-
-      monopolyApplyChance(
-        room,
-        player
-      );
-
-      break;
-
-    case "community":
-
-      monopolyApplyCommunity(
-        room,
-        player
-      );
-
-      break;
-
-    case "freeparking":
-
-      monopolyAddLog(
-        room,
-        `🅿️ ${player.name} se repose au Parc gratuit.`
-      );
-
-      break;
-
-  }
-
-}
-
-/* =========================================================
-   ACHATS / LOYERS
-========================================================= */
-
-function monopolyHandleBuyable(
-  room,
-  player,
-  tile
-) {
-
-  const ownerId =
-    room.properties[
-      tile.position
-    ];
-
-  if (!ownerId) {
-
-    monopolyAddLog(
-      room,
-      `🏠 ${tile.name} est disponible à l'achat pour ${tile.price} €.`
-    );
-
-    return;
-
-  }
-
-  if (
-    ownerId ===
-    player.id
-  ) {
-
-    monopolyAddLog(
-      room,
-      `🏠 ${player.name} arrive sur sa propriété ${tile.name}.`
-    );
-
-    return;
-
-  }
-
-  const owner =
-    room.players.find(
-      p =>
-        p.id ===
-        ownerId
-    );
-
-  if (
-    !owner ||
-    owner.bankrupt
-  ) {
-
-    delete room.properties[
-      tile.position
-    ];
-
-    monopolyAddLog(
-      room,
-      `🏦 ${tile.name} revient à la banque.`
-    );
-
-    return;
-
-  }
-
-  const rent =
-    monopolyCalculateRent(
-      room,
-      tile,
-      owner
-    );
-
-  player.money -= rent;
-
-  owner.money += rent;
-
-  monopolyAddLog(
-    room,
-    `💸 ${player.name} paie ${rent} € à ${owner.name} pour ${tile.name}.`
-  );
-
-  monopolyCheckBankruptcy(
-    room,
-    player
-  );
-
-}
-
-/* =========================================================
-   CALCUL LOYER
-========================================================= */
-
-function monopolyCalculateRent(
-  room,
-  tile,
-  owner
-) {
-
-  if (
-    tile.type === "station"
-  ) {
-
-    const count =
-      room.players.length &&
-      Object.values(
-        room.properties
-      ).filter(
-        ownerId =>
-          ownerId ===
-          owner.id
-      ).length;
-
-    /*
-     * Nombre de gares possédées.
-     */
-
-    const stations =
-      MONOPOLY_BOARD.filter(
-        item =>
-          item.type ===
-          "station" &&
-          room.properties[
-            item.position
-          ] ===
-          owner.id
-      ).length;
-
-    return (
-      tile.rent[
-        Math.max(
-          0,
-          Math.min(
-            stations - 1,
-            tile.rent.length - 1
-          )
-        )
-      ] ||
-      25
-    );
-
-  }
-
-  if (
-    tile.type === "utility"
-  ) {
-
-    const utilities =
-      MONOPOLY_BOARD.filter(
-        item =>
-          item.type ===
-          "utility" &&
-          room.properties[
-            item.position
-          ] ===
-          owner.id
-      ).length;
-
-    const diceTotal =
-      room.dice?.total ||
-      7;
-
-    return utilities >= 2
-      ? diceTotal * 10
-      : diceTotal * 4;
-
-  }
-
-  /*
-   * V1 :
-   * loyer de base.
-   * Les maisons/hôtels pourront
-   * être ajoutés ensuite.
-   */
-
-  return (
-    tile.rent?.[0] ||
-    0
-  );
-
-}
-
-/* =========================================================
-   ACHETER
-========================================================= */
-
-function monopolyBuy(
-  room,
-  player
-) {
-
-  if (
-    room.status !==
-    "playing"
-  ) {
-    return;
-  }
-
-  if (
-    !player ||
-    player.id !==
-    room.currentPlayerId
-  ) {
-
-    return;
-
-  }
-
-  if (
-    !room.hasRolled
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Lance d'abord les dés."
-      }
-    );
-
-    return;
-
-  }
-
-  const tile =
-    monopolyBoardTile(
-      player.position
-    );
-
-  if (
-    !tile ||
-    ![
-      "property",
-      "station",
-      "utility"
-    ].includes(
-      tile.type
-    )
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Cette case ne peut pas être achetée."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
-    room.properties[
-      tile.position
-    ]
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Cette propriété appartient déjà à quelqu'un."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
-    player.money <
-    tile.price
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          `Tu n'as pas assez d'argent. Prix : ${tile.price} €.`
-      }
-    );
-
-    return;
-
-  }
-
-  player.money -=
-    tile.price;
-
-  room.properties[
-    tile.position
-  ] =
-    player.id;
-
-  monopolyAddLog(
-    room,
-    `🏠 ${player.name} achète ${tile.name} pour ${tile.price} €.`
-  );
-
-  monopolySendState(room);
-
-}
-
-/* =========================================================
-   FIN DE TOUR
-========================================================= */
-
-function monopolyFinishTurn(
-  room,
-  player,
-  allowExtraRoll = true
-) {
-
-  if (
-    room.status !==
-    "playing"
-  ) {
-    return;
-  }
-
-  /*
-   * Un double permet de rejouer.
-   */
-
-  if (
-    allowExtraRoll &&
-    room.dice &&
-    room.dice.one ===
-    room.dice.two &&
-    !player.inJail
-  ) {
-
-    room.hasRolled =
-      false;
-
-    monopolyAddLog(
-      room,
-      `🎲 Double ! ${player.name} rejoue.`
-    );
-
-    monopolySendState(room);
-
-    return;
-
-  }
-
-  room.hasRolled =
-    false;
-
-  room.dice =
-    null;
-
-  room.doubles =
-    0;
-
-  const next =
-    monopolyGetNextPlayer(
-      room,
-      player.id
-    );
-
-  if (!next) {
-
-    monopolyEndGame(
-      room
-    );
-
-    return;
-
-  }
-
-  room.currentPlayerId =
-    next.id;
-
-  room.turn++;
-
-  monopolyAddLog(
-    room,
-    `➡️ C'est au tour de ${next.name}.`
-  );
-
-  monopolySendState(room);
-
-}
-
-/* =========================================================
-   FIN DE TOUR DEMANDÉE PAR CLIENT
-========================================================= */
-
-function monopolyEndTurn(
-  room,
-  player
-) {
-
-  if (
-    room.status !==
-    "playing"
-  ) {
-    return;
-  }
-
-  if (
-    !player ||
-    player.id !==
-    room.currentPlayerId
-  ) {
-    return;
-  }
-
-  if (
-    !room.hasRolled
-  ) {
-
-    send(
-      player.socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Tu dois d'abord lancer les dés."
-      }
-    );
-
-    return;
-
-  }
-
-  /*
-   * Si le joueur fait un double,
-   * le serveur laisse normalement
-   * rejouer automatiquement.
-   *
-   * Ici end_turn force simplement
-   * le passage.
-   */
-
-  room.hasRolled =
-    false;
-
-  room.dice =
-    null;
-
-  room.doubles =
-    0;
-
-  const next =
-    monopolyGetNextPlayer(
-      room,
-      player.id
-    );
-
-  if (!next) {
-
-    monopolyEndGame(
-      room
-    );
-
-    return;
-
-  }
-
-  room.currentPlayerId =
-    next.id;
-
-  room.turn++;
-
-  monopolyAddLog(
-    room,
-    `➡️ ${player.name} termine son tour.`
-  );
-
-  monopolyAddLog(
-    room,
-    `🎲 C'est au tour de ${next.name}.`
-  );
-
-  monopolySendState(room);
-
-}
-
-/* =========================================================
-   CHANCE
-========================================================= */
-
-function monopolyApplyChance(
-  room,
-  player
-) {
-
-  const cards = [
-
-    {
-      text:
-        "Avance jusqu'à Paris.",
-      action() {
-
-        player.position = 39;
-
-      }
-    },
-
-    {
-      text:
-        "Avance jusqu'à Londres.",
-      action() {
-
-        player.position = 26;
-
-      }
-    },
-
-    {
-      text:
-        "Recule de 3 cases.",
-      action() {
-
-        player.position =
-          (
-            player.position -
-            3 +
-            40
-          ) % 40;
-
-      }
-    },
-
-    {
-      text:
-        "Recevez 50 €.",
-      action() {
-
-        player.money += 50;
-
-      }
-    },
-
-    {
-      text:
-        "Payez 50 €.",
-      action() {
-
-        player.money -= 50;
-
-      }
-    },
-
-    {
-      text:
-        "Allez en prison.",
-      action() {
-
-        player.position = 10;
-
-        player.inJail = true;
-
-      }
-    }
-
-  ];
-
-  const card =
-    cards[
-      crypto.randomInt(
-        cards.length
-      )
-    ];
-
-  card.action();
-
-  monopolyAddLog(
-    room,
-    `❓ Chance : ${card.text}`
-  );
-
-  monopolyCheckBankruptcy(
-    room,
-    player
-  );
-
-}
-
-/* =========================================================
-   CAISSE DE COMMUNAUTÉ
-========================================================= */
-
-function monopolyApplyCommunity(
-  room,
-  player
-) {
-
-  const cards = [
-
-    {
-      text:
-        "Vous recevez 100 €.",
-      action() {
-
-        player.money += 100;
-
-      }
-    },
-
-    {
-      text:
-        "Vous recevez 50 €.",
-      action() {
-
-        player.money += 50;
-
-      }
-    },
-
-    {
-      text:
-        "Payez 50 €.",
-      action() {
-
-        player.money -= 50;
-
-      }
-    },
-
-    {
-      text:
-        "Payez 100 €.",
-      action() {
-
-        player.money -= 100;
-
-      }
-    },
-
-    {
-      text:
-        "Allez en prison.",
-      action() {
-
-        player.position = 10;
-
-        player.inJail = true;
-
-      }
-    }
-
-  ];
-
-  const card =
-    cards[
-      crypto.randomInt(
-        cards.length
-      )
-    ];
-
-  card.action();
-
-  monopolyAddLog(
-    room,
-    `📦 Caisse de communauté : ${card.text}`
-  );
-
-  monopolyCheckBankruptcy(
-    room,
-    player
-  );
-
-}
-
-/* =========================================================
-   FAILLITE
-========================================================= */
-
-function monopolyCheckBankruptcy(
-  room,
-  player
-) {
-
-  if (
-    player.money >= 0 ||
-    player.bankrupt
-  ) {
-
-    return false;
-
-  }
-
-  player.bankrupt =
-    true;
-
-  /*
-   * On libère les propriétés.
-   */
-
-  for (
-    const position of Object.keys(
-      room.properties
-    )
-  ) {
-
-    if (
-      room.properties[
-        position
-      ] === player.id
-    ) {
-
-      delete room.properties[
-        position
-      ];
-
-    }
-
-  }
-
-  monopolyAddLog(
-    room,
-    `💥 ${player.name} est en faillite !`
-  );
-
-  if (
-    room.currentPlayerId ===
-    player.id
-  ) {
-
-    room.hasRolled =
-      false;
-
-    room.dice =
-      null;
-
-    room.doubles =
-      0;
-
-  }
-
-  const active =
-    room.players.filter(
-      p =>
-        !p.bankrupt
-    );
-
-  if (
-    active.length <= 1
-  ) {
-
-    monopolyEndGame(
-      room
-    );
-
+function pay(r, p, pays) {
+  pays = pays.filter(x => x[1] > 0);
+  if (!pays.length) return true;
+  const total = pays.reduce((a, x) => a + x[1], 0);
+  if (r.debt && r.debt.pid === p.id) { r.debt.payments.push(...pays); r.debt.total += total; return false; }
+  if (p.money >= total) {
+    p.money -= total;
+    pays.forEach(([to, a]) => { const q = to && byId(r, to); if (q) q.money += a; });
     return true;
-
   }
-
-  if (
-    room.currentPlayerId ===
-    player.id
-  ) {
-
-    const next =
-      monopolyGetNextPlayer(
-        room,
-        player.id
-      );
-
-    room.currentPlayerId =
-      next
-        ? next.id
-        : null;
-
-  }
-
-  monopolySendState(room);
-
-  return true;
-
+  r.debt = { pid: p.id, payments: pays, total };
+  log(r, `⚠️ ${p.name} doit ${total} mais n'a que ${p.money} : vendre, hypothéquer ou faire faillite.`);
+  return false;
+}
+function settle(r) {
+  const d = r.debt; if (!d) return;
+  const p = byId(r, d.pid);
+  if (p.money >= d.total) { r.debt = null; pay(r, p, d.payments); log(r, `✅ ${p.name} règle sa dette (${d.total}).`); }
 }
 
-/* =========================================================
-   FIN DE PARTIE
-========================================================= */
+function sendToJail(r, p) {
+  p.position = 10; p.jail = true; p.jailTurns = 0; r.extra = false; r.canBuy = false;
+  log(r, `🔒 ${p.name} va en prison.`);
+}
+function goTo(r, p, dest, passGo, o) {
+  p.position = dest;
+  if (passGo) { p.money += GO_SALARY; log(r, `💶 ${p.name} passe par le Départ (+${GO_SALARY}).`); }
+  land(r, p, o);
+}
+const move = (r, p, steps) => { const np = p.position + steps; goTo(r, p, ((np % 40) + 40) % 40, np >= 40); };
+const advance = (r, p, dest) => goTo(r, p, dest, dest < p.position);
 
-function monopolyEndGame(
-  room
-) {
-
-  const active =
-    room.players.filter(
-      player =>
-        !player.bankrupt
-    );
-
-  if (
-    active.length === 1
-  ) {
-
-    room.winner =
-      active[0].id;
-
-    room.status =
-      "finished";
-
-    room.currentPlayerId =
-      null;
-
-    room.hasRolled =
-      false;
-
-    room.dice =
-      null;
-
-    monopolyAddLog(
-      room,
-      `🏆 ${active[0].name} remporte la partie !`
-    );
-
-  } else {
-
-    room.status =
-      "finished";
-
-    room.currentPlayerId =
-      null;
-
+function land(r, p, o = {}) {
+  const s = BOARD[p.position];
+  r.canBuy = false;
+  switch (s.type) {
+    case 'tax': log(r, `💸 ${p.name} paie ${s.price} (${s.name}).`); pay(r, p, [[null, s.price]]); break;
+    case 'go_to_jail': sendToJail(r, p); break;
+    case 'chance': case 'community': draw(r, p, s.type); break;
+    case 'property': case 'station': case 'utility': {
+      const ow = r.owners[p.position];
+      if (!ow) { r.canBuy = true; log(r, `📍 ${p.name} arrive sur ${s.name} (${s.price}).`); }
+      else if (ow !== p.id && !r.mortgaged[p.position]) {
+        const rent = rentFor(r, p.position, o);
+        log(r, `🏠 ${p.name} paie ${rent} à ${byId(r, ow).name} (${s.name}).`);
+        pay(r, p, [[ow, rent]]);
+      }
+    }
   }
-
-  monopolySendState(room);
-
 }
 
-/* =========================================================
-   REJOINDRE MONOPOLY
-========================================================= */
-
-function monopolyJoinRoom(
-  socket,
-  data
-) {
-
-  const code =
-    String(
-      data.room || ""
-    )
-    .trim()
-    .toUpperCase();
-
-  const room =
-    monopolyRooms.get(code);
-
-  if (!room) {
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Salon Monopoly introuvable."
-      }
-    );
-
-    return;
-
+function draw(r, p, deck) {
+  const idx = r.decks[deck].shift(), c = DECKS[deck][idx], [file, kind, a, b] = c;
+  r.card = { seq: ++r.cardSeq, deck, file, player: p.name };
+  log(r, `🃏 ${p.name} pioche ${deck === 'chance' ? 'Chance' : 'Caisse de communauté'} : ${cardLabel(c)}.`);
+  if (kind === 'keep') { p.cards[deck]++; return; }
+  r.decks[deck].push(idx);
+  const others = r.players.filter(q => q !== p && !q.bankrupt);
+  switch (kind) {
+    case 'jail': sendToJail(r, p); break;
+    case 'pay': pay(r, p, [[null, a]]); break;
+    case 'get': p.money += a; break;
+    case 'getAll': others.forEach(q => { const x = Math.min(a, q.money); q.money -= x; p.money += x; }); break;
+    case 'payAll': pay(r, p, others.map(q => [q.id, a])); break;
+    case 'go': advance(r, p, a); break;
+    case 'back': move(r, p, -a); break;
+    case 'near': {
+      const list = a === 'station' ? STATION_POS : UTILITY_POS;
+      const dest = list.find(x => x > p.position) ?? list[0];
+      const total = a === 'utility' ? rint(6) + rint(6) + 2 : 0;
+      goTo(r, p, dest, dest < p.position, { double: a === 'station', x10: a === 'utility', total });
+      break;
+    }
+    case 'repair': {
+      let h = 0, ho = 0;
+      Object.keys(r.owners).forEach(k => { if (r.owners[k] === p.id) { const n = r.houses[k] || 0; if (n === 5) ho++; else h += n; } });
+      if (h + ho) { log(r, `🔧 ${p.name} : ${h} maison(s), ${ho} hôtel(s).`); pay(r, p, [[null, h * a + ho * b]]); }
+    }
   }
+}
 
-  if (
-    room.status !==
-    "waiting"
-  ) {
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "La partie a déjà commencé."
-      }
-    );
-
+function doRoll(r, p) {
+  const d1 = rint(6) + 1, d2 = rint(6) + 1, dbl = d1 === d2, total = d1 + d2;
+  r.dice = { one: d1, two: d2, total }; r.rollSeq++; r.canBuy = false; r.extra = false; r.hasRolled = true;
+  log(r, `🎲 ${p.name} lance ${d1}+${d2}=${total}${dbl ? ' (double !)' : ''}.`);
+  if (p.jail) {
+    if (dbl) { p.jail = false; p.jailTurns = 0; log(r, `🔓 ${p.name} sort de prison grâce au double.`); move(r, p, total); return; }
+    if (++p.jailTurns >= 3) {
+      p.jail = false; p.jailTurns = 0;
+      log(r, `🔓 ${p.name} paie ${JAIL_FINE} et sort de prison.`);
+      pay(r, p, [[null, JAIL_FINE]]); move(r, p, total);
+    } else log(r, `${p.name} reste en prison (${p.jailTurns}/3).`);
     return;
-
   }
+  if (dbl && ++r.doubles >= 3) { log(r, `🚨 3 doubles de suite !`); sendToJail(r, p); return; }
+  move(r, p, total);
+  if (dbl && !p.jail && !p.bankrupt) r.extra = true;
+}
 
-  if (
-    room.players.length >=
-    MONOPOLY_MAX_PLAYERS
-  ) {
+function nextTurn(r) {
+  do { r.cur = (r.cur + 1) % r.players.length; } while (cur(r).bankrupt);
+  Object.assign(r, { hasRolled: false, extra: false, doubles: 0, canBuy: false });
+  log(r, `▶ Tour de ${cur(r).name}.`);
+}
+function goBankrupt(r, p) {
+  const d = r.debt;
+  const cid = d && new Set(d.payments.map(x => x[0])).size === 1 ? d.payments[0][0] : null;
+  const q = cid && byId(r, cid);
+  log(r, `💀 ${p.name} est en faillite${q ? ` face à ${q.name}` : ''} !`);
+  ['chance', 'community'].forEach(k => {
+    for (let i = 0; i < p.cards[k]; i++) { if (q) q.cards[k]++; else r.decks[k].push(JAILIDX[k]); }
+  });
+  if (q) q.money += p.money;
+  Object.keys(r.owners).forEach(pos => {
+    if (r.owners[pos] !== p.id) return;
+    delete r.houses[pos];
+    if (q) r.owners[pos] = q.id; else { delete r.owners[pos]; delete r.mortgaged[pos]; }
+  });
+  Object.assign(p, { money: 0, bankrupt: true, jail: false, cards: { chance: 0, community: 0 } });
+  r.debt = null; r.canBuy = false;
+  const alive = r.players.filter(x => !x.bankrupt);
+  if (alive.length === 1) {
+    r.status = 'finished'; r.winner = { id: alive[0].id, name: alive[0].name, money: alive[0].money };
+    log(r, `🏆 ${alive[0].name} remporte la partie !`);
+  } else if (cur(r) === p) nextTurn(r);
+}
 
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
+function manageInfo(r, p, pos) {
+  const s = BOARD[pos], out = {};
+  if (r.owners[pos] !== p.id) return out;
+  const mort = !!r.mortgaged[pos], h = r.houses[pos] || 0;
+  if (s.type === 'property') {
+    const grp = GROUPS[s.group], hs = grp.map(x => r.houses[x] || 0), sup = supply(r);
+    const full = grp.every(x => r.owners[x] === p.id), anyMort = grp.some(x => r.mortgaged[x]);
+    if (!r.debt && full && !anyMort && h < 5 && h <= Math.min(...hs) && p.money >= s.houseCost && (h < 4 ? sup.houses > 0 : sup.hotels > 0)) out.build = s.houseCost;
+    if (h > 0 && h >= Math.max(...hs) && (h < 5 || sup.houses >= 4)) out.sell = s.houseCost / 2;
+    if (!mort && hs.every(x => x === 0)) out.mortgage = s.price / 2;
+  } else if (!mort) out.mortgage = s.price / 2;
+  if (mort && !r.debt && p.money >= unCost(s)) out.unmortgage = unCost(s);
+  return out;
+}
 
-        message:
-          "Le salon est complet."
-      }
-    );
-
-    return;
-
-  }
-
-  const name =
-    String(
-      data.name ||
-      "Joueur"
-    )
-    .trim()
-    .slice(0, 18) ||
-    "Joueur";
-
-  const player = {
-
-    id:
-      makeId(),
-
-    name,
-
-    socket,
-
-    money:
-      MONOPOLY_START_MONEY,
-
-    position:
-      0,
-
-    bankrupt:
-      false,
-
-    inJail:
-      false,
-
-    jailTurns:
-      0
-
+/* ---------- Vue envoyée à chaque client ---------- */
+const pub = (r, p) => ({ id: p.id, name: p.name, token: p.token, color: p.color, money: p.money, position: p.position, jail: p.jail, bankrupt: p.bankrupt, host: p.id === r.hostId, online: !!r.members.get(p.id), jailCards: p.cards.chance + p.cards.community });
+function view(r, pid) {
+  const me = byId(r, pid), c = cur(r), playing = r.status === 'playing';
+  const mine = !!(playing && me && c === me && !me.bankrupt);
+  const s = c ? BOARD[c.position] : null;
+  const manage = {};
+  if (mine) Object.keys(r.owners).forEach(k => { if (r.owners[k] === me.id) manage[k] = manageInfo(r, me, +k); });
+  return {
+    status: r.status, mode: r.mode, room: r.code, isHost: pid === r.hostId,
+    me: me ? pub(r, me) : null, players: r.players.map(p => pub(r, p)),
+    currentPlayer: playing && c ? c.id : null, currentPlayerName: playing && c ? c.name : '',
+    myTurn: mine, hasRolled: r.hasRolled,
+    canRoll: mine && (!r.hasRolled || r.extra) && !r.debt,
+    canEnd: mine && r.hasRolled && !r.extra && !r.debt,
+    canBuy: mine && r.canBuy && c.money >= s.price,
+    buyable: mine && r.canBuy ? { pos: s.position, name: s.name, price: s.price } : null,
+    canPayJail: mine && c.jail && !r.hasRolled && !r.debt && c.money >= JAIL_FINE,
+    canUseCard: mine && c.jail && !r.hasRolled && c.cards.chance + c.cards.community > 0,
+    debt: r.debt ? { pid: r.debt.pid, total: r.debt.total } : null,
+    dice: r.dice, rollSeq: r.rollSeq, board: BOARD, properties: r.owners, houses: r.houses, mortgaged: r.mortgaged,
+    manage, supply: supply(r), logs: r.logs.slice(-40), winner: r.winner, card: r.card
   };
-
-  room.players.push(
-    player
-  );
-
-  socket.monopolyRoom =
-    room.room;
-
-  socket.monopolyPlayerId =
-    player.id;
-
-  monopolyAddLog(
-    room,
-    `👋 ${player.name} rejoint le salon.`
-  );
-
-  send(
-    socket,
-    {
-      type:
-        "monopoly_joined",
-
-      room:
-        room.room,
-
-      playerId:
-        player.id
-
-    }
-  );
-
-  monopolySendState(room);
-
 }
 
-/* =========================================================
-   ROUTEUR MONOPOLY
-========================================================= */
-
-function handleMonopolyMessage(
-  socket,
-  data
-) {
-
-  /* =======================================================
-     CRÉER
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_create_room"
-  ) {
-
-    const room =
-      monopolyCreateRoom(
-        socket,
-        data.name
-      );
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_room_created",
-
-        room:
-          room.room,
-
-        playerId:
-          socket.monopolyPlayerId
-
-      }
-    );
-
-    monopolySendState(room);
-
-    return;
-
-  }
-
-  /* =======================================================
-     REJOINDRE
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_join_room"
-  ) {
-
-    monopolyJoinRoom(
-      socket,
-      data
-    );
-
-    return;
-
-  }
-
-  /* =======================================================
-     RÉCUPÉRER LE SALON
-  ======================================================= */
-
-  const room =
-    monopolyRooms.get(
-      socket.monopolyRoom
-    );
-
-  if (!room) {
-
-    send(
-      socket,
-      {
-        type:
-          "monopoly_error",
-
-        message:
-          "Tu n'es pas dans un salon Monopoly."
-      }
-    );
-
-    return;
-
-  }
-
-  const player =
-    room.players.find(
-      p =>
-        p.id ===
-        socket.monopolyPlayerId
-    );
-
-  /* =======================================================
-     DÉMARRER
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_start_game"
-  ) {
-
-    monopolyStartGame(
-      room,
-      socket
-    );
-
-    return;
-
-  }
-
-  /* =======================================================
-     LANCER LES DÉS
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_roll"
-  ) {
-
-    if (player) {
-
-      monopolyRoll(
-        room,
-        player
-      );
-
-    }
-
-    return;
-
-  }
-
-  /* =======================================================
-     ACHETER
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_buy"
-  ) {
-
-    if (player) {
-
-      monopolyBuy(
-        room,
-        player
-      );
-
-    }
-
-    return;
-
-  }
-
-  /* =======================================================
-     FIN DE TOUR
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_end_turn"
-  ) {
-
-    if (player) {
-
-      monopolyEndTurn(
-        room,
-        player
-      );
-
-    }
-
-    return;
-
-  }
-
-  /* =======================================================
-     NOUVELLE PARTIE
-  ======================================================= */
-
-  if (
-    data.type ===
-    "monopoly_new_game"
-  ) {
-
-    if (
-      socket ===
-      room.host
-    ) {
-
-      room.status =
-        "waiting";
-
-      room.currentPlayerId =
-        null;
-
-      room.properties =
-        {};
-
-      room.dice =
-        null;
-
-      room.hasRolled =
-        false;
-
-      room.doubles =
-        0;
-
-      room.winner =
-        null;
-
-      room.logs = [];
-
-      for (
-        const p of room.players
-      ) {
-
-        p.money =
-          MONOPOLY_START_MONEY;
-
-        p.position =
-          0;
-
-        p.bankrupt =
-          false;
-
-        p.inJail =
-          false;
-
-        p.jailTurns =
-          0;
-
-      }
-
-      monopolyAddLog(
-        room,
-        "🔄 Nouvelle partie Monopoly prête."
-      );
-
-      monopolySendState(room);
-
-    }
-
-    return;
-
-  }
-
+/* ---------- Messages ---------- */
+function handle(ws, m) {
+  if (!m || typeof m.type !== 'string' || !m.type.startsWith('monopoly_')) return false;
+  try { dispatch(ws, m); } catch (e) { console.error('[monopoly]', e); err(ws, 'Erreur serveur.'); }
+  return true;
 }
 
-/* =========================================================
-   DÉCONNEXION MONOPOLY
-========================================================= */
-
-function handleMonopolyDisconnect(
-  socket
-) {
-
-  const room =
-    monopolyRooms.get(
-      socket.monopolyRoom
-    );
-
-  if (!room) {
-    return;
+function dispatch(ws, m) {
+  const t = m.type;
+  if (t === 'monopoly_create_room') {
+    const mode = m.mode === 'phones' ? 'phones' : 'tv';
+    const r = { code: genCode(), mode, hostId: rid(4), members: new Map(), players: [], touched: Date.now() };
+    initGame(r); rooms.set(r.code, r);
+    attach(r, ws, r.hostId);
+    if (mode === 'phones') r.players.push(newPlayer(r, r.hostId, clean(m.name) || 'Joueur'));
+    send(ws, { type: 'monopoly_room_created', room: r.code, playerId: r.hostId, mode });
+    return broadcast(r);
   }
-
-  const index =
-    room.players.findIndex(
-      player =>
-        player.socket ===
-        socket
-    );
-
-  if (
-    index === -1
-  ) {
-
-    return;
-
-  }
-
-  const leaving =
-    room.players[index];
-
-  const wasCurrent =
-    leaving.id ===
-    room.currentPlayerId;
-
-  room.players.splice(
-    index,
-    1
-  );
-
-  /*
-   * Les propriétés du joueur
-   * reviennent à la banque.
-   */
-
-  for (
-    const position of Object.keys(
-      room.properties
-    )
-  ) {
-
-    if (
-      room.properties[
-        position
-      ] === leaving.id
-    ) {
-
-      delete room.properties[
-        position
-      ];
-
+  if (t === 'monopoly_join_room' || t === 'monopoly_rejoin') {
+    const r = rooms.get(String(m.room || '').toUpperCase());
+    if (!r) return err(ws, 'Salon introuvable.', 'no_room');
+    if (t === 'monopoly_rejoin') {
+      if (!r.members.has(m.playerId)) return err(ws, 'Session expirée.', 'no_room');
+      attach(r, ws, m.playerId);
+      send(ws, { type: 'monopoly_joined', room: r.code, playerId: m.playerId, mode: m.playerId === r.hostId && r.mode === 'tv' ? 'tv' : 'phones' });
+      return broadcast(r);
     }
-
+    if (r.status !== 'waiting') return err(ws, 'La partie a déjà commencé.');
+    if (r.players.length >= MAX_PLAYERS) return err(ws, 'Salon complet (8 joueurs max).');
+    let name = clean(m.name) || 'Joueur';
+    if (r.players.some(p => p.name.toLowerCase() === name.toLowerCase())) name = `${name.slice(0, 15)}${r.players.length + 1}`;
+    const pid = rid(4);
+    attach(r, ws, pid);
+    r.players.push(newPlayer(r, pid, name));
+    send(ws, { type: 'monopoly_joined', room: r.code, playerId: pid, mode: 'phones' });
+    return broadcast(r);
   }
 
-  monopolyAddLog(
-    room,
-    `🚪 ${leaving.name} quitte le salon Monopoly.`
-  );
+  const info = socketInfo.get(ws), r = info && rooms.get(info.room);
+  if (!r) return err(ws, 'Tu n\'es dans aucun salon.', 'no_room');
+  const pid = info.pid, p = byId(r, pid), c = cur(r);
 
-  /*
-   * Si le créateur quitte,
-   * on transmet l'hôte au suivant.
-   */
-
-  if (
-    socket ===
-    room.host
-  ) {
-
-    if (
-      room.players.length
-    ) {
-
-      room.host =
-        room.players[0].socket;
-
-      monopolyAddLog(
-        room,
-        `👑 ${room.players[0].name} devient créateur du salon.`
-      );
-
-    } else {
-
-      monopolyRooms.delete(
-        room.room
-      );
-
-      return;
-
-    }
-
+  if (t === 'monopoly_pick_token') {
+    if (r.status !== 'waiting' || !p || !TOKENS.includes(m.token)) return;
+    if (r.players.some(q => q !== p && q.token === m.token)) return err(ws, 'Ce pion est déjà pris.');
+    p.token = m.token;
+    return broadcast(r);
   }
-
-  if (
-    !room.players.length
-  ) {
-
-    monopolyRooms.delete(
-      room.room
-    );
-
-    return;
-
+  if (t === 'monopoly_start_game') {
+    if (pid !== r.hostId || r.status !== 'waiting') return;
+    if (r.players.length < 2) return err(ws, 'Il faut au moins 2 joueurs.');
+    const free = shuffle(TOKENS.filter(k => !r.players.some(q => q.token === k)));
+    r.players.forEach(q => { if (!q.token) q.token = free.pop(); }); // pion au hasard pour ceux qui n'ont pas choisi
+    shuffle(r.players).forEach((q, i) => { q.color = COLORS[i % COLORS.length]; });
+    r.status = 'playing'; r.cur = 0;
+    log(r, `🎩 La partie commence ! ${r.players[0].name} joue en premier.`);
+    return broadcast(r);
   }
-
-  /*
-   * Si le joueur qui part était
-   * celui dont c'était le tour.
-   */
-
-  if (
-    wasCurrent &&
-    room.status ===
-    "playing"
-  ) {
-
-    const next =
-      monopolyGetNextPlayer(
-        room,
-        leaving.id
-      );
-
-    room.currentPlayerId =
-      next
-        ? next.id
-        : null;
-
-    room.hasRolled =
-      false;
-
-    room.dice =
-      null;
-
-    room.doubles =
-      0;
-
-    if (next) {
-
-      monopolyAddLog(
-        room,
-        `➡️ Le tour passe à ${next.name}.`
-      );
-
-    }
-
+  if (t === 'monopoly_new_game') {
+    if (pid !== r.hostId || r.status !== 'finished') return;
+    initGame(r);
+    return broadcast(r);
   }
+  if (r.status !== 'playing' || !p || p.bankrupt) return;
 
-  const active =
-    room.players.filter(
-      p =>
-        !p.bankrupt
-    );
-
-  if (
-    room.status ===
-    "playing" &&
-    active.length <= 1
-  ) {
-
-    monopolyEndGame(
-      room
-    );
-
-    return;
-
+  if (t === 'monopoly_manage') {
+    if (c !== p) return;
+    const pos = +m.pos, s = BOARD[pos];
+    if (!s || !['property', 'station', 'utility'].includes(s.type)) return;
+    const info2 = manageInfo(r, p, pos);
+    if (!info2[m.act]) return err(ws, 'Action impossible.');
+    if (m.act === 'build') { p.money -= s.houseCost; r.houses[pos] = (r.houses[pos] || 0) + 1; log(r, `🏗️ ${p.name} construit ${r.houses[pos] === 5 ? 'un hôtel' : 'une maison'} à ${s.name}.`); }
+    if (m.act === 'sell') { p.money += s.houseCost / 2; r.houses[pos]--; if (!r.houses[pos]) delete r.houses[pos]; log(r, `🏚️ ${p.name} vend un bâtiment à ${s.name}.`); }
+    if (m.act === 'mortgage') { p.money += s.price / 2; r.mortgaged[pos] = true; log(r, `🏦 ${p.name} hypothèque ${s.name} (+${s.price / 2}).`); }
+    if (m.act === 'unmortgage') { p.money -= unCost(s); delete r.mortgaged[pos]; log(r, `💰 ${p.name} lève l'hypothèque de ${s.name} (-${unCost(s)}).`); }
+    settle(r);
+    return broadcast(r);
   }
+  if (c !== p) return;
 
-  monopolySendState(room);
+  if (t === 'monopoly_roll') { if (r.debt || (r.hasRolled && !r.extra)) return; doRoll(r, p); }
+  else if (t === 'monopoly_buy') {
+    const s = BOARD[p.position];
+    if (!r.canBuy || p.money < s.price) return;
+    p.money -= s.price; r.owners[p.position] = p.id; r.canBuy = false;
+    log(r, `✅ ${p.name} achète ${s.name} pour ${s.price}.`);
+  }
+  else if (t === 'monopoly_end_turn') { if (!r.hasRolled || r.extra || r.debt) return; nextTurn(r); }
+  else if (t === 'monopoly_pay_jail') {
+    if (!p.jail || r.hasRolled || r.debt || p.money < JAIL_FINE) return;
+    p.money -= JAIL_FINE; p.jail = false; p.jailTurns = 0; log(r, `🔓 ${p.name} paie ${JAIL_FINE} pour sortir de prison.`);
+  }
+  else if (t === 'monopoly_use_card') {
+    if (!p.jail || r.hasRolled) return;
+    const k = p.cards.chance > 0 ? 'chance' : p.cards.community > 0 ? 'community' : null;
+    if (!k) return;
+    p.cards[k]--; r.decks[k].push(JAILIDX[k]); p.jail = false; p.jailTurns = 0;
+    log(r, `🔓 ${p.name} utilise sa carte « Libéré de prison ».`);
+  }
+  else if (t === 'monopoly_bankrupt') goBankrupt(r, p);
+  else return;
+  broadcast(r);
+}
 
+function handleClose(ws) {
+  const info = socketInfo.get(ws);
+  if (!info) return;
+  const r = rooms.get(info.room);
+  if (!r || r.members.get(info.pid) !== ws) return;
+  r.members.set(info.pid, null);
+  if (r.status === 'waiting' && info.pid !== r.hostId) {
+    r.players = r.players.filter(p => p.id !== info.pid);
+    r.members.delete(info.pid);
+  }
+  broadcast(r);
+}
+
+setInterval(() => rooms.forEach((r, k) => { if (Date.now() - r.touched > 3 * 3600 * 1000) rooms.delete(k); }), 10 * 60 * 1000).unref();
+
+
+return { handle, handleClose };
+})();
+
+/* Points d'entrée déjà appelés par le code UNO (inchangé) */
+
+function handleMonopolyMessage(socket, data) {
+  monopolyEngine.handle(socket, data);
+}
+
+function handleMonopolyDisconnect(socket) {
+  monopolyEngine.handleClose(socket);
 }
 
 /* =========================================================
