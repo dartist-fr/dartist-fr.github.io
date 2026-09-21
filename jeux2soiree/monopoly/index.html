@@ -203,6 +203,7 @@ input:focus{border-color:var(--red)}
  <header class="topbar">
   <div class="top-title">MONOPOLY</div>
   <span id="conn"></span>
+  <button class="action-btn" style="padding:5px 10px;font-size:19px" data-act="quit">🚪 QUITTER</button>
   <div class="room-code">SALON : <strong id="roomCodeDisplay">----</strong></div>
  </header>
 
@@ -222,7 +223,7 @@ input:focus{border-color:var(--red)}
    <div class="layout">
     <div class="board-col">
      <div class="board" id="board">
-      <img src="images/plateau/Plateau-web.jpg" onerror="this.onerror=null;this.src='images/plateau/tableau_a_l_endroit.png'" alt="Plateau Monopoly">
+      <img src="images/plateau/Plateau-web.jpg" onerror="this.onerror=null;this.src='images/tableau a l'endroit.png'" alt="Plateau Monopoly">
       <div class="ov" id="cells"></div>
       <div class="ov" id="tokens"></div>
      </div>
@@ -257,7 +258,7 @@ input:focus{border-color:var(--red)}
   <div class="winner-name" id="winnerName"></div>
   <div class="winner-money" id="winnerMoney"></div>
   <p>est le dernier joueur encore en jeu !</p>
-  <div class="controls"><button id="winnerNewGameBtn" class="start-btn" data-act="newGame">🔄 NOUVELLE PARTIE</button></div>
+  <div class="controls"><button id="winnerNewGameBtn" class="start-btn" data-act="newGame">🔄 NOUVELLE PARTIE</button><button class="action-btn" data-act="quit">🚪 QUITTER</button></div>
  </div>
 </div>
 
@@ -343,12 +344,18 @@ function connect(first){
     }
   };
 }
+function leaveGame(){
+  send({ type:"monopoly_leave" });
+  clearSession(); room = playerId = null;          // room=null : plus de reconnexion automatique
+  setTimeout(() => location.reload(), 200);
+}
 function send(d){ if(socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(d)); }
 
 function handleMessage(d){
   if(d.type === "monopoly_room_created" || d.type === "monopoly_joined"){
     room = d.room; playerId = d.playerId; saveSession(); openApp(); return;
   }
+  if(d.type === "monopoly_closed"){ clearSession(); room = playerId = null; alert(d.message || "Salon fermé."); location.reload(); return; }
   if(d.type === "monopoly_state"){ gameState = d.state; $("conn").textContent = ""; render(); return; }
   if(d.type === "monopoly_error" || d.type === "error"){
     if(d.code === "no_room"){ clearSession(); room = playerId = null; }
@@ -410,6 +417,7 @@ document.addEventListener("click", e => {
     if(act === "create") return createRoom();
     if(act === "joinGo") return joinRoom();
     if(act === "closeCard") return closeCard();
+    if(act === "quit"){ if(confirm("Quitter la partie ? Tu ne pourras plus la rejoindre.")) leaveGame(); return; }
     if(act === "bankrupt"){ if(confirm("Déclarer faillite ? Tu quittes la partie.")) send({ type:"monopoly_bankrupt" }); return; }
     if(["build","sell","mortgage","unmortgage"].includes(act)) return send({ type:"monopoly_manage", act, pos:+a.dataset.pos });
     return;
@@ -620,6 +628,7 @@ function handleEvents(){
    DÉMARRAGE : reprise automatique de la partie en cours
 ========================================================= */
 selectMode("tv");
+if(/[?&]reset/.test(location.search)) clearSession();   // secours : monopoly/index.html?reset
 try{
   const s = JSON.parse(localStorage.getItem(SKEY) || "null");
   if(s && s.room && s.playerId){ room = s.room; playerId = s.playerId; showMessage("Reconnexion à la partie…"); connect({ type:"monopoly_rejoin", room, playerId }); }
