@@ -73,7 +73,7 @@ input:focus{border-color:var(--red)}
 
 /* Plateau (image + overlay) */
 .board-col{display:flex;justify-content:center;min-width:0}
-.board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#000}
+.board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#fff}
 .board>img{width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0}#tokens{pointer-events:none}
 .cell{position:absolute;cursor:pointer;z-index:1;border:.35cqw solid transparent}
@@ -159,6 +159,12 @@ input:focus{border-color:var(--red)}
   <div class="logo">MONOPOLY</div>
   <div class="subtitle">Jeux2Soirée • Multijoueur</div>
 
+  <div id="resume" class="setup hidden" style="text-align:center;margin:0 0 18px">
+   <h2>PARTIE EN COURS</h2>
+   <div class="small" id="resumeInfo"></div>
+   <div class="controls"><button class="action-btn buy-btn" data-act="resume">↩ REPRENDRE</button><button class="action-btn" data-act="forget">✖ OUBLIER</button></div>
+  </div>
+
   <div id="homeMenu" class="menu">
    <button class="main-btn create" data-act="setup-tv">🖥️ CRÉER • TV + TÉLÉPHONES</button>
    <button class="main-btn" data-act="setup-phones">📱 CRÉER • TÉLÉPHONES UNIQUEMENT</button>
@@ -223,7 +229,7 @@ input:focus{border-color:var(--red)}
    <div class="layout">
     <div class="board-col">
      <div class="board" id="board">
-      <img src="images/plateau/Plateau-web.jpg" onerror="this.onerror=null;this.src='images/tableau a l'endroit.png'" alt="Plateau Monopoly">
+      <img id="boardImg" alt="Plateau Monopoly">
       <div class="ov" id="cells"></div>
       <div class="ov" id="tokens"></div>
      </div>
@@ -267,6 +273,7 @@ input:focus{border-color:var(--red)}
    CONFIG
 ========================================================= */
 const SERVER_URL = "wss://uno-jeux2soiree.onrender.com";
+const BOARD_IMG = "tableau a l'endroit.png";   // monopoly/images/tableau a l'endroit.png
 const ASSETS = "images/";   // ce fichier est dans monopoly/ → monopoly/images/...
 const DIR = { chance:"cartes chance", community:"cartes caisse de communauté", rent:"cartes loyer", hyp:"carte hypotheque", bills:"billets", tok:"figurines", houses:"maisons" };
 const img = (dir, file) => encodeURI(ASSETS + dir + "/" + file + ".png");
@@ -277,6 +284,8 @@ const SKEY = "mono_session";
 const TOKENS = { voiture:"Voiture", bateau:"Bateau", bottes:"Botte", brouette:"Brouette", chapeau:"Chapeau", chien:"Chien", de:"Dé à coudre", fer:"Fer à repasser" };
 const TOKFILE = { de:"dé a coudre", fer:"fer a repasser" };   // noms de fichiers différents de l'identifiant
 const tokSrc = id => encodeURI(ASSETS + DIR.tok + "/" + (TOKFILE[id] || id) + ".png");
+const houseFb = n => "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 40'><path d='M2 20 22 2l20 18h-6v18H8V20z' fill='${n === 5 ? "#ff5a5a" : "#1fa855"}' stroke='#063' stroke-width='2'/>${n === 5 ? "" : `<text x='22' y='31' font-size='18' font-weight='bold' text-anchor='middle' fill='white'>${n}</text>`}</svg>`);
+const houseImg = (n, cls) => `<img${cls ? ` class="${cls}"` : ""} src="${houseSrc(n)}" onerror="this.onerror=null;this.src=houseFb(${n})" alt="">`;
 const houseSrc = n => encodeURI(ASSETS + DIR.houses + "/" + (n === 5 ? "hotel" : n) + ".png");
 /* Si une image accentuée échoue (accents décomposés type macOS), on réessaie en NFD */
 document.addEventListener("error", e => {
@@ -305,7 +314,7 @@ function rect(p){
 ========================================================= */
 const $ = id => document.getElementById(id);
 let socket = null, room = null, playerId = null, setupMode = "tv";
-let gameState = null, openPos = null, lastCardSeq = null, lastRoll = null, cardTimer = null, hbTimer = null;
+let pendingSession = null, gameState = null, openPos = null, lastCardSeq = null, lastRoll = null, cardTimer = null, hbTimer = null;
 const toks = {};
 
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
@@ -316,7 +325,7 @@ const spaceName = pos => (gameState && gameState.board[pos]) ? gameState.board[p
 const byGroup = (a, b) => { const B = gameState.board; return GORD.indexOf(B[a].group) - GORD.indexOf(B[b].group) || a - b; };
 const ownedBy = id => Object.keys(gameState.properties).filter(k => gameState.properties[k] === id).map(Number).sort(byGroup);
 
-function saveSession(){ try{ localStorage.setItem(SKEY, JSON.stringify({ room, playerId })); }catch(e){} }
+function saveSession(){ try{ localStorage.setItem(SKEY, JSON.stringify({ room, playerId, t:Date.now() })); }catch(e){} }
 function clearSession(){ try{ localStorage.removeItem(SKEY); }catch(e){} }
 
 /* =========================================================
@@ -417,6 +426,12 @@ document.addEventListener("click", e => {
     if(act === "create") return createRoom();
     if(act === "joinGo") return joinRoom();
     if(act === "closeCard") return closeCard();
+    if(act === "resume" && pendingSession){
+      room = pendingSession.room; playerId = pendingSession.playerId; pendingSession = null;
+      $("resume").classList.add("hidden"); showMessage("Reconnexion à la partie…");
+      return connect({ type:"monopoly_rejoin", room, playerId });
+    }
+    if(act === "forget"){ clearSession(); pendingSession = null; $("resume").classList.add("hidden"); return; }
     if(act === "quit"){ if(confirm("Quitter la partie ? Tu ne pourras plus la rejoindre.")) leaveGame(); return; }
     if(act === "bankrupt"){ if(confirm("Déclarer faillite ? Tu quittes la partie.")) send({ type:"monopoly_bankrupt" }); return; }
     if(["build","sell","mortgage","unmortgage"].includes(act)) return send({ type:"monopoly_manage", act, pos:+a.dataset.pos });
@@ -484,7 +499,7 @@ function houseIcon(R, n){
   let cx = R.x + R.w / 2, cy = R.y + R.h / 2;
   if(R.side === "b") cy = R.y + BAND / 2; else if(R.side === "t") cy = R.y + R.h - BAND / 2;
   else if(R.side === "l") cx = R.x + R.w - BAND / 2; else cx = R.x + BAND / 2;
-  return `<img class="hi" src="${houseSrc(n)}" style="left:${cx}%;top:${cy}%" alt="">`;
+  return `<img class="hi" src="${houseSrc(n)}" onerror="this.onerror=null;this.src=houseFb(${n})" style="left:${cx}%;top:${cy}%" alt="">`;
 }
 
 function renderBoard(){
@@ -552,7 +567,7 @@ function myHtml(){
   const cards = mine.map(k => {
     const s = B[k], h = st.houses[k] || 0, m = st.mortgaged[k], mg = st.manage[k] || {};
     const full = s.type === "property" && B.filter(x => x.group === s.group).every(x => st.properties[x.position] === me.id);
-    return `<div class="pc${m ? " mort" : ""}" data-pos="${k}" style="--g:${GC[s.group]}"><img src="${img(m ? DIR.hyp : DIR.rent, m ? s.hyp : s.img)}" alt="${esc(s.name)}" loading="lazy">${full ? '<span class="st">★</span>' : ""}${h ? `<span class="bd"><img src="${houseSrc(h)}" alt=""></span>` : ""}${mg.build ? '<span class="bp">+</span>' : ""}</div>`;
+    return `<div class="pc${m ? " mort" : ""}" data-pos="${k}" style="--g:${GC[s.group]}"><img src="${img(m ? DIR.hyp : DIR.rent, m ? s.hyp : s.img)}" alt="${esc(s.name)}" loading="lazy">${full ? '<span class="st">★</span>' : ""}${h ? `<span class="bd">${houseImg(h)}</span>` : ""}${mg.build ? '<span class="bp">+</span>' : ""}</div>`;
   }).join("");
   return `<div class="panel"><div class="ptitle">💶 MON ARGENT</div><div class="bigmoney">${fmt(me.money)}</div><div class="bills">${billsHtml(me.money) || '<div class="empty">Plus un sou !</div>'}</div></div>
   <div class="panel"><div class="ptitle">🏠 MES PROPRIÉTÉS (${mine.length})</div>${cards ? `<div class="pcs">${cards}</div>` : '<div class="empty">Aucune propriété pour l\'instant</div>'}
@@ -590,7 +605,7 @@ function renderPropModal(){
   const btn = (a, label, cls) => `<button class="action-btn ${cls}" data-act="${a}" data-pos="${openPos}">${label}</button>`;
   setHtml($("propBody"), `<div class="pm-name" style="border-color:${GC[s.group]}">${esc(s.name)}</div>
     <img src="${img(mort ? DIR.hyp : DIR.rent, mort ? s.hyp : s.img)}" alt="${esc(s.name)}">
-    <div class="pm-info">${pl ? `Propriétaire : <b style="color:${pl.color}">${esc(pl.name)}</b>` : `Libre · ${fmt(s.price)}`}${h ? ` · <img src="${houseSrc(h)}" alt="">${h === 5 ? " hôtel" : " × " + h}` : ""}${mort ? " · 🏦 hypothéquée" : ""}</div>
+    <div class="pm-info">${pl ? `Propriétaire : <b style="color:${pl.color}">${esc(pl.name)}</b>` : `Libre · ${fmt(s.price)}`}${h ? ` · ${houseImg(h)}${h === 5 ? " hôtel" : " × " + h}` : ""}${mort ? " · 🏦 hypothéquée" : ""}</div>
     <div class="pm-btns">${mg.build ? btn("build", `🏠 Construire (−${mg.build})`, "buy-btn") : ""}${mg.sell ? btn("sell", `🏚️ Vendre bâtiment (+${mg.sell})`, "") : ""}${mg.mortgage ? btn("mortgage", `🏦 Hypothéquer (+${mg.mortgage})`, "") : ""}${mg.unmortgage ? btn("unmortgage", `💰 Lever l'hypothèque (−${mg.unmortgage})`, "buy-btn") : ""}
     ${btn("closeprop", "FERMER", "")}</div>`);
   m.classList.remove("hidden");
@@ -627,11 +642,14 @@ function handleEvents(){
 /* =========================================================
    DÉMARRAGE : reprise automatique de la partie en cours
 ========================================================= */
+$("boardImg").src = encodeURI(ASSETS + BOARD_IMG);
 selectMode("tv");
 if(/[?&]reset/.test(location.search)) clearSession();   // secours : monopoly/index.html?reset
-try{
+try{   // partie précédente mémorisée : on PROPOSE de la reprendre (plus de reconnexion automatique au chargement)
   const s = JSON.parse(localStorage.getItem(SKEY) || "null");
-  if(s && s.room && s.playerId){ room = s.room; playerId = s.playerId; showMessage("Reconnexion à la partie…"); connect({ type:"monopoly_rejoin", room, playerId }); }
+  if(s && s.room && s.playerId && Date.now() - (s.t || 0) < 3 * 3600 * 1000){
+    pendingSession = s; $("resumeInfo").textContent = "Salon " + s.room; $("resume").classList.remove("hidden");
+  } else if(s) clearSession();
 }catch(e){}
 </script>
 </body>
