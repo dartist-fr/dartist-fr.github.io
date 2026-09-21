@@ -51,7 +51,7 @@ input:focus{border-color:var(--red)}
 #lobby{text-align:center;max-width:900px;margin:auto}
 .big-room{font-family:'Press Start 2P';font-size:clamp(40px,10vw,80px);margin:25px}
 .lobby-players{display:grid;gap:8px;margin:18px 0}
-.lobby-player{background:#151925;border:2px solid #555;border-left:8px solid var(--c);padding:10px;font-size:24px}
+.lobby-player{display:flex;align-items:center;background:#151925;border:2px solid #555;border-left:8px solid var(--c);padding:10px;font-size:24px}
 .lobby-player.host{border-color:var(--gold);border-left-color:var(--c)}
 .lobby-settings{border:2px solid #555;padding:12px;margin:15px 0;background:var(--panel);font-size:22px}
 .start-btn{padding:14px 28px;background:#fff;color:#111;border:3px solid #fff;font-size:24px;box-shadow:5px 5px #000}
@@ -74,16 +74,23 @@ input:focus{border-color:var(--red)}
 /* Plateau (image + overlay) */
 .board-col{display:flex;justify-content:center;min-width:0}
 .board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#000}
-.board img{width:100%;height:100%;display:block}
+.board>img{width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0}#tokens{pointer-events:none}
 .cell{position:absolute;cursor:pointer;z-index:1;border:.35cqw solid transparent}
 .cell.own{border-color:var(--c)}
 .cell.own:before{content:'';position:absolute;inset:0;background:var(--c);opacity:.3}
 .cell.mort:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(0,0,0,.6) 0 .8cqw,rgba(0,0,0,.25) .8cqw 1.6cqw)}
 .cell:hover{outline:.4cqw solid #fff}
-.hs{position:absolute;display:flex;gap:.3%;padding:.15%;pointer-events:none;z-index:3}
-.hm{flex:1;background:#2fb344;border:1px solid #05340f}.ht{flex:1;background:#e02020;border:1px solid #400}
-.tok{position:absolute;width:4.2cqw;height:4.2cqw;margin:-2.1cqw 0 0 -2.1cqw;border-radius:50%;border:.4cqw solid #fff;background:var(--c);color:#fff;text-shadow:1px 1px #000;display:flex;justify-content:center;align-items:center;font-family:'Press Start 2P';font-size:2.1cqw;box-shadow:.35cqw .35cqw 0 #000;transition:left .45s ease,top .45s ease;z-index:5}
+.hi{position:absolute;width:5%;transform:translate(-50%,-50%);pointer-events:none;z-index:3;filter:drop-shadow(0 .2cqw .2cqw rgba(0,0,0,.5))}
+.tok{position:absolute;width:5.4cqw;height:5.4cqw;margin:-2.7cqw 0 0 -2.7cqw;border-radius:50%;border:.45cqw solid var(--c);background:rgba(255,255,255,.93);box-shadow:.35cqw .35cqw 0 #000;transition:left .45s ease,top .45s ease;z-index:5;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#111;font-family:'Press Start 2P';font-size:2.4cqw}
+.tok img{width:100%;height:100%;object-fit:contain;display:block}
+.pion{width:34px;height:34px;object-fit:contain;vertical-align:middle;background:#fff;border-radius:50%;border:3px solid var(--c);margin-right:6px}
+.tokpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.tk{border:3px solid #555;background:#151925;color:#fff;padding:6px 4px;font-size:18px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tk img{width:64px;height:64px;object-fit:contain}
+.tk.mine{border-color:var(--gold);background:#2a2440;box-shadow:0 0 12px rgba(255,217,40,.5)}.tk.taken{opacity:.25;cursor:not-allowed}
+.pc .bd{position:absolute;right:2px;bottom:2px;background:none;border:0;padding:0}.pc .bd img{width:30px;display:block}
+.pm-info img{height:26px;vertical-align:middle}
 .tok.turn{animation:pulse 1s infinite;z-index:6}
 @keyframes pulse{50%{transform:scale(1.28)}}
 
@@ -100,7 +107,6 @@ input:focus{border-color:var(--red)}
 .pc{position:relative;border-top:6px solid var(--g);background:#000;cursor:pointer}
 .pc img{width:100%;display:block}
 .pc.mort{opacity:.75;outline:2px dashed #888}
-.pc .bd{position:absolute;right:2px;bottom:2px;background:#000;border:1px solid #fff;font-size:17px;padding:0 4px}
 .pc .st{position:absolute;left:3px;top:1px;color:var(--gold);font-size:20px;text-shadow:1px 1px #000}
 .pc .bp{position:absolute;left:3px;bottom:3px;background:var(--green);border:1px solid #fff;font-size:18px;padding:0 5px}
 .empty{opacity:.6;text-align:center;padding:8px}
@@ -207,6 +213,7 @@ input:focus{border-color:var(--red)}
    <div class="small" id="modeLabel"></div>
    <div class="lobby-settings" id="lobbySettings">🎩 MONOPOLY • Édition Europe • 2 à 8 joueurs</div>
    <div class="lobby-players" id="lobbyPlayers"></div>
+   <div id="tokenPicker" class="panel hidden" style="margin:15px 0"><div class="ptitle">🎩 CHOISIS TON PION</div><div class="tokpick" id="tokGrid"></div><div class="small" style="margin-top:8px">Sans choix, un pion libre t'est attribué au hasard au lancement.</div></div>
    <div id="hostControls"><button id="startBtn" class="start-btn" data-act="start">▶ COMMENCER LA PARTIE</button></div>
   </section>
 
@@ -215,7 +222,7 @@ input:focus{border-color:var(--red)}
    <div class="layout">
     <div class="board-col">
      <div class="board" id="board">
-      <img src="Monopoly/Board-web.jpg" onerror="this.onerror=null;this.src='Monopoly/Board.png'" alt="Plateau Monopoly">
+      <img src="Monopoly/Plateau-web.jpg" onerror="this.onerror=null;this.src='Monopoly/tableau_a_l_endroit.png'" alt="Plateau Monopoly">
       <div class="ov" id="cells"></div>
       <div class="ov" id="tokens"></div>
      </div>
@@ -266,9 +273,13 @@ const GC = { brown:"#955b37", lightblue:"#80d9ed", pink:"#e889c7", orange:"#e990
 const GORD = Object.keys(GC);
 const BILLS = [10000, 5000, 1000, 500, 100, 50, 20, 10, 5, 1];
 const SKEY = "mono_session";
+const TOKENS = { voiture:"Voiture", bateau:"Bateau", bottes:"Botte", brouette:"Brouette", chapeau:"Chapeau", chien:"Chien", de:"Dé à coudre", fer:"Fer à repasser" };
+const tokSrc = id => encodeURI(ASSETS + "pions/" + id + ".png");
+const houseSrc = n => encodeURI(ASSETS + "maisons/" + (n === 5 ? "hotel" : n) + ".png");
+const pion = p => p.token ? `<img class="pion" style="--c:${p.color}" src="${tokSrc(p.token)}" alt="">` : "";
 
 /* Géométrie du plateau (en % de l'image) */
-const CW = 8.14, CO = 13.37, BAND = 2.2;
+const CO = 13.35, CW = (100 - 2 * CO) / 9, BAND = 2.9;
 function rect(p){
   if(p === 0)  return { x:100-CO, y:100-CO, w:CO, h:CO, side:"c" };
   if(p < 10)   return { x:100-CO-p*CW, y:100-CO, w:CW, h:CO, side:"b" };
@@ -395,6 +406,8 @@ document.addEventListener("click", e => {
     if(["build","sell","mortgage","unmortgage"].includes(act)) return send({ type:"monopoly_manage", act, pos:+a.dataset.pos });
     return;
   }
+  const tk = e.target.closest("[data-tok]");
+  if(tk){ if(!tk.disabled) send({ type:"monopoly_pick_token", token:tk.dataset.tok }); return; }
   const p = e.target.closest("[data-pos]");
   if(p && gameState){ openPos = +p.dataset.pos; renderPropModal(); }
 });
@@ -420,8 +433,16 @@ function renderLobby(){
   const st = gameState;
   $("modeLabel").textContent = st.mode === "phones" ? "📱 Mode téléphones • le créateur joue aussi" : "🖥️ Mode TV + téléphones • cet écran est le plateau";
   setHtml($("lobbyPlayers"), st.players.map(p =>
-    `<div class="lobby-player${p.host ? " host" : ""}" style="--c:${p.color}">${esc(p.name)}${p.host ? " 👑" : ""}</div>`).join("")
+    `<div class="lobby-player${p.host ? " host" : ""}" style="--c:${p.color}">${pion(p)}${esc(p.name)}${p.host ? " 👑" : ""}${p.token ? ` <span class="small">· ${TOKENS[p.token]}</span>` : ""}</div>`).join("")
     || `<div class="small">En attente de joueurs…</div>`);
+  const tp = $("tokenPicker"); tp.classList.toggle("hidden", !st.me);
+  if(st.me){
+    const taken = {}; st.players.forEach(p => { if(p.token) taken[p.token] = p.id; });
+    setHtml($("tokGrid"), Object.keys(TOKENS).map(id => {
+      const o = taken[id], mine = o === st.me.id, dis = o && !mine;
+      return `<button class="tk${mine ? " mine" : ""}${dis ? " taken" : ""}" data-tok="${id}"${dis ? " disabled" : ""}><img src="${tokSrc(id)}" alt=""><span>${TOKENS[id]}</span></button>`;
+    }).join(""));
+  }
   $("hostControls").classList.toggle("hidden", !st.isHost);
   $("startBtn").disabled = st.players.length < 2;
 }
@@ -443,13 +464,11 @@ function renderBanner(){
 }
 
 /* ----- Plateau ----- */
-function houseStrip(R, n){
-  const hotel = n === 5, T = BAND;
-  const pos = { b:`left:${R.x}%;top:${R.y}%;width:${R.w}%;height:${T}%;flex-direction:row`,
-                t:`left:${R.x}%;top:${R.y + R.h - T}%;width:${R.w}%;height:${T}%;flex-direction:row`,
-                l:`left:${R.x + R.w - T}%;top:${R.y}%;width:${T}%;height:${R.h}%;flex-direction:column`,
-                r:`left:${R.x}%;top:${R.y}%;width:${T}%;height:${R.h}%;flex-direction:column` }[R.side];
-  return `<div class="hs" style="${pos}">${`<i class="${hotel ? "ht" : "hm"}"></i>`.repeat(hotel ? 1 : n)}</div>`;
+function houseIcon(R, n){
+  let cx = R.x + R.w / 2, cy = R.y + R.h / 2;
+  if(R.side === "b") cy = R.y + BAND / 2; else if(R.side === "t") cy = R.y + R.h - BAND / 2;
+  else if(R.side === "l") cx = R.x + R.w - BAND / 2; else cx = R.x + BAND / 2;
+  return `<img class="hi" src="${houseSrc(n)}" style="left:${cx}%;top:${cy}%" alt="">`;
 }
 
 function renderBoard(){
@@ -458,7 +477,7 @@ function renderBoard(){
     if(!["property", "station", "utility"].includes(s.type)) return;
     const R = rect(s.position), o = st.properties[s.position], pl = o && st.players.find(p => p.id === o);
     h += `<div class="cell${pl ? " own" : ""}${st.mortgaged[s.position] ? " mort" : ""}" data-pos="${s.position}" title="${esc(s.name)}" style="left:${R.x}%;top:${R.y}%;width:${R.w}%;height:${R.h}%;--c:${pl ? pl.color : "transparent"}"></div>`;
-    if(st.houses[s.position]) h += houseStrip(R, st.houses[s.position]);
+    if(st.houses[s.position]) h += houseIcon(R, st.houses[s.position]);
   });
   setHtml($("cells"), h);
 
@@ -470,10 +489,12 @@ function renderBoard(){
     let el = toks[p.id];
     if(!el){ el = toks[p.id] = document.createElement("div"); el.className = "tok"; $("tokens").appendChild(el); }
     const R = rect(p.position); let cx = R.x + R.w / 2, cy = R.y + R.h / 2;
-    if(p.position === 10){ if(p.jail){ cx = 8.3; cy = 91.4; } else { cx = 5; cy = 95.5; } }
-    const n = list.length, rad = n === 1 ? 0 : n <= 2 ? 1.7 : 2.6, ang = 2 * Math.PI * i / n - Math.PI / 2;
+    if(p.position === 10){ if(p.jail){ cx = 8.25; cy = 91.7; } else { cx = 4.5; cy = 98; } }
+    const n = list.length, rad = n === 1 ? 0 : n <= 2 ? 2.4 : 3.6, ang = 2 * Math.PI * i / n - Math.PI / 2;
     el.style.left = (cx + rad * Math.cos(ang)) + "%"; el.style.top = (cy + rad * Math.sin(ang)) + "%";
-    el.style.setProperty("--c", p.color); el.textContent = p.name.charAt(0).toUpperCase(); el.title = p.name;
+    const inner = p.token ? `<img src="${tokSrc(p.token)}" alt="">` : esc(p.name.charAt(0).toUpperCase());
+    if(el._t !== inner){ el.innerHTML = inner; el._t = inner; }
+    el.style.setProperty("--c", p.color); el.title = p.name;
     el.classList.toggle("turn", p.id === st.currentPlayer);
   }));
   Object.keys(toks).forEach(id => { if(!alive.has(id)){ toks[id].remove(); delete toks[id]; } });
@@ -515,7 +536,7 @@ function myHtml(){
   const cards = mine.map(k => {
     const s = B[k], h = st.houses[k] || 0, m = st.mortgaged[k], mg = st.manage[k] || {};
     const full = s.type === "property" && B.filter(x => x.group === s.group).every(x => st.properties[x.position] === me.id);
-    return `<div class="pc${m ? " mort" : ""}" data-pos="${k}" style="--g:${GC[s.group]}"><img src="${img(m ? DIR.hyp : DIR.rent, m ? s.hyp : s.img)}" alt="${esc(s.name)}" loading="lazy">${full ? '<span class="st">★</span>' : ""}${h ? `<span class="bd">${h === 5 ? "🏨" : "🏠" + h}</span>` : ""}${mg.build ? '<span class="bp">+</span>' : ""}</div>`;
+    return `<div class="pc${m ? " mort" : ""}" data-pos="${k}" style="--g:${GC[s.group]}"><img src="${img(m ? DIR.hyp : DIR.rent, m ? s.hyp : s.img)}" alt="${esc(s.name)}" loading="lazy">${full ? '<span class="st">★</span>' : ""}${h ? `<span class="bd"><img src="${houseSrc(h)}" alt=""></span>` : ""}${mg.build ? '<span class="bp">+</span>' : ""}</div>`;
   }).join("");
   return `<div class="panel"><div class="ptitle">💶 MON ARGENT</div><div class="bigmoney">${fmt(me.money)}</div><div class="bills">${billsHtml(me.money) || '<div class="empty">Plus un sou !</div>'}</div></div>
   <div class="panel"><div class="ptitle">🏠 MES PROPRIÉTÉS (${mine.length})</div>${cards ? `<div class="pcs">${cards}</div>` : '<div class="empty">Aucune propriété pour l\'instant</div>'}
@@ -530,7 +551,7 @@ function playersHtml(){
       return `<i class="chip${st.mortgaged[k] ? " m" : ""}" data-pos="${k}" title="${esc(st.board[k].name)}" style="--g:${GC[st.board[k].group]}">${h === 5 ? "H" : h || ""}</i>`;
     }).join("");
     return `<div class="pl${p.id === st.currentPlayer ? " active" : ""}${p.bankrupt ? " out" : ""}" style="--c:${p.color}">
-      <div class="pl-top"><b>${esc(p.name)}${st.me && p.id === st.me.id ? " (toi)" : ""}${p.jail ? " 🔒" : ""}${p.online ? "" : " 📴"}</b><span class="mon">${fmt(p.money)}</span></div>
+      <div class="pl-top"><b>${pion(p)}${esc(p.name)}${st.me && p.id === st.me.id ? " (toi)" : ""}${p.jail ? " 🔒" : ""}${p.online ? "" : " 📴"}</b><span class="mon">${fmt(p.money)}</span></div>
       <div class="pl-pos">${esc(spaceName(p.position))}${p.jailCards ? " · 🃏×" + p.jailCards : ""}</div>${chips ? `<div class="chips">${chips}</div>` : ""}</div>`;
   }).join("");
 }
@@ -553,7 +574,7 @@ function renderPropModal(){
   const btn = (a, label, cls) => `<button class="action-btn ${cls}" data-act="${a}" data-pos="${openPos}">${label}</button>`;
   setHtml($("propBody"), `<div class="pm-name" style="border-color:${GC[s.group]}">${esc(s.name)}</div>
     <img src="${img(mort ? DIR.hyp : DIR.rent, mort ? s.hyp : s.img)}" alt="${esc(s.name)}">
-    <div class="pm-info">${pl ? `Propriétaire : <b style="color:${pl.color}">${esc(pl.name)}</b>` : `Libre · ${fmt(s.price)}`}${h ? ` · ${h === 5 ? "🏨 hôtel" : "🏠 " + h}` : ""}${mort ? " · 🏦 hypothéquée" : ""}</div>
+    <div class="pm-info">${pl ? `Propriétaire : <b style="color:${pl.color}">${esc(pl.name)}</b>` : `Libre · ${fmt(s.price)}`}${h ? ` · <img src="${houseSrc(h)}" alt="">${h === 5 ? " hôtel" : " × " + h}` : ""}${mort ? " · 🏦 hypothéquée" : ""}</div>
     <div class="pm-btns">${mg.build ? btn("build", `🏠 Construire (−${mg.build})`, "buy-btn") : ""}${mg.sell ? btn("sell", `🏚️ Vendre bâtiment (+${mg.sell})`, "") : ""}${mg.mortgage ? btn("mortgage", `🏦 Hypothéquer (+${mg.mortgage})`, "") : ""}${mg.unmortgage ? btn("unmortgage", `💰 Lever l'hypothèque (−${mg.unmortgage})`, "buy-btn") : ""}
     ${btn("closeprop", "FERMER", "")}</div>`);
   m.classList.remove("hidden");
