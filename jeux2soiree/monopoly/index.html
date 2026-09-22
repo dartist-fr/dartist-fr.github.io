@@ -38,6 +38,7 @@ input:focus{border-color:var(--red)}
 .buy-btn{background:var(--green)}.end-btn{background:var(--blue)}
 .small{font-size:20px;opacity:.8}
 .message{text-align:center;font-size:24px;margin:12px 0;min-height:26px}
+#toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);background:#7a1020;border:3px solid #fff;padding:10px 18px;font-size:21px;z-index:2000;box-shadow:4px 4px #000;max-width:90vw;text-align:center}
 
 /* ---------- App ---------- */
 #app{min-height:100vh;display:flex;flex-direction:column}
@@ -140,6 +141,23 @@ input:focus{border-color:var(--red)}
 .pm-name{font-family:'Press Start 2P';font-size:14px;border-bottom:6px solid;padding-bottom:8px;margin-bottom:10px}
 .pm-info{font-size:22px;margin:10px 0}
 .pm-btns{display:grid;gap:8px}
+.pot-pill{color:var(--green);font-size:22px;margin-left:8px}
+.pot-board{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:4;background:rgba(9,11,18,.82);border:3px solid var(--gold);padding:2.2cqw 3cqw;box-shadow:3px 3px #000;max-width:60%}
+.pot-board .lbl{font-family:'Press Start 2P';font-size:clamp(9px,1.6cqw,15px);color:var(--gold);white-space:nowrap}
+.pot-board .amt{font-family:'Press Start 2P';color:var(--green);font-size:clamp(11px,2cqw,18px)}
+.pot-stacks{display:flex;flex-wrap:wrap;gap:1.4cqw;justify-content:center}
+.pstack{position:relative}
+.pstack img{position:absolute;width:6.5cqw;min-width:26px;border-radius:2px;box-shadow:1px 1px 0 rgba(0,0,0,.7)}
+.pstack .pn{position:absolute;right:-3px;bottom:-9px;background:#000;border:1px solid #fff;font-size:11px;padding:0 3px;z-index:9;white-space:nowrap}
+.tcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin:14px 0}
+.tsec b{display:block;margin-bottom:6px;color:var(--gold);font-size:20px}
+.tprops{max-height:150px;overflow-y:auto;border:1px solid #444;padding:4px 8px;margin-bottom:8px;background:#0c0f18}
+.tprop{display:block;font-size:19px;padding:2px 0}
+.trow{display:flex;gap:14px;font-size:19px;align-items:center}
+.trow input{width:72px;background:#080a10;border:2px solid #555;color:#fff;padding:4px;font-size:18px}
+.growrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed #333}
+.growrow .gname{flex:1 1 90px;text-align:left;font-size:21px}
+.growrow input{width:100px;background:#080a10;border:2px solid #555;color:#fff;padding:7px;font-size:19px}
 .winner-name{font-family:'Press Start 2P';font-size:20px;color:var(--gold);margin:15px 0}
 .winner-money{font-size:30px;color:var(--green)}
 
@@ -204,6 +222,8 @@ input:focus{border-color:var(--red)}
  </div>
 </section>
 
+<div id="toast" class="hidden"></div>
+
 <!-- ============ APPLICATION ============ -->
 <section id="app" class="hidden">
  <header class="topbar">
@@ -231,11 +251,13 @@ input:focus{border-color:var(--red)}
      <div class="board" id="board">
       <img id="boardImg" alt="Plateau Monopoly">
       <div class="ov" id="cells"></div>
+      <div class="ov" id="potBoard"></div>
       <div class="ov" id="tokens"></div>
      </div>
     </div>
     <aside class="side">
      <div id="myBox"></div>
+     <div id="tradeBox" class="panel hidden"></div>
      <div class="panel"><div class="ptitle">👥 JOUEURS</div><div id="playersBox"></div></div>
      <div class="panel"><div class="ptitle">📜 DÉROULÉ</div><div class="logs" id="logsBox"></div></div>
     </aside>
@@ -247,6 +269,8 @@ input:focus{border-color:var(--red)}
 
 <!-- Modale propriété -->
 <div id="propModal" class="modal hidden"><div class="modal-box" id="propBody"></div></div>
+
+<div id="tradeModal" class="modal hidden"><div class="modal-box" style="max-width:640px" id="tradeBody"></div></div>
 
 <!-- Modale carte -->
 <div id="cardModal" class="modal hidden">
@@ -320,6 +344,10 @@ const toks = {};
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
 const fmt = n => "M" + Number(n).toLocaleString("fr-FR");
 const showMessage = t => { $("message").textContent = t || ""; };
+function toast(text){
+  const t = $("toast"); t.textContent = text; t.classList.remove("hidden");
+  clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add("hidden"), 3000);
+}
 const setHtml = (el, h) => { if(el._h !== h){ el.innerHTML = h; el._h = h; } };
 const spaceName = pos => (gameState && gameState.board[pos]) ? gameState.board[pos].name : "-";
 const byGroup = (a, b) => { const B = gameState.board; return GORD.indexOf(B[a].group) - GORD.indexOf(B[b].group) || a - b; };
@@ -367,8 +395,9 @@ function handleMessage(d){
   if(d.type === "monopoly_closed"){ clearSession(); room = playerId = null; alert(d.message || "Salon fermé."); location.reload(); return; }
   if(d.type === "monopoly_state"){ gameState = d.state; $("conn").textContent = ""; render(); return; }
   if(d.type === "monopoly_error" || d.type === "error"){
-    if(d.code === "no_room"){ clearSession(); room = playerId = null; }
-    showMessage(d.message || "Erreur.");
+    if(d.code === "no_room"){ clearSession(); room = playerId = null; showMessage(d.message || "Erreur."); return; }
+    if($("app").classList.contains("hidden")) showMessage(d.message || "Erreur.");
+    else toast(d.message || "Erreur.");
   }
 }
 
@@ -426,6 +455,23 @@ document.addEventListener("click", e => {
     if(act === "create") return createRoom();
     if(act === "joinGo") return joinRoom();
     if(act === "closeCard") return closeCard();
+    if(act === "openTrade"){ tradeStep1(); $("tradeModal").classList.remove("hidden"); return; }
+    if(act === "openGive"){ setHtml($("tradeBody"), giveModalHtml()); $("tradeModal").classList.remove("hidden"); return; }
+    if(act === "sendGive"){
+      const inp = $("give_" + a.dataset.to), amount = Math.floor(+inp.value || 0);
+      if(amount > 0) send({ type:"monopoly_give_money", to:a.dataset.to, amount });
+      $("tradeModal").classList.add("hidden"); return;
+    }
+    if(act === "closeTrade"){ $("tradeModal").classList.add("hidden"); return; }
+    if(act === "sendTrade"){
+      const offer = { money:+$("offMoney").value || 0, cards:+$("offCards").value || 0, props:[...document.querySelectorAll("[data-offp]:checked")].map(x => +x.dataset.offp) };
+      const request = { money:+$("reqMoney").value || 0, cards:+$("reqCards").value || 0, props:[...document.querySelectorAll("[data-reqp]:checked")].map(x => +x.dataset.reqp) };
+      send({ type:"monopoly_trade_propose", to:a.dataset.to, offer, request });
+      $("tradeModal").classList.add("hidden"); return;
+    }
+    if(act === "tradeAccept") return send({ type:"monopoly_trade_respond", accept:true });
+    if(act === "tradeDecline") return send({ type:"monopoly_trade_respond", accept:false });
+    if(act === "tradeCancel") return send({ type:"monopoly_trade_cancel" });
     if(act === "resume" && pendingSession){
       room = pendingSession.room; playerId = pendingSession.playerId; pendingSession = null;
       $("resume").classList.add("hidden"); showMessage("Reconnexion à la partie…");
@@ -437,6 +483,8 @@ document.addEventListener("click", e => {
     if(["build","sell","mortgage","unmortgage"].includes(act)) return send({ type:"monopoly_manage", act, pos:+a.dataset.pos });
     return;
   }
+  const tt = e.target.closest("[data-tradeto]");
+  if(tt){ tradeStep2(tt.dataset.tradeto); return; }
   const tk = e.target.closest("[data-tok]");
   if(tk){ if(!tk.disabled) send({ type:"monopoly_pick_token", token:tk.dataset.tok }); return; }
   const p = e.target.closest("[data-pos]");
@@ -491,7 +539,7 @@ function renderBanner(){
     else sub = "Gère tes biens ou termine ton tour";
   } else t = (st.me ? "⏳ Tour de " : "🔥 Tour de ") + (cp ? cp.name : "…");
   $("bannerText").textContent = t; $("bannerSub").textContent = sub;
-  setHtml($("diceBox"), `<div class="dice"><div class="die">${d.one || "–"}</div><div class="die">${d.two || "–"}</div>${d.total ? `<span class="dsum">=${d.total}</span>` : ""}</div>`);
+  setHtml($("diceBox"), `<div class="dice"><div class="die">${d.one || "–"}</div><div class="die">${d.two || "–"}</div>${d.total ? `<span class="dsum">=${d.total}</span>` : ""}${st.pot ? `<span class="pot-pill">🅿️ ${fmt(st.pot)}</span>` : ""}</div>`);
 }
 
 /* ----- Plateau ----- */
@@ -529,6 +577,8 @@ function renderBoard(){
     el.classList.toggle("turn", p.id === st.currentPlayer);
   }));
   Object.keys(toks).forEach(id => { if(!alive.has(id)){ toks[id].remove(); delete toks[id]; } });
+
+  setHtml($("potBoard"), st.pot ? `<div class="pot-board"><div class="lbl">🅿️ CAGNOTTE</div><div class="pot-stacks">${potBillsHtml(st.pot)}</div><div class="amt">${fmt(st.pot)}</div></div>` : "");
 }
 
 /* ----- Barre d'actions ----- */
@@ -550,6 +600,17 @@ function renderActions(){
 }
 
 /* ----- Panneau latéral : argent, propriétés, joueurs, journal ----- */
+function potBillsHtml(money){
+  let rest = money, h = "";
+  BILLS.forEach(v => {
+    const n = Math.floor(rest / v); rest -= n * v; if(!n) return;
+    const k = Math.min(n, 4); let ims = "";
+    for(let i = 0; i < k; i++) ims += `<img src="${img(DIR.bills, v + "$")}" style="left:${i * 2}%;top:${i * 3}%" alt="${v}" loading="lazy">`;
+    h += `<div class="pstack" style="width:${6.5 + (k - 1) * 2}cqw;height:3.5cqw"><span class="pn">×${n}</span>${ims}</div>`;
+  });
+  return h;
+}
+
 function billsHtml(money){
   let rest = money, h = "";
   BILLS.forEach(v => {
@@ -571,7 +632,62 @@ function myHtml(){
   }).join("");
   return `<div class="panel"><div class="ptitle">💶 MON ARGENT</div><div class="bigmoney">${fmt(me.money)}</div><div class="bills">${billsHtml(me.money) || '<div class="empty">Plus un sou !</div>'}</div></div>
   <div class="panel"><div class="ptitle">🏠 MES PROPRIÉTÉS (${mine.length})</div>${cards ? `<div class="pcs">${cards}</div>` : '<div class="empty">Aucune propriété pour l\'instant</div>'}
-  ${st.myTurn ? '<div style="text-align:center"><button class="link" data-act="bankrupt">🏳️ Abandonner la partie</button></div>' : ""}</div>`;
+  ${st.myTurn ? '<div style="text-align:center"><button class="link" data-act="bankrupt">🏳️ Abandonner la partie</button></div>' : ""}
+  ${st.players.some(x => x.id !== me.id && !x.bankrupt) ? `<div style="text-align:center;margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <button class="action-btn" data-act="openGive">💶 DONNER</button>
+    ${!st.trade ? `<button class="action-btn buy-btn" data-act="openTrade">🤝 ÉCHANGER</button>` : ""}
+  </div>` : ""}</div>`;
+}
+
+/* ----- Don d'argent ----- */
+function giveModalHtml(){
+  const st = gameState, others = st.players.filter(p => p.id !== st.me.id && !p.bankrupt);
+  return `<h2>💶 DONNER DE L'ARGENT</h2><div class="pm-btns">${others.map(p => `
+    <div class="growrow">
+      <span class="gname">${pion(p)}${esc(p.name)}</span>
+      <input type="number" min="1" max="${st.me.money}" placeholder="montant" id="give_${p.id}">
+      <button class="action-btn buy-btn" data-act="sendGive" data-to="${p.id}">Envoyer</button>
+    </div>`).join("") || '<div class="empty">Aucun autre joueur</div>'}
+    <button class="action-btn" data-act="closeTrade">FERMER</button></div>`;
+}
+
+/* ----- Échanges entre joueurs ----- */
+function tradeSide(owner, prefix, mine){
+  const st = gameState, props = ownedBy(owner.id).filter(k => !st.houses[k]);
+  return `<div class="tsec"><b>${pion(owner)}${esc(owner.name)}${mine ? " (toi)" : ""}</b>
+    <div class="tprops">${props.map(k => `<label class="tprop"><input type="checkbox" data-${prefix}p="${k}"> ${esc(spaceName(k))}${st.mortgaged[k] ? " 🏦" : ""}</label>`).join("") || '<div class="small">Aucun bien échangeable</div>'}</div>
+    <div class="trow"><label>💶 <input type="number" min="0" ${mine ? `max="${owner.money}"` : ""} value="0" id="${prefix}Money"></label>
+    <label>🃏 <input type="number" min="0" max="${owner.jailCards || 0}" value="0" id="${prefix}Cards"></label></div></div>`;
+}
+function tradeStep1(){
+  const st = gameState, others = st.players.filter(p => p.id !== st.me.id && !p.bankrupt);
+  setHtml($("tradeBody"), `<h2>🤝 ÉCHANGER AVEC QUI ?</h2><div class="pm-btns">${others.map(p => `<button class="action-btn" data-tradeto="${p.id}">${pion(p)}${esc(p.name)}</button>`).join("") || '<div class="empty">Aucun autre joueur</div>'}<button class="action-btn" data-act="closeTrade">FERMER</button></div>`);
+}
+function tradeStep2(partnerId){
+  const st = gameState, other = st.players.find(p => p.id === partnerId);
+  if(!other) return tradeStep1();
+  setHtml($("tradeBody"), `<h2>🤝 ÉCHANGE AVEC ${esc(other.name.toUpperCase())}</h2>
+    <div class="tcols">${tradeSide(st.me, "off", true)}${tradeSide(other, "req", false)}</div>
+    <div class="pm-btns"><button class="action-btn buy-btn" data-act="sendTrade" data-to="${other.id}">📨 ENVOYER LA PROPOSITION</button><button class="action-btn" data-act="closeTrade">ANNULER</button></div>`);
+}
+function tradeDesc(side){
+  const parts = [];
+  if(side.props.length) parts.push(side.props.map(k => spaceName(k)).join(", "));
+  if(side.money) parts.push(fmt(side.money));
+  if(side.cards) parts.push(side.cards + " carte(s) prison");
+  return esc(parts.join(" + ") || "rien");
+}
+function renderTrade(){
+  const st = gameState, box = $("tradeBox");
+  if(!st.trade || !st.me || (st.me.id !== st.trade.from && st.me.id !== st.trade.to)){ box.classList.add("hidden"); return; }
+  const { from, to, offer, request } = st.trade, fromP = st.players.find(p => p.id === from), toP = st.players.find(p => p.id === to), mine = from === st.me.id;
+  let html = `<div class="ptitle">🤝 PROPOSITION D'ÉCHANGE</div>
+    <div class="small">${pion(fromP)}${esc(fromP.name)} donne : ${tradeDesc(offer)}</div>
+    <div class="small">${pion(toP)}${esc(toP.name)} donne : ${tradeDesc(request)}</div>`;
+  html += mine
+    ? `<div class="controls"><button class="action-btn" data-act="tradeCancel">✖ ANNULER</button></div>`
+    : `<div class="controls"><button class="action-btn buy-btn" data-act="tradeAccept">✅ ACCEPTER</button><button class="action-btn bad" data-act="tradeDecline">✖ REFUSER</button></div>`;
+  setHtml(box, html); box.classList.remove("hidden");
 }
 
 function playersHtml(){
@@ -590,6 +706,7 @@ function playersHtml(){
 function renderSide(){
   const st = gameState;
   setHtml($("myBox"), myHtml());
+  renderTrade();
   setHtml($("playersBox"), playersHtml());
   setHtml($("logsBox"), st.logs.slice().reverse().map(l => `<div class="log-row"><span class="log-time">${esc(l.time)}</span>${esc(l.text)}</div>`).join(""));
 }
