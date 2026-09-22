@@ -2018,24 +2018,24 @@ const PROPS = [
   [21, 'Madrid', 'red', 220, [18, 36, 90, 250, 700, 875, 1050], 150, 'madrid', 'hyp-madrid'],
   [23, 'Athènes', 'red', 220, [18, 36, 90, 250, 700, 875, 1050], 150, 'athenes', 'hyp-athenes'],
   [24, 'Dublin', 'red', 240, [20, 40, 100, 300, 750, 925, 1100], 150, 'dublin', 'hyp-dublin'],
-  [26, 'Londres', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'londres', 'Property Card-17'],
-  [27, 'Copenhague', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'copenhague', 'Property Card-18'],
-  [29, 'Luxembourg', 'yellow', 280, [24, 48, 120, 360, 850, 1025, 1200], 150, 'luxenbourg', 'Property Card-19'],
-  [31, 'Bruxelles', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'bruxelles', 'Property Card-21'],
-  [32, 'Amsterdam', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'amsterdam', 'Property Card-22'],
-  [34, 'Rome', 'green', 320, [28, 56, 150, 450, 1000, 1200, 1400], 200, 'rome', 'Property Card-23'],
-  [37, 'Berlin', 'darkblue', 350, [35, 70, 175, 500, 1100, 1300, 1500], 200, 'berlin', 'Property Card-24'],
-  [39, 'Paris', 'darkblue', 400, [50, 100, 200, 600, 1400, 1700, 2000], 200, 'paris', 'Property Card-25']
+  [26, 'Londres', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'londres', 'hyp-londres'],
+  [27, 'Copenhague', 'yellow', 260, [22, 44, 110, 330, 800, 975, 1150], 150, 'copenhague', 'hyp-copenhague'],
+  [29, 'Luxembourg', 'yellow', 280, [24, 48, 120, 360, 850, 1025, 1200], 150, 'luxenbourg', 'hyp-luxembourg'],
+  [31, 'Bruxelles', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'bruxelles', 'hyp-bruxelles'],
+  [32, 'Amsterdam', 'green', 300, [26, 52, 130, 390, 900, 1100, 1275], 200, 'amsterdam', 'hyp-amsterdam'],
+  [34, 'Rome', 'green', 320, [28, 56, 150, 450, 1000, 1200, 1400], 200, 'rome', 'hyp-rome'],
+  [37, 'Berlin', 'darkblue', 350, [35, 70, 175, 500, 1100, 1300, 1500], 200, 'berlin', 'hyp-berlin'],
+  [39, 'Paris', 'darkblue', 400, [50, 100, 200, 600, 1400, 1700, 2000], 200, 'paris', 'hyp-paris']
 ];
 const STATIONS = [
   [5, 'Aéroport Schiphol', 'schiphol', 'hyp-schiphol'],
   [15, 'Aéroport de Francfort', 'francfort', 'hyp-francfort'],
   [25, 'Aéroport de Londres-Heathrow', 'londres-heathrow', 'hyp-londres-heathrow'],
-  [35, 'Aéroport Roissy-CDG', 'roissy', 'Property Card-20']
+  [35, 'Aéroport Roissy-CDG', 'roissy', 'hyp-cdg']
 ];
 const UTILITIES = [
-  [12, 'Parlement européen', 'parlement', 'Property Card-26'],
-  [28, 'Cour européenne de justice', 'cour', 'Property Card-27']
+  [12, 'Parlement européen', 'parlement', 'hyp-parlement europeen'],
+  [28, 'Cour européenne de justice', 'cour', 'hyp-cour de justice']
 ];
 const SPECIAL = {
   0: ['Départ', 'start'], 2: ['Coffre de communauté', 'community'], 4: ['Taxe sur le revenu', 'tax', 150],
@@ -2131,7 +2131,7 @@ function newPlayer(r, id, name) {
 function initGame(r) {
   Object.assign(r, {
     status: 'waiting', owners: {}, houses: {}, mortgaged: {}, cur: 0, hasRolled: false, extra: false, doubles: 0, canBuy: false,
-    dice: { one: 0, two: 0, total: 0 }, rollSeq: 0, debt: null, logs: [], winner: null, card: null, cardSeq: 0,
+    dice: { one: 0, two: 0, total: 0 }, rollSeq: 0, debt: null, logs: [], winner: null, card: null, cardSeq: 0, pot: 0, trade: null,
     decks: { chance: shuffle(CHANCE.map((_, i) => i)), community: shuffle(COMMUNITY.map((_, i) => i)) }
   });
   r.players.forEach((p, i) => Object.assign(p, { color: COLORS[i % COLORS.length], money: START_MONEY, position: 0, jail: false, jailTurns: 0, cards: { chance: 0, community: 0 }, bankrupt: false }));
@@ -2162,24 +2162,24 @@ function rentFor(r, pos, o = {}) {
   return GROUPS[s.group].every(x => r.owners[x] === owner) ? s.rent[1] : s.rent[0];
 }
 
-function pay(r, p, pays) {
+function pay(r, p, pays, toPot) {
   pays = pays.filter(x => x[1] > 0);
   if (!pays.length) return true;
   const total = pays.reduce((a, x) => a + x[1], 0);
   if (r.debt && r.debt.pid === p.id) { r.debt.payments.push(...pays); r.debt.total += total; return false; }
   if (p.money >= total) {
     p.money -= total;
-    pays.forEach(([to, a]) => { const q = to && byId(r, to); if (q) q.money += a; });
+    pays.forEach(([to, a]) => { const q = to && byId(r, to); if (q) q.money += a; else if (toPot) r.pot += a; });
     return true;
   }
-  r.debt = { pid: p.id, payments: pays, total };
+  r.debt = { pid: p.id, payments: pays, total, toPot };
   log(r, `⚠️ ${p.name} doit ${total} mais n'a que ${p.money} : vendre, hypothéquer ou faire faillite.`);
   return false;
 }
 function settle(r) {
   const d = r.debt; if (!d) return;
   const p = byId(r, d.pid);
-  if (p.money >= d.total) { r.debt = null; pay(r, p, d.payments); log(r, `✅ ${p.name} règle sa dette (${d.total}).`); }
+  if (p.money >= d.total) { r.debt = null; pay(r, p, d.payments, d.toPot); log(r, `✅ ${p.name} règle sa dette (${d.total}).`); }
 }
 
 function sendToJail(r, p) {
@@ -2198,8 +2198,12 @@ function land(r, p, o = {}) {
   const s = BOARD[p.position];
   r.canBuy = false;
   switch (s.type) {
-    case 'tax': log(r, `💸 ${p.name} paie ${s.price} (${s.name}).`); pay(r, p, [[null, s.price]]); break;
+    case 'tax': log(r, `💸 ${p.name} paie ${s.price} (${s.name}).`); pay(r, p, [[null, s.price]], true); break;
     case 'go_to_jail': sendToJail(r, p); break;
+    case 'free_parking':
+      if (r.pot > 0) { log(r, `🅿️ ${p.name} rafle la cagnotte du Parc gratuit (${r.pot}).`); p.money += r.pot; r.pot = 0; }
+      else log(r, `🅿️ ${p.name} se repose au Parc gratuit.`);
+      break;
     case 'chance': case 'community': draw(r, p, s.type); break;
     case 'property': case 'station': case 'utility': {
       const ow = r.owners[p.position];
@@ -2222,7 +2226,7 @@ function draw(r, p, deck) {
   const others = r.players.filter(q => q !== p && !q.bankrupt);
   switch (kind) {
     case 'jail': sendToJail(r, p); break;
-    case 'pay': pay(r, p, [[null, a]]); break;
+    case 'pay': pay(r, p, [[null, a]], true); break;
     case 'get': p.money += a; break;
     case 'getAll': others.forEach(q => { const x = Math.min(a, q.money); q.money -= x; p.money += x; }); break;
     case 'payAll': pay(r, p, others.map(q => [q.id, a])); break;
@@ -2238,7 +2242,7 @@ function draw(r, p, deck) {
     case 'repair': {
       let h = 0, ho = 0;
       Object.keys(r.owners).forEach(k => { if (r.owners[k] === p.id) { const n = r.houses[k] || 0; if (n === 5) ho++; else h += n; } });
-      if (h + ho) { log(r, `🔧 ${p.name} : ${h} maison(s), ${ho} hôtel(s).`); pay(r, p, [[null, h * a + ho * b]]); }
+      if (h + ho) { log(r, `🔧 ${p.name} : ${h} maison(s), ${ho} hôtel(s).`); pay(r, p, [[null, h * a + ho * b]], true); }
     }
   }
 }
@@ -2267,6 +2271,7 @@ function nextTurn(r) {
   log(r, `▶ Tour de ${cur(r).name}.`);
 }
 function goBankrupt(r, p) {
+  if (r.trade && (r.trade.from === p.id || r.trade.to === p.id)) r.trade = null;
   const d = r.debt;
   const cid = d && new Set(d.payments.map(x => x[0])).size === 1 ? d.payments[0][0] : null;
   const q = cid && byId(r, cid);
@@ -2287,6 +2292,55 @@ function goBankrupt(r, p) {
     r.status = 'finished'; r.winner = { id: alive[0].id, name: alive[0].name, money: alive[0].money };
     log(r, `🏆 ${alive[0].name} remporte la partie !`);
   } else if (cur(r) === p) nextTurn(r);
+}
+
+const interestFor = (r, pos) => r.mortgaged[pos] ? Math.round(BOARD[pos].price / 2 * 0.1) : 0;
+
+function moveJailCards(giver, receiver, n) {
+  let left = n;
+  ['chance', 'community'].forEach(k => { const t = Math.min(left, giver.cards[k]); giver.cards[k] -= t; receiver.cards[k] += t; left -= t; });
+}
+
+function sanitizeTradeSide(r, player, side) {
+  if (!side || typeof side !== 'object') return null;
+  const money = Math.max(0, Math.floor(Number(side.money) || 0));
+  const props = Array.isArray(side.props) ? [...new Set(side.props.map(Number))] : [];
+  for (const pos of props) { if (r.owners[pos] !== player.id || r.houses[pos]) return null; }
+  const cards = Math.max(0, Math.min(player.cards.chance + player.cards.community, Math.floor(Number(side.cards) || 0)));
+  return { money, props, cards };
+}
+
+function tradeDesc(side) {
+  const parts = [];
+  if (side.props.length) parts.push(side.props.map(k => BOARD[k].name).join(', '));
+  if (side.money) parts.push(`${side.money}`);
+  if (side.cards) parts.push(`${side.cards} carte(s) prison`);
+  return parts.join(' + ') || 'rien';
+}
+
+function executeTrade(r, tr) {
+  if (r.debt) return false;
+  const from = byId(r, tr.from), to = byId(r, tr.to);
+  if (!from || !to || from.bankrupt || to.bankrupt) return false;
+  const ownsAll = (pl, props) => props.every(pos => r.owners[pos] === pl.id && !r.houses[pos]);
+  if (!ownsAll(from, tr.offer.props) || !ownsAll(to, tr.request.props)) return false;
+  const offerInterest = tr.offer.props.reduce((sum, pos) => sum + interestFor(r, pos), 0);
+  const requestInterest = tr.request.props.reduce((sum, pos) => sum + interestFor(r, pos), 0);
+  if (from.money < tr.offer.money + requestInterest) return false;
+  if (to.money < tr.request.money + offerInterest) return false;
+  if (from.cards.chance + from.cards.community < tr.offer.cards) return false;
+  if (to.cards.chance + to.cards.community < tr.request.cards) return false;
+
+  from.money += tr.request.money - tr.offer.money - requestInterest;
+  to.money += tr.offer.money - tr.request.money - offerInterest;
+  tr.offer.props.forEach(pos => { r.owners[pos] = to.id; });
+  tr.request.props.forEach(pos => { r.owners[pos] = from.id; });
+  moveJailCards(from, to, tr.offer.cards);
+  moveJailCards(to, from, tr.request.cards);
+
+  log(r, `🤝 Échange conclu : ${from.name} donne ${tradeDesc(tr.offer)} · ${to.name} donne ${tradeDesc(tr.request)}.`);
+  if (offerInterest || requestInterest) log(r, `🏦 Intérêts d'hypothèque à la banque : ${offerInterest + requestInterest}.`);
+  return true;
 }
 
 function manageInfo(r, p, pos) {
@@ -2324,7 +2378,7 @@ function view(r, pid) {
     canPayJail: mine && c.jail && !r.hasRolled && !r.debt && c.money >= JAIL_FINE,
     canUseCard: mine && c.jail && !r.hasRolled && c.cards.chance + c.cards.community > 0,
     debt: r.debt ? { pid: r.debt.pid, total: r.debt.total } : null,
-    dice: r.dice, rollSeq: r.rollSeq, board: BOARD, properties: r.owners, houses: r.houses, mortgaged: r.mortgaged,
+    dice: r.dice, rollSeq: r.rollSeq, board: BOARD, properties: r.owners, houses: r.houses, mortgaged: r.mortgaged, pot: r.pot, trade: r.trade,
     manage, supply: supply(r), logs: r.logs.slice(-40), winner: r.winner, card: r.card
   };
 }
@@ -2371,6 +2425,26 @@ function dispatch(ws, m) {
   if (!r) return err(ws, 'Tu n\'es dans aucun salon.', 'no_room');
   const pid = info.pid, p = byId(r, pid), c = cur(r);
 
+  if (t === 'monopoly_leave') {
+    // Quitter volontairement : le salon se ferme si c'est l'écran TV (ou le dernier joueur), sinon abandon / retrait du joueur
+    const others = r.players.filter(q => q.id !== pid);
+    if (pid === r.hostId && (r.mode === 'tv' || !others.length)) {
+      r.members.forEach((w, id) => { if (id !== pid) send(w, { type: 'monopoly_closed', message: 'Le salon a été fermé par son créateur.' }); });
+      rooms.delete(r.code);
+      return send(ws, { type: 'monopoly_left' });
+    }
+    if (r.status === 'playing' && p && !p.bankrupt) {
+      const isCur = c === p, keepDebt = !isCur && r.debt && r.debt.pid !== p.id ? r.debt : null, keepBuy = isCur ? false : r.canBuy;
+      if (keepDebt) r.debt = null;
+      goBankrupt(r, p);
+      if (!isCur) { r.canBuy = keepBuy; if (keepDebt && r.status === 'playing') r.debt = keepDebt; }
+    } else if (r.status !== 'playing') r.players = r.players.filter(q => q.id !== pid);
+    r.members.delete(pid);
+    socketInfo.delete(ws);
+    if (pid === r.hostId) { const nh = r.players.find(q => !q.bankrupt) || r.players[0]; if (nh) r.hostId = nh.id; }
+    if (!r.players.length) rooms.delete(r.code); else broadcast(r);
+    return send(ws, { type: 'monopoly_left' });
+  }
   if (t === 'monopoly_pick_token') {
     if (r.status !== 'waiting' || !p || !TOKENS.includes(m.token)) return;
     if (r.players.some(q => q !== p && q.token === m.token)) return err(ws, 'Ce pion est déjà pris.');
@@ -2394,6 +2468,40 @@ function dispatch(ws, m) {
   }
   if (r.status !== 'playing' || !p || p.bankrupt) return;
 
+  if (t === 'monopoly_give_money') {
+    if (r.debt) return err(ws, "Règle ta dette avant de donner de l'argent.");
+    const to = byId(r, m.to), amount = Math.floor(Number(m.amount) || 0);
+    if (!to || to === p || to.bankrupt || amount <= 0) return err(ws, 'Don invalide.');
+    if (p.money < amount) return err(ws, 'Fonds insuffisants.');
+    p.money -= amount; to.money += amount;
+    log(r, `💸 ${p.name} donne ${amount} à ${to.name}.`);
+    return broadcast(r);
+  }
+  if (t === 'monopoly_trade_propose') {
+    if (r.trade) return err(ws, 'Un échange est déjà en cours.');
+    if (r.debt) return err(ws, 'Règle ta dette avant de proposer un échange.');
+    const to = byId(r, m.to);
+    if (!to || to === p || to.bankrupt) return err(ws, 'Joueur invalide.');
+    const offer = sanitizeTradeSide(r, p, m.offer), request = sanitizeTradeSide(r, to, m.request);
+    if (!offer || !request) return err(ws, 'Échange invalide.');
+    if (!offer.props.length && !offer.money && !offer.cards && !request.props.length && !request.money && !request.cards) return err(ws, 'Échange vide.');
+    r.trade = { from: p.id, to: to.id, offer, request };
+    log(r, `🤝 ${p.name} propose un échange à ${to.name}.`);
+    return broadcast(r);
+  }
+  if (t === 'monopoly_trade_cancel') {
+    if (!r.trade || r.trade.from !== pid) return;
+    log(r, `❌ ${p.name} retire sa proposition d'échange.`);
+    r.trade = null;
+    return broadcast(r);
+  }
+  if (t === 'monopoly_trade_respond') {
+    if (!r.trade || r.trade.to !== pid) return;
+    const tr = r.trade; r.trade = null;
+    if (!m.accept) { log(r, `❌ ${p.name} refuse l'échange.`); return broadcast(r); }
+    if (!executeTrade(r, tr)) log(r, `⚠️ Échange impossible (conditions non remplies).`);
+    return broadcast(r);
+  }
   if (t === 'monopoly_manage') {
     if (c !== p) return;
     const pos = +m.pos, s = BOARD[pos];
