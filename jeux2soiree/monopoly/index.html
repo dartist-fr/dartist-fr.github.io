@@ -73,7 +73,9 @@ input:focus{border-color:var(--red)}
 @media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 400px;align-items:start}}
 
 /* Plateau (image + overlay) */
-.board-col{display:flex;justify-content:center;min-width:0}
+.board-col{display:flex;flex-direction:column;align-items:center;min-width:0}
+.board-roll{margin-top:10px}
+.board-roll .act{font-size:15px;padding:14px 26px}
 .board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#fff}
 .board>img{width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0}#tokens{pointer-events:none}
@@ -254,6 +256,7 @@ input:focus{border-color:var(--red)}
       <div class="ov" id="potBoard"></div>
       <div class="ov" id="tokens"></div>
      </div>
+     <div id="boardRoll" class="board-roll"></div>
     </div>
     <aside class="side">
      <div id="myBox"></div>
@@ -505,7 +508,7 @@ function render(){
   $("lobby").classList.toggle("hidden", !waiting);
   $("game").classList.toggle("hidden", waiting);
   if(waiting){ renderLobby(); return; }
-  renderBanner(); renderBoard(); renderActions(); renderSide(); renderPropModal(); handleEvents();
+  renderBanner(); renderBoard(); renderActions(); renderRollNextToBoard(); renderSide(); renderPropModal(); handleEvents();
 }
 
 function renderLobby(){
@@ -582,6 +585,10 @@ function renderBoard(){
 }
 
 /* ----- Barre d'actions ----- */
+function renderRollNextToBoard(){
+  const st = gameState;
+  setHtml($("boardRoll"), (st.myTurn && st.canRoll) ? `<button class="act roll" data-act="roll">🎲 LANCER LES DÉS</button>` : "");
+}
 function renderActions(){
   const st = gameState, bar = $("actionBar");
   if(!st.me || st.status !== "playing" || st.me.bankrupt){ bar.classList.add("hidden"); return; }
