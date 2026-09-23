@@ -42,6 +42,14 @@ input:focus{border-color:var(--red)}
 
 /* ---------- App ---------- */
 #app{min-height:100vh;display:flex;flex-direction:column}
+@media(min-width:1000px){
+ #app{height:100vh}
+ #gameArea{overflow:hidden;display:flex;flex-direction:column;min-height:0}
+ #game{flex:1;display:flex;flex-direction:column;min-height:0;width:100%}
+ .layout{flex:1;min-height:0}
+ .side{max-height:100%;overflow-y:auto;padding-right:4px}
+ #actionBar{display:none!important}
+}
 .topbar{min-height:58px;border-bottom:3px solid #fff;background:var(--panel);display:flex;justify-content:space-between;align-items:center;padding:0 15px;gap:10px}
 .top-title{font-family:'Press Start 2P';font-size:clamp(11px,2.4vw,18px)}
 .room-code{border:2px solid #fff;padding:5px 12px;font-size:23px}
@@ -52,6 +60,7 @@ input:focus{border-color:var(--red)}
 #lobby{text-align:center;max-width:900px;margin:auto}
 .big-room{font-family:'Press Start 2P';font-size:clamp(40px,10vw,80px);margin:25px}
 .lobby-players{display:grid;gap:8px;margin:18px 0}
+.micon{height:.8em;vertical-align:-.08em;margin-right:.12em}
 .lobby-player{display:flex;align-items:center;background:#151925;border:2px solid #555;border-left:8px solid var(--c);padding:10px;font-size:24px}
 .lobby-player.host{border-color:var(--gold);border-left-color:var(--c)}
 .lobby-settings{border:2px solid #555;padding:12px;margin:15px 0;background:var(--panel);font-size:22px}
@@ -60,7 +69,7 @@ input:focus{border-color:var(--red)}
 
 /* Jeu */
 #game{max-width:1600px;margin:auto}
-.banner{display:flex;justify-content:space-between;align-items:center;gap:10px;border:3px solid #fff;background:var(--panel);box-shadow:4px 4px #000;padding:8px 12px;margin-bottom:12px}
+.banner{display:flex;justify-content:space-between;align-items:center;gap:10px;border:3px solid #fff;background:var(--panel);box-shadow:4px 4px #000;padding:8px 12px;margin-bottom:12px;flex:none}
 .banner .t{font-family:'Press Start 2P';font-size:clamp(9px,2.5vw,15px);line-height:1.6}
 .banner .sub{font-size:20px;opacity:.85;margin-top:2px}
 .dice{display:flex;gap:6px;align-items:center;flex:none}
@@ -75,7 +84,9 @@ input:focus{border-color:var(--red)}
 /* Plateau (image + overlay) */
 .board-col{display:flex;flex-direction:column;align-items:center;min-width:0}
 .board-roll{margin-top:10px}
-.board-roll .act{font-size:15px;padding:14px 26px}
+.board-roll{display:none;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}
+.board-roll .act{font-size:15px;padding:12px 18px;flex:0 1 auto}
+@media(min-width:1000px){.board-roll{display:flex}}
 .board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#fff}
 .board>img{width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0}#tokens{pointer-events:none}
@@ -262,7 +273,7 @@ input:focus{border-color:var(--red)}
      <div id="myBox"></div>
      <div id="tradeBox" class="panel hidden"></div>
      <div class="panel"><div class="ptitle">👥 JOUEURS</div><div id="playersBox"></div></div>
-     <div class="panel"><div class="ptitle">📜 DÉROULÉ</div><div class="logs" id="logsBox"></div></div>
+     <div class="panel" id="logsPanel"></div>
     </aside>
    </div>
    <div id="actionBar" class="hidden"></div>
@@ -341,11 +352,12 @@ function rect(p){
 ========================================================= */
 const $ = id => document.getElementById(id);
 let socket = null, room = null, playerId = null, setupMode = "tv";
-let pendingSession = null, gameState = null, openPos = null, lastCardSeq = null, lastRoll = null, cardTimer = null, hbTimer = null;
+let logsOpen = false, pendingSession = null, gameState = null, openPos = null, lastCardSeq = null, lastRoll = null, cardTimer = null, hbTimer = null;
 const toks = {};
 
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
-const fmt = n => "M" + Number(n).toLocaleString("fr-FR");
+const MICON = `<img class="micon" src="${encodeURI(ASSETS + "logos/M-money.png")}" alt="M">`;
+const fmt = n => MICON + Number(n).toLocaleString("fr-FR");
 const showMessage = t => { $("message").textContent = t || ""; };
 function toast(text){
   const t = $("toast"); t.textContent = text; t.classList.remove("hidden");
@@ -395,6 +407,7 @@ function handleMessage(d){
   if(d.type === "monopoly_room_created" || d.type === "monopoly_joined"){
     room = d.room; playerId = d.playerId; saveSession(); openApp(); return;
   }
+  if(d.type === "monopoly_kicked"){ clearSession(); room = playerId = null; alert("Tu as été exclu(e) du salon."); location.reload(); return; }
   if(d.type === "monopoly_closed"){ clearSession(); room = playerId = null; alert(d.message || "Salon fermé."); location.reload(); return; }
   if(d.type === "monopoly_state"){ gameState = d.state; $("conn").textContent = ""; render(); return; }
   if(d.type === "monopoly_error" || d.type === "error"){
@@ -458,6 +471,8 @@ document.addEventListener("click", e => {
     if(act === "create") return createRoom();
     if(act === "joinGo") return joinRoom();
     if(act === "closeCard") return closeCard();
+    if(act === "toggleLogs"){ logsOpen = !logsOpen; renderSide(); return; }
+    if(act === "kick"){ if(confirm("Exclure ce joueur du salon ?")) send({ type:"monopoly_kick", target:a.dataset.to }); return; }
     if(act === "openTrade"){ tradeStep1(); $("tradeModal").classList.remove("hidden"); return; }
     if(act === "openGive"){ setHtml($("tradeBody"), giveModalHtml()); $("tradeModal").classList.remove("hidden"); return; }
     if(act === "sendGive"){
@@ -515,7 +530,7 @@ function renderLobby(){
   const st = gameState;
   $("modeLabel").textContent = st.mode === "phones" ? "📱 Mode téléphones • le créateur joue aussi" : "🖥️ Mode TV + téléphones • cet écran est le plateau";
   setHtml($("lobbyPlayers"), st.players.map(p =>
-    `<div class="lobby-player${p.host ? " host" : ""}" style="--c:${p.color}">${pion(p)}${esc(p.name)}${p.host ? " 👑" : ""}${p.token ? ` <span class="small">· ${TOKENS[p.token]}</span>` : ""}</div>`).join("")
+    `<div class="lobby-player${p.host ? " host" : ""}" style="--c:${p.color}">${pion(p)}${esc(p.name)}${p.host ? " 👑" : ""}${p.token ? ` <span class="small">· ${TOKENS[p.token]}</span>` : ""}${(st.isHost && !p.host) ? `<button class="link" style="margin-left:auto" data-act="kick" data-to="${p.id}">✖ exclure</button>` : ""}</div>`).join("")
     || `<div class="small">En attente de joueurs…</div>`);
   const tp = $("tokenPicker"); tp.classList.toggle("hidden", !st.me);
   if(st.me){
@@ -586,13 +601,11 @@ function renderBoard(){
 
 /* ----- Barre d'actions ----- */
 function renderRollNextToBoard(){
-  const st = gameState;
-  setHtml($("boardRoll"), (st.myTurn && st.canRoll) ? `<button class="act roll" data-act="roll">🎲 LANCER LES DÉS</button>` : "");
+  setHtml($("boardRoll"), actionButtonsHtml());
 }
-function renderActions(){
-  const st = gameState, bar = $("actionBar");
-  if(!st.me || st.status !== "playing" || st.me.bankrupt){ bar.classList.add("hidden"); return; }
-  bar.classList.remove("hidden");
+function actionButtonsHtml(){
+  const st = gameState;
+  if(!st.me || st.status !== "playing" || st.me.bankrupt) return "";
   let h = "";
   if(st.myTurn){
     if(st.debt) h += `<button class="act bad" data-act="bankrupt">🏳️ FAILLITE</button>`;
@@ -603,6 +616,11 @@ function renderActions(){
     if(st.canEnd) h += `<button class="act end" data-act="end">▶ FIN DE TOUR</button>`;
     if(!h) h = `<div class="wait">Règle ta dette en vendant ou hypothéquant…</div>`;
   } else h = `<div class="wait">⏳ Tour de ${esc(st.currentPlayerName || "…")}…</div>`;
+  return h;
+}
+function renderActions(){
+  const st = gameState, bar = $("actionBar"), h = actionButtonsHtml();
+  bar.classList.toggle("hidden", !h);
   setHtml(bar, h);
 }
 
@@ -715,7 +733,7 @@ function renderSide(){
   setHtml($("myBox"), myHtml());
   renderTrade();
   setHtml($("playersBox"), playersHtml());
-  setHtml($("logsBox"), st.logs.slice().reverse().map(l => `<div class="log-row"><span class="log-time">${esc(l.time)}</span>${esc(l.text)}</div>`).join(""));
+  setHtml($("logsPanel"), `<div class="ptitle" data-act="toggleLogs" style="cursor:pointer;display:flex;justify-content:space-between">📜 DÉROULÉ <span>${logsOpen ? "▲ masquer" : "▼ afficher"}</span></div>${logsOpen ? `<div class="logs">${st.logs.slice().reverse().map(l => `<div class="log-row"><span class="log-time">${esc(l.time)}</span>${esc(l.text)}</div>`).join("")}</div>` : ""}`);
 }
 
 /* ----- Modale propriété ----- */
