@@ -48,7 +48,6 @@ input:focus{border-color:var(--red)}
  #game{flex:1;display:flex;flex-direction:column;min-height:0;width:100%}
  .layout{flex:1;min-height:0}
  .side{max-height:100%;overflow-y:auto;padding-right:4px}
- #actionBar{display:none!important}
 }
 .topbar{min-height:58px;border-bottom:3px solid #fff;background:var(--panel);display:flex;justify-content:space-between;align-items:center;padding:0 15px;gap:10px}
 .top-title{font-family:'Press Start 2P';font-size:clamp(11px,2.4vw,18px)}
@@ -84,9 +83,9 @@ input:focus{border-color:var(--red)}
 /* Plateau (image + overlay) */
 .board-col{display:flex;flex-direction:column;align-items:center;min-width:0}
 .board-roll{margin-top:10px}
-.board-roll{display:none;flex-wrap:wrap;justify-content:center;gap:8px;width:100%}
+.board-roll{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%;margin-top:10px}
 .board-roll .act{font-size:15px;padding:12px 18px;flex:0 1 auto}
-@media(min-width:1000px){.board-roll{display:flex}}
+#actionBar{display:none!important}
 .board{position:relative;width:min(100%,calc(100vh - 150px));width:min(100%,calc(100dvh - 150px));min-width:min(100%,320px);aspect-ratio:1;container-type:inline-size;border:4px solid #fff;box-shadow:6px 6px #000;background:#fff}
 .board>img{width:100%;height:100%;display:block}
 .ov{position:absolute;inset:0}#tokens{pointer-events:none}
@@ -155,13 +154,10 @@ input:focus{border-color:var(--red)}
 .pm-info{font-size:22px;margin:10px 0}
 .pm-btns{display:grid;gap:8px}
 .pot-pill{color:var(--green);font-size:22px;margin-left:8px}
-.pot-board{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:4;background:rgba(9,11,18,.82);border:3px solid var(--gold);padding:2.2cqw 3cqw;box-shadow:3px 3px #000;max-width:60%}
-.pot-board .lbl{font-family:'Press Start 2P';font-size:clamp(9px,1.6cqw,15px);color:var(--gold);white-space:nowrap}
-.pot-board .amt{font-family:'Press Start 2P';color:var(--green);font-size:clamp(11px,2cqw,18px)}
-.pot-stacks{display:flex;flex-wrap:wrap;gap:1.4cqw;justify-content:center}
-.pstack{position:relative}
-.pstack img{position:absolute;width:6.5cqw;min-width:26px;border-radius:2px;box-shadow:1px 1px 0 rgba(0,0,0,.7)}
-.pstack .pn{position:absolute;right:-3px;bottom:-9px;background:#000;border:1px solid #fff;font-size:11px;padding:0 3px;z-index:9;white-space:nowrap}
+.pot-board{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:.6em;z-index:4;background:rgba(9,11,18,.88);border:2px solid var(--gold);border-radius:16px;padding:.5em 1em;box-shadow:0 4px 14px rgba(0,0,0,.55)}
+.pot-board .picon{font-size:clamp(15px,2.2cqw,20px)}
+.pot-board .amt{font-family:'Press Start 2P';color:var(--green);font-size:clamp(12px,2.1cqw,19px);display:flex;align-items:center}
+.pot-board .amt .micon{height:.85em}
 .tcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin:14px 0}
 .tsec b{display:block;margin-bottom:6px;color:var(--gold);font-size:20px}
 .tprops{max-height:150px;overflow-y:auto;border:1px solid #444;padding:4px 8px;margin-bottom:8px;background:#0c0f18}
@@ -356,8 +352,8 @@ let logsOpen = false, pendingSession = null, gameState = null, openPos = null, l
 const toks = {};
 
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
-const MICON = `<img class="micon" src="${encodeURI(ASSETS + "logos/M-money.png")}" alt="M">`;
-const fmt = n => MICON + Number(n).toLocaleString("fr-FR");
+const micon = light => `<img class="micon" src="${encodeURI(ASSETS + "logos/M-money-" + (light ? "noir" : "blanc") + ".png")}" alt="M">`;
+const fmt = (n, light) => micon(light) + Number(n).toLocaleString("fr-FR");
 const showMessage = t => { $("message").textContent = t || ""; };
 function toast(text){
   const t = $("toast"); t.textContent = text; t.classList.remove("hidden");
@@ -596,7 +592,7 @@ function renderBoard(){
   }));
   Object.keys(toks).forEach(id => { if(!alive.has(id)){ toks[id].remove(); delete toks[id]; } });
 
-  setHtml($("potBoard"), st.pot ? `<div class="pot-board"><div class="lbl">🅿️ CAGNOTTE</div><div class="pot-stacks">${potBillsHtml(st.pot)}</div><div class="amt">${fmt(st.pot)}</div></div>` : "");
+  setHtml($("potBoard"), st.pot ? `<div class="pot-board"><span class="picon">🅿️</span><span class="amt">${fmt(st.pot)}</span></div>` : "");
 }
 
 /* ----- Barre d'actions ----- */
