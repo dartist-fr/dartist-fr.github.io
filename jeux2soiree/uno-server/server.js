@@ -2451,6 +2451,17 @@ function dispatch(ws, m) {
     p.token = m.token;
     return broadcast(r);
   }
+  if (t === 'monopoly_kick') {
+    if (pid !== r.hostId || r.status !== 'waiting') return;
+    const target = byId(r, m.target);
+    if (!target || target.id === r.hostId) return;
+    const tws = r.members.get(target.id);
+    r.players = r.players.filter(q => q.id !== target.id);
+    r.members.delete(target.id);
+    log(r, `👢 ${target.name} a été exclu(e) par ${p.name}.`);
+    send(tws, { type: 'monopoly_kicked' });
+    return broadcast(r);
+  }
   if (t === 'monopoly_start_game') {
     if (pid !== r.hostId || r.status !== 'waiting') return;
     if (r.players.length < 2) return err(ws, 'Il faut au moins 2 joueurs.');
