@@ -2251,6 +2251,7 @@ function doRoll(r, p) {
   const d1 = rint(6) + 1, d2 = rint(6) + 1, dbl = d1 === d2, total = d1 + d2;
   r.dice = { one: d1, two: d2, total }; r.rollSeq++; r.canBuy = false; r.extra = false; r.hasRolled = true;
   log(r, `🎲 ${p.name} lance ${d1}+${d2}=${total}${dbl ? ' (double !)' : ''}.`);
+  if (d1 === 6 && d2 === 6 && r.pot > 0) { log(r, `🎰 Double 6 ! ${p.name} rafle la cagnotte du Parc gratuit (${r.pot}).`); p.money += r.pot; r.pot = 0; }
   if (p.jail) {
     if (dbl) { p.jail = false; p.jailTurns = 0; log(r, `🔓 ${p.name} sort de prison grâce au double.`); move(r, p, total); return; }
     if (++p.jailTurns >= 3) {
