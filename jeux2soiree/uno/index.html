@@ -50,7 +50,10 @@ input:focus{border-color:#ff315e}
 #app{min-height:100vh;display:flex;flex-direction:column}
 .topbar{height:65px;border-bottom:3px solid #fff;background:#10131d;display:flex;justify-content:space-between;align-items:center;padding:0 15px}
 .top-title{font-family:'Press Start 2P';font-size:18px}
+.top-right{display:flex;align-items:center;gap:10px}
 .room-code{border:2px solid #fff;padding:7px 12px;font-size:23px}
+.fs-btn{border:2px solid #fff;background:#171b28;color:#fff;padding:7px 12px;font-size:20px}
+.fs-btn:hover{background:#fff;color:#111}
 #gameArea{flex:1;padding:15px}
 
 #lobby{text-align:center;max-width:800px;margin:auto}
@@ -172,6 +175,7 @@ input:focus{border-color:#ff315e}
   .topbar{height:58px}
   .top-title{font-size:12px}
   .room-code{font-size:17px;padding:6px 9px}
+  .fs-btn{font-size:15px;padding:6px 9px}
   #gameArea{padding:8px}
   .table{gap:12px;min-height:250px}
   .deck,.card{width:80px;height:115px}
@@ -270,8 +274,11 @@ Avec cette option : +2 → +2 → +4, etc.
 
 <header class="topbar">
 <div class="top-title">UNO</div>
+<div class="top-right">
+<button id="fsBtn" class="fs-btn" onclick="toggleFullscreen()">⛶ PLEIN ÉCRAN</button>
 <div class="room-code">
 SALON : <strong id="roomCodeDisplay">----</strong>
+</div>
 </div>
 </header>
 
@@ -473,6 +480,40 @@ let socketHeartbeatTimer=null;
 
 
 const $=id=>document.getElementById(id);
+
+
+/* =========================================================
+   PLEIN ÉCRAN
+   ========================================================= */
+
+function toggleFullscreen(){
+
+  if(!document.fullscreenElement){
+
+    document.documentElement.requestFullscreen();
+
+  }else{
+
+    if(document.exitFullscreen){
+      document.exitFullscreen();
+    }
+
+  }
+
+}
+
+
+document.addEventListener(
+  "fullscreenchange",
+  ()=>{
+
+    $("fsBtn").textContent=
+      document.fullscreenElement
+        ?"⛶ QUITTER"
+        :"⛶ PLEIN ÉCRAN";
+
+  }
+);
 
 
 function showMessage(t){
