@@ -2,7 +2,15 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- viewport-fit=cover permet d'occuper tout l'écran y compris autour du poinçon -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- Intégration PWA / WebApp plein écran -->
+    <meta name="theme-color" content="#0b0616">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>jeux2soiree</title>
     <link rel="icon" type="image/png" href="favicon.png">
 
@@ -37,6 +45,7 @@
 
         html {
             background: var(--bg-body);
+            height: 100%;
         }
 
         body {
@@ -57,7 +66,14 @@
 
             color: var(--text-main);
             min-height: 100vh;
-            padding: 24px 12px 60px;
+            min-height: 100dvh;
+            
+            /* Utilise le safe-area-inset pour repousser le contenu sous le capteur sans couper l'arrière-plan */
+            padding-top: calc(24px + env(safe-area-inset-top));
+            padding-right: calc(12px + env(safe-area-inset-right));
+            padding-bottom: calc(60px + env(safe-area-inset-bottom));
+            padding-left: calc(12px + env(safe-area-inset-left));
+            
             position: relative;
             overflow-x: hidden;
         }
@@ -303,7 +319,7 @@
 
             text-transform: uppercase;
 
-            scroll-margin-top: 30px;
+            scroll-margin-top: calc(30px + env(safe-area-inset-top));
         }
 
         /* =========================
@@ -472,8 +488,8 @@
         #btn-haut {
             position: fixed;
 
-            bottom: 25px;
-            right: 25px;
+            bottom: calc(25px + env(safe-area-inset-bottom));
+            right: calc(25px + env(safe-area-inset-right));
 
             background: var(--neon-pink);
             color: #fff;
@@ -1000,30 +1016,25 @@
             </span>
         </a>
 
-<!-- =========================
-     MONOPOLY
-========================= -->
-<a
-    href="monopoly/"
-    class="carte-jeu green"
-    data-tag="MULTIJOUEUR"
->
-    <div class="icone">🎩</div>
-    <div class="titre-jeu">
-        Monopoly
-    </div>
-    <div class="info-jeu">
-        Achète des propriétés, développe ton empire et ruine tes amis !
-    </div>
-    <span class="btn-jouer">
-        Jouer ▶
-    </span>
-</a>
+        <!-- MONOPOLY -->
+        <a
+            href="monopoly/"
+            class="carte-jeu green"
+            data-tag="MULTIJOUEUR"
+        >
+            <div class="icone">🎩</div>
+            <div class="titre-jeu">
+                Monopoly
+            </div>
+            <div class="info-jeu">
+                Achète des propriétés, développe ton empire et ruine tes amis !
+            </div>
+            <span class="btn-jouer">
+                Jouer ▶
+            </span>
+        </a>
 
-        <!-- =========================
-             UNO
-        ========================= -->
-
+        <!-- UNO -->
         <a
             href="uno/"
             class="carte-jeu pink"
@@ -1158,14 +1169,14 @@
 
             if (!document.fullscreenElement) {
 
-                document.documentElement.requestFullscreen();
+                document.documentElement.requestFullscreen().catch(() => {});
 
                 label.textContent = 'QUITTER';
 
             } else {
 
                 if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                    document.exitFullscreen().catch(() => {});
                 }
 
                 label.textContent = 'PLEIN ÉCRAN';
