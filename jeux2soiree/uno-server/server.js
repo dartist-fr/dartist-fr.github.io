@@ -862,6 +862,8 @@ function makeRoom(
 
     penaltyDecision: null,
 
+    pendingTurnSteps: null,
+
     settings: {
 
       stacking:
@@ -1147,7 +1149,14 @@ function resetPlayerTurnFlags(
    FIN CARTE UNO
 ========================================================= */
 
-function advanceAfterCard(
+/*
+ * Applique l'EFFET de la carte (pioche, inversion, logs, animation)
+ * SANS faire avancer le tour. Retourne le nombre de joueurs à
+ * sauter (steps) pour que l'appelant fasse nextPlayer(room, steps)
+ * lui-même — une fois, au bon moment (immédiatement, ou après la
+ * résolution d'un défi UNO si la carte amène la main à 1 carte).
+ */
+function applyCardEffect(
   room,
   card,
   actor
@@ -1159,8 +1168,6 @@ function advanceAfterCard(
 
     const skipped =
       getNextPlayer(room, 1);
-
-    nextPlayer(room, 2);
 
     addLog(
       room,
@@ -1185,7 +1192,7 @@ function advanceAfterCard(
 
     }
 
-    return;
+    return 2;
 
   }
 
@@ -1197,25 +1204,33 @@ function advanceAfterCard(
       room.players.length === 2
     ) {
 
-      nextPlayer(room, 2);
-
       addLog(
         room,
         "↔ Reverse à 2 joueurs : le joueur suivant est passé."
       );
 
-    } else {
-
-      room.direction *= -1;
-
-      nextPlayer(room, 1);
-
-      addLog(
+      broadcast(
         room,
-        "↔ Sens de jeu inversé."
+        {
+          type: "action_effect",
+          effect: {
+            type: "reverse",
+            actorName: actor ? actor.name : "",
+            targetName: ""
+          }
+        }
       );
 
+      return 2;
+
     }
+
+    room.direction *= -1;
+
+    addLog(
+      room,
+      "↔ Sens de jeu inversé."
+    );
 
     broadcast(
       room,
@@ -1229,7 +1244,7 @@ function advanceAfterCard(
       }
     );
 
-    return;
+    return 1;
 
   }
 
@@ -1268,9 +1283,7 @@ function advanceAfterCard(
 
     }
 
-    nextPlayer(room, 2);
-
-    return;
+    return 2;
 
   }
 
@@ -1309,13 +1322,11 @@ function advanceAfterCard(
 
     }
 
-    nextPlayer(room, 2);
-
-    return;
+    return 2;
 
   }
 
-  nextPlayer(room, 1);
+  return 1;
 
 }
 
@@ -1507,8 +1518,6 @@ function resolveUnoChallenge(
 
   room.unoChallenge = null;
 
-  nextPlayer(room, 1);
-
   sendState(room);
 
 }
@@ -1692,6 +1701,15 @@ function playCard(
 
   }
 
+  const steps =
+    applyCardEffect(
+      room,
+      card,
+      player
+    );
+
+  nextPlayer(room, steps);
+
   if (
     player.hand.length === 1
   ) {
@@ -1704,12 +1722,6 @@ function playCard(
     return;
 
   }
-
-  advanceAfterCard(
-    room,
-    card,
-    player
-  );
 
   sendState(room);
 
