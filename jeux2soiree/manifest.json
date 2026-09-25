@@ -3,8 +3,7 @@
   "short_name": "Arcade",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay", "fullscreen", "standalone"],
+  "display": "fullscreen",
   "background_color": "#0b0616",
   "theme_color": "#0b0616",
   "icons": [
