@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    <!-- Lien vers le manifest -->
+    <!-- Lien vers le manifest PWA -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Couleurs et intégration Android / iOS -->
+    <!-- Couleurs et intégration plein écran mobile -->
     <meta name="theme-color" content="#0b0616">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -70,7 +70,7 @@
             min-height: 100vh;
             min-height: 100dvh;
 
-            /* Étend le fond tout en protégeant les boutons sous la caméra */
+            /* Étend le fond tout en protégeant les éléments sous l'encoche */
             padding-top: calc(20px + env(safe-area-inset-top, 0px));
             padding-right: calc(12px + env(safe-area-inset-right, 0px));
             padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
@@ -1159,6 +1159,17 @@
     ========================= -->
 
     <script>
+
+        /* =========================
+           SERVICE WORKER (PWA)
+        ========================= */
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+
 
         /* =========================
            PLEIN ÉCRAN
