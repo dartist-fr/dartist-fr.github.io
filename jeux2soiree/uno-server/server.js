@@ -1149,19 +1149,41 @@ function resetPlayerTurnFlags(
 
 function advanceAfterCard(
   room,
-  card
+  card,
+  actor
 ) {
 
   if (
     card.type === "skip"
   ) {
 
+    const skipped =
+      getNextPlayer(room, 1);
+
     nextPlayer(room, 2);
 
     addLog(
       room,
-      "⛔ Le tour est passé."
+      skipped
+        ? `⛔ ${skipped.name} est bloqué et passe son tour.`
+        : "⛔ Le tour est passé."
     );
+
+    if (skipped) {
+
+      broadcast(
+        room,
+        {
+          type: "action_effect",
+          effect: {
+            type: "skip",
+            actorName: actor ? actor.name : "",
+            targetName: skipped.name
+          }
+        }
+      );
+
+    }
 
     return;
 
@@ -1195,6 +1217,18 @@ function advanceAfterCard(
 
     }
 
+    broadcast(
+      room,
+      {
+        type: "action_effect",
+        effect: {
+          type: "reverse",
+          actorName: actor ? actor.name : "",
+          targetName: ""
+        }
+      }
+    );
+
     return;
 
   }
@@ -1203,17 +1237,38 @@ function advanceAfterCard(
     card.type === "draw2"
   ) {
 
-    room.pendingDraw =
-      room.settings.stacking
-        ? room.pendingDraw + 2
-        : 2;
+    const target =
+      getNextPlayer(room, 1);
 
-    nextPlayer(room, 1);
+    if (target) {
 
-    addLog(
-      room,
-      `⚠️ +${room.pendingDraw} en attente : le joueur suivant peut répondre ou piocher.`
-    );
+      const drawn =
+        drawCards(
+          room,
+          target,
+          2
+        );
+
+      addLog(
+        room,
+        `⚠️ ${target.name} pioche ${drawn} carte(s) (+2) et passe son tour.`
+      );
+
+      broadcast(
+        room,
+        {
+          type: "action_effect",
+          effect: {
+            type: "draw2",
+            actorName: actor ? actor.name : "",
+            targetName: target.name
+          }
+        }
+      );
+
+    }
+
+    nextPlayer(room, 2);
 
     return;
 
@@ -1223,14 +1278,38 @@ function advanceAfterCard(
     card.type === "wild4"
   ) {
 
-    room.pendingDraw = 4;
+    const target =
+      getNextPlayer(room, 1);
 
-    nextPlayer(room, 1);
+    if (target) {
 
-    addLog(
-      room,
-      "⚠️ +4 en attente : le joueur suivant peut répondre ou piocher."
-    );
+      const drawn =
+        drawCards(
+          room,
+          target,
+          4
+        );
+
+      addLog(
+        room,
+        `⚠️ ${target.name} pioche ${drawn} carte(s) (+4) et passe son tour.`
+      );
+
+      broadcast(
+        room,
+        {
+          type: "action_effect",
+          effect: {
+            type: "draw4",
+            actorName: actor ? actor.name : "",
+            targetName: target.name
+          }
+        }
+      );
+
+    }
+
+    nextPlayer(room, 2);
 
     return;
 
@@ -1490,25 +1569,6 @@ function playCard(
   }
 
   if (
-    room.penaltyDecision &&
-    room.penaltyDecision.targetId !==
-    player.id
-  ) {
-
-    send(
-      player.socket,
-      {
-        type: "error",
-        message:
-          "Le joueur visé doit d'abord décider."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
     !Number.isInteger(index) ||
     index < 0 ||
     index >= player.hand.length
@@ -1584,16 +1644,6 @@ function playCard(
 
   }
 
-  const wasPenalty =
-    room.pendingDraw > 0;
-
-  const previousPenalty =
-    room.pendingDraw;
-
-  room.pendingDraw = 0;
-
-  room.penaltyDecision = null;
-
   player.hand.splice(
     index,
     1
@@ -1629,15 +1679,6 @@ function playCard(
     }.`
   );
 
-  if (wasPenalty) {
-
-    addLog(
-      room,
-      `🛡️ ${player.name} répond à la pénalité de +${previousPenalty} au lieu de la prendre.`
-    );
-
-  }
-
   if (
     player.hand.length === 0
   ) {
@@ -1666,7 +1707,8 @@ function playCard(
 
   advanceAfterCard(
     room,
-    card
+    card,
+    player
   );
 
   sendState(room);
@@ -1740,48 +1782,6 @@ function drawNormal(
 }
 
 /* =========================================================
-   PIOCHE PÉNALITÉ UNO
-========================================================= */
-
-function drawPenalty(
-  room,
-  player
-) {
-
-  const amount =
-    room.pendingDraw;
-
-  if (!amount) {
-    return;
-  }
-
-  const drawn =
-    drawCards(
-      room,
-      player,
-      amount
-    );
-
-  room.pendingDraw = 0;
-
-  room.penaltyDecision = null;
-
-  resetPlayerTurnFlags(
-    player
-  );
-
-  addLog(
-    room,
-    `⚠️ ${player.name} prend la pénalité de +${amount} et pioche ${drawn} carte(s).`
-  );
-
-  nextPlayer(room, 1);
-
-  sendState(room);
-
-}
-
-/* =========================================================
    ACTION PIOCHER UNO
 ========================================================= */
 
@@ -1835,25 +1835,6 @@ function drawCard(
   }
 
   if (
-    room.penaltyDecision &&
-    room.penaltyDecision.targetId !==
-    player.id
-  ) {
-
-    send(
-      player.socket,
-      {
-        type: "error",
-        message:
-          "Le joueur visé doit d'abord décider."
-      }
-    );
-
-    return;
-
-  }
-
-  if (
     player.hasDrawn
   ) {
 
@@ -1865,34 +1846,6 @@ function drawCard(
           "Tu as déjà pioché."
       }
     );
-
-    return;
-
-  }
-
-  if (
-    room.pendingDraw > 0
-  ) {
-
-    room.penaltyDecision = {
-
-      targetId:
-        player.id,
-
-      targetName:
-        player.name,
-
-      amount:
-        room.pendingDraw
-
-    };
-
-    addLog(
-      room,
-      `⚖️ ${player.name} doit choisir : défendre ou prendre +${room.pendingDraw}.`
-    );
-
-    sendState(room);
 
     return;
 
@@ -2980,63 +2933,6 @@ wss.on(
               room,
               player
             );
-
-          }
-
-          return;
-
-        }
-
-        /* =================================================
-           PRENDRE PÉNALITÉ
-        ================================================= */
-
-        if (
-          data.type ===
-          "penalty_draw"
-        ) {
-
-          if (
-            player &&
-            room.penaltyDecision?.targetId ===
-            player.id
-          ) {
-
-            drawPenalty(
-              room,
-              player
-            );
-
-          }
-
-          return;
-
-        }
-
-        /* =================================================
-           ANNULER DÉCISION PÉNALITÉ
-        ================================================= */
-
-        if (
-          data.type ===
-          "penalty_cancel"
-        ) {
-
-          if (
-            player &&
-            room.penaltyDecision?.targetId ===
-            player.id
-          ) {
-
-            room.penaltyDecision =
-              null;
-
-            addLog(
-              room,
-              `🛡️ ${player.name} choisit de jouer une carte pour répondre à la pénalité.`
-            );
-
-            sendState(room);
 
           }
 
