@@ -542,6 +542,15 @@ function isPlayable(
   card
 ) {
 
+  if (
+    room.settings.stacking &&
+    room.pendingDraw > 0
+  ) {
+
+    return card.type === "draw2";
+
+  }
+
   return basePlayable(
     room,
     player,
@@ -1255,6 +1264,34 @@ function applyCardEffect(
     const target =
       getNextPlayer(room, 1);
 
+    if (
+      room.settings.stacking
+    ) {
+
+      room.pendingDraw =
+        (room.pendingDraw || 0) + 2;
+
+      addLog(
+        room,
+        `⚠️ ${actor ? actor.name : "?"} empile +2 (total : ${room.pendingDraw}).`
+      );
+
+      broadcast(
+        room,
+        {
+          type: "action_effect",
+          effect: {
+            type: "draw2",
+            actorName: actor ? actor.name : "",
+            targetName: target ? target.name : ""
+          }
+        }
+      );
+
+      return 1;
+
+    }
+
     if (target) {
 
       const drawn =
@@ -1858,6 +1895,39 @@ function drawCard(
           "Tu as déjà pioché."
       }
     );
+
+    return;
+
+  }
+
+  if (
+    room.pendingDraw > 0
+  ) {
+
+    const amount =
+      room.pendingDraw;
+
+    const drawn =
+      drawCards(
+        room,
+        player,
+        amount
+      );
+
+    room.pendingDraw = 0;
+
+    addLog(
+      room,
+      `⚠️ ${player.name} prend la pile et pioche ${drawn} carte(s) (+${amount}).`
+    );
+
+    resetPlayerTurnFlags(
+      player
+    );
+
+    nextPlayer(room, 1);
+
+    sendState(room);
 
     return;
 
