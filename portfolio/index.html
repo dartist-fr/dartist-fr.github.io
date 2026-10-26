@@ -464,14 +464,14 @@
     function ouvrirAlbum(index) {
       const album = portfolioData[index];
       currentAlbumTitle.textContent = album.titre;
-      currentAlbumSub.textContent = album.sujet + " — " + album.photos.length + " clichés";
+      currentAlbumSub.textContent = album.sujet + " · " + album.photos.length + " clichés";
       photosContainer.innerHTML = "";
 
       album.photos.forEach((photo, i) => {
         const item = document.createElement("button");
         item.className = "photo-item";
-        item.onclick = () => ouvrirLightbox(photo, album.titre + " — cliché " + (i + 1));
-        item.innerHTML = `<img src="${photo}" alt="${album.titre} — cliché ${i + 1}" loading="lazy" onerror="this.style.visibility='hidden'; console.error('Image introuvable :', this.src)" />`;
+        item.onclick = () => ouvrirLightbox(photo, album.titre + " · cliché " + (i + 1));
+        item.innerHTML = `<img src="${photo}" alt="${album.titre} · cliché ${i + 1}" loading="lazy" onerror="this.style.visibility='hidden'; console.error('Image introuvable :', this.src)" />`;
         photosContainer.appendChild(item);
       });
 
