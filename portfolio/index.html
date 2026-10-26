@@ -64,6 +64,10 @@
     h2{font:500 1.3rem var(--display);margin:0}
     .gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
     .gallery-card{background:var(--surface);min-width:0}
+    .travel-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--accent-soft)}
+    .travel-section{margin-top:38px}
+    .travel-section .gallery-grid{margin-top:16px}
+    .travel-section[hidden]{display:none!important}
     .photo-placeholder{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:linear-gradient(145deg,var(--accent-soft),transparent 70%);color:var(--faint)}
     .photo-placeholder svg{width:32px;height:32px}
     .photo-placeholder strong{font:500 1.1rem var(--display);color:var(--ink)}
@@ -104,6 +108,7 @@
           <button class="filter-btn" type="button" data-filter="sport" aria-pressed="false">Sport <small>02</small></button>
           <button class="filter-btn" type="button" data-filter="mecanique" aria-pressed="false">Sports mécaniques <small>03</small></button>
           <button class="filter-btn" type="button" data-filter="evenementiel" aria-pressed="false">Événementiel <small>04</small></button>
+          <button class="filter-btn" type="button" data-filter="voyages" aria-pressed="false">Voyages <small>05</small></button>
         </nav>
         <div class="side-divider"></div>
         <p class="side-label">À propos</p>
@@ -117,7 +122,7 @@
             <h1 id="page-title">Des moments qui méritent d'être capturés.</h1>
             <p class="intro">Une sélection de photographies sportives et événementielles. Parcourez les univers depuis le panneau latéral.</p>
           </div>
-          <span class="count" id="photo-count">PORTFOLIO · 03 CATÉGORIES</span>
+          <span class="count" id="photo-count">PORTFOLIO · 04 CATÉGORIES</span>
         </section>
 
         <section id="galerie" aria-labelledby="gallery-title">
@@ -148,8 +153,61 @@
               <div class="card-caption"><h3>Au cœur des événements</h3><p>Reportage · Ambiance · Équipe</p></div>
             </article>
           </div>
-          <p class="empty-note" id="photo-note">La structure de la galerie est prête. Les photographies originales ne sont pas présentes dans le dossier du portfolio pour le moment : les emplacements pourront être remplacés par tes clichés sans modifier la mise en page.</p>
-        </section>
+          <section class="travel-section" id="voyages" aria-labelledby="travel-title">
+            <div class="gallery-head">
+              <h2 id="travel-title">Voyages</h2>
+              <span class="count">LONDRES · MARRAKECH · ROME</span>
+            </div>
+            <div class="gallery-grid" id="travel-grid">
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/Bentley%20London.jpg" alt="Londres — Bentley London" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>Bentley London</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF3953.jpg" alt="Londres — DSCF3953" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF3953</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF3963.jpg" alt="Londres — DSCF3963" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF3963</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF3991.jpg" alt="Londres — DSCF3991" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF3991</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF4855.jpg" alt="Londres — DSCF4855" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF4855</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF4857-2.jpg" alt="Londres — DSCF4857 2" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF4857 2</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Londres/DSCF4861.jpg" alt="Londres — DSCF4861" loading="lazy"><div class="card-caption"><h3>Londres</h3><p>DSCF4861</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3072.jpg" alt="Marrakech — DSCF3072" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3072</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3088-3.jpg" alt="Marrakech — DSCF3088 3" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3088 3</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3109.jpg" alt="Marrakech — DSCF3109" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3109</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3116.jpg" alt="Marrakech — DSCF3116" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3116</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3290.jpg" alt="Marrakech — DSCF3290" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3290</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3293.jpg" alt="Marrakech — DSCF3293" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3293</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3337.jpg" alt="Marrakech — DSCF3337" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3337</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3347.jpg" alt="Marrakech — DSCF3347" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3347</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3352.jpg" alt="Marrakech — DSCF3352" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3352</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3521.jpg" alt="Marrakech — DSCF3521" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3521</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3527.jpg" alt="Marrakech — DSCF3527" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3527</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3612.jpg" alt="Marrakech — DSCF3612" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3612</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3716.jpg" alt="Marrakech — DSCF3716" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3716</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/DSCF3722.jpg" alt="Marrakech — DSCF3722" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>DSCF3722</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Marrakech/nourriture-maroc-ps.jpg" alt="Marrakech — nourriture maroc ps" loading="lazy"><div class="card-caption"><h3>Marrakech</h3><p>nourriture maroc ps</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3613.jpg" alt="Rome — DSCF3613" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3613</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3684.jpg" alt="Rome — DSCF3684" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3684</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3695.jpg" alt="Rome — DSCF3695" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3695</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3783.jpg" alt="Rome — DSCF3783" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3783</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3803.jpg" alt="Rome — DSCF3803" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3803</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF3892.jpg" alt="Rome — DSCF3892" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF3892</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4039.jpg" alt="Rome — DSCF4039" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4039</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4116-2-Edit.jpg" alt="Rome — DSCF4116 2 Edit" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4116 2 Edit</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4121.jpg" alt="Rome — DSCF4121" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4121</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4159.jpg" alt="Rome — DSCF4159" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4159</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4169.jpg" alt="Rome — DSCF4169" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4169</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4177.jpg" alt="Rome — DSCF4177" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4177</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4187.jpg" alt="Rome — DSCF4187" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4187</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4192.jpg" alt="Rome — DSCF4192" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4192</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4193.jpg" alt="Rome — DSCF4193" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4193</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4197.jpg" alt="Rome — DSCF4197" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4197</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4205.jpg" alt="Rome — DSCF4205" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4205</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4207.jpg" alt="Rome — DSCF4207" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4207</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4209.jpg" alt="Rome — DSCF4209" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4209</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4300.jpg" alt="Rome — DSCF4300" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4300</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4306.jpg" alt="Rome — DSCF4306" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4306</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4311.jpg" alt="Rome — DSCF4311" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4311</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4316.jpg" alt="Rome — DSCF4316" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4316</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4318.jpg" alt="Rome — DSCF4318" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4318</p></div></article>
+              <article class="gallery-card travel-card" data-category="voyages"><img class="travel-photo" src="images/Voyages/Rome/DSCF4364.jpg" alt="Rome — DSCF4364" loading="lazy"><div class="card-caption"><h3>Rome</h3><p>DSCF4364</p></div></article>
+            </div>
+          </section>
       </main>
     </div>
 
@@ -190,10 +248,12 @@
       const active = button.getAttribute('aria-pressed') !== 'true';
       filters.forEach(item => item.setAttribute('aria-pressed', String(item === button && active)));
       cards.forEach(card => { card.hidden = active && card.dataset.category !== selected; });
+      document.querySelector('.travel-section').hidden = active && selected !== 'voyages';
+      document.getElementById('photo-note').hidden = active && selected === 'voyages';
       document.querySelectorAll('.side-nav .current').forEach(item => item.classList.remove('current'));
       if (active) button.classList.add('current');
       else document.querySelector('.side-nav a')?.classList.add('current');
-      document.getElementById('gallery-title').textContent = active ? button.textContent.trim().replace(/\\s+\\d+$/, '') : 'Explorer les séries';
+      document.getElementById('gallery-title').textContent = active && selected !== 'voyages' ? button.textContent.trim().replace(/\\s+\\d+$/, '') : 'Explorer les séries';
     }));
   </script>
   <!-- GitHub Pages refresh: portfolio contact email -->
