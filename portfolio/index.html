@@ -359,85 +359,122 @@
   </div>
 
   <script>
-    const portfolioData = [
-      {
-        "titre": "Londres",
-        "sujet": "Voyage · Photographie",
-        "cover": "images/Voyages/Londres/Bentley%20London.jpg",
-        "photos": [
-          "images/Voyages/Londres/Bentley%20London.jpg",
-          "images/Voyages/Londres/DSCF3953.jpg",
-          "images/Voyages/Londres/DSCF3963.jpg",
-          "images/Voyages/Londres/DSCF3991.jpg",
-          "images/Voyages/Londres/DSCF4855.jpg",
-          "images/Voyages/Londres/DSCF4857-2.jpg",
-          "images/Voyages/Londres/DSCF4861.jpg"
-        ]
-      },
-      {
-        "titre": "Marrakech",
-        "sujet": "Voyage · Photographie",
-        "cover": "images/Voyages/Marrakech/DSCF3072.jpg",
-        "photos": [
-          "images/Voyages/Marrakech/DSCF3072.jpg",
-          "images/Voyages/Marrakech/DSCF3088-3.jpg",
-          "images/Voyages/Marrakech/DSCF3109.jpg",
-          "images/Voyages/Marrakech/DSCF3116.jpg",
-          "images/Voyages/Marrakech/DSCF3290.jpg",
-          "images/Voyages/Marrakech/DSCF3293.jpg",
-          "images/Voyages/Marrakech/DSCF3337.jpg",
-          "images/Voyages/Marrakech/DSCF3347.jpg",
-          "images/Voyages/Marrakech/DSCF3352.jpg",
-          "images/Voyages/Marrakech/DSCF3521.jpg",
-          "images/Voyages/Marrakech/DSCF3527.jpg",
-          "images/Voyages/Marrakech/DSCF3612.jpg",
-          "images/Voyages/Marrakech/DSCF3716.jpg",
-          "images/Voyages/Marrakech/DSCF3722.jpg",
-          "images/Voyages/Marrakech/nourriture-maroc-ps.jpg"
-        ]
-      },
-      { "titre": "Red Bull", "sujet": "Sport · Événementiel", "cover": "", "photos": [] },
-      { "titre": "Sports", "sujet": "Sport · Photographie", "cover": "", "photos": [] },
-      { "titre": "France", "sujet": "Voyage · Photographie", "cover": "", "photos": [],
-        "children": [
-          { "titre": "Avignon", "sujet": "France · Photographie", "cover": "", "photos": [] },
-          { "titre": "Sud", "sujet": "France · Photographie", "cover": "", "photos": [] },
-          { "titre": "Montagne", "sujet": "France · Photographie", "cover": "", "photos": [] }
-        ]
-      },
-      {
-        "titre": "Rome",
-        "sujet": "Voyage · Photographie",
-        "cover": "images/Voyages/Rome/DSCF4121.jpg",
-        "photos": [
-          "images/Voyages/Rome/DSCF3613.jpg",
-          "images/Voyages/Rome/DSCF3684.jpg",
-          "images/Voyages/Rome/DSCF3695.jpg",
-          "images/Voyages/Rome/DSCF3783.jpg",
-          "images/Voyages/Rome/DSCF3803.jpg",
-          "images/Voyages/Rome/DSCF3892.jpg",
-          "images/Voyages/Rome/DSCF4039.jpg",
-          "images/Voyages/Rome/DSCF4116-2-Edit.jpg",
-          "images/Voyages/Rome/DSCF4121.jpg",
-          "images/Voyages/Rome/DSCF4159.jpg",
-          "images/Voyages/Rome/DSCF4169.jpg",
-          "images/Voyages/Rome/DSCF4177.jpg",
-          "images/Voyages/Rome/DSCF4187.jpg",
-          "images/Voyages/Rome/DSCF4192.jpg",
-          "images/Voyages/Rome/DSCF4193.jpg",
-          "images/Voyages/Rome/DSCF4197.jpg",
-          "images/Voyages/Rome/DSCF4205.jpg",
-          "images/Voyages/Rome/DSCF4207.jpg",
-          "images/Voyages/Rome/DSCF4209.jpg",
-          "images/Voyages/Rome/DSCF4300.jpg",
-          "images/Voyages/Rome/DSCF4306.jpg",
-          "images/Voyages/Rome/DSCF4311.jpg",
-          "images/Voyages/Rome/DSCF4316.jpg",
-          "images/Voyages/Rome/DSCF4318.jpg",
-          "images/Voyages/Rome/DSCF4364.jpg"
-        ]
-      }
-    ];
+    const portfolioData =       [
+        {
+          "titre": "Voyages",
+          "sujet": "Voyage · Photographie",
+          "cover": "images/Voyages/Londres/Bentley%20London.jpg",
+          "photos": [],
+          "children": [
+            {
+              "titre": "Londres",
+              "sujet": "Voyage · Photographie",
+              "cover": "images/Voyages/Londres/Bentley%20London.jpg",
+              "photos": [
+                "images/Voyages/Londres/Bentley%20London.jpg",
+                "images/Voyages/Londres/DSCF3953.jpg",
+                "images/Voyages/Londres/DSCF3963.jpg",
+                "images/Voyages/Londres/DSCF3991.jpg",
+                "images/Voyages/Londres/DSCF4855.jpg",
+                "images/Voyages/Londres/DSCF4857-2.jpg",
+                "images/Voyages/Londres/DSCF4861.jpg"
+              ]
+            },
+            {
+              "titre": "Marrakech",
+              "sujet": "Voyage · Photographie",
+              "cover": "images/Voyages/Marrakech/DSCF3072.jpg",
+              "photos": [
+                "images/Voyages/Marrakech/DSCF3072.jpg",
+                "images/Voyages/Marrakech/DSCF3088-3.jpg",
+                "images/Voyages/Marrakech/DSCF3109.jpg",
+                "images/Voyages/Marrakech/DSCF3116.jpg",
+                "images/Voyages/Marrakech/DSCF3290.jpg",
+                "images/Voyages/Marrakech/DSCF3293.jpg",
+                "images/Voyages/Marrakech/DSCF3337.jpg",
+                "images/Voyages/Marrakech/DSCF3347.jpg",
+                "images/Voyages/Marrakech/DSCF3352.jpg",
+                "images/Voyages/Marrakech/DSCF3521.jpg",
+                "images/Voyages/Marrakech/DSCF3527.jpg",
+                "images/Voyages/Marrakech/DSCF3612.jpg",
+                "images/Voyages/Marrakech/DSCF3716.jpg",
+                "images/Voyages/Marrakech/DSCF3722.jpg",
+                "images/Voyages/Marrakech/nourriture-maroc-ps.jpg"
+              ]
+            },
+            {
+              "titre": "Rome",
+              "sujet": "Voyage · Photographie",
+              "cover": "images/Voyages/Rome/DSCF4121.jpg",
+              "photos": [
+                "images/Voyages/Rome/DSCF3613.jpg",
+                "images/Voyages/Rome/DSCF3684.jpg",
+                "images/Voyages/Rome/DSCF3695.jpg",
+                "images/Voyages/Rome/DSCF3783.jpg",
+                "images/Voyages/Rome/DSCF3803.jpg",
+                "images/Voyages/Rome/DSCF3892.jpg",
+                "images/Voyages/Rome/DSCF4039.jpg",
+                "images/Voyages/Rome/DSCF4116-2-Edit.jpg",
+                "images/Voyages/Rome/DSCF4121.jpg",
+                "images/Voyages/Rome/DSCF4159.jpg",
+                "images/Voyages/Rome/DSCF4169.jpg",
+                "images/Voyages/Rome/DSCF4177.jpg",
+                "images/Voyages/Rome/DSCF4187.jpg",
+                "images/Voyages/Rome/DSCF4192.jpg",
+                "images/Voyages/Rome/DSCF4193.jpg",
+                "images/Voyages/Rome/DSCF4197.jpg",
+                "images/Voyages/Rome/DSCF4205.jpg",
+                "images/Voyages/Rome/DSCF4207.jpg",
+                "images/Voyages/Rome/DSCF4209.jpg",
+                "images/Voyages/Rome/DSCF4300.jpg",
+                "images/Voyages/Rome/DSCF4306.jpg",
+                "images/Voyages/Rome/DSCF4311.jpg",
+                "images/Voyages/Rome/DSCF4316.jpg",
+                "images/Voyages/Rome/DSCF4318.jpg",
+                "images/Voyages/Rome/DSCF4364.jpg"
+              ]
+            }
+          ]
+        },
+        {
+          "titre": "Red Bull",
+          "sujet": "Sport · Événementiel",
+          "cover": "",
+          "photos": []
+        },
+        {
+          "titre": "Sports",
+          "sujet": "Sport · Photographie",
+          "cover": "",
+          "photos": []
+        },
+        {
+          "titre": "France",
+          "sujet": "Voyage · Photographie",
+          "cover": "",
+          "photos": [],
+          "children": [
+            {
+              "titre": "Avignon",
+              "sujet": "France · Photographie",
+              "cover": "",
+              "photos": []
+            },
+            {
+              "titre": "Sud",
+              "sujet": "France · Photographie",
+              "cover": "",
+              "photos": []
+            },
+            {
+              "titre": "Montagne",
+              "sujet": "France · Photographie",
+              "cover": "",
+              "photos": []
+            }
+          ]
+        }
+      ];
 
     const albumsView = document.getElementById("albums-view");
     const photoView = document.getElementById("photo-view");
@@ -484,11 +521,18 @@
           card.className = "album-card";
           card.onclick = () => ouvrirSousAlbum(child);
           const frame = document.createElement("div"); frame.className = "album-frame";
-          const placeholder = document.createElement("div"); placeholder.className = "album-placeholder";
+          if (child.cover) {
+            const image = document.createElement("img"); image.src = child.cover; image.alt = "Série : " + child.titre; image.loading = "lazy";
+            image.onerror = () => { image.style.visibility = "hidden"; };
+            frame.appendChild(image);
+          } else {
+            const placeholder = document.createElement("div"); placeholder.className = "album-placeholder"; frame.appendChild(placeholder);
+          }
           const title = document.createElement("div"); title.className = "album-info";
           const name = document.createElement("span"); name.className = "album-title"; name.textContent = child.titre;
-          const count = document.createElement("span"); count.className = "album-count"; count.textContent = "À compléter";
-          frame.appendChild(placeholder); title.append(name, count); card.append(frame, title); photosContainer.appendChild(card);
+          const count = document.createElement("span"); count.className = "album-count"; count.textContent = child.children ? child.children.length + " sous-séries" : child.photos.length ? child.photos.length + " clichés" : "À compléter";
+          frame.insertAdjacentHTML("beforeend", '<span class="album-view">Voir la série</span>');
+          title.append(name, count); card.append(frame, title); photosContainer.appendChild(card);
         });
       } else if (!album.photos.length) {
         photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
@@ -509,8 +553,36 @@
 
     function ouvrirSousAlbum(child) {
       currentAlbumTitle.textContent = child.titre;
-      currentAlbumSub.textContent = child.sujet + " · Série à compléter";
-      photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
+      currentAlbumSub.textContent = child.sujet + (child.children ? " · " + child.children.length + " sous-séries" : child.photos.length ? " · " + child.photos.length + " clichés" : " · Série à compléter");
+      photosContainer.innerHTML = "";
+      if (child.children) {
+        child.children.forEach((nested, nestedIndex) => {
+          const card = document.createElement("button");
+          card.className = "album-card";
+          card.onclick = () => ouvrirSousAlbum(nested);
+          const frame = document.createElement("div"); frame.className = "album-frame";
+          if (nested.cover) {
+            const image = document.createElement("img"); image.src = nested.cover; image.alt = "Série : " + nested.titre; image.loading = "lazy";
+            frame.appendChild(image);
+          } else {
+            const placeholder = document.createElement("div"); placeholder.className = "album-placeholder"; frame.appendChild(placeholder);
+          }
+          const title = document.createElement("div"); title.className = "album-info";
+          const name = document.createElement("span"); name.className = "album-title"; name.textContent = nested.titre;
+          const count = document.createElement("span"); count.className = "album-count"; count.textContent = nested.photos.length ? nested.photos.length + " clichés" : "À compléter";
+          title.append(name, count); card.append(frame, title); photosContainer.appendChild(card);
+        });
+      }
+      if (!child.photos.length && !child.children) {
+        photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
+      }
+      child.photos.forEach((photo, i) => {
+        const item = document.createElement("button");
+        item.className = "photo-item";
+        item.onclick = () => ouvrirLightbox(photo, child.titre + " · cliché " + (i + 1));
+        item.innerHTML = `<img src="${photo}" alt="${child.titre} · cliché ${i + 1}" loading="lazy" />`;
+        photosContainer.appendChild(item);
+      });
     }
 
     function fermerAlbum() {
