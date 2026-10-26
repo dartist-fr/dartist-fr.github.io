@@ -1,288 +1,240 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hub de projets • dartist</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dartist — Projets numériques</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <meta name="description" content="Un hub central qui relie tous mes projets : jeux, portfolio, outils et expériences." />
+  <meta name="description" content="Le hub des projets, jeux et expériences numériques créés par dartist.">
   <meta name="theme-color" content="#faf9f5">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
   <script>
     (function () {
-      var stored = null;
+      var stored;
       try { stored = localStorage.getItem('theme'); } catch (e) {}
       var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
-
   <style>
     :root {
-      --bg: #faf9f5;
-      --surface: #ffffff;
-      --ink: #16181d;
-      --ink-soft: #5b5f68;
-      --ink-faint: #9a9c9f;
-      --line: #e3e1da;
-      --accent: #23324a;
-      --accent-soft: #23324a0f;
-      --amber: #b8853c;
-      --font-display: 'Fraunces', Georgia, serif;
-      --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --bg: #faf9f5; --surface: #fff; --ink: #16181d; --ink-soft: #5b5f68;
+      --ink-faint: #8b8e96; --line: #e3e1da; --accent: #23324a;
+      --accent-soft: #23324a0f; --amber: #b8853c;
+      --display: 'Fraunces', Georgia, serif; --body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
     }
-
     :root[data-theme="dark"] {
-      --bg: #15171c;
-      --surface: #1c1f26;
-      --ink: #f1f0ea;
-      --ink-soft: #a8acb5;
-      --ink-faint: #686c76;
-      --line: #2b2e35;
-      --accent: #8fa8d6;
-      --accent-soft: #8fa8d61a;
-      --amber: #d9a768;
+      --bg: #15171c; --surface: #1c1f26; --ink: #f1f0ea; --ink-soft: #a8acb5;
+      --ink-faint: #737783; --line: #2b2e35; --accent: #a8bee7; --accent-soft: #8fa8d61a; --amber: #d9a768;
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html { color-scheme: light dark; scroll-behavior: smooth; }
     body {
-      background-color: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-body);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      line-height: 1.5;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      margin: 0; min-width: 320px; background: var(--bg); color: var(--ink);
+      font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased;
+      transition: background-color .2s ease, color .2s ease;
     }
+    a { color: inherit; }
+    button { font: inherit; }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
 
-    .container { max-width: 46rem; margin: 0 auto; padding: 6rem 1.75rem 4rem; }
-
-    header {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 1.25rem; padding-bottom: 3.5rem; border-bottom: 1px solid var(--line);
-    }
-    .header-id { display: flex; align-items: flex-start; gap: 1.25rem; }
-
+    .shell { max-width: 76rem; margin: auto; padding: 1.5rem 1.25rem 3rem; }
+    .masthead { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+    .wordmark { font: 500 1.2rem/1 var(--display); text-decoration: none; letter-spacing: -.04em; }
+    .masthead-meta, .eyebrow, .project-no, .tag, .section-label, .footer-note { font: 500 .68rem/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .masthead-meta { color: var(--ink-faint); }
     .theme-toggle {
-      display: flex; align-items: center; justify-content: center;
-      width: 2.5rem; height: 2.5rem; flex-shrink: 0;
-      border: 1px solid var(--line); background: var(--surface);
-      color: var(--ink-soft); cursor: pointer;
+      display: grid; place-items: center; width: 2.55rem; height: 2.55rem; margin-left: 1rem;
+      color: var(--ink-soft); background: transparent; border: 1px solid var(--line); cursor: pointer; transition: color .18s, border-color .18s, background .18s;
     }
-    .theme-toggle svg { width: 1.1rem; height: 1.1rem; }
-    .theme-toggle .icon-moon { display: none; }
-    :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
-    :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+    .theme-toggle svg { width: 1.05rem; height: 1.05rem; }
+    .icon-moon { display: none; }
+    :root[data-theme="dark"] .icon-sun { display: none; }
+    :root[data-theme="dark"] .icon-moon { display: block; }
 
-    .avatar {
-      display: flex; align-items: center; justify-content: center;
-      width: 3rem; height: 3rem; flex-shrink: 0;
-      border: 1px solid var(--line); background: var(--surface); overflow: hidden;
+    .hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(14rem, .55fr); gap: 3rem; padding: clamp(4rem, 11vw, 9rem) 0 4rem; border-bottom: 1px solid var(--line); }
+    .eyebrow { display: flex; gap: .7rem; align-items: center; color: var(--ink-faint); margin: 0 0 1.3rem; }
+    .eyebrow::before { content: ''; width: 1.8rem; height: 1px; background: var(--amber); }
+    h1 { max-width: 13ch; margin: 0; font: 500 clamp(3.25rem, 7.4vw, 6.6rem)/.94 var(--display); letter-spacing: -.065em; }
+    .hero-copy { max-width: 34rem; margin: 1.6rem 0 0; color: var(--ink-soft); font-size: clamp(1rem, 1.4vw, 1.13rem); line-height: 1.7; }
+    .contact { display: inline-flex; align-items: center; gap: .6rem; margin-top: 1.6rem; color: var(--accent); font: 500 .78rem var(--mono); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: .18rem; }
+    .contact::after { content: '↗'; font-size: 1rem; transition: transform .18s; }
+    .contact:hover::after { transform: translate(2px, -2px); }
+    .portrait { align-self: end; padding: 1rem 0 0 1rem; border-left: 1px solid var(--line); }
+    .portrait img { display: block; width: min(100%, 13rem); aspect-ratio: 1; object-fit: cover; filter: saturate(.84); }
+    .portrait figcaption { margin-top: .7rem; color: var(--ink-faint); font: .66rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+
+    .projects { padding-top: 1.5rem; }
+    .section-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+    .section-label { color: var(--ink-faint); }
+    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+    .project {
+      position: relative; display: flex; min-height: 17rem; flex-direction: column; padding: clamp(1.25rem, 3vw, 2.25rem);
+      color: inherit; text-decoration: none; background: var(--bg); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      transition: background .2s ease, color .2s ease;
     }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .project:hover, .project:focus-visible { background: var(--accent); color: #fff; outline-offset: -5px; }
+    .project--lab { cursor: pointer; border: 0; width: 100%; text-align: left; font: inherit; }
+    .project-top { display: flex; align-items: start; justify-content: space-between; gap: 1rem; color: var(--ink-faint); }
+    .project:hover .project-top, .project:focus-visible .project-top { color: rgba(255,255,255,.6); }
+    .project-no { padding-top: .2rem; }
+    .project-arrow { width: 1.25rem; height: 1.25rem; transition: transform .2s ease; }
+    .project:hover .project-arrow, .project:focus-visible .project-arrow { transform: translate(4px,-4px); }
+    .project-body { margin-top: auto; padding-top: 2.5rem; }
+    .project h2 { margin: 0; font: 500 clamp(1.6rem, 3vw, 2.35rem)/1 var(--display); letter-spacing: -.045em; }
+    .project p { max-width: 26rem; margin: .65rem 0 0; color: var(--ink-soft); font-size: .93rem; line-height: 1.6; }
+    .project:hover p, .project:focus-visible p { color: rgba(255,255,255,.75); }
+    .tag { display: inline-block; margin-top: 1rem; padding: .28rem .48rem; color: var(--ink-faint); border: 1px solid var(--line); letter-spacing: .08em; }
+    .project:hover .tag, .project:focus-visible .tag { color: rgba(255,255,255,.72); border-color: rgba(255,255,255,.32); }
+    .tag--private { color: var(--amber); border-color: var(--amber); }
+    .project:hover .tag--private, .project:focus-visible .tag--private { color: #f2c176; border-color: #f2c176; }
 
-    .id-block { flex: 1; }
-    .kicker { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-faint); }
-    h1 { font-family: var(--font-display); font-weight: 500; font-size: 1.85rem; margin: 0.3rem 0 0.85rem; }
-    .bio { max-width: 30rem; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.65; }
-    .contact { display: inline-flex; margin-top: 1.1rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); }
+    footer { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem 0 0; color: var(--ink-faint); border-top: 1px solid var(--line); margin-top: 1.5rem; }
+    .footer-note { letter-spacing: .07em; text-transform: none; }
 
-    section { padding-top: 3.5rem; }
-    .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
-    .section-title, .section-count { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--ink-faint); }
+    .modal-overlay { display: none; position: fixed; z-index: 10; inset: 0; align-items: center; justify-content: center; padding: 1rem; background: rgba(10,12,16,.68); }
+    .modal-overlay.active { display: flex; }
+    .modal { width: min(100%, 27rem); padding: 2rem; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1.5rem 4rem rgba(0,0,0,.25); }
+    .modal h2 { margin: 0; font: 500 1.65rem/1.05 var(--display); letter-spacing: -.04em; }
+    .modal p { margin: .7rem 0 1.4rem; color: var(--ink-soft); font-size: .9rem; }
+    .modal label { display: block; margin-bottom: .45rem; color: var(--ink-faint); font: .68rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .modal input { width: 100%; padding: .8rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); font: .9rem var(--mono); }
+    .modal-error { display: none; margin: .7rem 0 0; color: #c54444; font-size: .8rem; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: .7rem; margin-top: 1.4rem; }
+    .modal-button { padding: .67rem .9rem; cursor: pointer; color: var(--ink); background: transparent; border: 1px solid var(--line); font: .7rem var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .modal-button.primary { color: var(--surface); background: var(--accent); border-color: var(--accent); }
 
-    .liste { border-top: 1px solid var(--line); }
-    .projet {
-      display: grid; grid-template-columns: 2rem 1fr auto; gap: 1.25rem;
-      align-items: start; padding: 1.75rem 0.75rem; border-bottom: 1px solid var(--line);
-      text-decoration: none; color: inherit; transition: background 0.15s ease; cursor: pointer;
+    @media (max-width: 640px) {
+      .shell { padding: 1.1rem 1rem 2rem; }
+      .masthead-meta { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 4.2rem 0 3.25rem; }
+      h1 { font-size: clamp(3.1rem, 17vw, 4.5rem); }
+      .portrait { width: 100%; max-width: 15rem; padding: .8rem 0 0 .8rem; }
+      .project-grid { grid-template-columns: 1fr; }
+      .project { min-height: 14rem; }
+      footer { flex-direction: column; }
     }
-    /* Classe commune pour simuler le survol des liens sur notre div */
-    .projet-cliquable:hover { background: var(--accent-soft); }
-    .projet-cliquable:hover .titre-projet { color: var(--accent); }
-    .projet-cliquable:hover .fleche { transform: translate(3px, -3px); opacity: 1; }
-
-    .index { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-faint); padding-top: 0.15rem; }
-    .corps-projet { min-width: 0; }
-    .ligne-titre { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-    .titre-projet { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; color: var(--ink); transition: color 0.15s ease; }
-    .tag { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; border: 1px solid var(--line); padding: 0.15rem 0.5rem; color: var(--ink-faint); }
-    .desc-projet { margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
-    .fleche { width: 1rem; height: 1rem; color: var(--ink-faint); flex-shrink: 0; margin-top: 0.3rem; opacity: 0; transition: transform 0.15s ease, opacity 0.15s ease; }
-
-    /* Modale */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-      z-index: 1000; align-items: center; justify-content: center; padding: 1rem;
-    }
-    .modal-overlay.actif { display: flex; }
-    .modal-box {
-      background: var(--surface); border: 1px solid var(--line); padding: 2rem;
-      width: 100%; max-width: 24rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-    .modal-title { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--ink); }
-    .modal-desc { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 1.25rem; }
-    .modal-input {
-      width: 100%; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.9rem;
-      background: var(--bg); border: 1px solid var(--line); color: var(--ink); margin-bottom: 1rem;
-    }
-    .modal-input:focus { outline: 1px solid var(--accent); }
-    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-    .modal-btn {
-      font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;
-      padding: 0.6rem 1rem; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-    }
-    .modal-btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
-    .modal-error { font-size: 0.75rem; color: #e53e3e; margin-bottom: 0.75rem; display: none; }
-
-    footer { margin-top: 4.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-faint); }
-    @media (min-width: 640px) { footer { flex-direction: row; justify-content: space-between; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
-  <div class="container">
-
-    <header>
-      <div class="header-id">
-        <div class="avatar"><img src="pdp.jpeg" alt=""></div>
-        <div class="id-block">
-          <span class="kicker">Hub de projets</span>
-          <h1>dartist</h1>
-          <p class="bio">Développeur indépendant qui crée des , des outils et des expériences interactives.</p>
-          <a class="contact" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
-        </div>
+  <main class="shell">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="Accueil dartist">dartist</a>
+      <div style="display:flex;align-items:center">
+        <span class="masthead-meta">Projets numériques · 2026</span>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Activer le mode sombre">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
       </div>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Activer le mode sombre">
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-      </button>
     </header>
 
-    <section aria-label="Projets">
-      <div class="section-head">
-        <span class="section-title">Tous les projets</span>
-        <span class="section-count">04</span>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Bienvenue dans mon univers</p>
+        <h1 id="page-title">Des idées faites pour être explorées.</h1>
+        <p class="hero-copy">Je suis dartist, développeur indépendant. Je crée des jeux, des outils et des expériences interactives avec une attention particulière pour les détails qui donnent envie de rester.</p>
+        <a class="contact" href="mailto:flawz.ad@gmail.com">Me contacter</a>
       </div>
+      <figure class="portrait">
+        <img src="pdp.jpeg" alt="Portrait de dartist">
+        <figcaption>Indépendant · Créatif · Curieux</figcaption>
+      </figure>
+    </section>
 
-      <div class="liste">
-        <a class="projet" href="jeux2soiree/">
-          <span class="index">01</span>
-          <div class="corps-projet">
-            <div class="ligne-titre"><span class="titre-projet">Salle d'arcade</span><span class="tag">Jeux</span></div>
-            <p class="desc-projet">Une collection de jeux dans le navigateur pour vos soirées.</p>
-          </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+    <section class="projects" aria-labelledby="projects-title">
+      <div class="section-top">
+        <h2 class="section-label" id="projects-title">Sélection de projets</h2>
+        <span class="section-label">04 projets</span>
+      </div>
+      <div class="project-grid">
+        <a class="project" href="jeux2soiree/">
+          <span class="project-top"><span class="project-no">01 / 04</span><svg class="project-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+          <span class="project-body"><h2>Salle d’arcade</h2><p>Une collection de jeux dans le navigateur, pensée pour vos soirées.</p><span class="tag">Jeux</span></span>
         </a>
-
-        <a class="projet" href="portfolio/">
-          <span class="index">02</span>
-          <div class="corps-projet">
-            <div class="ligne-titre"><span class="titre-projet">Portfolio</span><span class="tag">Vitrine</span></div>
-            <p class="desc-projet">Mon portfolio de photos.</p>
-          </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+        <a class="project" href="portfolio/">
+          <span class="project-top"><span class="project-no">02 / 04</span><svg class="project-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+          <span class="project-body"><h2>Portfolio</h2><p>Une sélection de photos, d’images et de fragments visuels.</p><span class="tag">Vitrine</span></span>
         </a>
-
-        <a class="projet" href="#">
-          <span class="index">03</span>
-          <div class="corps-projet">
-            <div class="ligne-titre"><span class="titre-projet">Boîte à outils</span><span class="tag">Outils</span></div>
-            <p class="desc-projet">Petits utilitaires pour accélérer le travail.</p>
-          </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+        <a class="project" href="#">
+          <span class="project-top"><span class="project-no">03 / 04</span><svg class="project-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+          <span class="project-body"><h2>Boîte à outils</h2><p>De petits utilitaires pour fluidifier le travail au quotidien.</p><span class="tag">Outils</span></span>
         </a>
-
-        <!-- LE LABO TRANSFORMÉ EN DIV SANS URL VISIBLE -->
-        <div class="projet projet-cliquable" id="btn-labo" oncontextmenu="return false;">
-          <span class="index">04</span>
-          <div class="corps-projet">
-            <div class="ligne-titre">
-              <span class="titre-projet">Le Labo</span>
-              <span class="badge" style="font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); padding:0.15rem 0.5rem;">Privé</span>
-            </div>
-            <p class="desc-projet">Prototypes et expériences protégés.</p>
-          </div>
-          <svg class="fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-        </div>
+        <button class="project project--lab" id="btn-labo" type="button" aria-haspopup="dialog">
+          <span class="project-top"><span class="project-no">04 / 04</span><svg class="project-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+          <span class="project-body"><h2>Le Labo</h2><p>Prototypes, essais et expériences encore en développement.</p><span class="tag tag--private">Accès privé</span></span>
+        </button>
       </div>
     </section>
 
     <footer>
-      <span>© 2026 — Hub de projets</span>
-      <span>Pour toutes questions → flawz.ad@gmail.com</span>
+      <span class="footer-note">© 2026 dartist</span>
+      <a class="footer-note" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
     </footer>
-  </div>
+  </main>
 
-  <!-- Modale -->
-  <div class="modal-overlay" id="modal-labo">
-    <div class="modal-box">
-      <h3 class="modal-title">Accès restreint</h3>
-      <p class="modal-desc">Veuillez entrer le mot de passe pour accéder au Labo.</p>
-      <div class="modal-error" id="modal-error">Mot de passe incorrect.</div>
-      <input type="password" id="modal-password" class="modal-input" placeholder="Mot de passe">
+  <div class="modal-overlay" id="modal-labo" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <h2 id="modal-title">Accès au Labo</h2>
+      <p>Cette partie rassemble des projets en cours. Saisissez le mot de passe pour continuer.</p>
+      <label for="modal-password">Mot de passe</label>
+      <input type="password" id="modal-password" autocomplete="current-password">
+      <p class="modal-error" id="modal-error" role="alert">Mot de passe incorrect.</p>
       <div class="modal-actions">
-        <button class="modal-btn" id="modal-cancel">Annuler</button>
-        <button class="modal-btn primary" id="modal-submit">Valider</button>
+        <button class="modal-button" id="modal-cancel" type="button">Annuler</button>
+        <button class="modal-button primary" id="modal-submit" type="button">Entrer</button>
       </div>
     </div>
   </div>
 
   <script>
-    document.getElementById('theme-toggle').addEventListener('click', function() {
-      var currentTheme = document.documentElement.getAttribute('data-theme');
-      var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      try { localStorage.setItem('theme', newTheme); } catch (e) {}
+    var toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      toggle.setAttribute('aria-label', next === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre');
+      try { localStorage.setItem('theme', next); } catch (e) {}
     });
 
-    // Logique de la modale et suppression du lien natif
-    const btnLabo = document.getElementById('btn-labo');
-    const modalLabo = document.getElementById('modal-labo');
-    const modalCancel = document.getElementById('modal-cancel');
-    const modalSubmit = document.getElementById('modal-submit');
-    const modalPassword = document.getElementById('modal-password');
-    const modalError = document.getElementById('modal-error');
+    var laboButton = document.getElementById('btn-labo');
+    var modal = document.getElementById('modal-labo');
+    var password = document.getElementById('modal-password');
+    var error = document.getElementById('modal-error');
+    var lastFocus;
 
-    btnLabo.addEventListener('click', function() {
-      if (sessionStorage.getItem('labo_auth') === 'true') {
-        window.location.href = "labo/";
-      } else {
-        modalLabo.classList.add('actif');
-        modalPassword.focus();
-      }
-    });
-
-    modalCancel.addEventListener('click', function() {
-      modalLabo.classList.remove('actif');
-      modalPassword.value = '';
-      modalError.style.display = 'none';
-    });
-
-    function validerMdp() {
-      if (modalPassword.value === "2800") {
+    function closeModal() {
+      modal.classList.remove('active');
+      password.value = '';
+      error.style.display = 'none';
+      if (lastFocus) lastFocus.focus();
+    }
+    function openModal() {
+      if (sessionStorage.getItem('labo_auth') === 'true') { window.location.href = 'labo/'; return; }
+      lastFocus = document.activeElement;
+      modal.classList.add('active');
+      password.focus();
+    }
+    function validatePassword() {
+      if (password.value === '2800') {
         sessionStorage.setItem('labo_auth', 'true');
-        window.location.href = "labo/";
+        window.location.href = 'labo/';
       } else {
-        modalError.style.display.style = 'block'; // Correction mineure
-        modalError.style.display = 'block';
-        modalPassword.value = '';
-        modalPassword.focus();
+        error.style.display = 'block';
+        password.value = '';
+        password.focus();
       }
     }
-
-    modalSubmit.addEventListener('click', validerMdp);
-    modalPassword.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        validerMdp();
-      }
-    });
+    laboButton.addEventListener('click', openModal);
+    document.getElementById('modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-submit').addEventListener('click', validatePassword);
+    password.addEventListener('keydown', function (event) { if (event.key === 'Enter') validatePassword(); });
+    modal.addEventListener('click', function (event) { if (event.target === modal) closeModal(); });
+    document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
   </script>
 </body>
 </html>
