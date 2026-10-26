@@ -1,4 +1,5 @@
 name: Actualiser le portfolio
+# Génère portfolio/images-manifest.json depuis les dossiers d’images.
 
 on:
   push:
