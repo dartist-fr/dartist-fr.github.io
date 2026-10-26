@@ -12,9 +12,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script>
     (function () {
-      let theme;
-      try { theme = localStorage.getItem('theme'); } catch (e) {}
-      document.documentElement.dataset.theme = theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var preference = 'system';
+      try { preference = localStorage.getItem('portfolio-theme-preference') || 'system'; } catch (e) {}
+      var dark = preference === 'dark' || (preference === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.documentElement.dataset.themePreference = preference;
     })();
   </script>
   <style>
@@ -39,7 +41,8 @@
     .top-actions{display:flex;align-items:center;gap:16px}
     .back-link,.theme-toggle{font:500 .75rem var(--mono);text-decoration:none;color:var(--soft)}
     .back-link:hover{color:var(--accent)}
-    .theme-toggle{width:40px;height:40px;border:0;background:var(--surface);cursor:pointer;color:var(--ink);font-size:1rem}
+    .theme-toggle{min-width:40px;height:40px;padding:0 11px;border:1px solid var(--line);background:var(--surface);cursor:pointer;color:var(--ink);font:500 .66rem var(--mono);letter-spacing:.06em;text-transform:uppercase;transition:color .18s,background .18s,border-color .18s}
+    .theme-toggle:hover{color:var(--accent);background:var(--accent-soft);border-color:var(--accent)}
     .page-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:54px;padding-top:42px}
     .sidebar{align-self:start;position:sticky;top:24px;border:0;background:var(--surface);padding:20px}
     .side-label,.eyebrow{font:500 .68rem var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--faint)}
@@ -89,7 +92,7 @@
       </a>
       <div class="top-actions">
         <a class="back-link" href="../">← Accueil</a>
-        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Basculer le thème" title="Basculer le thème">◐</button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Thème : système. Cliquer pour choisir le thème clair." title="Thème : système">Système</button>
       </div>
     </header>
 
@@ -154,10 +157,31 @@
   </div>
   <script>
     const root = document.documentElement;
-    document.getElementById('theme-toggle').addEventListener('click', function () {
-      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      root.dataset.theme = next;
-      try { localStorage.setItem('theme', next); } catch (e) {}
+    const themeButton = document.getElementById('theme-toggle');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const themeOrder = ['system', 'light', 'dark'];
+    const themeLabels = { system: 'Système', light: 'Clair', dark: 'Sombre' };
+
+    function applyTheme(preference) {
+      const dark = preference === 'dark' || (preference === 'system' && systemTheme.matches);
+      root.dataset.theme = dark ? 'dark' : 'light';
+      root.dataset.themePreference = preference;
+      themeButton.textContent = themeLabels[preference];
+      const next = themeOrder[(themeOrder.indexOf(preference) + 1) % themeOrder.length];
+      themeButton.setAttribute('aria-label', 'Thème : ' + themeLabels[preference].toLowerCase() + '. Cliquer pour choisir le thème ' + themeLabels[next].toLowerCase() + '.');
+      themeButton.title = 'Thème : ' + themeLabels[preference];
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#15171c' : '#faf9f5');
+    }
+
+    applyTheme(root.dataset.themePreference || 'system');
+    themeButton.addEventListener('click', function () {
+      const current = root.dataset.themePreference || 'system';
+      const next = themeOrder[(themeOrder.indexOf(current) + 1) % themeOrder.length];
+      try { localStorage.setItem('portfolio-theme-preference', next); } catch (e) {}
+      applyTheme(next);
+    });
+    systemTheme.addEventListener('change', function () {
+      if ((root.dataset.themePreference || 'system') === 'system') applyTheme('system');
     });
     const cards = [...document.querySelectorAll('.gallery-card')];
     const filters = [...document.querySelectorAll('[data-filter]')];
