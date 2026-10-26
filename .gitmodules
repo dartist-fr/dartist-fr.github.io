@@ -1,0 +1,3 @@
+[submodule "mes applications/Automa"]
+	path = mes applications/Automa
+	url = https://github.com/dartist-fr/automa.git
