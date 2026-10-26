@@ -9,12 +9,33 @@
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500&display=swap');
 
     :root {
+      color-scheme: light;
       --paper: #f4f2ec;
       --paper-2: #eae7df;
       --ink: #1a1815;
       --ink-soft: #6b665c;
       --line: #d6d2c8;
       --accent: #b3542f;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #171715;
+      --paper-2: #242320;
+      --ink: #f1eee7;
+      --ink-soft: #aaa49a;
+      --line: #3a3731;
+      --accent: #d27b55;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --paper: #171715;
+        --paper-2: #242320;
+        --ink: #f1eee7;
+        --ink-soft: #aaa49a;
+        --line: #3a3731;
+        --accent: #d27b55;
+      }
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,6 +77,15 @@
     }
     .topnav a { color: var(--ink-soft); text-decoration: none; transition: color 0.2s; }
     .topnav a:hover { color: var(--ink); }
+    .topbar-actions { display: flex; align-items: center; gap: 22px; }
+    .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px;
+      background: transparent; color: var(--ink); font: inherit; font-size: .72rem;
+      cursor: pointer; transition: background .2s, border-color .2s;
+    }
+    .theme-toggle:hover { background: var(--paper-2); }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
     /* --- Hero --- */
     header.hero {
@@ -188,9 +218,8 @@
     .album-header p { color: var(--ink-soft); margin-top: 8px; font-size: 0.9rem; letter-spacing: 0.04em; }
 
     .photos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 18px;
+      columns: 4 220px;
+      column-gap: 14px;
     }
     .photo-item {
       position: relative;
@@ -202,7 +231,9 @@
       border: none;
       padding: 0;
       display: block;
-      align-self: start;
+      break-inside: avoid;
+      margin: 0 0 14px;
+      -webkit-column-break-inside: avoid;
     }
     .photo-item img {
       display: block;
@@ -211,7 +242,7 @@
       object-fit: contain;
       transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .photo-item:hover img { transform: scale(1.06); }
+    .photo-item:hover img { transform: scale(1.025); }
 
     /* --- Lightbox --- */
     #lightbox {
@@ -258,13 +289,15 @@
     .album-frame img, .photo-item img { display: block; }
     @media (max-width: 640px) {
       .wrap { padding: 0 18px; }
-      .topbar { align-items: flex-start; gap: 18px; }
+      .topbar { align-items: flex-start; gap: 12px; }
+      .topbar-actions { align-items: flex-end; flex-direction: column; gap: 10px; }
       .topnav { gap: 12px; flex-wrap: wrap; justify-content: flex-end; font-size: 0.68rem; }
       header.hero { padding: 58px 0 46px; }
       .hero p { font-size: 0.96rem; }
       .section-head { margin-top: 40px; }
       .albums-grid { grid-template-columns: 1fr; gap: 28px; }
-      .photos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .photos-grid { columns: 2 0; column-gap: 10px; }
+      .photo-item { margin-bottom: 10px; }
       #lightbox { padding: 16px; }
       #lightbox img { max-width: 96vw; max-height: 82vh; }
       .lb-close { top: 14px; right: 16px; }
@@ -276,11 +309,16 @@
   <div class="wrap">
     <div class="topbar">
       <div class="wordmark">dartist<span>.</span></div>
-      <nav class="topnav">
-        <a href="#travaux">Travaux</a>
-        <a href="#apropos">À propos</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <div class="topbar-actions">
+        <nav class="topnav">
+          <a href="#travaux">Travaux</a>
+          <a href="#apropos">À propos</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activer le thème sombre" title="Changer le thème">
+          <span id="theme-icon" aria-hidden="true">☾</span><span id="theme-label">Sombre</span>
+        </button>
+      </div>
     </div>
 
     <header class="hero">
@@ -458,6 +496,32 @@
       document.body.style.overflow = "";
     }
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") fermerLightbox(); });
+
+    const themeToggle = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const themeLabel = document.getElementById("theme-label");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function appliquerTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      const sombre = theme === "dark";
+      themeIcon.textContent = sombre ? "☀" : "☾";
+      themeLabel.textContent = sombre ? "Clair" : "Sombre";
+      themeToggle.setAttribute("aria-label", sombre ? "Activer le thème clair" : "Activer le thème sombre");
+    }
+
+    // Sans choix manuel, le thème suit automatiquement les réglages de l'appareil.
+    const themeEnregistre = null;
+    appliquerTheme(themeEnregistre || (prefersDark.matches ? "dark" : "light"));
+    themeToggle.addEventListener("click", () => {
+      appliquerTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    });
+    prefersDark.addEventListener?.("change", (event) => {
+      if (!document.documentElement.dataset.themeManuel) appliquerTheme(event.matches ? "dark" : "light");
+    });
+    themeToggle.addEventListener("click", () => {
+      document.documentElement.dataset.themeManuel = "true";
+    });
 
     afficherAlbums();
   </script>
