@@ -195,16 +195,20 @@
     .photo-item {
       position: relative;
       width: 100%;
-      aspect-ratio: 1 / 1;
+      height: fit-content;
       overflow: hidden;
       background: var(--paper-2);
       cursor: zoom-in;
       border: none;
       padding: 0;
+      display: block;
+      align-self: start;
     }
     .photo-item img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
       transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
     .photo-item:hover img { transform: scale(1.06); }
@@ -355,7 +359,7 @@
       {
         "titre": "Rome",
         "sujet": "Voyage · Photographie",
-        "cover": "images/Voyages/Rome/DSCF3613.jpg",
+        "cover": "images/Voyages/Rome/DSCF4121.jpg",
         "photos": [
           "images/Voyages/Rome/DSCF3613.jpg",
           "images/Voyages/Rome/DSCF3684.jpg",
