@@ -107,9 +107,9 @@
       position: absolute;
       z-index: -2;
       inset: 0;
-      background-image: url("images/Red%20Bull/DSCF6593.webp");
+      background-image: var(--hero-image, none);
       background-size: cover;
-      background-position: center 45%;
+      background-position: var(--hero-position, center 45%);
       transform: scale(1.01);
     }
     header.hero::after {
@@ -615,8 +615,15 @@
         const response = await fetch("images-manifest.json?v=" + Date.now(), { cache: "no-store" });
         if (!response.ok) throw new Error("Le manifeste du portfolio est indisponible.");
         const data = await response.json();
-        if (!Array.isArray(data)) throw new Error("Format de manifeste invalide.");
-        portfolioData = data;
+        if (!data || !Array.isArray(data.albums)) throw new Error("Format de manifeste invalide.");
+        if (data.hero && data.hero.image) {
+          const imagePath = data.hero.image.replace(/["\\\\]/g, "");
+          document.querySelector(".hero").style.setProperty("--hero-image", 'url("' + imagePath + '")');
+          if (data.hero.position) {
+            document.querySelector(".hero").style.setProperty("--hero-position", data.hero.position);
+          }
+        }
+        portfolioData = data.albums;
         afficherAlbums();
       } catch (error) {
         albumsView.innerHTML = '<p class="empty-series">Impossible de charger les séries pour le moment. Réessayez dans quelques instants.</p>';
