@@ -246,6 +246,26 @@
     footer .fw { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1rem; }
     footer a { color: var(--ink-soft); text-decoration: none; }
     footer a:hover { color: var(--accent); }
+
+    .album-card:focus-visible, .photo-item:focus-visible, .btn-back:focus-visible, .lb-close:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+    .album-frame img, .photo-item img { display: block; }
+    @media (max-width: 640px) {
+      .wrap { padding: 0 18px; }
+      .topbar { align-items: flex-start; gap: 18px; }
+      .topnav { gap: 12px; flex-wrap: wrap; justify-content: flex-end; font-size: 0.68rem; }
+      header.hero { padding: 58px 0 46px; }
+      .hero p { font-size: 0.96rem; }
+      .section-head { margin-top: 40px; }
+      .albums-grid { grid-template-columns: 1fr; gap: 28px; }
+      .photos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      #lightbox { padding: 16px; }
+      #lightbox img { max-width: 96vw; max-height: 82vh; }
+      .lb-close { top: 14px; right: 16px; }
+      footer { align-items: flex-start; flex-direction: column; }
+    }
   </style>
 </head>
 <body>
@@ -290,8 +310,8 @@
   </div>
 
   <div id="lightbox" onclick="fermerLightbox()">
-    <button class="lb-close" aria-label="Fermer">✕</button>
-    <img id="lightbox-img" src="" alt="" />
+    <button class="lb-close" type="button" aria-label="Fermer" onclick="event.stopPropagation(); fermerLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
   </div>
 
   <script>
@@ -387,7 +407,7 @@
         card.innerHTML = `
           <div class="album-frame">
             <span class="album-index">${String(index + 1).padStart(2, "0")}</span>
-            <img src="${album.cover}" alt="Série : ${album.titre}" loading="lazy" />
+            <img src="${album.cover}" alt="Série : ${album.titre}" loading="lazy" onerror="this.style.visibility='hidden'; console.error('Image introuvable :', this.src)" />
             <span class="album-view">Voir la série</span>
           </div>
           <div class="album-info">
@@ -409,7 +429,7 @@
         const item = document.createElement("button");
         item.className = "photo-item";
         item.onclick = () => ouvrirLightbox(photo, album.titre + " — cliché " + (i + 1));
-        item.innerHTML = `<img src="${photo}" alt="${album.titre} — cliché ${i + 1}" loading="lazy" />`;
+        item.innerHTML = `<img src="${photo}" alt="${album.titre} — cliché ${i + 1}" loading="lazy" onerror="this.style.visibility='hidden'; console.error('Image introuvable :', this.src)" />`;
         photosContainer.appendChild(item);
       });
 
