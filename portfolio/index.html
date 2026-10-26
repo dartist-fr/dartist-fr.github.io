@@ -283,6 +283,10 @@
     footer .fw { font-family: 'Fraunces', serif; color: var(--ink); font-size: 1rem; }
     footer a { color: var(--ink-soft); text-decoration: none; }
     footer a:hover { color: var(--accent); }
+    .footer-social { display: inline-flex; align-items: center; gap: 14px; }
+    .instagram-link { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; }
+    .instagram-link svg { display: block; width: 22px; height: 22px; }
+    .instagram-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
 
     .album-card:focus-visible, .photo-item:focus-visible, .btn-back:focus-visible, .lb-close:focus-visible {
       outline: 2px solid var(--accent);
@@ -349,7 +353,16 @@
     <footer id="contact">
       <span class="fw">dartist</span>
       <span>Disponible pour commandes &amp; collaborations</span>
-      <a href="mailto:dartist.photography@gmail.com">dartist.photography@gmail.com</a>
+      <div class="footer-social">
+        <a href="mailto:dartist.photography@gmail.com">dartist.photography@gmail.com</a>
+        <a class="instagram-link" href="https://www.instagram.com/dartist_photography/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de dartist photography" title="Instagram de dartist photography">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="17.5" cy="6.8" r="1.1" fill="currentColor"/>
+          </svg>
+        </a>
+      </div>
     </footer>
   </div>
 
