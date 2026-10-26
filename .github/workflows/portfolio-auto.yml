@@ -1,0 +1,37 @@
+name: Actualiser le portfolio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "portfolio/images/**"
+      - "scripts/generate-portfolio.py"
+      - ".github/workflows/portfolio-auto.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-auto
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+      - name: Générer le manifeste des séries
+        run: python3 scripts/generate-portfolio.py
+      - name: Enregistrer le manifeste si nécessaire
+        run: |
+          if git diff --quiet -- portfolio/images-manifest.json; then
+            echo "Le manifeste est déjà à jour."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add portfolio/images-manifest.json
+          git commit -m "chore(portfolio): actualiser les séries et photos"
+          git push
