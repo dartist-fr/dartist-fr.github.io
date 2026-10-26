@@ -95,6 +95,10 @@
 
     footer { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem 0 0; color: var(--ink-faint); border-top: 1px solid var(--line); margin-top: 1.5rem; }
     .footer-note { letter-spacing: .07em; text-transform: none; }
+    .footer-links { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .footer-github { display: inline-flex; align-items: center; gap: .4rem; color: inherit; text-decoration: none; transition: color .2s ease; }
+    .footer-github:hover, .footer-github:focus-visible { color: var(--ink); }
+    .footer-github svg { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; }
 
     .modal-overlay { display: none; position: fixed; z-index: 10; inset: 0; align-items: center; justify-content: center; padding: 1rem; background: rgba(10,12,16,.68); }
     .modal-overlay.active { display: flex; }
@@ -178,7 +182,13 @@
 
     <footer>
       <span class="footer-note">© 2026 dartist</span>
-      <a class="footer-note" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
+      <div class="footer-links">
+        <a class="footer-note" href="mailto:flawz.ad@gmail.com">flawz.ad@gmail.com</a>
+        <a class="footer-note footer-github" href="https://github.com/dartist-fr" target="_blank" rel="noopener noreferrer" aria-label="Voir mon profil GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.08c-3.1.67-3.76-1.32-3.76-1.32-.51-1.3-1.24-1.65-1.24-1.65-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15 1 1.7 2.62 1.21 3.26.93.1-.72.39-1.21.71-1.49-2.48-.28-5.09-1.24-5.09-5.52 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.29-2.62 5.24-5.11 5.52.4.35.76 1.03.76 2.08v3.06c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
     </footer>
   </main>
 
