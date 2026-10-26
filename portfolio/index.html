@@ -163,13 +163,13 @@
     const filters = [...document.querySelectorAll('[data-filter]')];
     filters.forEach(button => button.addEventListener('click', () => {
       const selected = button.dataset.filter;
-      filters.forEach(item => item.setAttribute('aria-pressed', String(item === button && item.getAttribute('aria-pressed') !== 'true')));
-      const active = button.getAttribute('aria-pressed') === 'true';
+      const active = button.getAttribute('aria-pressed') !== 'true';
+      filters.forEach(item => item.setAttribute('aria-pressed', String(item === button && active)));
       cards.forEach(card => { card.hidden = active && card.dataset.category !== selected; });
-      document.querySelector('.side-nav .current')?.classList.remove('current');
-      if (!active) button.classList.add('current');
+      document.querySelectorAll('.side-nav .current').forEach(item => item.classList.remove('current'));
+      if (active) button.classList.add('current');
       else document.querySelector('.side-nav a')?.classList.add('current');
-      document.getElementById('gallery-title').textContent = active ? button.textContent.trim().replace(/\s+\d+$/, '') : 'Explorer les séries';
+      document.getElementById('gallery-title').textContent = active ? button.textContent.trim().replace(/\\s+\\d+$/, '') : 'Explorer les séries';
     }));
   </script>
 </body>
