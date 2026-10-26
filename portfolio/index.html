@@ -87,16 +87,44 @@
     .theme-toggle:hover { background: var(--paper-2); }
     .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-    /* --- Hero --- */
+    /* --- Accueil : une grande photo en arrière-plan, uniquement sur la page d'accueil --- */
     header.hero {
-      padding: 84px 0 64px;
-      border-bottom: 1px solid var(--line);
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: min(72vh, 760px);
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: 100px max(28px, calc((100vw - 1124px) / 2)) 96px;
+      overflow: hidden;
+      border-bottom: 0;
+      color: #fff;
+    }
+    header.hero::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      inset: 0;
+      background-image: url("images/Red%20Bull/DSCF6593.webp");
+      background-size: cover;
+      background-position: center 45%;
+      transform: scale(1.01);
+    }
+    header.hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(12, 12, 11, .78) 0%, rgba(12, 12, 11, .48) 52%, rgba(12, 12, 11, .16) 100%),
+                  linear-gradient(0deg, rgba(12, 12, 11, .28), transparent 55%);
     }
     .hero .eyebrow {
       font-size: 0.78rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: #f0b18f;
       margin-bottom: 22px;
     }
     .hero h1 {
@@ -107,11 +135,11 @@
       letter-spacing: -0.02em;
       max-width: 14ch;
     }
-    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero h1 em { font-style: italic; color: #f0b18f; }
     .hero p {
       margin-top: 26px;
       max-width: 46ch;
-      color: var(--ink-soft);
+      color: rgba(255, 255, 255, .88);
       font-size: 1.05rem;
     }
 
@@ -333,7 +361,7 @@
       .topbar { align-items: flex-start; gap: 12px; }
       .topbar-actions { align-items: flex-end; flex-direction: column; gap: 10px; }
       .topnav { gap: 12px; flex-wrap: wrap; justify-content: flex-end; font-size: 0.68rem; }
-      header.hero { padding: 58px 0 46px; }
+      header.hero { min-height: 62vh; padding: 76px 22px 68px; }
       .hero p { font-size: 0.96rem; }
       .section-head { margin-top: 40px; }
       .albums-grid { grid-template-columns: 1fr; gap: 28px; }
