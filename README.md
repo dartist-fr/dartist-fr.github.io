@@ -1,14 +1,17 @@
 # dartist — Hub de projets
 
-Un hub qui rassemble mes projets web : jeux, portfolio photo et outils.
+Un hub qui rassemble mes projets web, jeux, outils et applications.
 
 🌐 **Site :** https://dartist-fr.github.io/
 
 ## Espaces
 - **Salle d’arcade** : jeux dans le navigateur.
-- **Portfolio** : photographies.
+- **Mes Applications** : applications et projets logiciels, dont [Automa](https://github.com/dartist-fr/automa).
 - **Boîte à outils** : utilitaires.
 - **Le Labo** : prototypes et expériences.
+
+## Portfolio photo
+Le portfolio photographique est destiné à vivre dans un dépôt GitHub indépendant. Il n’est plus référencé comme section de ce hub.
 
 ## Technologies
 HTML, CSS et JavaScript.
