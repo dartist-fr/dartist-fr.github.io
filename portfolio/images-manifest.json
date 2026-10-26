@@ -99,7 +99,7 @@
   {
     "titre": "Sports",
     "sujet": "Sport · Photographie",
-    "cover": "images/Sports/Volleyball/DSCF2247.webp",
+    "cover": "images/Sports/Tennis/DSCF0620.webp",
     "photos": [],
     "children": [
       {
@@ -129,8 +129,18 @@
       {
         "titre": "Tennis",
         "sujet": "Sport · Photographie",
-        "cover": "",
-        "photos": []
+        "cover": "images/Sports/Tennis/DSCF0620.webp",
+        "photos": [
+          "images/Sports/Tennis/DSCF0620.webp",
+          "images/Sports/Tennis/DSCF0623.webp",
+          "images/Sports/Tennis/DSCF0633.webp",
+          "images/Sports/Tennis/DSCF0636.webp",
+          "images/Sports/Tennis/DSCF0683.webp",
+          "images/Sports/Tennis/DSCF0721.webp",
+          "images/Sports/Tennis/DSCF0723.webp",
+          "images/Sports/Tennis/DSCF0729.webp",
+          "images/Sports/Tennis/DSCF0746.webp"
+        ]
       },
       {
         "titre": "Volleyball",
