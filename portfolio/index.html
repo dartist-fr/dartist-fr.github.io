@@ -359,122 +359,7 @@
   </div>
 
   <script>
-    const portfolioData =       [
-        {
-          "titre": "Voyages",
-          "sujet": "Voyage · Photographie",
-          "cover": "images/Voyages/Londres/Bentley%20London.jpg",
-          "photos": [],
-          "children": [
-            {
-              "titre": "Londres",
-              "sujet": "Voyage · Photographie",
-              "cover": "images/Voyages/Londres/Bentley%20London.jpg",
-              "photos": [
-                "images/Voyages/Londres/Bentley%20London.jpg",
-                "images/Voyages/Londres/DSCF3953.jpg",
-                "images/Voyages/Londres/DSCF3963.jpg",
-                "images/Voyages/Londres/DSCF3991.jpg",
-                "images/Voyages/Londres/DSCF4855.jpg",
-                "images/Voyages/Londres/DSCF4857-2.jpg",
-                "images/Voyages/Londres/DSCF4861.jpg"
-              ]
-            },
-            {
-              "titre": "Marrakech",
-              "sujet": "Voyage · Photographie",
-              "cover": "images/Voyages/Marrakech/DSCF3072.jpg",
-              "photos": [
-                "images/Voyages/Marrakech/DSCF3072.jpg",
-                "images/Voyages/Marrakech/DSCF3088-3.jpg",
-                "images/Voyages/Marrakech/DSCF3109.jpg",
-                "images/Voyages/Marrakech/DSCF3116.jpg",
-                "images/Voyages/Marrakech/DSCF3290.jpg",
-                "images/Voyages/Marrakech/DSCF3293.jpg",
-                "images/Voyages/Marrakech/DSCF3337.jpg",
-                "images/Voyages/Marrakech/DSCF3347.jpg",
-                "images/Voyages/Marrakech/DSCF3352.jpg",
-                "images/Voyages/Marrakech/DSCF3521.jpg",
-                "images/Voyages/Marrakech/DSCF3527.jpg",
-                "images/Voyages/Marrakech/DSCF3612.jpg",
-                "images/Voyages/Marrakech/DSCF3716.jpg",
-                "images/Voyages/Marrakech/DSCF3722.jpg",
-                "images/Voyages/Marrakech/nourriture-maroc-ps.jpg"
-              ]
-            },
-            {
-              "titre": "Rome",
-              "sujet": "Voyage · Photographie",
-              "cover": "images/Voyages/Rome/DSCF4121.jpg",
-              "photos": [
-                "images/Voyages/Rome/DSCF3613.jpg",
-                "images/Voyages/Rome/DSCF3684.jpg",
-                "images/Voyages/Rome/DSCF3695.jpg",
-                "images/Voyages/Rome/DSCF3783.jpg",
-                "images/Voyages/Rome/DSCF3803.jpg",
-                "images/Voyages/Rome/DSCF3892.jpg",
-                "images/Voyages/Rome/DSCF4039.jpg",
-                "images/Voyages/Rome/DSCF4116-2-Edit.jpg",
-                "images/Voyages/Rome/DSCF4121.jpg",
-                "images/Voyages/Rome/DSCF4159.jpg",
-                "images/Voyages/Rome/DSCF4169.jpg",
-                "images/Voyages/Rome/DSCF4177.jpg",
-                "images/Voyages/Rome/DSCF4187.jpg",
-                "images/Voyages/Rome/DSCF4192.jpg",
-                "images/Voyages/Rome/DSCF4193.jpg",
-                "images/Voyages/Rome/DSCF4197.jpg",
-                "images/Voyages/Rome/DSCF4205.jpg",
-                "images/Voyages/Rome/DSCF4207.jpg",
-                "images/Voyages/Rome/DSCF4209.jpg",
-                "images/Voyages/Rome/DSCF4300.jpg",
-                "images/Voyages/Rome/DSCF4306.jpg",
-                "images/Voyages/Rome/DSCF4311.jpg",
-                "images/Voyages/Rome/DSCF4316.jpg",
-                "images/Voyages/Rome/DSCF4318.jpg",
-                "images/Voyages/Rome/DSCF4364.jpg"
-              ]
-            }
-          ]
-        },
-        {
-          "titre": "Red Bull",
-          "sujet": "Sport · Événementiel",
-          "cover": "",
-          "photos": []
-        },
-        {
-          "titre": "Sports",
-          "sujet": "Sport · Photographie",
-          "cover": "",
-          "photos": []
-        },
-        {
-          "titre": "France",
-          "sujet": "Voyage · Photographie",
-          "cover": "",
-          "photos": [],
-          "children": [
-            {
-              "titre": "Avignon",
-              "sujet": "France · Photographie",
-              "cover": "",
-              "photos": []
-            },
-            {
-              "titre": "Sud",
-              "sujet": "France · Photographie",
-              "cover": "",
-              "photos": []
-            },
-            {
-              "titre": "Montagne",
-              "sujet": "France · Photographie",
-              "cover": "",
-              "photos": []
-            }
-          ]
-        }
-      ];
+    let portfolioData = [];
 
     const albumsView = document.getElementById("albums-view");
     const photoView = document.getElementById("photo-view");
@@ -628,7 +513,20 @@
       document.documentElement.dataset.themeManuel = "true";
     });
 
-    afficherAlbums();
+    async function chargerPortfolio() {
+      try {
+        const response = await fetch("images-manifest.json?v=" + Date.now(), { cache: "no-store" });
+        if (!response.ok) throw new Error("Le manifeste du portfolio est indisponible.");
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("Format de manifeste invalide.");
+        portfolioData = data;
+        afficherAlbums();
+      } catch (error) {
+        albumsView.innerHTML = '<p class="empty-series">Impossible de charger les séries pour le moment. Réessayez dans quelques instants.</p>';
+        console.error("Chargement du portfolio :", error);
+      }
+    }
+    chargerPortfolio();
   </script>
 </body>
 </html>
