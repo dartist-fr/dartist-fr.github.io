@@ -219,6 +219,28 @@
     }
     .album-header p { color: var(--ink-soft); margin-top: 8px; font-size: 0.9rem; letter-spacing: 0.04em; }
 
+    .featured-photo {
+      display: block;
+      width: 100%;
+      margin: 0 0 24px;
+      padding: 0;
+      border: 0;
+      background: var(--paper-2);
+      cursor: zoom-in;
+      overflow: hidden;
+    }
+    .featured-photo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 78vh;
+      object-fit: contain;
+      margin: 0 auto;
+      transition: transform 0.5s ease;
+    }
+    .featured-photo:hover img { transform: scale(1.01); }
+    .featured-photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
     .photos-grid {
       columns: 4 220px;
       column-gap: 14px;
@@ -407,11 +429,28 @@
       });
     }
 
+    function afficherPhotoPrincipale(album) {
+      if (!album || album.children || !album.cover) return;
+      const featured = document.createElement("button");
+      featured.type = "button";
+      featured.className = "featured-photo";
+      featured.setAttribute("aria-label", "Agrandir la photo principale de " + album.titre);
+      featured.onclick = () => ouvrirLightbox(album.cover, album.titre + " · photo principale");
+      const image = document.createElement("img");
+      image.src = album.cover;
+      image.alt = album.titre + " · photo principale";
+      image.loading = "eager";
+      image.onerror = () => featured.remove();
+      featured.appendChild(image);
+      photosContainer.appendChild(featured);
+    }
+
     function ouvrirAlbum(index) {
       const album = portfolioData[index];
       currentAlbumTitle.textContent = album.titre;
       currentAlbumSub.textContent = album.sujet + (album.children ? " · " + album.children.length + " sous-séries" : album.photos.length ? " · " + album.photos.length + " clichés" : " · Série à compléter");
       photosContainer.innerHTML = "";
+      afficherPhotoPrincipale(album);
 
       if (album.children) {
         album.children.forEach((child, childIndex) => {
@@ -436,7 +475,7 @@
         photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
       }
 
-      album.photos.forEach((photo, i) => {
+      album.photos.filter(photo => photo !== album.cover).forEach((photo, i) => {
         const item = document.createElement("button");
         item.className = "photo-item";
         item.onclick = () => ouvrirLightbox(photo, album.titre + " · cliché " + (i + 1));
@@ -453,6 +492,7 @@
       currentAlbumTitle.textContent = child.titre;
       currentAlbumSub.textContent = child.sujet + (child.children ? " · " + child.children.length + " sous-séries" : child.photos.length ? " · " + child.photos.length + " clichés" : " · Série à compléter");
       photosContainer.innerHTML = "";
+      afficherPhotoPrincipale(child);
       if (child.children) {
         child.children.forEach((nested, nestedIndex) => {
           const card = document.createElement("button");
@@ -474,7 +514,7 @@
       if (!child.photos.length && !child.children) {
         photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
       }
-      child.photos.forEach((photo, i) => {
+      child.photos.filter(photo => photo !== child.cover).forEach((photo, i) => {
         const item = document.createElement("button");
         item.className = "photo-item";
         item.onclick = () => ouvrirLightbox(photo, child.titre + " · cliché " + (i + 1));
