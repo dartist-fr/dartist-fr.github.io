@@ -11,7 +11,7 @@ OUTPUT = ROOT / "portfolio" / "images-manifest.json"
 EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif"}
 SUBJECTS = {
     "voyages": "Voyage · Photographie",
-    "france": "Voyage · Photographie",
+    "france": "France · Photographie",
     "red bull": "Sport · Événementiel",
     "sports": "Sport · Photographie",
     "sport": "Sport · Photographie",
