@@ -1,11 +1,5 @@
 [
   {
-    "titre": "Evenementiel",
-    "sujet": "Événementiel · Photographie",
-    "cover": "",
-    "photos": []
-  },
-  {
     "titre": "France",
     "sujet": "Voyage · Photographie",
     "cover": "images/France/Avignon/DSCF0046.webp",
@@ -58,7 +52,7 @@
   {
     "titre": "Red Bull",
     "sujet": "Sport · Événementiel",
-    "cover": "images/Red%20Bull/DSCF8276.webp",
+    "cover": "images/Red%20Bull/DSCF6593.webp",
     "photos": [
       "images/Red%20Bull/DSCF6593.webp",
       "images/Red%20Bull/DSCF7086.webp",
@@ -78,12 +72,6 @@
       "images/Red%20Bull/DSCF9301.webp",
       "images/Red%20Bull/DSCF9410.webp"
     ]
-  },
-  {
-    "titre": "Sport",
-    "sujet": "Sport · Photographie",
-    "cover": "",
-    "photos": []
   },
   {
     "titre": "Sports",
