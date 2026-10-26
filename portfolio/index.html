@@ -145,6 +145,8 @@
       overflow: hidden;
       background: var(--paper-2);
     }
+    .album-placeholder { width: 100%; height: 100%; background: var(--paper-2); }
+    .empty-series { color: var(--ink-soft); padding: 28px 0; font-size: .95rem; }
     .album-frame img {
       width: 100%;
       height: 100%;
@@ -394,6 +396,15 @@
           "images/Voyages/Marrakech/nourriture-maroc-ps.jpg"
         ]
       },
+      { "titre": "Red Bull", "sujet": "Sport · Événementiel", "cover": "", "photos": [] },
+      { "titre": "Sports", "sujet": "Sport · Photographie", "cover": "", "photos": [] },
+      { "titre": "France", "sujet": "Voyage · Photographie", "cover": "", "photos": [],
+        "children": [
+          { "titre": "Avignon", "sujet": "France · Photographie", "cover": "", "photos": [] },
+          { "titre": "Sud", "sujet": "France · Photographie", "cover": "", "photos": [] },
+          { "titre": "Montagne", "sujet": "France · Photographie", "cover": "", "photos": [] }
+        ]
+      },
       {
         "titre": "Rome",
         "sujet": "Voyage · Photographie",
@@ -454,7 +465,7 @@
           </div>
           <div class="album-info">
             <span class="album-title">${album.titre}</span>
-            <span class="album-count">${album.photos.length} clichés</span>
+            <span class="album-count">${album.children ? album.children.length + " sous-séries" : album.photos.length ? album.photos.length + " clichés" : "À compléter"}</span>
           </div>
         `;
         albumsView.appendChild(card);
@@ -464,8 +475,24 @@
     function ouvrirAlbum(index) {
       const album = portfolioData[index];
       currentAlbumTitle.textContent = album.titre;
-      currentAlbumSub.textContent = album.sujet + " · " + album.photos.length + " clichés";
+      currentAlbumSub.textContent = album.sujet + (album.children ? " · " + album.children.length + " sous-séries" : album.photos.length ? " · " + album.photos.length + " clichés" : " · Série à compléter");
       photosContainer.innerHTML = "";
+
+      if (album.children) {
+        album.children.forEach((child, childIndex) => {
+          const card = document.createElement("button");
+          card.className = "album-card";
+          card.onclick = () => ouvrirSousAlbum(child);
+          const frame = document.createElement("div"); frame.className = "album-frame";
+          const placeholder = document.createElement("div"); placeholder.className = "album-placeholder";
+          const title = document.createElement("div"); title.className = "album-info";
+          const name = document.createElement("span"); name.className = "album-title"; name.textContent = child.titre;
+          const count = document.createElement("span"); count.className = "album-count"; count.textContent = "À compléter";
+          frame.appendChild(placeholder); title.append(name, count); card.append(frame, title); photosContainer.appendChild(card);
+        });
+      } else if (!album.photos.length) {
+        photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
+      }
 
       album.photos.forEach((photo, i) => {
         const item = document.createElement("button");
@@ -478,6 +505,12 @@
       travaux.style.display = "none";
       photoView.style.display = "block";
       window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    }
+
+    function ouvrirSousAlbum(child) {
+      currentAlbumTitle.textContent = child.titre;
+      currentAlbumSub.textContent = child.sujet + " · Série à compléter";
+      photosContainer.innerHTML = '<p class="empty-series">Les photos de cette série seront ajoutées prochainement.</p>';
     }
 
     function fermerAlbum() {
