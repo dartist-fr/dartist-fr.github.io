@@ -245,6 +245,19 @@
       columns: 4 220px;
       column-gap: 14px;
     }
+    /* Sous-séries : une vraie grille pour aligner les cartes sur des rangées. */
+    .photos-grid.subseries-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-count: initial;
+      column-gap: 26px;
+      row-gap: 30px;
+    }
+    .photos-grid.subseries-grid > .album-card {
+      width: 100%;
+      margin: 0;
+      break-inside: auto;
+    }
     .photo-item {
       position: relative;
       width: 100%;
@@ -325,6 +338,7 @@
       .section-head { margin-top: 40px; }
       .albums-grid { grid-template-columns: 1fr; gap: 28px; }
       .photos-grid { columns: 2; column-gap: 10px; }
+      .photos-grid.subseries-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
       .photo-item { margin-bottom: 10px; }
       #lightbox { padding: 16px; }
       #lightbox img { max-width: 96vw; max-height: 82vh; }
@@ -450,6 +464,7 @@
       currentAlbumTitle.textContent = album.titre;
       currentAlbumSub.textContent = album.sujet + (album.children ? " · " + album.children.length + " sous-séries" : album.photos.length ? " · " + album.photos.length + " clichés" : " · Série à compléter");
       photosContainer.innerHTML = "";
+      photosContainer.classList.toggle("subseries-grid", Boolean(album.children));
       afficherPhotoPrincipale(album);
 
       if (album.children) {
@@ -492,6 +507,7 @@
       currentAlbumTitle.textContent = child.titre;
       currentAlbumSub.textContent = child.sujet + (child.children ? " · " + child.children.length + " sous-séries" : child.photos.length ? " · " + child.photos.length + " clichés" : " · Série à compléter");
       photosContainer.innerHTML = "";
+      photosContainer.classList.toggle("subseries-grid", Boolean(child.children));
       afficherPhotoPrincipale(child);
       if (child.children) {
         child.children.forEach((nested, nestedIndex) => {
