@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f5">
+  <meta name="description" content="Découvrez Automa, l’application Android de dartist, consultez les nouveautés et téléchargez la dernière version depuis GitHub Releases.">
+  <title>Automa — dartist</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var stored;
+      try { stored = localStorage.getItem('theme'); } catch (e) {}
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <style>
+    :root { --bg:#faf9f5; --surface:#fff; --ink:#16181d; --soft:#5b5f68; --faint:#8b8e96; --line:#e3e1da; --accent:#23324a; --accent-soft:#23324a0f; --amber:#b8853c; --display:'Fraunces',Georgia,serif; --body:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace; }
+    :root[data-theme="dark"] { --bg:#15171c; --surface:#1c1f26; --ink:#f1f0ea; --soft:#a8acb5; --faint:#737783; --line:#2b2e35; --accent:#a8bee7; --accent-soft:#8fa8d61a; --amber:#d9a768; }
+    * { box-sizing:border-box; }
+    html { color-scheme:light dark; scroll-behavior:smooth; }
+    body { margin:0; min-width:320px; background:var(--bg); color:var(--ink); font:400 16px/1.65 var(--body); -webkit-font-smoothing:antialiased; }
+    a { color:inherit; }
+    :focus-visible { outline:2px solid var(--amber); outline-offset:4px; }
+    .shell { width:min(100% - 2.5rem, 72rem); margin:auto; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.4rem 0; border-bottom:1px solid var(--line); }
+    .wordmark { font:500 1.2rem/1 var(--display); text-decoration:none; letter-spacing:-.04em; }
+    .nav { display:flex; align-items:center; gap:1.1rem; color:var(--soft); font-size:.82rem; }
+    .nav a { text-decoration:none; }
+    .nav a:hover { color:var(--ink); }
+    .theme-toggle { display:grid; place-items:center; width:2.5rem; height:2.5rem; color:var(--soft); background:transparent; border:1px solid var(--line); cursor:pointer; }
+    .theme-toggle svg { width:1.1rem; height:1.1rem; }
+    .icon-moon { display:none; }
+    :root[data-theme="dark"] .icon-sun { display:none; }
+    :root[data-theme="dark"] .icon-moon { display:block; }
+    .hero { padding:clamp(4rem,11vw,8rem) 0 4rem; max-width:54rem; }
+    .eyebrow,.label { font:500 .68rem/1.4 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+    .eyebrow { display:flex; align-items:center; gap:.7rem; margin:0 0 1.2rem; }
+    .eyebrow:before { content:""; width:1.8rem; height:1px; background:var(--amber); }
+    h1 { margin:0; font:500 clamp(3.4rem,10vw,7rem)/.92 var(--display); letter-spacing:-.055em; }
+    .lead { max-width:39rem; margin:1.6rem 0 0; color:var(--soft); font-size:clamp(1rem,2vw,1.15rem); }
+    .actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2rem; }
+    .button { display:inline-flex; justify-content:center; align-items:center; gap:.65rem; min-height:3.2rem; padding:.8rem 1.05rem; border:1px solid var(--line); text-decoration:none; font-size:.84rem; font-weight:600; transition:transform .18s,background .18s,border-color .18s; }
+    .button:hover { transform:translateY(-2px); }
+    .button-primary { color:var(--bg); background:var(--accent); border-color:var(--accent); }
+    :root[data-theme="dark"] .button-primary { color:#15171c; }
+    .button-secondary:hover { background:var(--accent-soft); border-color:var(--accent); }
+    .arrow { font-size:1.1rem; }
+    .facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:1rem 0 4.5rem; border:1px solid var(--line); }
+    .fact { padding:1.2rem 1.3rem; border-right:1px solid var(--line); }
+    .fact:last-child { border-right:0; }
+    .fact strong { display:block; font:500 1.05rem var(--display); }
+    .fact span { display:block; margin-top:.25rem; color:var(--faint); font-size:.76rem; }
+    .section { display:grid; grid-template-columns:minmax(9rem,.55fr) minmax(0,1.45fr); gap:2rem; padding:2rem 0; border-top:1px solid var(--line); }
+    .section h2 { margin:0; font:500 clamp(1.6rem,4vw,2.4rem)/1.1 var(--display); letter-spacing:-.04em; }
+    .section p { margin:0 0 1rem; color:var(--soft); }
+    .feature-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; margin:1.4rem 0 0; padding:0; list-style:none; }
+    .feature-list li { padding:1rem; border:1px solid var(--line); background:var(--surface); }
+    .feature-list strong { display:block; font-size:.88rem; font-weight:600; }
+    .feature-list span { display:block; margin-top:.25rem; color:var(--soft); font-size:.8rem; }
+    .release-note { padding:1.25rem; border-left:2px solid var(--amber); background:var(--accent-soft); color:var(--soft); font-size:.9rem; }
+    footer { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-top:4rem; padding:1.5rem 0 2.5rem; border-top:1px solid var(--line); color:var(--faint); font:500 .68rem var(--mono); }
+    footer a { text-decoration:none; }
+    @media(max-width:640px) { .shell{width:min(100% - 2rem,72rem)} .nav .nav-source{display:none} .hero{padding:4rem 0 3rem} .facts{grid-template-columns:1fr;margin-bottom:3rem} .fact{border-right:0;border-bottom:1px solid var(--line)} .fact:last-child{border-bottom:0} .section{grid-template-columns:1fr;gap:1rem;padding:1.6rem 0} .feature-list{grid-template-columns:1fr} footer{margin-top:3rem} }
+    @media(prefers-reduced-motion:reduce) { *,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important} }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="wordmark" href="../" aria-label="Retour à l’accueil dartist">dartist</a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="../">Accueil</a>
+        <a class="nav-source" href="https://github.com/dartist-fr/automa" target="_blank" rel="noopener noreferrer">Code source ↗</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activer le mode sombre">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">Application Android · Projet dartist</p>
+        <h1>Automa<span aria-hidden="true">.</span></h1>
+        <p class="lead">Un projet Android autour de la personnalisation de l’écran d’accueil : des widgets utiles, une apparence configurable et une expérience qui évolue au fil des versions.</p>
+        <div class="actions">
+          <a class="button button-primary" href="https://github.com/dartist-fr/automa/releases/latest" target="_blank" rel="noopener noreferrer">Télécharger la dernière version <span class="arrow" aria-hidden="true">↗</span></a>
+          <a class="button button-secondary" href="https://github.com/dartist-fr/automa/releases" target="_blank" rel="noopener noreferrer">Toutes les versions</a>
+          <a class="button button-secondary" href="https://github.com/dartist-fr/automa" target="_blank" rel="noopener noreferrer">Code source <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <div class="facts" aria-label="Informations sur Automa">
+        <div class="fact"><strong>Android</strong><span>Plateforme</span></div>
+        <div class="fact"><strong>Widgets</strong><span>Personnalisation de l’accueil</span></div>
+        <div class="fact"><strong>Open development</strong><span>Projet et versions sur GitHub</span></div>
+      </div>
+
+      <section class="section" aria-labelledby="features-title">
+        <div><p class="label">01 / Le projet</p><h2 id="features-title">Un accueil à ton image.</h2></div>
+        <div>
+          <p>Automa explore la personnalisation Android avec des widgets et des réglages visuels pensés pour adapter l’écran d’accueil à ses besoins. Les fonctionnalités évoluent selon les versions publiées.</p>
+          <ul class="feature-list">
+            <li><strong>Widgets personnalisables</strong><span>Des informations utiles directement sur l’écran d’accueil.</span></li>
+            <li><strong>Réglages visuels</strong><span>Adapter l’apparence à ses préférences.</span></li>
+            <li><strong>Versions suivies</strong><span>Retrouver les nouveautés et les anciennes publications.</span></li>
+            <li><strong>Projet indépendant</strong><span>Consulter le dépôt et suivre le développement.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="download-title">
+        <div><p class="label">02 / Téléchargement</p><h2 id="download-title">Toujours depuis la source officielle.</h2></div>
+        <div>
+          <p>Les fichiers APK sont publiés dans les GitHub Releases du projet. Ouvre la dernière version, puis sélectionne le fichier APK dans la section « Assets ». Les notes de version et les publications précédentes restent disponibles sur GitHub.</p>
+          <div class="release-note">Conseil : Android peut demander l’autorisation d’installer une application provenant de cette source. Vérifie toujours la version et le fichier téléchargé avant l’installation.</div>
+          <div class="actions">
+            <a class="button button-primary" href="https://github.com/dartist-fr/automa/releases/latest" target="_blank" rel="noopener noreferrer">Ouvrir la dernière Release <span class="arrow" aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="https://github.com/dartist-fr/automa/releases" target="_blank" rel="noopener noreferrer">Consulter l’historique</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>© 2026 dartist</span><span><a href="../">Retour à l’accueil</a> · <a href="https://github.com/dartist-fr/automa" target="_blank" rel="noopener noreferrer">GitHub Automa ↗</a></span></footer>
+  </div>
+  <script>
+    var toggle = document.getElementById('theme-toggle');
+    toggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      toggle.setAttribute('aria-label', next === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre');
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  </script>
+</body>
+</html>
