@@ -18,7 +18,8 @@
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
-  <link rel="stylesheet" href="homepage-effects.css?v=20261027-2">
+  <link rel="stylesheet" href="homepage-effects.css?v=20261027-3">
+  <link rel="stylesheet" href="target-cursor.css?v=20261027-1">
   <style>
     :root {
       --bg: #faf9f5; --surface: #fff; --ink: #16181d; --ink-soft: #5b5f68;
@@ -158,18 +159,6 @@
         <span class="section-label">05 projets</span>
       </div>
 
-      <div class="circular-showcase" aria-label="Carrousel circulaire des projets">
-        <div class="carousel-stage" id="project-carousel" tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Projets à explorer">
-          <div class="carousel-ring">
-            <a class="orbit-card orbit-card--arcade" href="jeux2soiree/" data-title="Salle d’arcade"><span class="orbit-card__index">01 / 05</span><span class="orbit-card__symbol" aria-hidden="true">✳</span><span class="orbit-card__name">Salle d’arcade</span><span class="orbit-card__meta">Jeux · Multijoueur</span></a>
-            <a class="orbit-card orbit-card--automa" href="https://github.com/dartist-fr/automa" target="_blank" rel="noopener noreferrer" data-title="Automa"><span class="orbit-card__index">02 / 05</span><span class="orbit-card__symbol" aria-hidden="true">◉</span><span class="orbit-card__name">Automa</span><span class="orbit-card__meta">Android · Widgets</span></a>
-            <a class="orbit-card orbit-card--tools" href="boite-a-outils/" data-title="Boîte à outils"><span class="orbit-card__index">03 / 05</span><span class="orbit-card__symbol" aria-hidden="true">⌘</span><span class="orbit-card__name">Boîte à outils</span><span class="orbit-card__meta">Outils · Productivité</span></a>
-            <button class="orbit-card orbit-card--lab" type="button" data-title="Le Labo" data-action="labo"><span class="orbit-card__index">04 / 05</span><span class="orbit-card__symbol" aria-hidden="true">⌬</span><span class="orbit-card__name">Le Labo</span><span class="orbit-card__meta">Prototypes · Accès privé</span></button>
-            <a class="orbit-card orbit-card--photo" href="https://dartist-fr.github.io/portfolio/" target="_blank" rel="noopener noreferrer" data-title="Portfolio photo"><span class="orbit-card__index">05 / 05</span><span class="orbit-card__symbol" aria-hidden="true">◌</span><span class="orbit-card__name">Portfolio photo</span><span class="orbit-card__meta">Photographie · Galerie</span></a>
-          </div>
-        </div>
-        <div class="carousel-controls"><button type="button" class="carousel-control" id="carousel-prev" aria-label="Projet précédent">←</button><span class="carousel-status" id="carousel-status" aria-live="polite">01 <span>/</span> 05</span><button type="button" class="carousel-control" id="carousel-next" aria-label="Projet suivant">→</button><span class="carousel-hint">Glissez pour explorer</span></div>
-      </div>
       <div class="project-grid">
         <a class="project" href="jeux2soiree/">
           <span class="project-top"><span class="project-no">01 / 05</span><svg class="project-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
@@ -202,6 +191,21 @@
         <span>JEUX INTERACTIFS</span><i>✳</i><span>WEB</span><i>✳</i><span>ANDROID</span><i>✳</i><span>PHOTOGRAPHIE</span><i>✳</i><span>OUTILS NUMÉRIQUES</span><i>✳</i><span>EXPÉRIMENTATION</span><i>✳</i>
       </div></div>
     </section>
+    <section class="bottom-carousel reveal" aria-labelledby="bottom-carousel-title">
+      <div class="section-top"><h2 class="section-label" id="bottom-carousel-title">À explorer</h2><span class="section-label">Faites défiler les projets</span></div>
+      <div class="circular-showcase" aria-label="Carrousel circulaire des projets">
+        <div class="carousel-stage" id="project-carousel" tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Projets à explorer">
+          <div class="carousel-ring">
+            <a class="orbit-card orbit-card--arcade" href="jeux2soiree/" data-title="Salle d’arcade"><span class="orbit-card__index">01 / 05</span><span class="orbit-card__symbol" aria-hidden="true">✳</span><span class="orbit-card__name">Salle d’arcade</span><span class="orbit-card__meta">Jeux · Multijoueur</span></a>
+            <a class="orbit-card orbit-card--automa" href="https://github.com/dartist-fr/automa" target="_blank" rel="noopener noreferrer" data-title="Automa"><span class="orbit-card__index">02 / 05</span><span class="orbit-card__symbol" aria-hidden="true">◉</span><span class="orbit-card__name">Automa</span><span class="orbit-card__meta">Android · Widgets</span></a>
+            <a class="orbit-card orbit-card--tools" href="boite-a-outils/" data-title="Boîte à outils"><span class="orbit-card__index">03 / 05</span><span class="orbit-card__symbol" aria-hidden="true">⌘</span><span class="orbit-card__name">Boîte à outils</span><span class="orbit-card__meta">Outils · Productivité</span></a>
+            <button class="orbit-card orbit-card--lab" type="button" data-title="Le Labo" data-action="labo"><span class="orbit-card__index">04 / 05</span><span class="orbit-card__symbol" aria-hidden="true">⌬</span><span class="orbit-card__name">Le Labo</span><span class="orbit-card__meta">Prototypes · Accès privé</span></button>
+            <a class="orbit-card orbit-card--photo" href="https://dartist-fr.github.io/portfolio/" target="_blank" rel="noopener noreferrer" data-title="Portfolio photo"><span class="orbit-card__index">05 / 05</span><span class="orbit-card__symbol" aria-hidden="true">◌</span><span class="orbit-card__name">Portfolio photo</span><span class="orbit-card__meta">Photographie · Galerie</span></a>
+          </div>
+        </div>
+        <div class="carousel-controls"><button type="button" class="carousel-control" id="carousel-prev" aria-label="Projet précédent">←</button><span class="carousel-status" id="carousel-status" aria-live="polite">01 <span>/</span> 05</span><button type="button" class="carousel-control" id="carousel-next" aria-label="Projet suivant">→</button><span class="carousel-hint">Glissez pour explorer</span></div>
+      </div>
+    </section>
     <footer>
       <span class="footer-note">© 2026 dartist</span>
       <div class="footer-links">
@@ -228,7 +232,8 @@
     </div>
   </div>
 
-  <script src="homepage-effects.js?v=20261027-2" defer></script>
+  <script src="homepage-effects.js?v=20261027-3" defer></script>
+  <script src="target-cursor.js?v=20261027-1" defer></script>
   <script>
     var toggle = document.getElementById('theme-toggle');
     toggle.addEventListener('click', function () {
