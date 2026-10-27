@@ -1,0 +1,53 @@
+/* Motion layer for the dartist homepage: inspired by modern component libraries. */
+.hero { position: relative; isolation: isolate; }
+.hero::before {
+  content: ""; position: absolute; z-index: -1; width: min(34rem, 65vw); aspect-ratio: 1;
+  right: 4%; top: 8%; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--amber) 12%, transparent), transparent 68%);
+  pointer-events: none; filter: blur(8px); animation: dartist-breathe 9s ease-in-out infinite alternate;
+}
+.hero-gradient {
+  display: inline; background: linear-gradient(110deg, var(--accent) 5%, var(--amber) 45%, var(--accent) 75%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; animation: dartist-gradient 8s ease-in-out infinite;
+}
+.contact {
+  position: relative; isolation: isolate; overflow: hidden; padding: .72rem .95rem;
+  color: var(--bg); background: var(--accent); border: 1px solid var(--accent);
+  font: 500 .76rem var(--mono); text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.contact::before {
+  content: ""; position: absolute; z-index: -1; inset: 0; transform: translateX(-130%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / .3), transparent);
+  transition: transform .65s ease;
+}
+.contact:hover { transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 20%, transparent); }
+.contact:hover::before { transform: translateX(130%) skewX(-18deg); }
+.project {
+  isolation: isolate; overflow: hidden;
+  transition: background .28s ease, color .28s ease, transform .28s ease, box-shadow .28s ease;
+}
+.project::before {
+  content: ""; position: absolute; z-index: -1; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(360px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), color-mix(in srgb, var(--amber) 17%, transparent), transparent 70%);
+  transition: opacity .25s ease;
+}
+.project:hover::before, .project:focus-visible::before { opacity: 1; }
+.project:hover, .project:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 35px color-mix(in srgb, var(--ink) 7%, transparent); }
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .65s ease, transform .65s cubic-bezier(.2,.7,.2,1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.project-grid .project:nth-child(2) { transition-delay: 60ms; }
+.project-grid .project:nth-child(3) { transition-delay: 120ms; }
+.project-grid .project:nth-child(4) { transition-delay: 180ms; }
+.project-grid .project:nth-child(5) { transition-delay: 240ms; }
+@keyframes dartist-gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes dartist-breathe { from { transform: translate3d(0, -8px, 0) scale(.96); opacity: .65; } to { transform: translate3d(-14px, 12px, 0) scale(1.06); opacity: 1; } }
+@media (max-width: 640px) {
+  .hero::before { width: 80vw; right: -12%; top: 2%; }
+  .project:hover, .project:focus-visible { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
