@@ -1,163 +1,174 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Labo • Projets & Expériences</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #15171c;
-            --surface: #1c1f26;
-            --ink: #f1f0ea;
-            --ink-soft: #a8acb5;
-            --ink-faint: #686c76;
-            --line: #2b2e35;
-            --accent: #ff2e88;
-            --accent-soft: rgba(255, 46, 136, 0.1);
-            --font-body: 'Inter', sans-serif;
-            --font-mono: 'IBM Plex Mono', monospace;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: var(--bg);
-            color: var(--ink);
-            font-family: var(--font-body);
-            min-height: 100vh;
-            padding: 4rem 1.5rem 3rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            max-width: 44rem;
-            width: 100%;
-        }
-
-        header {
-            margin-bottom: 3rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .back-link {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--ink-faint);
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        .back-link:hover { color: var(--accent); }
-
-        h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        p {
-            color: var(--ink-soft);
-            font-size: 0.95rem;
-        }
-
-        .section-title {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--ink-faint);
-            margin-bottom: 1rem;
-        }
-
-        .grid-projets {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .carte-projet {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            padding: 1.5rem;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: border-color 0.15s ease, background 0.15s ease;
-        }
-
-        .carte-projet:hover {
-            border-color: var(--accent);
-            background: var(--accent-soft);
-        }
-
-        .info-projet h2 {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--ink);
-        }
-
-        .info-projet p {
-            font-size: 0.85rem;
-            color: var(--ink-soft);
-        }
-
-        .badge-status {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            background: rgba(34, 230, 255, 0.1);
-            color: #22e6ff;
-            border: 1px solid rgba(34, 230, 255, 0.3);
-            padding: 0.2rem 0.5rem;
-            border-radius: 3px;
-        }
-
-        footer {
-            margin-top: 4rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--ink-faint);
-            border-top: 1px solid var(--line);
-            padding-top: 1rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f5">
+  <meta name="description" content="Le Labo dartist : prototypes, jeux expérimentaux et projets numériques en cours de création.">
+  <title>Le Labo — dartist</title>
+  <link rel="icon" type="image/png" href="../favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var theme;
+      try { theme = localStorage.getItem('theme'); } catch (e) {}
+      if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #faf9f5; --surface: #fff; --ink: #16181d; --soft: #5b5f68;
+      --muted: #898d95; --line: #e3e1da; --accent: #23324a; --accent-soft: #edf0f4;
+      --amber: #b8853d; --display: 'Fraunces', Georgia, serif;
+      --body: 'Inter', ui-sans-serif, system-ui, sans-serif; --mono: 'IBM Plex Mono', monospace;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #15171c; --surface: #1c1f26; --ink: #f1f0ea; --soft: #a8acb5;
+      --muted: #777c87; --line: #2b2e35; --accent: #a8bee7; --accent-soft: #252c38; --amber: #d9a768;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 320px; background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; transition: background .2s, color .2s; }
+    a { color: inherit; }
+    button { font: inherit; }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
+    .shell { max-width: 76rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 2.5rem; }
+    .masthead { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--line); }
+    .wordmark { font: 500 1.25rem/1 var(--display); letter-spacing: -.04em; text-decoration: none; }
+    .masthead-right { display: flex; align-items: center; gap: 1rem; }
+    .meta, .eyebrow, .section-label, .project-no, .tag, .footer-note { font: 500 .68rem/1.4 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .meta { color: var(--muted); }
+    .theme-toggle { width: 2.6rem; height: 2.6rem; display: grid; place-items: center; border: 1px solid var(--line); background: transparent; color: var(--soft); cursor: pointer; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .theme-toggle svg { width: 1.1rem; height: 1.1rem; }
+    .moon { display: none; }
+    :root[data-theme="dark"] .sun { display: none; }
+    :root[data-theme="dark"] .moon { display: block; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(13rem, .5fr); gap: clamp(2rem, 6vw, 6rem); align-items: end; padding: clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 6vw, 5rem); border-bottom: 1px solid var(--line); }
+    .eyebrow { display: flex; align-items: center; gap: .7rem; margin: 0 0 1.4rem; color: var(--muted); }
+    .eyebrow::before { content: ''; width: 1.8rem; height: 1px; background: var(--amber); }
+    h1 { max-width: 10ch; margin: 0; font: 500 clamp(4rem, 10vw, 8.5rem)/.84 var(--display); letter-spacing: -.075em; }
+    h1 span { color: var(--amber); }
+    .intro { max-width: 37rem; margin: 1.8rem 0 0; color: var(--soft); font-size: clamp(1rem, 1.5vw, 1.15rem); line-height: 1.75; }
+    .hero-aside { border-left: 1px solid var(--line); padding: .2rem 0 .2rem 1.25rem; align-self: end; }
+    .aside-index { color: var(--amber); font: 500 .7rem var(--mono); letter-spacing: .08em; }
+    .aside-title { margin: .75rem 0 .45rem; font: 500 1.45rem/1.1 var(--display); letter-spacing: -.03em; }
+    .aside-copy { color: var(--muted); font-size: .82rem; line-height: 1.65; }
+    .projects { padding-top: 1.8rem; }
+    .section-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1.2rem; }
+    .section-label { color: var(--muted); }
+    .count { color: var(--muted); font: .7rem var(--mono); }
+    .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+    .project { min-height: 21rem; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1.25rem, 3vw, 2.25rem); text-decoration: none; background: var(--bg); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; transition: background .22s ease, color .22s ease; }
+    .project::after { content: '↗'; position: absolute; right: 1.6rem; bottom: 1.45rem; font-size: 1.6rem; color: var(--muted); transition: transform .22s, color .22s; }
+    .project:hover, .project:focus-visible { background: var(--accent); color: #fff; outline-offset: -5px; }
+    .project:hover::after, .project:focus-visible::after { transform: translate(4px,-4px); color: #fff; }
+    .project-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--muted); }
+    .project:hover .project-top, .project:focus-visible .project-top { color: rgba(255,255,255,.65); }
+    .project-no { font-size: .7rem; }
+    .project-icon { display: grid; place-items: center; width: 3.3rem; height: 3.3rem; border: 1px solid var(--line); color: var(--amber); font-size: 1.4rem; transition: border-color .22s, color .22s; }
+    .project:hover .project-icon, .project:focus-visible .project-icon { border-color: rgba(255,255,255,.35); color: #fff; }
+    .project-body { padding: 3rem 1.5rem 0 0; }
+    .project h2 { margin: 0; font: 500 clamp(1.8rem, 3.2vw, 2.6rem)/1 var(--display); letter-spacing: -.05em; }
+    .project p { max-width: 25rem; margin: .8rem 0 0; color: var(--soft); font-size: .9rem; line-height: 1.7; }
+    .project:hover p, .project:focus-visible p { color: rgba(255,255,255,.75); }
+    .tag { display: inline-block; margin-top: 1.15rem; padding: .35rem .5rem; color: var(--muted); border: 1px solid var(--line); font-size: .62rem; }
+    .project:hover .tag, .project:focus-visible .tag { color: rgba(255,255,255,.8); border-color: rgba(255,255,255,.35); }
+    .project--featured { background: var(--surface); }
+    .project--featured .project-icon { background: var(--accent-soft); }
+    .project--featured:hover .project-icon { background: transparent; }
+    .footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1.5rem; padding-top: 1.4rem; border-top: 1px solid var(--line); color: var(--muted); }
+    .footer-note { text-transform: none; letter-spacing: .02em; }
+    .footer a { color: var(--soft); text-decoration: none; }
+    .footer a:hover { color: var(--ink); }
+    .footer-link { font: 500 .7rem var(--mono); }
+    @media (max-width: 680px) {
+      .shell { padding-top: 1rem; }
+      .meta { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 2rem; padding-top: 4.5rem; }
+      h1 { font-size: clamp(4rem, 19vw, 6.5rem); }
+      .hero-aside { max-width: 24rem; }
+      .project-grid { grid-template-columns: 1fr; }
+      .project { min-height: 18rem; }
+      .footer { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
 </head>
 <body>
+  <div class="shell">
+    <header class="masthead">
+      <a class="wordmark" href="../" aria-label="dartist, accueil">dartist<span aria-hidden="true">.</span></a>
+      <div class="masthead-right">
+        <span class="meta">Projets indépendants · 01 / Labo</span>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activer le thème sombre" title="Changer de thème">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.7 8.7 0 1 0 20.5 14.2Z"></path></svg>
+        </button>
+      </div>
+    </header>
 
-    <div class="container">
-        <header>
-            <a href="../" class="back-link">&larr; Retour au Hub principal</a>
-            <h1>Le Labo</h1>
-            <p>Espace de prototypage et d'expérimentation de code en cours de développement.</p>
-        </header>
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Terrain d'expérimentation</p>
+          <h1 id="page-title">Le Labo<span>.</span></h1>
+          <p class="intro">Des idées en chantier, des prototypes qui prennent forme et des expériences numériques à tester. Ici, les projets évoluent au fil des essais.</p>
+        </div>
+        <aside class="hero-aside">
+          <span class="aside-index">ZONE 001 — EN COURS</span>
+          <h2 class="aside-title">Tester. Jouer. Itérer.</h2>
+          <p class="aside-copy">Un espace indépendant pour explorer des concepts avant, peut-être, de les pousser plus loin.</p>
+        </aside>
+      </section>
 
-        <main>
-            <div class="section-title">Projets actifs</div>
-            <div class="grid-projets">
-                
-                <!-- Lien vers le jeu Qui est-ce ? -->
-                <a href="qui-est-ce/" class="carte-projet">
-                    <div class="info-projet">
-                        <h2>Qui est-ce ? (Édition Soirée)</h2>
-                        <p>Jeu de déduction personnalisé avec les photos et les prénoms de la bande.</p>
-                    </div>
-                    <span class="badge-status">Actif</span>
-                </a>
-
+      <section class="projects" aria-labelledby="projects-title">
+        <div class="section-top">
+          <h2 id="projects-title" class="section-label">Projets à explorer</h2>
+          <span class="count">01 projet disponible</span>
+        </div>
+        <div class="project-grid">
+          <a class="project project--featured" href="qui-est-ce/">
+            <div class="project-top">
+              <span class="project-no">LAB / 001</span>
+              <span class="project-icon" aria-hidden="true">◉</span>
             </div>
-        </main>
+            <div class="project-body">
+              <h2>Qui est-ce ?</h2>
+              <p>Une édition personnalisée du jeu de déduction, avec les visages et les prénoms de la bande. À vous de retrouver la bonne personne.</p>
+              <span class="tag">JEU · MULTIJOUEUR</span>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
 
-        <footer>
-            <span>Espace protégé — dartist</span>
-        </footer>
-    </div>
-
+    <footer class="footer">
+      <span class="footer-note">Un projet dartist — construit par curiosité.</span>
+      <a class="footer-link" href="../">← Retour au hub principal</a>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var button = document.getElementById('theme-toggle');
+      if (!button) return;
+      function updateLabel() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        button.setAttribute('aria-label', dark ? 'Activer le thème clair' : 'Activer le thème sombre');
+      }
+      updateLabel();
+      button.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        updateLabel();
+      });
+    })();
+  </script>
 </body>
 </html>
