@@ -7,11 +7,12 @@
   pointer-events: none; filter: blur(8px); animation: dartist-breathe 9s ease-in-out infinite alternate;
 }
 .hero-gradient {
-  display: inline-block; color: var(--ink); white-space: nowrap;
-  font-family: var(--mono); font-weight: 500; letter-spacing: -.055em;
+  display: inline; color: inherit; white-space: normal;
+  font: inherit; letter-spacing: inherit;
   background: none; -webkit-text-fill-color: currentColor;
 }
-.hero-gradient .tech-char { display: inline-block; min-width: .28em; color: var(--accent); }
+.hero-gradient .tech-char { display: inline; min-width: 0; font: inherit; letter-spacing: inherit; color: inherit; }
+.hero-gradient .tech-char.is-decoding { color: var(--amber); text-shadow: 0 0 .45em color-mix(in srgb, var(--amber) 35%, transparent); }
 .hero-gradient .tech-char.is-decoding { color: var(--amber); text-shadow: 0 0 .45em color-mix(in srgb, var(--amber) 35%, transparent); }
 .contact {
   position: relative; isolation: isolate; overflow: hidden; display: inline-flex !important;
@@ -88,7 +89,9 @@
 .target-cursor__corner--br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0; }
 .target-cursor.is-targeting .target-cursor__corner { width: 15px; height: 15px; }
 .target-cursor__dot { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: currentColor; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-@media (hover: hover) and (pointer: fine) { body, a, button { cursor: none; } input, textarea { cursor: text; } }
+.has-target-cursor, .has-target-cursor a, .has-target-cursor button, .has-target-cursor [role="button"] { cursor: none !important; }
+.has-target-cursor input, .has-target-cursor textarea { cursor: text !important; }
+.target-cursor { will-change: transform; }
 
 /* Circular project carousel — 3D ring, drag/swipe and snap. */
 .circular-showcase { padding: 1rem 0 1.25rem; overflow: hidden; border-bottom: 1px solid var(--line); }
