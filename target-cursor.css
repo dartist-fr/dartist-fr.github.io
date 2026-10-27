@@ -1,3 +1,5 @@
+.has-target-cursor, .has-target-cursor a, .has-target-cursor button, .has-target-cursor [role="button"] { cursor: none !important; }
+.has-target-cursor input, .has-target-cursor textarea { cursor: text !important; }
 .target-cursor {
   position: fixed;
   inset: 0;
