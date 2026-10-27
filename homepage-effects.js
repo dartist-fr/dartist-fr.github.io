@@ -76,31 +76,6 @@
     });
   }
 
-  /* Target Cursor: reticle snaps around interactive elements on desktop. */
-  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (finePointer) {
-    var cursor = document.createElement('div');
-    cursor.className = 'target-cursor';
-    cursor.setAttribute('aria-hidden', 'true');
-    cursor.innerHTML = '<span class="target-cursor__corner target-cursor__corner--tl"></span><span class="target-cursor__corner target-cursor__corner--tr"></span><span class="target-cursor__corner target-cursor__corner--bl"></span><span class="target-cursor__corner target-cursor__corner--br"></span><span class="target-cursor__dot"></span>';
-    document.body.appendChild(cursor);
-    document.documentElement.classList.add('has-target-cursor');
-    var cursorX = -100, cursorY = -100, cursorFrame = 0;
-    document.addEventListener('pointermove', function (event) {
-      cursorX = event.clientX; cursorY = event.clientY;
-      if (!cursorFrame) cursorFrame = window.requestAnimationFrame(function () {
-        cursor.style.transform = 'translate3d(' + cursorX + 'px,' + cursorY + 'px,0) translate(-50%,-50%)';
-        cursor.classList.add('is-active'); cursorFrame = 0;
-      });
-      var target = event.target && event.target.closest ? event.target.closest('a, button, [role="button"], input, .carousel-stage') : null;
-      cursor.classList.toggle('is-targeting', !!target);
-    });
-    document.addEventListener('pointerleave', function () { cursor.classList.remove('is-active'); });
-    document.addEventListener('pointerenter', function () { cursor.classList.add('is-active'); });
-    window.addEventListener('blur', function () { cursor.classList.remove('is-active'); });
-    window.addEventListener('focus', function () { cursor.classList.add('is-active'); });
-  }
-
   /* Circular carousel: 3D ring with drag/swipe, controls, keyboard and click-to-focus. */
   var stage = document.getElementById('project-carousel');
   if (stage) {
