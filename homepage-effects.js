@@ -75,4 +75,96 @@
       });
     });
   }
+
+  /* Target Cursor: reticle snaps around interactive elements on desktop. */
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (finePointer && !reducedMotion) {
+    var cursor = document.createElement('div');
+    cursor.className = 'target-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    cursor.innerHTML = '<span class="target-cursor__corner target-cursor__corner--tl"></span><span class="target-cursor__corner target-cursor__corner--tr"></span><span class="target-cursor__corner target-cursor__corner--bl"></span><span class="target-cursor__corner target-cursor__corner--br"></span><span class="target-cursor__dot"></span>';
+    document.body.appendChild(cursor);
+    var cursorX = -100, cursorY = -100, cursorFrame = 0;
+    document.addEventListener('pointermove', function (event) {
+      cursorX = event.clientX; cursorY = event.clientY;
+      if (!cursorFrame) cursorFrame = window.requestAnimationFrame(function () {
+        cursor.style.transform = 'translate3d(' + cursorX + 'px,' + cursorY + 'px,0) translate(-50%,-50%)';
+        cursor.classList.add('is-active'); cursorFrame = 0;
+      });
+      var target = event.target && event.target.closest ? event.target.closest('a, button, [role="button"], input, .carousel-stage') : null;
+      cursor.classList.toggle('is-targeting', !!target);
+    });
+    document.addEventListener('pointerleave', function () { cursor.classList.remove('is-active'); });
+  }
+
+  /* Circular carousel: 3D ring with drag/swipe, controls, keyboard and click-to-focus. */
+  var stage = document.getElementById('project-carousel');
+  if (stage) {
+    var ring = stage.querySelector('.carousel-ring');
+    var cards = Array.prototype.slice.call(stage.querySelectorAll('.orbit-card'));
+    var status = document.getElementById('carousel-status');
+    var current = 0, rotation = 0, startX = 0, startRotation = 0, dragging = false, moved = false;
+    var radius = window.matchMedia('(max-width: 640px)').matches ? 215 : 300;
+    var cardAngle = 360 / cards.length;
+    function layoutCarousel(animate) {
+      ring.style.transition = animate ? 'transform .65s cubic-bezier(.2,.75,.2,1)' : 'none';
+      ring.style.transform = 'translateZ(-' + radius + 'px) rotateY(' + rotation + 'deg)';
+      cards.forEach(function (card, index) {
+        var angle = index * cardAngle;
+        card.style.transform = 'translate(-50%, -50%) rotateY(' + angle + 'deg) translateZ(' + radius + 'px)';
+        card.style.zIndex = String(Math.round(100 + 50 * Math.cos((angle + rotation) * Math.PI / 180)));
+        card.setAttribute('aria-current', index === current ? 'true' : 'false');
+        card.style.filter = Math.cos((angle + rotation) * Math.PI / 180) > .2 ? 'brightness(1)' : 'brightness(.62)';
+      });
+      if (status) status.innerHTML = String(current + 1).padStart(2, '0') + ' <span>/</span> ' + String(cards.length).padStart(2, '0');
+    }
+    function goTo(index) { current = (index + cards.length) % cards.length; rotation = -current * cardAngle; layoutCarousel(true); }
+    document.getElementById('carousel-prev').addEventListener('click', function () { goTo(current - 1); });
+    document.getElementById('carousel-next').addEventListener('click', function () { goTo(current + 1); });
+    stage.addEventListener('pointerdown', function (event) {
+      startX = event.clientX; startRotation = rotation; moved = false; dragging = true;
+      if (stage.setPointerCapture) stage.setPointerCapture(event.pointerId);
+      ring.style.transition = 'none';
+    });
+    stage.addEventListener('pointermove', function (event) {
+      if (!dragging) return;
+      var delta = event.clientX - startX;
+      if (Math.abs(delta) > 5) moved = true;
+      rotation = startRotation + delta * .22;
+      ring.style.transform = 'translateZ(-' + radius + 'px) rotateY(' + rotation + 'deg)';
+      cards.forEach(function (card, index) {
+        var angle = index * cardAngle + rotation;
+        card.style.zIndex = String(Math.round(100 + 50 * Math.cos(angle * Math.PI / 180)));
+        card.style.filter = Math.cos(angle * Math.PI / 180) > .2 ? 'brightness(1)' : 'brightness(.62)';
+      });
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      var nearest = Math.round(-rotation / cardAngle);
+      current = (nearest % cards.length + cards.length) % cards.length;
+      rotation = -current * cardAngle;
+      layoutCarousel(true);
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('lostpointercapture', endDrag);
+    stage.addEventListener('click', function (event) {
+      if (moved) { event.preventDefault(); event.stopPropagation(); moved = false; return; }
+      var card = event.target.closest('.orbit-card');
+      if (!card) return;
+      var index = cards.indexOf(card);
+      if (index !== current) { event.preventDefault(); goTo(index); return; }
+      if (card.dataset.action === 'labo') { event.preventDefault(); document.getElementById('btn-labo').click(); }
+    });
+    stage.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); goTo(current - 1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); goTo(current + 1); }
+      if (event.key === 'Home') { event.preventDefault(); goTo(0); }
+      if (event.key === 'End') { event.preventDefault(); goTo(cards.length - 1); }
+    });
+    window.addEventListener('resize', function () { radius = window.matchMedia('(max-width: 640px)').matches ? 215 : 300; layoutCarousel(false); });
+    layoutCarousel(false);
+  }
+
 })();
