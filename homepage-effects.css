@@ -76,3 +76,48 @@
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+/* Target Cursor — a reticle that expands around interactive targets. */
+.target-cursor { position: fixed; z-index: 1000; left: 0; top: 0; width: 34px; height: 34px; pointer-events: none; opacity: 0; color: var(--amber); mix-blend-mode: difference; transition: opacity .18s ease; }
+.target-cursor.is-active { opacity: 1; }
+.target-cursor__corner { position: absolute; width: 10px; height: 10px; border-color: currentColor; border-style: solid; transition: width .16s ease, height .16s ease; }
+.target-cursor__corner--tl { left: 0; top: 0; border-width: 1.5px 0 0 1.5px; }
+.target-cursor__corner--tr { right: 0; top: 0; border-width: 1.5px 1.5px 0 0; }
+.target-cursor__corner--bl { left: 0; bottom: 0; border-width: 0 0 1.5px 1.5px; }
+.target-cursor__corner--br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0; }
+.target-cursor.is-targeting .target-cursor__corner { width: 15px; height: 15px; }
+.target-cursor__dot { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: currentColor; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+@media (hover: hover) and (pointer: fine) { body, a, button { cursor: none; } input, textarea { cursor: text; } }
+
+/* Circular project carousel — 3D ring, drag/swipe and snap. */
+.circular-showcase { padding: 1rem 0 1.25rem; overflow: hidden; border-bottom: 1px solid var(--line); }
+.carousel-stage { position: relative; height: clamp(19rem, 37vw, 27rem); perspective: 1050px; touch-action: pan-y; outline-offset: -2px; user-select: none; }
+.carousel-ring { position: absolute; inset: 0; transform-style: preserve-3d; }
+.orbit-card { --card-hue: 215; position: absolute; left: 50%; top: 50%; width: clamp(12rem, 23vw, 17rem); height: clamp(14rem, 27vw, 19rem); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 1.25rem; overflow: hidden; text-align: left; text-decoration: none; color: #fff; background: linear-gradient(145deg, hsl(var(--card-hue) 38% 20% / .97), hsl(var(--card-hue) 28% 9% / .99)); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); border-radius: 5px; box-shadow: 0 1.5rem 3rem rgb(0 0 0 / .22); backface-visibility: hidden; transform-style: preserve-3d; transition: border-color .25s ease, box-shadow .25s ease; cursor: pointer; font: inherit; }
+.orbit-card::before { content: ""; position: absolute; inset: 0; opacity: .65; pointer-events: none; background: radial-gradient(circle at 75% 18%, hsl(var(--card-hue) 75% 65% / .48), transparent 43%), linear-gradient(135deg, transparent 35%, hsl(var(--card-hue) 65% 65% / .1)); }
+.orbit-card::after { content: ""; position: absolute; width: 11rem; height: 11rem; right: -4rem; top: -3rem; border: 1px solid hsl(var(--card-hue) 75% 75% / .35); border-radius: 50%; box-shadow: 0 0 0 1.5rem hsl(var(--card-hue) 75% 75% / .045), 0 0 0 3rem hsl(var(--card-hue) 75% 75% / .035); }
+.orbit-card--arcade { --card-hue: 265; } .orbit-card--automa { --card-hue: 190; } .orbit-card--tools { --card-hue: 35; } .orbit-card--lab { --card-hue: 145; } .orbit-card--photo { --card-hue: 5; }
+.orbit-card__index, .orbit-card__name, .orbit-card__meta, .orbit-card__symbol { position: relative; z-index: 1; }
+.orbit-card__index { margin-bottom: auto; color: rgb(255 255 255 / .66); font: 500 .65rem var(--mono); letter-spacing: .1em; }
+.orbit-card__symbol { align-self: center; margin: auto 0; color: hsl(var(--card-hue) 85% 80%); font: 400 clamp(4rem, 8vw, 6rem)/1 var(--mono); text-shadow: 0 0 2.5rem hsl(var(--card-hue) 90% 65% / .55); }
+.orbit-card__name { color: #fff; font: 500 clamp(1.25rem, 2.4vw, 1.7rem)/1.05 var(--display); letter-spacing: -.04em; }
+.orbit-card__meta { margin-top: .55rem; color: rgb(255 255 255 / .65); font: 500 .62rem var(--mono); letter-spacing: .04em; }
+.orbit-card:hover, .orbit-card:focus-visible { border-color: var(--amber); box-shadow: 0 1.8rem 3.5rem rgb(0 0 0 / .32), 0 0 0 1px var(--amber); outline-offset: 4px; }
+.carousel-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; min-height: 2.6rem; }
+.carousel-control { display: grid; place-items: center; width: 2.35rem; height: 2.35rem; border: 1px solid var(--line); color: var(--ink); background: var(--surface); cursor: pointer; font: 1.1rem var(--mono); transition: color .2s, background .2s, border-color .2s; }
+.carousel-control:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.carousel-status { min-width: 4.5rem; text-align: center; color: var(--ink); font: 500 .72rem var(--mono); letter-spacing: .1em; } .carousel-status span { color: var(--ink-faint); }
+.carousel-hint { margin-left: 1rem; color: var(--ink-faint); font: .65rem var(--mono); letter-spacing: .06em; }
+
+/* Logo Loop — seamless marquee, pauses on hover. */
+.tool-loop { padding: 1.7rem 0 1.5rem; overflow: hidden; border-bottom: 1px solid var(--line); }
+.tool-loop__label { margin-bottom: 1rem; color: var(--ink-faint); text-align: center; font: 500 .65rem var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+.logo-loop { overflow: hidden; position: relative; mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.logo-loop__track { display: flex; align-items: center; width: max-content; gap: clamp(1.3rem, 3.2vw, 3.2rem); animation: dartist-logo-loop 28s linear infinite; }
+.logo-loop:hover .logo-loop__track { animation-play-state: paused; }
+.logo-loop__track span { color: var(--ink-soft); white-space: nowrap; font: 500 .76rem var(--mono); letter-spacing: .11em; }
+.logo-loop__track i { color: var(--amber); font-style: normal; font-size: .9rem; }
+@keyframes dartist-logo-loop { to { transform: translateX(-50%); } }
+@media (max-width: 640px) { .target-cursor { display: none; } .carousel-stage { height: 21rem; perspective: 850px; } .orbit-card { width: 12.5rem; height: 16rem; padding: 1rem; } .orbit-card__symbol { font-size: 4.3rem; } .carousel-hint { display: none; } .carousel-controls { gap: .75rem; } .logo-loop__track { gap: 1.5rem; } }
+@media (prefers-reduced-motion: reduce) { .logo-loop__track { animation: none; } .target-cursor, .orbit-card, .carousel-control { transition: none; } }
