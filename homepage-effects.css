@@ -7,16 +7,29 @@
   pointer-events: none; filter: blur(8px); animation: dartist-breathe 9s ease-in-out infinite alternate;
 }
 .hero-gradient {
-  display: inline; background: linear-gradient(110deg, var(--accent) 5%, var(--amber) 45%, var(--accent) 75%);
-  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; animation: dartist-gradient 8s ease-in-out infinite;
+  display: inline-block; color: var(--ink); white-space: nowrap;
+  font-family: var(--mono); font-weight: 500; letter-spacing: -.055em;
+  background: none; -webkit-text-fill-color: currentColor;
 }
+.hero-gradient .tech-char { display: inline-block; min-width: .28em; color: var(--accent); }
+.hero-gradient .tech-char.is-decoding { color: var(--amber); text-shadow: 0 0 .45em color-mix(in srgb, var(--amber) 35%, transparent); }
 .contact {
-  position: relative; isolation: isolate; overflow: hidden; padding: .72rem .95rem;
-  color: var(--bg); background: var(--accent); border: 1px solid var(--accent);
-  font: 500 .76rem var(--mono); text-decoration: none;
-  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative; isolation: isolate; overflow: hidden; display: inline-flex !important;
+  align-items: center; justify-content: center; gap: .6rem; margin-top: 1.6rem;
+  min-height: 2.9rem; padding: .8rem 1.15rem !important; border: 1px solid var(--accent) !important;
+  border-radius: 3px; color: #fff !important; background: #23324a !important;
+  font: 600 .8rem var(--mono) !important; text-decoration: none !important;
+  box-shadow: 0 5px 16px rgb(35 50 74 / 16%);
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
 }
+:root[data-theme="dark"] .contact { color: #15171c !important; background: #d9a768 !important; border-color: #d9a768 !important; }
+.contact::before {
+  content: ""; position: absolute; z-index: -1; inset: 0; transform: translateX(-130%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / .34), transparent);
+  transition: transform .65s ease;
+}
+.contact:hover { transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent); }
+.contact:hover::before { transform: translateX(130%) skewX(-18deg); }
 .contact::before {
   content: ""; position: absolute; z-index: -1; inset: 0; transform: translateX(-130%) skewX(-18deg);
   background: linear-gradient(90deg, transparent, rgb(255 255 255 / .3), transparent);
@@ -25,14 +38,26 @@
 .contact:hover { transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 20%, transparent); }
 .contact:hover::before { transform: translateX(130%) skewX(-18deg); }
 .project {
-  isolation: isolate; overflow: hidden;
-  transition: background .28s ease, color .28s ease, transform .28s ease, box-shadow .28s ease !important;
+  isolation: isolate; overflow: hidden; position: relative; display: flex; min-height: 17rem;
+  flex-direction: column; padding: clamp(1.25rem, 3vw, 2.25rem);
+  color: var(--ink) !important; text-decoration: none; background: var(--surface) !important;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  transition: background .28s ease, transform .28s ease, box-shadow .28s ease;
 }
 .project::before {
-  content: ""; position: absolute; z-index: -1; inset: 0; opacity: 0; pointer-events: none;
-  background: radial-gradient(360px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), color-mix(in srgb, var(--amber) 17%, transparent), transparent 70%);
+  content: ""; position: absolute; z-index: 0; inset: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(360px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), color-mix(in srgb, var(--amber) 12%, transparent), transparent 70%);
   transition: opacity .25s ease;
 }
+.project > * { position: relative; z-index: 1; }
+.project:hover::before, .project:focus-visible::before { opacity: 1; }
+.project:hover, .project:focus-visible {
+  color: var(--ink) !important; background: var(--surface) !important;
+  transform: translateY(-3px); box-shadow: 0 14px 35px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.project:hover .project-top, .project:focus-visible .project-top { color: var(--ink-faint) !important; }
+.project:hover p, .project:focus-visible p { color: var(--ink-soft) !important; }
+.project:hover .tag, .project:focus-visible .tag { color: var(--ink-faint) !important; }
 .project:hover::before, .project:focus-visible::before { opacity: 1; }
 .project:hover, .project:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 35px color-mix(in srgb, var(--ink) 7%, transparent); }
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .65s ease, transform .65s cubic-bezier(.2,.7,.2,1); }
