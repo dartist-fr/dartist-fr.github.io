@@ -4,7 +4,7 @@
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="icon" type="image/png" href="../favicon.png">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#faf9f5"><meta name="description" content="Un studio gratuit d’outils web : JSON, texte, couleurs, encodage, mots de passe, calculs, QR codes et bac à sable HTML/CSS.">
+<meta name="theme-color" content="#faf9f5"><meta name="description" content="Un studio gratuit d’outils web : compresseur d’images, JSON, couleurs, calculs, QR codes et bac à sable HTML/CSS.">
 <title>Studio — Boîte à outils dartist</title>
 <link rel="stylesheet" href="../assets/css/target-cursor.css?v=20261027-5"><script src="../assets/js/target-cursor.js?v=20261027-5" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,14 +34,12 @@
 </head>
 <body><main class="shell">
 <header class="masthead"><a class="wordmark" href="../" aria-label="Retour à l’accueil dartist">dartist</a><div class="head-right"><span class="mono">Boîte à outils / Studio</span><button class="theme" id="themeToggle" type="button" aria-label="Basculer le thème">◐</button></div></header>
-<section class="hero"><p class="eyebrow">Studio web · gratuit · traitement local</p><h1>Les bons outils.<br>Au même endroit.</h1><p class="intro">Un atelier pratique pour manipuler du texte, vérifier du JSON, créer des couleurs, encoder des données, générer des mots de passe ou tester du HTML/CSS. Pas de compte, pas d’installation : tout se passe dans ton navigateur.</p><div class="hero-links"><a class="btn primary" href="#tools">Explorer les outils ↓</a><a class="btn" href="compresseur.html">Ouvrir le compresseur d’images ↗</a><a class="btn" href="../">← Retour au site</a></div></section>
+<section class="hero"><p class="eyebrow">Studio web · gratuit · traitement local</p><h1>Les bons outils.<br>Au même endroit.</h1><p class="intro">Un atelier pratique pour compresser des images, vérifier du JSON, créer des couleurs, calculer et générer des QR codes ou tester du HTML/CSS. Pas de compte, pas d’installation : tout se passe dans ton navigateur.</p><div class="hero-links"><a class="btn primary" href="#tools">Explorer les outils ↓</a><a class="btn" href="compresseur.html">Ouvrir le compresseur d’images ↗</a><a class="btn" href="../">← Retour au site</a></div></section>
 <section id="tools"><div class="searchrow"><div><p class="eyebrow">La collection</p><h2 style="font:500 2rem var(--display);letter-spacing:-.05em;margin:.3rem 0">Choisis ton outil</h2></div><input id="toolSearch" class="search" type="search" placeholder="Rechercher un outil…" aria-label="Rechercher un outil"></div>
 <nav class="categories" aria-label="Catégories d’outils"><button class="chip active" data-category="all">Tout</button><button class="chip" data-category="text">Texte & données</button><button class="chip" data-category="design">Design</button><button class="chip" data-category="dev">Développement</button><button class="chip" data-category="daily">Quotidien</button></nav>
 <div class="toolgrid" id="toolGrid">
+<a class="toolcard cursor-target" href="compresseur.html" style="text-decoration:none"><span class="toolicon">▧</span><strong>Compresseur d’images</strong><p>Réduire le poids des images et les télécharger plus légères.</p><span class="tag">Image · premier outil</span></a>
 <button class="toolcard cursor-target" data-tool="json" data-category="text dev"><span class="toolicon">⌘</span><strong>Formateur JSON</strong><p>Formate, minifie et valide des données JSON.</p><span class="tag">Texte & données</span></button>
-<button class="toolcard cursor-target" data-tool="text" data-category="text"><span class="toolicon">Aa</span><strong>Atelier de texte</strong><p>Compter, nettoyer, changer la casse et trier des lignes.</p><span class="tag">Texte & données</span></button>
-<button class="toolcard cursor-target" data-tool="encode" data-category="text dev"><span class="toolicon">⇄</span><strong>Encodeur</strong><p>Encoder ou décoder une URL et du Base64.</p><span class="tag">Texte & données</span></button>
-<button class="toolcard cursor-target" data-tool="password" data-category="daily"><span class="toolicon">✳</span><strong>Mots de passe</strong><p>Générer des mots de passe aléatoires localement.</p><span class="tag">Sécurité</span></button>
 <button class="toolcard cursor-target" data-tool="colors" data-category="design"><span class="toolicon">◒</span><strong>Palette de couleurs</strong><p>Créer une palette et copier les codes HEX.</p><span class="tag">Design</span></button>
 <button class="toolcard cursor-target" data-tool="gradient" data-category="design dev"><span class="toolicon">◩</span><strong>Dégradé CSS</strong><p>Composer un dégradé et copier le CSS.</p><span class="tag">Design</span></button>
 <button class="toolcard cursor-target" data-tool="qr" data-category="daily dev"><span class="toolicon">▦</span><strong>QR code</strong><p>Créer un QR code pour une URL ou un texte.</p><span class="tag">Partage</span></button>
@@ -65,7 +63,7 @@
 <script>
 (async () => {
 const workarea=document.getElementById('workarea');
-const toolIds=["json","text","encode","password","colors","gradient","qr","calculator","playground"];
+const toolIds=["json","colors","gradient","qr","calculator","playground"];
 const toolFragments=await Promise.all(toolIds.map(async id=>{
   const response=await fetch('outils/'+id+'.html');
   if(!response.ok)throw new Error('Impossible de charger l’outil '+id);
@@ -91,15 +89,6 @@ $('jsonFormat').addEventListener('click',()=>{try{$('jsonOutput').value=JSON.str
 $('jsonMinify').addEventListener('click',()=>{try{$('jsonOutput').value=JSON.stringify(JSON.parse($('jsonInput').value));status('jsonStatus','JSON valide · minifié.')}catch(e){status('jsonStatus','JSON invalide : '+e.message,true)}});
 $('jsonClear').addEventListener('click',()=>{$('jsonInput').value='';$('jsonOutput').value='';status('jsonStatus','')});
 $('jsonCopy').addEventListener('click',()=>copyText($('jsonOutput').value,'jsonStatus'));
-function updateTextStats(){const t=$('textInput').value;const words=t.trim()?t.trim().split(/\s+/u).length:0;$('charCount').textContent=t.length.toLocaleString('fr-FR');$('wordCount').textContent=words.toLocaleString('fr-FR');$('lineCount').textContent=t?t.split(/\r\n|\r|\n/).length:0;const sec=Math.ceil(words/200*60);$('readTime').textContent=sec<60?sec+' s':Math.ceil(sec/60)+' min'}
-$('textInput').addEventListener('input',updateTextStats);
-document.querySelectorAll('[data-text]').forEach(b=>b.addEventListener('click',async()=>{const t=$('textInput').value;switch(b.dataset.text){case'upper':$('textInput').value=t.toLocaleUpperCase('fr-FR');break;case'lower':$('textInput').value=t.toLocaleLowerCase('fr-FR');break;case'title':$('textInput').value=t.replace(/(^|[\s([{])(\p{L})/gu,(m,a,c)=>a+c.toLocaleUpperCase('fr-FR'));break;case'trim':$('textInput').value=t.split(/\r\n|\r|\n/).map(x=>x.trim().replace(/\s+/g,' ')).join('\n').trim();break;case'sort':$('textInput').value=t.split(/\r\n|\r|\n/).sort((a,b)=>a.localeCompare(b,'fr',{sensitivity:'base'})).join('\n');break;case'dedupe':$('textInput').value=[...new Set(t.split(/\r\n|\r|\n/))].join('\n');break;case'copy':await copyText(t,'textStatus');return}updateTextStats();status('textStatus','Transformation appliquée.')}));
-$('encodeRun').addEventListener('click',()=>{try{const t=$('encodeInput').value;let out='';switch($('encodeMode').value){case'urlenc':out=encodeURIComponent(t);break;case'urldec':out=decodeURIComponent(t);break;case'b64enc':out=btoa(unescape(encodeURIComponent(t)));break;case'b64dec':out=decodeURIComponent(escape(atob(t.trim())));break}$('encodeOutput').value=out;status('encodeStatus','Conversion terminée.')}catch(e){status('encodeStatus','Entrée invalide : '+e.message,true)}});
-$('encodeSwap').addEventListener('click',()=>{$('encodeInput').value=$('encodeOutput').value;$('encodeOutput').value=''});
-$('encodeCopy').addEventListener('click',()=>copyText($('encodeOutput').value,'encodeStatus'));
-$('passLength').addEventListener('input',()=>$('passLengthValue').textContent=$('passLength').value);
-function generatePassword(){let chars='';if($('passLower').checked)chars+='abcdefghijkmnopqrstuvwxyz';if($('passUpper').checked)chars+='ABCDEFGHJKLMNPQRSTUVWXYZ';if($('passNumbers').checked)chars+='23456789';if($('passSymbols').checked)chars+='!@#$%^&*()-_=+[]{}?';if(!chars){status('passStatus','Choisis au moins un type de caractère.',true);return}const len=+$('passLength').value;let out='';const arr=new Uint32Array(len);if(crypto.getRandomValues)crypto.getRandomValues(arr);else for(let i=0;i<len;i++)arr[i]=Math.floor(Math.random()*4294967295);for(let n of arr)out+=chars[n%chars.length];$('passOutput').textContent=out;status('passStatus','Nouveau mot de passe généré localement.')}
-$('passGenerate').addEventListener('click',generatePassword);$('passCopy').addEventListener('click',()=>copyText($('passOutput').textContent,'passStatus'));generatePassword();
 function hexRgb(hex){const h=hex.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function rgbHex(rgb){return '#'+rgb.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('').toUpperCase()}
 function palette(){const base=$('baseColor').value;const [r,g,b]=hexRgb(base);const colors=[rgbHex([r,g,b]),rgbHex([r*.72+255*.28,g*.72+255*.28,b*.72+255*.28]),rgbHex([r*.42+255*.58,g*.42+255*.58,b*.42+255*.58]),rgbHex([r*.72,g*.72,b*.72]),rgbHex([r*.48,g*.48,b*.48])];$('swatches').innerHTML=colors.map((c,i)=>'<button class="swatch cursor-target" data-hex="'+c+'"><div class="swatch-color" style="background:'+c+'"></div><code>'+c+'</code><div class="hint">'+['Base','Clair 1','Clair 2','Sombre 1','Sombre 2'][i]+'</div></button>').join('');$('baseHex').value=base;document.querySelectorAll('[data-hex]').forEach(b=>b.addEventListener('click',()=>copyText(b.dataset.hex,'paletteStatus')));status('paletteStatus','Clique sur une couleur pour copier son code HEX.')}
