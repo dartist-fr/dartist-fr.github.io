@@ -2,6 +2,7 @@
 .has-target-cursor input, .has-target-cursor textarea { cursor: text !important; }
 .target-cursor {
   position: fixed;
+  filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 2px #fff);
   inset: 0;
   z-index: 2147483647;
   pointer-events: none;
@@ -34,6 +35,11 @@
   line-height: 1;
   white-space: nowrap;
   opacity: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: var(--bg, #15171c);
+  text-shadow: 0 0 1px var(--bg, #15171c);
+  box-shadow: 0 0 0 1px var(--target-cursor-color, #ffffff);
   will-change: transform, opacity;
 }
 @media (max-width: 640px), (hover: none), (pointer: coarse) { .target-cursor { display: none; } }

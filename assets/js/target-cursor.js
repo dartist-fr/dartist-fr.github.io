@@ -9,7 +9,7 @@
     cursorColorOnTarget: rootStyle.getPropertyValue('--accent').trim() || '#ffffff',
     spinDuration: 2, hoverDuration: 0.2, parallaxOn: true, hideDefaultCursor: true,
     size: 36, cornerSize: 12, thickness: 3, padding: 6, matchRadius: true,
-    dotSize: 4, blendMode: 'difference', showLabel: true, clickEffect: true
+    dotSize: 4, blendMode: 'normal', showLabel: true, clickEffect: true
   };
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var root = document.createElement('div');
