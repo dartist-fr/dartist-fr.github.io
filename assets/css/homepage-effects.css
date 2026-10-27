@@ -11,9 +11,6 @@
   font: inherit; letter-spacing: inherit;
   background: none; -webkit-text-fill-color: currentColor;
 }
-.hero-gradient .tech-char { display: inline; min-width: 0; font: inherit; letter-spacing: inherit; color: inherit; }
-.hero-gradient .tech-char.is-decoding { color: var(--amber); text-shadow: 0 0 .45em color-mix(in srgb, var(--amber) 35%, transparent); }
-.hero-gradient .tech-char.is-decoding { color: var(--amber); text-shadow: 0 0 .45em color-mix(in srgb, var(--amber) 35%, transparent); }
 .contact {
   position: relative; isolation: isolate; overflow: hidden; display: inline-flex !important;
   align-items: center; justify-content: center; gap: .6rem; margin-top: 1.6rem;
