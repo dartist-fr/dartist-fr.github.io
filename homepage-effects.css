@@ -79,20 +79,6 @@
 }
 
 
-/* Target Cursor — a reticle that expands around interactive targets. */
-.target-cursor { position: fixed; z-index: 1000; left: 0; top: 0; width: 34px; height: 34px; pointer-events: none; opacity: 0; color: var(--amber); mix-blend-mode: difference; transition: opacity .18s ease; }
-.target-cursor.is-active { opacity: 1; }
-.target-cursor__corner { position: absolute; width: 10px; height: 10px; border-color: currentColor; border-style: solid; transition: width .16s ease, height .16s ease; }
-.target-cursor__corner--tl { left: 0; top: 0; border-width: 1.5px 0 0 1.5px; }
-.target-cursor__corner--tr { right: 0; top: 0; border-width: 1.5px 1.5px 0 0; }
-.target-cursor__corner--bl { left: 0; bottom: 0; border-width: 0 0 1.5px 1.5px; }
-.target-cursor__corner--br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0; }
-.target-cursor.is-targeting .target-cursor__corner { width: 15px; height: 15px; }
-.target-cursor__dot { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: currentColor; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-.has-target-cursor, .has-target-cursor a, .has-target-cursor button, .has-target-cursor [role="button"] { cursor: none !important; }
-.has-target-cursor input, .has-target-cursor textarea { cursor: text !important; }
-.target-cursor { will-change: transform; }
-
 /* Circular project carousel — 3D ring, drag/swipe and snap. */
 .circular-showcase { padding: 1rem 0 1.25rem; overflow: hidden; border-bottom: 1px solid var(--line); }
 .carousel-stage { position: relative; height: clamp(19rem, 37vw, 27rem); perspective: 1050px; touch-action: pan-y; outline-offset: -2px; user-select: none; }
@@ -122,5 +108,9 @@
 .logo-loop__track span { color: var(--ink-soft); white-space: nowrap; font: 500 .76rem var(--mono); letter-spacing: .11em; }
 .logo-loop__track i { color: var(--amber); font-style: normal; font-size: .9rem; }
 @keyframes dartist-logo-loop { to { transform: translateX(-50%); } }
-@media (max-width: 640px) { .target-cursor { display: none; } .carousel-stage { height: 21rem; perspective: 850px; } .orbit-card { width: 12.5rem; height: 16rem; padding: 1rem; } .orbit-card__symbol { font-size: 4.3rem; } .carousel-hint { display: none; } .carousel-controls { gap: .75rem; } .logo-loop__track { gap: 1.5rem; } }
-@media (prefers-reduced-motion: reduce) { .logo-loop__track { animation: none; } .target-cursor, .orbit-card, .carousel-control { transition: none; } }
+@media (max-width: 640px) { .carousel-stage { height: 21rem; perspective: 850px; } .orbit-card { width: 12.5rem; height: 16rem; padding: 1rem; } .orbit-card__symbol { font-size: 4.3rem; } .carousel-hint { display: none; } .carousel-controls { gap: .75rem; } .logo-loop__track { gap: 1.5rem; } }
+@media (prefers-reduced-motion: reduce) { .logo-loop__track { animation: none; } .orbit-card, .carousel-control { transition: none; } }
+
+/* Carousel relocated immediately above the footer. */
+.bottom-carousel { padding-top: 1.5rem; }
+.bottom-carousel .circular-showcase { padding-top: .25rem; }
