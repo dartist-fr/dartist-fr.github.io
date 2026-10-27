@@ -21,13 +21,24 @@
   var angles = [0,90,180,270], quarter = Math.PI/2;
   var pointer = {x:0,y:0,inside:false,pressed:false}, target = null, turn = 0, raf = 0, last = 0, lastLabel = '', currentColor = '';
   var center = {x:0,y:0}, half = {w:settings.size/2,h:settings.size/2}, presence = 0, lock = 0, press = 0, cornerRadius = 0;
-  document.querySelectorAll('a, button, [role="button"], input, textarea, .carousel-stage').forEach(function (el) {
+  function markTargets(scope) {
+    var selector = 'a, button, [role="button"], input, textarea, select, .carousel-stage';
+    if (scope.nodeType === 1 && scope.matches && scope.matches(selector)) markOne(scope);
+    if (scope.querySelectorAll) scope.querySelectorAll(selector).forEach(markOne);
+  }
+  function markOne(el) {
     el.classList.add('cursor-target');
     if (!el.hasAttribute('data-cursor-label')) {
       var name = (el.getAttribute('aria-label') || el.getAttribute('data-title') || el.textContent || el.tagName).trim().replace(/\s+/g,' ');
       el.setAttribute('data-cursor-label', name.slice(0,32));
     }
-  });
+  }
+  markTargets(document);
+  new MutationObserver(function (records) {
+    records.forEach(function (record) {
+      record.addedNodes.forEach(function (node) { if (node.nodeType === 1) markTargets(node); });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
   function tick(now) {
     raf=0;
     var dt=last?Math.min(.05,(now-last)/1000):1/60; last=now;
