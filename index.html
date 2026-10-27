@@ -18,6 +18,7 @@
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
+  <link rel="stylesheet" href="homepage-effects.css">
   <style>
     :root {
       --bg: #faf9f5; --surface: #fff; --ink: #16181d; --ink-soft: #5b5f68;
@@ -138,10 +139,10 @@
       </div>
     </header>
 
-    <section class="hero" aria-labelledby="page-title">
+    <section class="hero reveal" aria-labelledby="page-title">
       <div>
         <p class="eyebrow">Bienvenue dans mon univers</p>
-        <h1 id="page-title">Des idées faites pour être explorées.</h1>
+        <h1 id="page-title">Des idées faites pour être <span class="hero-gradient">explorées.</span></h1>
         <p class="hero-copy">Je suis dartist, développeur indépendant. Je crée des jeux, des outils et des expériences interactives avec une attention particulière pour les détails qui donnent envie de rester.</p>
         <a class="contact" href="mailto:flawz.ad@gmail.com">Me contacter</a>
       </div>
@@ -151,7 +152,7 @@
       </figure>
     </section>
 
-    <section class="projects" aria-labelledby="projects-title">
+    <section class="projects reveal" aria-labelledby="projects-title">
       <div class="section-top">
         <h2 class="section-label" id="projects-title">Sélection de projets</h2>
         <span class="section-label">05 projets</span>
@@ -206,6 +207,7 @@
     </div>
   </div>
 
+  <script src="homepage-effects.js" defer></script>
   <script>
     var toggle = document.getElementById('theme-toggle');
     toggle.addEventListener('click', function () {
