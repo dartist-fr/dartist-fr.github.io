@@ -1,27 +1,46 @@
 # dartist — Hub de projets
 
-Un hub qui rassemble mes projets web, jeux, outils, applications et photographies.
+Un hub personnel qui rassemble mes projets web, jeux jouables dans le navigateur, outils pratiques, applications et photographies.
 
-🌐 **Site :** https://dartist-fr.github.io/
+🌐 **[Accéder au site dartist](https://dartist-fr.github.io/)**
 
-## Espaces
-- **Salle d’arcade** : jeux dans le navigateur.
-- **Mes Applications** : applications et projets logiciels. [Automa](https://github.com/dartist-fr/automa) est une application Android en développement qui vise à personnaliser l’écran d’accueil grâce à des widgets (horloge, date, batterie et options visuelles).
-- **Boîte à outils** : utilitaires web, dont un compresseur et convertisseur d’images qui traite les fichiers localement dans le navigateur.
-- **Le Labo** : prototypes et expériences.
-- **Portfolio photo** : galerie publiée à l’adresse [dartist-fr.github.io/portfolio](https://dartist-fr.github.io/portfolio/). Ce lien mène au site du portfolio, et non au dépôt GitHub.
+## Explorer le site
 
-## Dépôts
-- [Site principal](https://github.com/dartist-fr/dartist-fr.github.io)
-- [Application Automa](https://github.com/dartist-fr/automa)
-- [Sources du portfolio photo](https://github.com/dartist-fr/portfolio)
+- **Salle d’arcade** — jeux et expériences interactives accessibles depuis le navigateur.
+- **Mes applications** — applications et projets logiciels. [Automa](https://github.com/dartist-fr/automa) est une application Android en développement, pensée pour personnaliser l’écran d’accueil avec des widgets et des options visuelles.
+- **[Boîte à outils](https://dartist-fr.github.io/boite-a-outils/)** — collection d’utilitaires web : formateur JSON, palette de couleurs, générateur de dégradés CSS, QR codes personnalisés, calculatrice et conversions, lab HTML/CSS, ainsi qu’un compresseur d’images.
+- **Le Labo** — prototypes, essais et expériences en cours.
+- **[Portfolio photo](https://dartist-fr.github.io/portfolio/)** — galerie de photographies. Ce lien ouvre le site publié, pas le dépôt source.
+
+## Boîte à outils
+
+La boîte à outils fonctionne directement dans le navigateur, sans installation. Elle propose notamment :
+
+- **Compresseur d’images** — compression, conversion, redimensionnement et export des résultats, avec téléchargement ZIP.
+- **QR codes personnalisés** — réglages du contenu, des formes, des couleurs et du logo, avec export PNG ou SVG.
+- **Formateur JSON**, **palette de couleurs** et **générateur de dégradés CSS**.
+- **Calculatrice & conversions** et **lab HTML/CSS**.
+
+Le compresseur traite les images localement dans le navigateur : elles ne sont pas envoyées à un serveur. Certaines fonctions utilisent des bibliothèques externes et peuvent nécessiter une connexion Internet.
+
+➡️ **[Ouvrir la boîte à outils](https://dartist-fr.github.io/boite-a-outils/)**
+
+## Dépôts associés
+
+- [Site principal — sources du hub](https://github.com/dartist-fr/dartist-fr.github.io)
+- [Automa — application Android](https://github.com/dartist-fr/automa)
+- [Portfolio photo — dépôt source](https://github.com/dartist-fr/portfolio)
 
 ## Technologies
-HTML, CSS et JavaScript.
+
+Le site utilise principalement **HTML, CSS et JavaScript** et est publié avec **GitHub Pages**. Certains outils chargent des bibliothèques JavaScript externes selon leurs besoins.
 
 ## Lancer en local
-Clonez le dépôt, puis ouvrez `index.html` dans votre navigateur :
+
+Clone le dépôt, puis ouvre `index.html` dans un navigateur :
 
 ```bash
 git clone https://github.com/dartist-fr/dartist-fr.github.io.git
 ```
+
+Aucun processus de compilation n’est nécessaire pour consulter les pages statiques de base. Certaines fonctionnalités nécessitent toutefois une connexion Internet pour charger leurs dépendances.
