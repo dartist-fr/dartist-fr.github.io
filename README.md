@@ -10,7 +10,7 @@ Un hub personnel qui rassemble mes projets web, jeux jouables dans le navigateur
 - **Mes applications** — applications et projets logiciels. [Automa](https://github.com/dartist-fr/automa) est une application Android en développement, pensée pour personnaliser l’écran d’accueil avec des widgets et des options visuelles.
 - **[Boîte à outils](https://dartist-fr.github.io/boite-a-outils/)** — collection d’utilitaires web : formateur JSON, palette de couleurs, générateur de dégradés CSS, QR codes personnalisés, calculatrice et conversions, lab HTML/CSS, ainsi qu’un compresseur d’images.
 - **Le Labo** — prototypes, essais et expériences en cours.
-- **[Portfolio photo](https://dartist-fr.github.io/portfolio/)** — galerie de photographies. Ce lien ouvre le site publié, pas le dépôt source.
+- **[Portfolio photo](https://dartist-fr.github.io/portfolio/)** — galerie de photographies.
 
 ## Boîte à outils
 
@@ -29,7 +29,6 @@ Le compresseur traite les images localement dans le navigateur : elles ne sont p
 
 - [Site principal — sources du hub](https://github.com/dartist-fr/dartist-fr.github.io)
 - [Automa — application Android](https://github.com/dartist-fr/automa)
-- [Portfolio photo — dépôt source](https://github.com/dartist-fr/portfolio)
 
 ## Technologies
 
