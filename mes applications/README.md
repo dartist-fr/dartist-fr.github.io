@@ -18,3 +18,11 @@ git clone --recurse-submodules https://github.com/dartist-fr/dartist-fr.github.i
 ```
 
 Les APK ne sont pas stockés dans le dépôt du site : ils restent hébergés dans les Releases du dépôt Automa afin d’éviter les doublons et de conserver un historique clair des versions.
+
+## FlowMind
+
+FlowMind est une application distincte, présentée dans son propre dépôt GitHub.
+
+- **[Découvrir FlowMind sur le site](flowmind.html)** — présentation de l’application.
+- **[Dépôt et code source FlowMind](https://github.com/dartist-fr/FlowMind)** — consulter le projet et son évolution.
+
