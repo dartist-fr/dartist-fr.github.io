@@ -52,7 +52,7 @@
 <button class="daybtn" data-day="4"><span class="daynum">06</span><span class="daylabel">Vendredi · Retour</span></button>
 </nav>
 <section class="workspace">
-<div class="panel"><div class="panelhead"><div><h2>Explorer la carte</h2><p id="mapsub">Les étapes de votre arrivée</p></div><span class="badge" id="count">4 lieux</span></div><div class="mapfilters"><label for="mapday">Journée <select id="mapday"><option value="all">Toutes les journées</option><option value="0">Lun. 2 nov.</option><option value="1">Mar. 3 nov.</option><option value="2">Mer. 4 nov.</option><option value="3">Jeu. 5 nov.</option><option value="4">Ven. 6 nov.</option></select></label><label for="mapcat">Catégorie <select id="mapcat"><option value="all">Toutes les catégories</option><option value="patrimoine">Monuments & musées</option><option value="food">Cuisine & marchés</option><option value="balade">Balades & photo</option><option value="activite">Activités à deux</option><option value="transport">Transport</option></select></label></div><div id="map" aria-label="Carte interactive de Palerme"></div><div class="mapfoot"><span>Fond de carte © Esri</span><a class="btn" id="route" target="_blank" rel="noopener">Itinéraire ↗</a></div></div>
+<div class="panel"><div class="panelhead"><div><h2>Explorer la carte</h2><p id="mapsub">Les étapes de votre arrivée</p></div><span class="badge" id="count">4 lieux</span></div><div class="mapfilters"><label for="mapday">Journée <select id="mapday"><option value="all">Toutes les journées</option><option value="0">Lun. 2 nov.</option><option value="1">Mar. 3 nov.</option><option value="2">Mer. 4 nov.</option><option value="3">Jeu. 5 nov.</option><option value="4">Ven. 6 nov.</option></select></label></div><div id="map" aria-label="Carte interactive de Palerme"></div><div class="mapfoot"><span>Fond de carte © Esri</span><a class="btn" id="route" target="_blank" rel="noopener">Itinéraire ↗</a></div></div>
 <article class="panel"><div class="panelhead"><div><h2 id="panelday">Lundi 2 novembre</h2><p id="panelsub">Arrivée et première découverte</p></div><span class="badge" id="tag">Arrivée</span></div><div class="planbody"><div class="kicker" id="kicker">LUNDI · 2 NOVEMBRE</div><h2 class="daytitle" id="title">Un premier aperçu de Palerme.</h2><p class="description" id="description"></p><div id="activities"></div><div class="note" id="note"></div></div><div class="planfoot"><a class="btn" id="route2" target="_blank" rel="noopener">Ouvrir l’itinéraire ↗</a></div></article>
 </section>
 <section class="lower" id="conseils"><article><h2>Avant de partir</h2><p>Vérifiez les horaires et les jours d’ouverture des monuments et musées pour vos dates exactes. Le mercredi, prévoyez du temps pour stationner à Monreale. Le vendredi, anticipez la restitution éventuelle de la voiture et le transfert à l’aéroport.</p></article><article><h2>Manger bien sans se ruiner</h2><p>Privilégiez les arancine, panelle et crocchè, les marchés de Ballarò et du Capo, les boulangeries et les trattorias avec menu du jour. Comptez environ 5–10 € pour un repas de street-food et 10–15 € dans une adresse simple, selon les choix et les prix sur place.</p></article><article><h2>En cas de pluie</h2><p>Privilégiez les visites intérieures et gardez les promenades flexibles. L’escape game du jeudi est une suggestion à réserver et à confirmer pour deux joueurs, notamment pour la langue du jeu. Les horaires proposés restent indicatifs.</p></article></section>
@@ -83,10 +83,9 @@ function category(p){
 function drawMap(){
  if(!map||!layer)return;
  layer.clearLayers();markers=[];
- const dayFilter=$("mapday").value,catFilter=$("mapcat").value;let bounds=[],count=0;
+ const dayFilter=$("mapday").value;let bounds=[],count=0;
  days.forEach((d,di)=>d.places.forEach((p,pi)=>{
   if(dayFilter!=="all"&&Number(dayFilter)!==di)return;
-  if(catFilter!=="all"&&category(p)!==catFilter)return;
   count++;const m=L.marker([p[2],p[3]],{icon:icon(count)}).addTo(layer);
   m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(d.date)+' · '+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="'+searchUrl(p)+'">Ouvrir dans Google Maps ↗</a>');
   markers.push({marker:m,day:di,place:pi});bounds.push([p[2],p[3]]);
@@ -106,7 +105,6 @@ function render(i){
 }
 document.querySelectorAll(".daybtn").forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.day);$("mapday").value=String(i);render(i);}));
 $("mapday").addEventListener("change",()=>{if($("mapday").value!=="all")render(Number($("mapday").value));drawMap();});
-$("mapcat").addEventListener("change",drawMap);
 $("theme").addEventListener("click",()=>{let n=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=n;try{localStorage.setItem("theme",n)}catch(e){}});
 if(typeof L!=="undefined"){map=L.map("map",{scrollWheelZoom:false}).setView([38.116,13.358],13);L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Tiles © Esri"}).addTo(map);layer=L.featureGroup().addTo(map);render(0);addEventListener("resize",()=>map.invalidateSize());}else{$("map").innerHTML="<p style='padding:20px'>La carte ne peut pas être chargée. Vérifiez votre connexion Internet et rechargez la page.</p>";}
 </script>
