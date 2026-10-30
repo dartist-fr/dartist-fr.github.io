@@ -151,8 +151,16 @@ function generateQR(){
  catch(e){qrStyling=null;box.innerHTML='<span class="qr-placeholder">Génération impossible.</span>';qrSetStatus('Erreur : '+e.message,true)}
 }
 function qrApplyPreset(name){
- const presets={midnight:['#172238','#ffffff','#6f91d8'],forest:['#174b38','#ffffff','#8ebc8b'],sunset:['#9a3f2d','#fff8ed','#e4a34b'],minimal:['#000000','#ffffff','#555555']};
- if(!presets[name])return;[$('qrFg').value,$('qrBg').value,$('qrFg2').value]=presets[name];$('qrGradient').checked=name==='sunset';$('qrGradientFields').classList.toggle('hidden',!$('qrGradient').checked);generateQR();
+ const presets={midnight:['#172238','#ffffff','#6f91d8'],forest:['#174b38','#ffffff','#8ebc8b'],sunset:['#9a3f2d','#fff8ed','#e4a34b'],minimal:['#000000','#ffffff','#555555'],rounded:['#263449','#ffffff','#6b8db8'],social:['#4f46e5','#ffffff','#a78bfa'],professional:['#102a43','#ffffff','#486581'],event:['#9a3412','#fff7ed','#f59e0b'],print:['#000000','#ffffff','#000000'],inverted:['#ffffff','#171717','#cbd5e1']};
+ if(!presets[name])return;
+ [$('qrFg').value,$('qrBg').value,$('qrFg2').value]=presets[name];
+ $('qrGradient').checked=['sunset','event'].includes(name);
+ $('qrGradientFields').classList.toggle('hidden',!$('qrGradient').checked);
+ if(name==='rounded'){$('qrBodyShape').value='rounded';$('qrEyeFrameShape').value='extra-rounded';$('qrEyeCenterShape').value='dot'}
+ if(name==='social')$('qrBodyShape').value='dots';
+ if(name==='print'||name==='professional'||name==='minimal'){$('qrBodyShape').value='square';$('qrEyeFrameShape').value='square';$('qrEyeCenterShape').value='square'}
+ if(name==='inverted')$('qrEcc').value='H';
+ generateQR();
 }
 $('qrType').addEventListener('change',qrTypeFields);$('qrWifiShowPassword')?.addEventListener('change',()=>{$('qrWifiPassword').type=$('qrWifiShowPassword').checked?'text':'password'});$('qrGradientAngle')?.addEventListener('input',()=>{const o=$('qrGradientAngleValue');if(o)o.textContent=$('qrGradientAngle').value+'°';generateQR()});
 qrIds.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',()=>{if(id==='qrLogoSize')$('qrLogoSizeValue').textContent=el.value+'%';if(id==='qrMargin')$('qrMarginValue').textContent=el.value+'%';generateQR()});el.addEventListener('change',generateQR)}});
