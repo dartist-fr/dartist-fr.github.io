@@ -466,7 +466,8 @@ function qrBuildSvg(){
   let decorative='';
   for(let row=0;row<34;row++)for(let col=0;col<34;col++){
    const cx=14+col*30,cy=14+row*30;
-   if(cx>=normalizedStart&&cx<=normalizedStart+normalizedPlate&&cy>=normalizedStart&&cy<=normalizedStart+normalizedPlate)continue;
+   const safe=22/2+3;
+   if(cx>=normalizedStart-safe&&cx<=normalizedStart+normalizedPlate+safe&&cy>=normalizedStart-safe&&cy<=normalizedStart+normalizedPlate+safe)continue;
    const hash=(row*73856093)^(col*19349663)^0x5f3759df;if((hash>>>0)%11===0)continue;
    const s=22*.88,px=cx-s/2,py=cy-s/2;
    if(style==='dots')decorative+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(s*.43)+'" fill="'+fg+'"/>';
