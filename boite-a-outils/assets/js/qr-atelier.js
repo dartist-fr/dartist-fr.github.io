@@ -89,9 +89,12 @@ $('qrMultiImage')?.addEventListener('change',async e=>{
   const scale=Math.min(1,2600/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);
   const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);
   if('BarcodeDetector'in window){
-   try{const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);multiResults=codes.map(c=>({data:c.rawValue,x:0,y:0})).filter(c=>c.data).slice(0,30)}catch{}
+   try{const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);multiResults=codes.map(c=>({data:c.rawValue,x:c.boundingBox?.x||0,y:c.boundingBox?.y||0})).filter(c=>c.data).slice(0,30)}catch{}
   }
-  if(!multiResults.length&&window.jsQR)multiResults=scanQrTiles(canvas);
+  if(window.jsQR){
+   const tiled=scanQrTiles(canvas);
+   for(const item of tiled){const duplicate=multiResults.some(existing=>existing.data===item.data&&Math.hypot((existing.x||0)-item.x,(existing.y||0)-item.y)<Math.max(24,Math.min(canvas.width,canvas.height)*.08));if(!duplicate&&multiResults.length<30)multiResults.push(item)}
+  }
   host.innerHTML='';
   if(!multiResults.length){host.textContent='Aucun QR code détecté. Essaie une image plus nette, mieux éclairée ou recadrée.';return}
   multiResults.forEach((item,i)=>{
