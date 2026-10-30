@@ -431,11 +431,13 @@ function qrBuildSvg(){
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
  if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
-  if($('qrPixelatedEdge')?.checked!==false){
-   const module=side/count;let pixelBody='';
-   for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)&&qrPointInSvgShape(shapeName,(col+.5)*1000/count,(r+.5)*1000/count,count))pixelBody+='<rect x="'+(x+col*module)+'" y="'+(y+r*module)+'" width="'+(module+.15)+'" height="'+(module+.15)+'" fill="'+fill+'"/>';
-   output+=pixelBody;
-  }else output+='<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';
+  const module=side/count,testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
+  const test=testCanvas.getContext('2d'),path=qrShapePath(shapeName,count),pixelated=$('qrPixelatedEdge')?.checked!==false,soft=qrHexBlend(fg,bg,.48);
+  for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)){
+   const coverage=qrShapeCoverage(test,path,col*1000/count,r*1000/count,1000/count,pixelated);
+   const moduleFill=coverage>=.999?fill:qrHexBlend(fg,bg,.48+.52*coverage);
+   output+='<rect x="'+(x+col*module)+'" y="'+(y+r*module)+'" width="'+(module+.15)+'" height="'+(module+.15)+'" fill="'+(coverage>=.999?fill:moduleFill)+'"/>';
+  }
  }else output+=body;
  if(qrLogoData||qrSilhouetteData){
   const logoData=qrLogoData||qrSilhouetteData;
