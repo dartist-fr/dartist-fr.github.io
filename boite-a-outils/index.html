@@ -130,19 +130,14 @@ function qrTypeFields(){const type=$('qrType').value;document.querySelectorAll('
 function qrFramePreview(){
  const box=$('qrBox'),frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'';
  const canvas=box.querySelector('canvas');if(!canvas)return;
- const wrap=document.createElement('div');wrap.className='qr-export-frame';wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px;max-width:100%;border:'+(frame==='none'?'0':'2px solid '+$('qrFg').value)+';border-radius:'+(frame==='rounded'?'18px':'0');
- box.innerHTML='';wrap.appendChild(canvas);if(caption){const cap=document.createElement('div');cap.textContent=caption;cap.style.cssText='font:700 '+Math.max(12,Math.round(+$('qrSize').value*.035))+'px Arial,sans-serif;letter-spacing:.08em;color:'+ $('qrFg').value;wrap.appendChild(cap)}box.appendChild(wrap);
-}
-function qrValidationMessage(){
- const type=$('qrType').value;
- if(type==='url'){const raw=$('qrInput').value.trim();if(!raw)return'Ajoute une adresse web.';try{const u=new URL(/^https?:\/\//i.test(raw)?raw:'https://'+raw);if(!['http:','https:'].includes(u.protocol))return'Utilise une adresse HTTP ou HTTPS.'}catch{return'Adresse web invalide.'}}
- if(type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('qrEmail').value.trim()))return'Adresse e-mail invalide.';
- if(type==='wifi'&&$('qrEncryption').value!=='nopass'&&!$('qrWifiPassword').value)return'Ajoute le mot de passe du réseau Wi-Fi ou sélectionne Réseau ouvert.';
- if(type==='whatsapp'&&$('qrWaPhone').value.replace(/\D/g,'').length<6)return'Numéro WhatsApp trop court.';
- if(type==='phone'&&$('qrPhone').value.replace(/\D/g,'').length<6)return'Numéro de téléphone invalide.';
- if(type==='sms'&&$('qrSmsPhone').value.replace(/\D/g,'').length<6)return'Numéro SMS invalide.';
- if(type==='location'){const a=$('qrLatitude').value,b=$('qrLongitude').value;if(a===''||b===''||Math.abs(+a)>90||Math.abs(+b)>180)return'Coordonnées GPS invalides.'}
- return'';
+ const fg=$('qrFg').value,bg=$('qrBg').value;
+ const wrap=document.createElement('div');wrap.className='qr-export-frame';
+ wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px;max-width:100%;background:'+(frame==='banner-top'||frame==='banner-bottom'?bg:'transparent')+';border:'+(frame==='none'||frame.startsWith('banner')||frame==='label'?'0':frame==='viewfinder'?'2px dashed '+fg:'2px solid '+fg)+';border-radius:'+(frame==='rounded'?'18px':'0');
+ const cap=()=>{const el=document.createElement('div');el.textContent=caption;el.style.cssText='font:700 '+Math.max(12,Math.round(+$('qrSize').value*.035))+'px Arial,sans-serif;letter-spacing:.08em;color:'+(frame.startsWith('banner')?'#ffffff':fg)+';background:'+(frame.startsWith('banner')?fg:frame==='label'?bg:'transparent')+';padding:'+(frame==='label'?'6px 16px':'6px 10px')+';border:'+(frame==='label'?'1px solid '+fg:'0')+';border-radius:'+(frame==='label'?'999px':'0')+';text-align:center;max-width:100%;overflow-wrap:anywhere';return el};
+ if(caption&&frame==='banner-top')wrap.appendChild(cap());
+ wrap.appendChild(canvas);
+ if(caption&&frame!=='banner-top')wrap.appendChild(cap());
+ box.innerHTML='';box.appendChild(wrap);
 }
 function generateQR(){
  const value=qrContent(),box=$('qrBox'),validation=qrValidationMessage();if(validation){box.innerHTML='<span class="qr-placeholder">'+validation+'</span>';qrStyling=null;qrSetStatus(validation,true);return}if(!value){box.innerHTML='<span class="qr-placeholder">Complète les champs nécessaires pour créer ton QR code.</span>';qrStyling=null;qrSetStatus('Contenu manquant ou invalide.',true);return}
@@ -176,12 +171,14 @@ async function qrExport(format){
  try{
   const node=$('qrBox').querySelector('.qr-export-frame')||$('qrBox').firstElementChild;
   const canvas=node&&node.querySelector('canvas');if(!canvas)throw Error('Aperçu non disponible');
-  const size=+$('qrSize').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',frame=$('qrFrame').value,pad=20,edge=frame==='none'?0:20,capH=caption?Math.max(30,Math.round(size*.055))+12:0,w=size+2*(pad+edge),h=size+2*(pad+edge)+capH;
+  const size=+$('qrSize').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',frame=$('qrFrame').value,pad=20,edge=frame==='none'||frame.startsWith('banner')||frame==='label'?0:20,capH=caption?Math.max(30,Math.round(size*.055))+12:0,topCaption=caption&&frame==='banner-top',w=size+2*(pad+edge),h=size+2*(pad+edge)+capH;
   const out=document.createElement('canvas');out.width=w;out.height=h;const ctx=out.getContext('2d');
   if(!$('qrTransparent').checked||format==='jpg'){ctx.fillStyle=$('qrBg').value;ctx.fillRect(0,0,w,h)}
-  if(frame!=='none'){ctx.strokeStyle=$('qrFg').value;ctx.lineWidth=4;ctx.strokeRect(2,2,w-4,h-4)}
-  ctx.drawImage(canvas,pad+edge,pad+edge,size,size);
-  if(caption){ctx.fillStyle=$('qrFg').value;ctx.font='700 '+Math.max(12,Math.round(size*.035))+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(caption,w/2,h-pad-edge-capH/2)}
+  const fg=$('qrFg').value,bg=$('qrBg').value;
+  if(frame==='plain'||frame==='rounded'){ctx.strokeStyle=fg;ctx.lineWidth=4;if(frame==='rounded'&&ctx.roundRect){ctx.beginPath();ctx.roundRect(2,2,w-4,h-4,18);ctx.stroke()}else ctx.strokeRect(2,2,w-4,h-4)}
+  if(frame==='viewfinder'){ctx.strokeStyle=fg;ctx.lineWidth=4;ctx.setLineDash([10,7]);ctx.strokeRect(2,2,w-4,h-4);ctx.setLineDash([])}
+  const imageY=pad+edge+(topCaption?capH:0);ctx.drawImage(canvas,pad+edge,imageY,size,size);
+  if(caption){ctx.font='700 '+Math.max(12,Math.round(size*.035))+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';const cy=topCaption?pad+capH/2:imageY+size+capH/2;if(frame==='banner-top'||frame==='banner-bottom'){ctx.fillStyle=fg;ctx.fillRect(0,topCaption?0:h-capH,w,capH);ctx.fillStyle='#ffffff'}else if(frame==='label'){ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(w*.2,h-capH*.8,w*.6,capH*.6,20);ctx.fill();ctx.fillStyle=bg}else ctx.fillStyle=fg;ctx.fillText(caption,w/2,cy)}
   if(format==='pdf'){
    if(!window.jspdf)throw Error('Le module PDF est indisponible');const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:w>=h?'landscape':'portrait',unit:'px',format:[w,h]});doc.addImage(out.toDataURL('image/png'),'PNG',0,0,w,h);doc.save('dartist-qr-code.pdf');
   }else{
