@@ -412,41 +412,33 @@ function qrVectorMatrix(){
 }
 function qrXml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]))}
 function qrBuildSvg(){
- const {code,count}=qrVectorMatrix(),unit=10,side=count*unit,quiet=4*unit+Math.round(side*(+$('qrMargin').value/100)),pad=20,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:20,capH=caption?48:0,top=caption&&frame==='banner-top',w=side+2*(quiet+pad+edge),h=side+2*(quiet+pad+edge)+capH,x=quiet+pad+edge,y=quiet+pad+edge+(top?capH:0),fg=$('qrFg').value,bg=$('qrBg').value;
- const angle=(+$('qrGradientAngle')?.value||0)*Math.PI/180,dx=Math.cos(angle),dy=Math.sin(angle),x1=(.5-dx*.5)*100,y1=(.5-dy*.5)*100,x2=(.5+dx*.5)*100,y2=(.5+dy*.5)*100;
- const fill=$('qrGradient').checked?'url(#qrGradient)':fg;
+ const {code,count}=qrVectorMatrix(),unit=10,side=count*unit,quiet=4*unit+Math.round(side*(+$('qrMargin').value/100)),pad=20,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:20,capH=caption?48:0,top=caption&&frame==='banner-top',fg=$('qrFg').value,bg=$('qrBg').value;
+ const previewCanvas=$('qrBox')?.querySelector('canvas'),shapeName=previewCanvas?.qrFallback?'square':($('qrSilhouetteShape')?.value||'square'),isShape=shapeName!=='square'&&qrSilhouettePaths[shapeName];
+ const ratio=isShape?qrSilhouetteInnerRatio(new Path2D(qrSilhouettePaths[shapeName])):1,plate=side+2*quiet,shapeSide=isShape?plate/ratio:0;
+ const baseW=plate+2*(pad+edge),baseH=plate+2*(pad+edge)+capH,w=isShape?Math.max(baseW,shapeSide+2*(pad+edge)):baseW,h=isShape?Math.max(baseH,shapeSide+2*(pad+edge)+capH):baseH;
+ const contentTop=top?capH:0,contentH=h-capH,x=(w-side)/2,y=contentTop+(contentH-side)/2,shapeX=(w-shapeSide)/2,shapeY=contentTop+(contentH-shapeSide)/2;
+ const angle=(+$('qrGradientAngle')?.value||0)*Math.PI/180,dx=Math.cos(angle),dy=Math.sin(angle),x1=(.5-dx*.5)*100,y1=(.5-dy*.5)*100,x2=(.5+dx*.5)*100,y2=(.5+dy*.5)*100,fill=$('qrGradient').checked?'url(#qrGradient)':fg;
  let body='';
- for(let r=0;r<count;r++)for(let c=0;c<count;c++)if(code.isDark(r,c)){
-  const px=x+c*unit,py=y+r*unit,shape=$('qrBodyShape').value;
+ for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)){
+  const px=x+col*unit,py=y+r*unit,shape=$('qrBodyShape').value;
   if(shape==='dots')body+='<circle cx="'+(px+unit/2)+'" cy="'+(py+unit/2)+'" r="'+(unit*.43)+'" fill="'+fill+'"/>';
   else if(shape==='rounded')body+='<rect x="'+(px+.25)+'" y="'+(py+.25)+'" width="'+(unit-.5)+'" height="'+(unit-.5)+'" rx="'+(unit*.28)+'" fill="'+fill+'"/>';
   else body+='<rect x="'+px+'" y="'+py+'" width="'+unit+'" height="'+unit+'" fill="'+fill+'"/>';
  }
- const previewCanvas=$('qrBox')?.querySelector('canvas'),shapeName=previewCanvas?.qrFallback?'square':($('qrSilhouetteShape')?.value||'square');
- let defs='<defs><linearGradient id="qrGradient" x1="'+x1+'%" y1="'+y1+'%" x2="'+x2+'%" y2="'+y2+'%"><stop offset="0%" stop-color="'+fg+'"/><stop offset="100%" stop-color="'+$('qrFg2').value+'"/></linearGradient>';
- if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
-  const z=8.5/count,transform='translate('+x+' '+y+') scale('+(side/1000)+')';
-  defs+='<clipPath id="qrSilhouetteClip"><path d="'+qrSilhouettePaths[shapeName]+'" transform="'+transform+'"/><rect x="'+x+'" y="'+y+'" width="'+(side*z)+'" height="'+(side*z)+'"/><rect x="'+(x+side-side*z)+'" y="'+y+'" width="'+(side*z)+'" height="'+(side*z)+'"/><rect x="'+x+'" y="'+(y+side-side*z)+'" width="'+(side*z)+'" height="'+(side*z)+'"/></clipPath>';
- }
- defs+='</defs>';
- let output='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+defs;
+ let output='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="qrGradient" x1="'+x1+'%" y1="'+y1+'%" x2="'+x2+'%" y2="'+y2+'%"><stop offset="0%" stop-color="'+fg+'"/><stop offset="100%" stop-color="'+$('qrFg2').value+'"/></linearGradient></defs>';
  if(!$('qrTransparent').checked)output+='<rect width="100%" height="100%" fill="'+bg+'"/>';
+ if(isShape)output+='<path d="'+qrSilhouettePaths[shapeName]+'" transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" fill="'+fg+'"/>';
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
- if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
-  const envelopeX=x-quiet-pad*.25,envelopeY=y-quiet-pad*.25,envelopeSide=side+2*quiet+pad*.5;
-  output+='<path d="'+qrSilhouettePaths[shapeName]+'" transform="translate('+envelopeX+' '+envelopeY+') scale('+(envelopeSide/1000)+')" fill="'+fg+'"/>';
-  // Zone de silence blanche complète autour de la matrice, indispensable à la détection.
-  output+='<rect x="'+(x-quiet)+'" y="'+(y-quiet)+'" width="'+(side+2*quiet)+'" height="'+(side+2*quiet)+'" fill="'+bg+'"/>'+body;
- }else output+=body;
+ // Le QR complet est posé sur une plaque blanche centrée dans la silhouette.
+ output+='<rect x="'+(x-quiet)+'" y="'+(y-quiet)+'" width="'+plate+'" height="'+plate+'" fill="'+bg+'"/>'+body;
  if(qrLogoData||qrSilhouetteData){
-  const logoData=qrLogoData||qrSilhouetteData;
-  const logoSide=side*(+$('qrLogoSize').value/100),lx=x+(side-logoSide)/2,ly=y+(side-logoSide)/2;
-  output+='<rect x="'+(lx-8)+'" y="'+(ly-8)+'" width="'+(logoSide+16)+'" height="'+(logoSide+16)+'" rx="8" fill="'+bg+'"/><image x="'+lx+'" y="'+ly+'" width="'+logoSide+'" height="'+logoSide+'" preserveAspectRatio="xMidYMid meet" href="'+qrXml(logoData)+'" xlink:href="'+qrXml(qrLogoData)+'"/>';
+  const logoData=qrLogoData||qrSilhouetteData,logoSide=side*(+$('qrLogoSize').value/100),lx=x+(side-logoSide)/2,ly=y+(side-logoSide)/2;
+  output+='<rect x="'+(lx-8)+'" y="'+(ly-8)+'" width="'+(logoSide+16)+'" height="'+(logoSide+16)+'" rx="8" fill="'+bg+'"/><image x="'+lx+'" y="'+ly+'" width="'+logoSide+'" height="'+logoSide+'" preserveAspectRatio="xMidYMid meet" href="'+qrXml(logoData)+'" xlink:href="'+qrXml(logoData)+'"/>';
  }
  if(caption){
-  const cy=top?pad+edge+capH*.68:y+side+quiet*.45+capH*.5;
+  const cy=top?capH*.68:y+side+quiet*.45+capH*.5;
   if(frame==='label')output+='<rect x="'+(w*.2)+'" y="'+(h-capH*.8)+'" width="'+(w*.6)+'" height="'+(capH*.6)+'" rx="20" fill="'+fg+'"/>';
   output+='<text x="'+(w/2)+'" y="'+cy+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="2" fill="'+((frame==='banner-top'||frame==='banner-bottom'||frame==='label')?'#ffffff':fg)+'">'+qrXml(caption)+'</text>';
  }
