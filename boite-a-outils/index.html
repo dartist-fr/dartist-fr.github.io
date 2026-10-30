@@ -241,9 +241,9 @@ function qrVectorMatrix(){
 }
 function qrXml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]))}
 function qrBuildSvg(){
- const {code,count}=qrVectorMatrix(),unit=10,side=count*unit,quiet=4*unit+Math.round(512*(+$('qrMargin').value/100)),pad=20,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:20,capH=caption?48:0,top=caption&&frame==='banner-top',w=side+2*(quiet+pad+edge),h=side+2*(quiet+pad+edge)+capH,x=quiet+pad+edge,y=quiet+pad+edge+(top?capH:0),fg=$('qrFg').value,bg=$('qrBg').value;
+ const {code,count}=qrVectorMatrix(),unit=10,side=count*unit,quiet=4*unit+Math.round(side*(+$('qrMargin').value/100)),pad=20,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:20,capH=caption?48:0,top=caption&&frame==='banner-top',w=side+2*(quiet+pad+edge),h=side+2*(quiet+pad+edge)+capH,x=quiet+pad+edge,y=quiet+pad+edge+(top?capH:0),fg=$('qrFg').value,bg=$('qrBg').value;
  const angle=(+$('qrGradientAngle')?.value||0)*Math.PI/180,dx=Math.cos(angle),dy=Math.sin(angle),x1=(.5-dx*.5)*100,y1=(.5-dy*.5)*100,x2=(.5+dx*.5)*100,y2=(.5+dy*.5)*100;
- const fill=$('qrGradient').checked?'url(#qrGradient)':'qrForeground';
+ const fill=$('qrGradient').checked?'url(#qrGradient)':fg;
  let body='';
  for(let r=0;r<count;r++)for(let c=0;c<count;c++)if(code.isDark(r,c)){
   const px=x+c*unit,py=y+r*unit,shape=$('qrBodyShape').value;
@@ -270,7 +270,7 @@ function qrBuildSvg(){
  output+='</svg>';return output;
 }
 function qrBuildEps(){
- const {code,count}=qrVectorMatrix(),unit=7,side=count*unit,quiet=4*unit+Math.round(512*(+$('qrMargin').value/100)*unit/512),pad=16,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:14,capH=caption?34:0,top=caption&&frame==='banner-top',w=side+2*(quiet+pad+edge),h=side+2*(quiet+pad+edge)+capH,x=quiet+pad+edge,y=quiet+pad+edge+(top?capH:0),fg=$('qrFg').value,bg=$('qrBg').value;
+ const {code,count}=qrVectorMatrix(),unit=7,side=count*unit,quiet=4*unit+Math.round(side*(+$('qrMargin').value/100)),pad=16,frame=$('qrFrame').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',edge=['none','banner-top','banner-bottom','label'].includes(frame)?0:14,capH=caption?34:0,top=caption&&frame==='banner-top',w=side+2*(quiet+pad+edge),h=side+2*(quiet+pad+edge)+capH,x=quiet+pad+edge,y=quiet+pad+edge+(top?capH:0),fg=$('qrFg').value,bg=$('qrBg').value;
  const rgb=hex=>{const v=hex.replace('#','');return[parseInt(v.slice(0,2),16)/255,parseInt(v.slice(2,4),16)/255,parseInt(v.slice(4,6),16)/255]},color=rgb(fg),background=rgb(bg),ps=[];
  ps.push('%!PS-Adobe-3.0 EPSF-3.0','%%BoundingBox: 0 0 '+Math.ceil(w)+' '+Math.ceil(h),'%%LanguageLevel: 2','%%Pages: 1','%%EndComments','gsave');
  if(!$('qrTransparent').checked)ps.push(background.join(' ')+' setrgbcolor 0 0 '+w+' '+h+' rectfill');
@@ -284,7 +284,7 @@ function qrBuildEps(){
  }
  if(caption){
   const ascii=caption.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,'?').replace(/[\\()]/g,'\\$('qrDownloadSvg').addEventListener('click',async()=>{if(!qrStyling){qrSetStatus('Génère d’abord un QR code.',true);return}try{await qrStyling.download({name:'dartist-qr-code',extension:'svg'});qrSetStatus('SVG vectoriel téléchargé. Le cadre et la légende sont inclus dans les exports PNG/JPG/PDF.')}catch(e){qrSetStatus('Export SVG impossible : '+e.message,true)}});');
-  const tx=frame==='banner-top'||frame==='banner-bottom'||frame==='label'?'1 1 1':'0 0 0';
+  const tx=frame==='banner-top'||frame==='banner-bottom'||frame==='label'?'1 1 1':color.join(' ');
   ps.push(tx+' setrgbcolor /Helvetica-Bold findfont 16 scalefont setfont '+(w/2)+' '+(top?h-capH/2:pad+capH/2)+' moveto ('+ascii+') dup stringwidth pop 2 div neg 0 rmoveto show');
  }
  ps.push('grestore','showpage','%%EOF');return ps.join('\n');
