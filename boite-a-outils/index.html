@@ -403,6 +403,7 @@ async function qrExportVector(format){
    const blob=new Blob([qrBuildSvg()],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-qr-code.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
    qrSetStatus('SVG vectoriel téléchargé avec cadre et légende.');
   }else{
+   if($('qrSilhouetteShape')?.value&&$('qrSilhouetteShape').value!=='square'){qrSetStatus('L’export EPS conserve uniquement la matrice carrée. Utilise SVG ou PNG pour garder la silhouette.',true);return}
    const blob=new Blob([qrBuildEps()],{type:'application/postscript'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-qr-code.eps';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
    qrSetStatus('EPS vectoriel téléchargé. Le dégradé est aplati et le logo intégré est omis dans ce format.');
   }
