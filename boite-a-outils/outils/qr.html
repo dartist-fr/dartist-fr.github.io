@@ -4,6 +4,9 @@
   <div class="qr-controls">
     <div class="qr-tabs" role="tablist" aria-label="Fonctions QR Code">
       <button class="qr-tab active" type="button" data-qr-tab="create" role="tab" aria-selected="true">Créer</button>
+      <button class="qr-tab" type="button" data-qr-tab="art" role="tab" aria-selected="false">QR artistiques</button>
+      <button class="qr-tab" type="button" data-qr-tab="manage" role="tab" aria-selected="false">Gestion avancée</button>
+      <button class="qr-tab" type="button" data-qr-tab="help" role="tab" aria-selected="false">Scanner & aide</button>
       <button class="qr-tab" type="button" data-qr-tab="batch" role="tab" aria-selected="false">En série</button>
       <button class="qr-tab" type="button" data-qr-tab="scan" role="tab" aria-selected="false">Lire & vérifier</button>
     </div>
@@ -80,6 +83,50 @@
         <p id="qrScanStatus" class="status" role="status"></p>
         <div class="field"><label for="qrScanResult">Contenu détecté</label><textarea id="qrScanResult" class="control" rows="4" readonly placeholder="Aucun contenu détecté pour le moment."></textarea></div>
         <div class="actions"><button class="btn" id="qrScanCopy" type="button" disabled>Copier le contenu</button><button class="btn" id="qrScanOpen" type="button" disabled>Ouvrir le lien</button></div>
+      </div>
+    </section>
+
+    <section class="qr-pane hidden" data-qr-pane="art">
+      <div class="qr-section"><h3>QR artistiques & silhouettes</h3>
+        <p class="hint">Les formes proposées habillent le QR sans modifier ses modules. Les QR illustrés construits à partir d'une photo demandent un moteur dédié et des tests de lecture : ils ne sont pas simulés.</p>
+        <div class="field"><label for="qrSilhouette">Silhouette décorative</label><select id="qrSilhouette" class="control"><option value="classic">Classique</option><option value="circle">Cadre circulaire</option><option value="heart">Cœur (cadre)</option><option value="star">Étoile (cadre)</option><option value="leaf">Feuille (cadre)</option><option value="hex">Hexagone (cadre)</option></select></div>
+        <div id="qrSilhouettePreview" class="qr-scan-preview">Le QR reste standard afin de préserver sa lisibilité.</div>
+        <div class="actions"><button class="btn" type="button" id="qrApplySilhouette">Appliquer un cadre arrondi</button><button class="btn" type="button" id="qrClearSilhouette">Réinitialiser</button></div>
+        <div class="qr-section"><h3>QR illustré à partir d'une photo</h3><p class="hint">Moteur spécialisé non intégré à cette version. La fonction reste désactivée plutôt que de produire une image décorative non fiable.</p><button class="btn" type="button" disabled>Génération illustrée — indisponible</button></div>
+      </div>
+    </section>
+    <section class="qr-pane hidden" data-qr-pane="manage">
+      <div class="qr-section"><h3>Thèmes personnels</h3><p class="hint">Enregistrement local dans ce navigateur.</p>
+        <div class="field"><label for="qrThemeName">Nom du thème</label><input id="qrThemeName" class="control" maxlength="48" placeholder="Mon identité visuelle"></div>
+        <div class="actions"><button class="btn primary" type="button" id="qrThemeSave">Enregistrer le thème</button><button class="btn" type="button" id="qrThemeExport">Exporter</button><label class="btn" for="qrThemeImportFile">Importer</label><input id="qrThemeImportFile" class="hidden" type="file" accept="application/json,.json"></div>
+        <div id="qrThemeList" class="qr-batch-list"></div><p id="qrThemeStatus" class="status" role="status"></p>
+      </div>
+      <div class="qr-section"><h3>Intégration HTML</h3><p class="hint">Génère un extrait HTML autonome à partir du QR actuel.</p>
+        <div class="field"><label for="qrEmbedAlt">Texte alternatif</label><input id="qrEmbedAlt" class="control" value="QR code"></div>
+        <div class="actions"><button class="btn" type="button" id="qrEmbedGenerate">Générer</button><button class="btn" type="button" id="qrEmbedCopy">Copier</button></div>
+        <textarea id="qrEmbedOutput" class="control" rows="5" readonly placeholder="Code HTML…"></textarea>
+        <p class="hint">Pour Canva, télécharge le PNG puis importe-le. L'extension navigateur et l'intégration native Canva nécessitent des livrables distincts.</p>
+      </div>
+      <div class="qr-section"><h3>Services nécessitant un serveur</h3><div class="qr-batch-list">
+        <div class="qr-batch-item"><div><strong>QR dynamiques & redirections</strong><small>API et hébergement requis · non activé</small></div></div>
+        <div class="qr-batch-item"><div><strong>Statistiques & campagnes</strong><small>Base de données requise · non activé</small></div></div>
+        <div class="qr-batch-item"><div><strong>Comptes & bibliothèque cloud</strong><small>Authentification requise · non activé</small></div></div>
+        <div class="qr-batch-item"><div><strong>Collaboration & sauvegarde</strong><small>Serveur requis · non activé</small></div></div>
+      </div></div>
+    </section>
+    <section class="qr-pane hidden" data-qr-pane="help">
+      <div class="qr-section"><h3>Scanner avec la caméra</h3><p class="hint">Fonctionne sur HTTPS avec autorisation caméra. La détection multiple dépend du navigateur.</p>
+        <div class="actions"><button class="btn primary" type="button" id="qrCameraStart">Démarrer</button><button class="btn" type="button" id="qrCameraStop" disabled>Arrêter</button></div>
+        <video id="qrCameraVideo" playsinline muted class="previewframe hidden" aria-label="Flux caméra"></video><p id="qrCameraStatus" class="status" role="status"></p>
+      </div>
+      <div class="qr-section"><h3>Extraction de plusieurs QR codes</h3><div class="field"><label for="qrMultiImage">Image (PNG, JPG, WebP)</label><input id="qrMultiImage" class="control" type="file" accept="image/png,image/jpeg,image/webp"></div><div id="qrMultiResults" class="result">Aucun résultat.</div></div>
+      <div class="qr-section"><h3>Vérificateur de lisibilité</h3><div class="field"><label for="qrAuditImage">Image du QR code</label><input id="qrAuditImage" class="control" type="file" accept="image/png,image/jpeg,image/webp"></div><div id="qrAuditResult" class="result">En attente d'une image.</div><p class="hint">Le diagnostic logiciel ne remplace pas un scan réel sur plusieurs téléphones.</p></div>
+      <div class="qr-section"><h3>Aide & confidentialité</h3>
+        <details><summary>Pourquoi mon QR code ne fonctionne-t-il pas ?</summary><p class="hint">Vérifie le contraste, la marge blanche, la taille d'impression et la densité. Évite un logo trop grand et teste le fichier final sur plusieurs appareils.</p></details>
+        <details><summary>Mes données sont-elles envoyées sur Internet ?</summary><p class="hint">La génération et le traitement des fichiers sont locaux. Les bibliothèques sont chargées depuis des CDN. Les fonctions serveur restent séparées.</p></details>
+        <details><summary>Que signifie ECC ?</summary><p class="hint">Les niveaux L, M, Q et H indiquent la correction d'erreur. Les taux sont approximatifs et ne garantissent pas la récupération d'une surface équivalente.</p></details>
+        <details><summary>Quel ECC choisir avec un logo ?</summary><p class="hint">H est généralement conseillé, sans garantir la lecture. Réduis le logo et teste le code imprimé.</p></details>
+        <details><summary>Un QR statique peut-il être modifié ?</summary><p class="hint">Non : son contenu est encodé directement. Un QR dynamique nécessite une URL de redirection hébergée sur un serveur.</p></details>
       </div>
     </section>
   </div>
