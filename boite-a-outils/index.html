@@ -127,6 +127,44 @@ $('baseColor').addEventListener('input',palette);$('baseHex').addEventListener('
 $('paletteGenerate').addEventListener('click',palette);$('paletteRandom').addEventListener('click',()=>{$('baseColor').value=rgbHex([Math.random()*255,Math.random()*255,Math.random()*255]);palette()});$('paletteCss').addEventListener('click',()=>{const css=[...document.querySelectorAll('[data-hex]')].map((b,i)=>'  --color-'+(i+1)+': '+b.dataset.hex+';').join('\n');copyText(':root {\n'+css+'\n}','paletteStatus')});palette();
 function updateGradient(){const a=$('gradA').value,b=$('gradB').value,ang=$('gradAngle').value;const css='linear-gradient('+ang+'deg, '+a+', '+b+')';$('gradAngleValue').textContent=ang+'°';$('gradientPreview').style.background=css;$('gradCss').value='background: '+css+';'}['gradA','gradB','gradAngle'].forEach(id=>$(id).addEventListener('input',updateGradient));$('gradCopy').addEventListener('click',()=>copyText($('gradCss').value,'gradStatus'));updateGradient();
 let qrStyling=null,qrLogoData=null,qrSilhouetteData=null,qrBatchItems=[];
+const qrSilhouettePaths={
+ fish:'M90 500 C210 260 520 210 760 390 L930 220 L900 450 L980 500 L900 550 L930 780 L760 610 C520 790 210 740 90 500 Z',
+ heart:'M500 880 C410 790 100 560 100 330 C100 80 400 40 500 260 C600 40 900 80 900 330 C900 560 590 790 500 880 Z',
+ star:'M500 70 L610 360 L930 370 L680 565 L770 880 L500 690 L230 880 L320 565 L70 370 L390 360 Z',
+ cat:'M170 900 L170 330 L80 90 L360 230 Q500 170 640 230 L920 90 L830 900 Z',
+ dog:'M120 900 L120 390 Q80 170 260 150 L390 270 Q500 220 610 270 L740 150 Q920 170 880 390 L880 900 Z',
+ butterfly:'M500 500 C330 80 40 80 90 390 C120 570 330 600 500 500 C670 600 880 570 910 390 C960 80 670 80 500 500 C330 920 160 900 230 650 C300 510 420 480 500 500 C580 480 700 510 770 650 C840 900 670 920 500 500 Z',
+ house:'M80 450 L500 80 L920 450 L830 450 L830 900 L170 900 L170 450 Z',
+ football:'M500 70 C760 70 930 260 930 500 C930 740 760 930 500 930 C240 930 70 740 70 500 C70 260 240 70 500 70 Z',
+ circle:'M500 70 A430 430 0 1 1 499 70 Z'
+};
+function qrShapePath(name){
+ const d=qrSilhouettePaths[name];if(!d)return null;
+ const p=new Path2D(d);
+ // Les trois repères QR restent intégralement visibles, même près du bord de la forme.
+ const count=qrcode(0,$('qrEcc').value);count.addData(qrContent(),'Byte');count.make();
+ const n=count.getModuleCount(),s=1000/n,zone=s*8.5;
+ p.addPath(new Path2D('M0 0 H'+zone+' V'+zone+' H0 Z'));
+ p.addPath(new Path2D('M'+(1000-zone)+' 0 H1000 V'+zone+' H'+(1000-zone)+' Z'));
+ p.addPath(new Path2D('M0 '+(1000-zone)+' H'+zone+' V1000 H0 Z'));
+ return p;
+}
+function qrBuildSilhouetteCanvas(){
+ const value=qrContent();if(!value||typeof qrcode!=='function'||typeof jsQR!=='function')return null;
+ const ecc=$('qrEcc').value,code=qrcode(0,ecc);code.addData(value,'Byte');code.make();
+ const n=code.getModuleCount(),size=+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,unit=size/n,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape);
+ if(!path)return null;
+ const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true}),bg=$('qrTransparent').checked?'rgba(255,255,255,0)':$('qrBg').value;
+ ctx.fillStyle=bg;ctx.fillRect(0,0,total,total);ctx.save();ctx.translate(margin,margin);ctx.scale(size/1000,size/1000);ctx.clip(path);
+ const fg=$('qrFg').value;ctx.fillStyle=fg;
+ for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col))ctx.fillRect(col*1000/n,r*1000/n,1000/n+.15,1000/n+.15);
+ ctx.restore();
+ const image=ctx.getImageData(0,0,total,total),decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'});
+ if(!decoded||decoded.data!==value)return null;
+ return canvas;
+}
+
 const qrIds=['qrType','qrInput','qrSsid','qrWifiPassword','qrWifiHidden','qrEncryption','qrFirstName','qrLastName','qrOrg','qrVcardTitle','qrVcardAddress','qrVcardPhone','qrVcardEmail','qrWebsite','qrWaPhone','qrWaCountry','qrWaMessage','qrEmail','qrSubject','qrEmailBody','qrPhone','qrSmsPhone','qrSmsMessage','qrLatitude','qrLongitude','qrLocationName','qrLocationLink','qrGradientAngle','qrFg','qrBg','qrFg2','qrGradientType','qrEye','qrEyeCenter','qrBodyShape','qrEyeFrameShape','qrEyeCenterShape','qrEcc','qrTransparent','qrFrame','qrSize','qrMargin','qrLogoSize','qrCaption','qrCaptionText'];
 function qrEsc(v){return String(v||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/:/g,'\\:').replace(/"/g,'\\"');}
 function qrContent(){
@@ -225,7 +263,14 @@ function qrArtTestRead(){
 function generateQR(){
  const value=qrContent(),box=$('qrBox'),validation=qrValidationMessage();if(validation){box.innerHTML='<span class="qr-placeholder">'+validation+'</span>';qrStyling=null;qrSetStatus(validation,true);return}if(!value){box.innerHTML='<span class="qr-placeholder">Complète les champs nécessaires pour créer ton QR code.</span>';qrStyling=null;qrSetStatus('Contenu manquant ou invalide.',true);return}
  if(typeof QRCodeStyling==='undefined'){qrStyling=null;qrSetStatus('La bibliothèque QR est indisponible. Vérifie ta connexion.',true);return}
- try{qrStyling=new QRCodeStyling(qrOptions());box.innerHTML='';qrStyling.append(box);setTimeout(qrFramePreview,60);$('qrPreviewMeta').textContent=$('qrSize').value+' × '+$('qrSize').value+' px';qrSetStatus('QR code généré. Scanne-le avant de le diffuser.')}
+ try{
+  if($('qrSilhouetteShape')?.value&&$('qrSilhouetteShape').value!=='square'){
+   const shaped=qrBuildSilhouetteCanvas();
+   if(shaped){qrStyling={};box.innerHTML='';shaped.style.cssText='width:min(100%,512px);height:auto;display:block';box.appendChild(shaped);$('qrPreviewMeta').textContent=$('qrSize').value+' px · '+$('qrSilhouetteShape').selectedOptions[0].text;qrSetStatus('Silhouette validée : le lecteur local décode correctement le contenu.');return}
+   qrStyling=null;box.innerHTML='<span class="qr-placeholder">Cette silhouette ne permet pas une lecture fiable avec ce contenu. Le QR carré reste disponible : choisis une autre forme ou raccourcis le contenu.</span>';qrSetStatus('Silhouette non validée : QR carré recommandé.',true);return;
+  }
+  qrStyling=new QRCodeStyling(qrOptions());box.innerHTML='';qrStyling.append(box);setTimeout(qrFramePreview,60);$('qrPreviewMeta').textContent=$('qrSize').value+' × '+$('qrSize').value+' px';qrSetStatus('QR code généré. Scanne-le avant de le diffuser.')
+ }
  catch(e){qrStyling=null;box.innerHTML='<span class="qr-placeholder">Génération impossible.</span>';qrSetStatus('Erreur : '+e.message,true)}
 }
 function qrApplyPreset(name){
@@ -253,6 +298,7 @@ $('qrEmojiOpen').addEventListener('click',()=>{$('qrEmojiDialog').showModal();qr
 $('qrEmojiClose').addEventListener('click',()=>$('qrEmojiDialog').close());
 $('qrEmojiSearch').addEventListener('input',qrRenderEmojiPicker);
 $('qrEmojiCategory').addEventListener('change',qrRenderEmojiPicker);
+$('qrSilhouetteShape')?.addEventListener('change',()=>{if($('qrSilhouetteShape').value!=='square')$('qrEcc').value='H';generateQR()});
 $('qrEmojiClear').addEventListener('click',()=>{qrSilhouetteData=null;$('qrSilhouettePreview').textContent='Aucun';$('qrEmojiClear').disabled=true;generateQR()});
 $('qrType').addEventListener('change',qrTypeFields);$('qrWifiShowPassword')?.addEventListener('change',()=>{$('qrWifiPassword').type=$('qrWifiShowPassword').checked?'text':'password'});$('qrGradientAngle')?.addEventListener('input',()=>{const o=$('qrGradientAngleValue');if(o)o.textContent=$('qrGradientAngle').value+'°';generateQR()});
 qrIds.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',()=>{if(id==='qrLogoSize')$('qrLogoSizeValue').textContent=el.value+'%';if(id==='qrMargin')$('qrMarginValue').textContent=el.value+'%';generateQR()});el.addEventListener('change',generateQR)}});
@@ -261,13 +307,13 @@ $('qrGradient').addEventListener('change',()=>{$('qrGradientFields').classList.t
 $('qrCaption').addEventListener('change',()=>{$('qrCaptionField').classList.toggle('hidden',!$('qrCaption').checked);generateQR()});
 $('qrGenerate').addEventListener('click',generateQR);
 $('qrLogo').addEventListener('change',()=>{const file=$('qrLogo').files[0];if(!file){qrLogoData=null;generateQR();return}if(!/^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type)||file.size>2*1024*1024){qrSetStatus('Choisis une image PNG, JPG, WebP ou SVG de 2 Mo maximum.',true);$('qrLogo').value='';return}const reader=new FileReader();reader.onload=()=>{qrLogoData=reader.result;generateQR()};reader.onerror=()=>qrSetStatus('Image du logo illisible.',true);reader.readAsDataURL(file)});
-$('qrReset').addEventListener('click',()=>{Object.assign($('qrFg'),{value:'#172238'});$('qrBg').value='#ffffff';$('qrFg2').value='#b8853c';$('qrEye').value='#172238';$('qrEyeCenter').value='#172238';$('qrGradient').checked=false;$('qrGradientFields').classList.add('hidden');$('qrGradientType').value='linear';if($('qrGradientAngle'))$('qrGradientAngle').value=0;if($('qrGradientAngleValue'))$('qrGradientAngleValue').textContent='0°';$('qrTransparent').checked=false;$('qrFrame').value='none';$('qrLogoSize').value=18;$('qrLogoSizeValue').textContent='18%';$('qrSize').value=512;$('qrMargin').value=4;$('qrMarginValue').textContent='4%';$('qrCaption').checked=false;$('qrCaptionField').classList.add('hidden');$('qrCaptionText').value='SCAN ME';$('qrLogo').value='';qrLogoData=null;qrSilhouetteData=null;if($('qrSilhouettePreview'))$('qrSilhouettePreview').textContent='Aucun';if($('qrEmojiClear'))$('qrEmojiClear').disabled=true;$('qrBodyShape').value='square';$('qrEyeFrameShape').value='square';$('qrEyeCenterShape').value='square';$('qrEcc').value='M';$('qrPreset').value='custom';generateQR()});
+$('qrReset').addEventListener('click',()=>{Object.assign($('qrFg'),{value:'#172238'});$('qrBg').value='#ffffff';$('qrFg2').value='#b8853c';$('qrEye').value='#172238';$('qrEyeCenter').value='#172238';$('qrGradient').checked=false;$('qrGradientFields').classList.add('hidden');$('qrGradientType').value='linear';if($('qrGradientAngle'))$('qrGradientAngle').value=0;if($('qrGradientAngleValue'))$('qrGradientAngleValue').textContent='0°';$('qrTransparent').checked=false;$('qrFrame').value='none';$('qrLogoSize').value=18;$('qrLogoSizeValue').textContent='18%';$('qrSize').value=512;$('qrMargin').value=4;$('qrMarginValue').textContent='4%';$('qrCaption').checked=false;$('qrCaptionField').classList.add('hidden');$('qrCaptionText').value='SCAN ME';$('qrLogo').value='';qrLogoData=null;qrSilhouetteData=null;if($('qrSilhouettePreview'))$('qrSilhouettePreview').textContent='Aucun';if($('qrEmojiClear'))$('qrEmojiClear').disabled=true;$('qrBodyShape').value='square';$('qrEyeFrameShape').value='square';$('qrEyeCenterShape').value='square';$('qrEcc').value='M';if($('qrSilhouetteShape'))$('qrSilhouetteShape').value='square';$('qrPreset').value='custom';generateQR()});
 document.querySelectorAll('[data-qr-tab]').forEach(btn=>btn.addEventListener('click',()=>{const tab=btn.dataset.qrTab;document.querySelectorAll('[data-qr-tab]').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});document.querySelectorAll('[data-qr-pane]').forEach(p=>{const active=p.dataset.qrPane===tab;p.classList.toggle('active',active);p.classList.toggle('hidden',!active)})}));
 async function qrExport(format){
  if(!qrStyling){qrSetStatus('Génère d’abord un QR code.',true);return}
  try{
   const node=$('qrBox').querySelector('.qr-export-frame')||$('qrBox').firstElementChild;
-  const canvas=node&&node.querySelector('canvas');if(!canvas)throw Error('Aperçu non disponible');
+  const canvas=node&&(node.matches('canvas')?node:node.querySelector('canvas'));if(!canvas)throw Error('Aperçu non disponible');
   const size=+$('qrSize').value,caption=$('qrCaption').checked?$('qrCaptionText').value.trim():'',frame=$('qrFrame').value,pad=20,edge=frame==='none'||frame.startsWith('banner')||frame==='label'?0:20,capH=caption?Math.max(30,Math.round(size*.055))+12:0,topCaption=caption&&frame==='banner-top',w=size+2*(pad+edge),h=size+2*(pad+edge)+capH;
   const out=document.createElement('canvas');out.width=w;out.height=h;const ctx=out.getContext('2d');
   if(!$('qrTransparent').checked||format==='jpg'){ctx.fillStyle=$('qrBg').value;ctx.fillRect(0,0,w,h)}
