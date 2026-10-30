@@ -55,14 +55,59 @@ async function loadImageFile(file){
   if(!file||!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>15*1024*1024)throw Error('Choisis une image PNG, JPG ou WebP de moins de 15 Mo.');
   const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();URL.revokeObjectURL(url);return img}catch(e){URL.revokeObjectURL(url);throw e}
 }
+let multiResults=[];
+function scanQrTiles(canvas){
+ const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=canvas.width,h=canvas.height,found=[];
+ const add=(code,ox,oy)=>{
+  if(!code?.data)return;
+  const loc=code.location||{},points=['topLeftCorner','topRightCorner','bottomLeftCorner','bottomRightCorner'].map(k=>loc[k]).filter(Boolean);
+  const cx=points.length?points.reduce((v,p)=>v+p.x,0)/points.length+ox:ox;
+  const cy=points.length?points.reduce((v,p)=>v+p.y,0)/points.length+oy:oy;
+  const duplicate=found.some(item=>item.data===code.data&&Math.hypot(item.x-cx,item.y-cy)<Math.max(24,Math.min(w,h)*.08));
+  if(!duplicate)found.push({data:code.data,x:cx,y:cy});
+ };
+ const scan=(x,y,rw,rh)=>{
+  if(rw<80||rh<80)return;
+  const pixels=ctx.getImageData(Math.round(x),Math.round(y),Math.round(rw),Math.round(rh));
+  const code=jsQR(pixels.data,pixels.width,pixels.height,{inversionAttempts:'attemptBoth'});
+  if(code)add(code,x,y);
+ };
+ scan(0,0,w,h);
+ for(const ratio of [.72,.48]){
+  const tw=Math.round(w*ratio),th=Math.round(h*ratio);
+  const xs=[0,Math.round((w-tw)/2),w-tw],ys=[0,Math.round((h-th)/2),h-th];
+  for(const y of [...new Set(ys)])for(const x of [...new Set(xs)])scan(x,y,tw,th);
+  if(found.length>=30)break;
+ }
+ return found.slice(0,30);
+}
+function csvCell(value){return '"'+String(value??'').replace(/"/g,'""')+'"'}
 $('qrMultiImage')?.addEventListener('change',async e=>{
- const host=$('qrMultiResults');try{const img=await loadImageFile(e.target.files?.[0]);const canvas=document.createElement('canvas');const scale=Math.min(1,2200/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);let values=[];
- if('BarcodeDetector'in window){const detector=new BarcodeDetector({formats:['qr_code']});values=await detector.detect(canvas)}
- else if(window.jsQR){const d=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(d.data,d.width,d.height,{inversionAttempts:'attemptBoth'});if(code)values=[{rawValue:code.data,format:'qr_code'}]}
- host.innerHTML='';if(!values.length){host.textContent='Aucun QR code détecté. Sur ce navigateur, la détection multiple peut ne pas être prise en charge.';return}
- values.forEach((code,i)=>{const row=document.createElement('div');row.className='qr-batch-item';const text=document.createElement('span');text.textContent='QR '+(i+1)+' — '+code.rawValue;const copy=document.createElement('button');copy.className='btn small';copy.textContent='Copier';copy.addEventListener('click',()=>navigator.clipboard?.writeText(code.rawValue));row.append(text,copy);host.append(row)});
- }catch(err){host.textContent=err.message}finally{e.target.value=''}
+ const host=$('qrMultiResults'),copy=$('qrMultiCopyAll'),csv=$('qrMultiCsv');multiResults=[];copy.disabled=true;csv.disabled=true;
+ try{
+  const img=await loadImageFile(e.target.files?.[0]),canvas=document.createElement('canvas');
+  const scale=Math.min(1,2600/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  if('BarcodeDetector'in window){
+   try{const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);multiResults=codes.map(c=>({data:c.rawValue,x:0,y:0})).filter(c=>c.data).slice(0,30)}catch{}
+  }
+  if(!multiResults.length&&window.jsQR)multiResults=scanQrTiles(canvas);
+  host.innerHTML='';
+  if(!multiResults.length){host.textContent='Aucun QR code détecté. Essaie une image plus nette, mieux éclairée ou recadrée.';return}
+  multiResults.forEach((item,i)=>{
+   const row=document.createElement('div');row.className='qr-batch-item';
+   const info=document.createElement('div'),title=document.createElement('strong'),value=document.createElement('small');
+   title.textContent='QR '+(i+1);value.textContent=item.data;info.append(title,value);
+   const button=document.createElement('button');button.className='btn small';button.type='button';button.textContent='Copier';button.addEventListener('click',()=>navigator.clipboard?.writeText(item.data));
+   row.append(info,button);host.append(row);
+  });
+  copy.disabled=false;csv.disabled=false;
+  $('qrMultiStatus').textContent=multiResults.length+' QR code(s) extrait(s)'+(multiResults.some(x=>x.x||x.y)?' avec recherche par zones.':' avec le lecteur natif du navigateur.');
+ }catch(err){host.textContent=err.message;$('qrMultiStatus').textContent='';}
+ finally{e.target.value=''}
 });
+$('qrMultiCopyAll')?.addEventListener('click',async()=>{if(!multiResults.length)return;try{await navigator.clipboard.writeText(multiResults.map(x=>x.data).join('\n'));$('qrMultiStatus').textContent='Tous les contenus ont été copiés.'}catch{$('qrMultiStatus').textContent='Copie non autorisée par le navigateur.'}});
+$('qrMultiCsv')?.addEventListener('click',()=>{if(!multiResults.length)return;const rows=[['numero','contenu'],...multiResults.map((x,i)=>[i+1,x.data])];const blob=new Blob(['\uFEFF'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});downloadBlob(blob,'dartist-qr-extraits.csv')});
 $('qrAuditImage')?.addEventListener('change',async e=>{
  const host=$('qrAuditResult');try{const img=await loadImageFile(e.target.files?.[0]);const canvas=document.createElement('canvas');const scale=Math.min(1,2200/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;let min=255,max=0,sum=0,count=0;for(let i=0;i<data.length;i+=16){const lum=.2126*data[i]+.7152*data[i+1]+.0722*data[i+2];min=Math.min(min,lum);max=Math.max(max,lum);sum+=lum;count++}
  let decoded=false,content='';if('BarcodeDetector'in window){const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);decoded=codes.length>0;content=codes[0]?.rawValue||''}else if(window.jsQR){const d=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(d.data,d.width,d.height,{inversionAttempts:'attemptBoth'});decoded=!!code;content=code?.data||''}
