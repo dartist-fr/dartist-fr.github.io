@@ -163,7 +163,7 @@ function qrArtDraw(){
    else ctx.rect(x+unit*.035,y+unit*.035,unit*.93,unit*.93);
   }
   ctx.clip();
-  if(qrArtPhotoImage)ctx.drawImage(qrArtPhotoImage,offset,offset,count*unit,count*unit);
+  if(qrArtPhotoImage){const iw=qrArtPhotoImage.naturalWidth||qrArtPhotoImage.width,ih=qrArtPhotoImage.naturalHeight||qrArtPhotoImage.height,target=count*unit,scale=Math.max(target/iw,target/ih),sw=target/scale,sh=target/scale,sx=(iw-sw)/2,sy=(ih-sh)/2;ctx.drawImage(qrArtPhotoImage,sx,sy,sw,sh,offset,offset,target,target)}
   else{ctx.fillStyle=$('qrArtColor').value;ctx.fillRect(offset,offset,count*unit,count*unit)}
   ctx.globalAlpha=(+$('qrArtOpacity').value||82)/100;
   ctx.fillStyle=$('qrArtColor').value;ctx.fillRect(offset,offset,count*unit,count*unit);
@@ -296,7 +296,7 @@ async function qrExportVector(format){
    qrSetStatus('SVG vectoriel téléchargé avec cadre et légende.');
   }else{
    const blob=new Blob([qrBuildEps()],{type:'application/postscript'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-qr-code.eps';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
-   qrSetStatus(qrLogoData?'EPS vectoriel téléchargé. Le logo intégré au QR est omis dans le format EPS.':'EPS vectoriel téléchargé.');
+   qrSetStatus('EPS vectoriel téléchargé. Le dégradé est aplati et le logo intégré est omis dans ce format.');
   }
  }catch(error){qrSetStatus('Export '+format.toUpperCase()+' impossible : '+error.message,true)}
 }
