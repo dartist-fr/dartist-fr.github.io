@@ -149,22 +149,25 @@ function qrShapePath(name){
  p.addPath(new Path2D('M0 '+(1000-zone)+' H'+zone+' V1000 H0 Z'));
  return p;
 }
-function qrBuildSilhouetteCanvas(){
- const value=qrContent();if(!value||typeof qrcode!=='function'||typeof jsQR!=='function')return null;
+function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
+ const value=valueOverride||qrContent();if(!value||typeof qrcode!=='function')return null;
  const ecc=$('qrEcc').value,code=qrcode(0,ecc);code.addData(value,'Byte');code.make();
- const n=code.getModuleCount(),size=+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,unit=size/n,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape);
+ const n=code.getModuleCount(),size=sizeOverride||+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape);
  if(!path)return null;
  const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),bg=$('qrTransparent').checked?'rgba(255,255,255,0)':$('qrBg').value;
- ctx.fillStyle=bg;ctx.fillRect(0,0,total,total);ctx.save();ctx.translate(margin,margin);ctx.scale(size/1000,size/1000);
- // La matrice complète reste présente en gris doux pour préserver le décodage.
- ctx.fillStyle='#777777';
- for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col))ctx.fillRect(col*1000/n,r*1000/n,1000/n+.15,1000/n+.15);
- ctx.clip(path);const fg=$('qrFg').value;ctx.fillStyle=fg;
+ ctx.fillStyle=bg;ctx.fillRect(0,0,total,total);
+ ctx.save();ctx.translate(margin,margin);ctx.scale(size/1000,size/1000);ctx.clip(path);
+ // Les modules sont dessinés uniquement à l'intérieur du contour : plus de QR carré gris derrière.
+ const fg=$('qrFg').value;ctx.fillStyle=fg;
  for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col))ctx.fillRect(col*1000/n,r*1000/n,1000/n+.15,1000/n+.15);
  ctx.restore();
- const image=ctx.getImageData(0,0,total,total),decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'});
- if(!decoded||decoded.data!==value)return null;
+ let decoded=null;
+ if(typeof jsQR==='function'){
+  try{const image=ctx.getImageData(0,0,total,total);decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'})}catch(e){}
+ }
+ canvas.qrDecodeValid=!!decoded&&decoded.data===value;
+ canvas.qrShapeName=shape;
  return canvas;
 }
 
@@ -269,8 +272,8 @@ function generateQR(){
  try{
   if($('qrSilhouetteShape')?.value&&$('qrSilhouetteShape').value!=='square'){
    const shaped=qrBuildSilhouetteCanvas();
-   if(shaped){qrStyling={};box.innerHTML='';shaped.style.cssText='width:min(100%,512px);height:auto;display:block';box.appendChild(shaped);$('qrPreviewMeta').textContent=$('qrSize').value+' px · '+$('qrSilhouetteShape').selectedOptions[0].text;qrSetStatus('Silhouette validée : le lecteur local décode correctement le contenu.');return}
-   qrStyling=null;box.innerHTML='<span class="qr-placeholder">Cette silhouette ne permet pas une lecture fiable avec ce contenu. Le QR carré reste disponible : choisis une autre forme ou raccourcis le contenu.</span>';qrSetStatus('Silhouette non validée : QR carré recommandé.',true);return;
+   if(shaped){qrStyling={};box.innerHTML='';shaped.style.cssText='width:min(100%,512px);height:auto;display:block';box.appendChild(shaped);$('qrPreviewMeta').textContent=$('qrSize').value+' px · '+$('qrSilhouetteShape').selectedOptions[0].text;qrSetStatus(shaped.qrDecodeValid?'Silhouette lisible par le lecteur local.':'Silhouette artistique affichée. Cette forme ne passe pas le test de lecture automatique : utilise un QR carré si le scan est indispensable.',!shaped.qrDecodeValid);return}
+   qrStyling=null;box.innerHTML='<span class="qr-placeholder">Impossible de dessiner cette silhouette.</span>';qrSetStatus('Silhouette indisponible.',true);return;
   }
   qrStyling=new QRCodeStyling(qrOptions());box.innerHTML='';qrStyling.append(box);setTimeout(qrFramePreview,60);$('qrPreviewMeta').textContent=$('qrSize').value+' × '+$('qrSize').value+' px';qrSetStatus('QR code généré. Scanne-le avant de le diffuser.')
  }
@@ -363,7 +366,7 @@ function qrBuildSvg(){
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
- if(shapeName!=='square'&&qrSilhouettePaths[shapeName])output+=body.split(fill).join('#777777')+'<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';else output+=body;
+ if(shapeName!=='square'&&qrSilhouettePaths[shapeName])output+='<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';else output+=body;
  if(qrLogoData||qrSilhouetteData){
   const logoData=qrLogoData||qrSilhouetteData;
   const logoSide=side*(+$('qrLogoSize').value/100),lx=x+(side-logoSide)/2,ly=y+(side-logoSide)/2;
@@ -412,6 +415,10 @@ async function qrExportVector(format){
 $('qrDownloadSvg').addEventListener('click',()=>qrExportVector('svg'));
 $('qrDownloadEps').addEventListener('click',()=>qrExportVector('eps'));
 async function qrMakeCanvas(value,size){
+ if($('qrSilhouetteShape')?.value&&$('qrSilhouetteShape').value!=='square'){
+  const shaped=qrBuildSilhouetteCanvas(value,size);
+  if(shaped)return Promise.resolve(shaped);
+ }
  return new Promise((resolve,reject)=>{try{const q=new QRCodeStyling({...qrOptions(size),data:value,image:qrLogoData||undefined});const host=document.createElement('div');host.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(host);q.append(host);const check=()=>{const c=host.querySelector('canvas');if(c){const copy=document.createElement('canvas');copy.width=size;copy.height=size;copy.getContext('2d').drawImage(c,0,0,size,size);host.remove();resolve(copy)}else setTimeout(check,40)};setTimeout(check,40);setTimeout(()=>{host.remove();reject(Error('Délai de génération dépassé'))},5000)}catch(e){reject(e)}});
 }
 function qrParseBatch(text){
