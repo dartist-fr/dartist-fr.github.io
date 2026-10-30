@@ -12,7 +12,7 @@ Depuis la page d’accueil, tu peux accéder aux outils suivants :
 | --- | --- |
 | **Compresseur d’images** | Compresser, convertir et redimensionner des images, comparer leur poids et télécharger les résultats individuellement ou en ZIP. |
 | **Lab HTML / CSS** | Écrire du HTML et du CSS, ajuster l’espace de travail et visualiser le résultat dans un aperçu isolé. |
-| **Générateur de QR codes** | Créer des QR codes personnalisés avec différents contenus, formes, couleurs, dégradés, logo, cadre et légende, puis exporter en PNG ou SVG. |
+| **Studio QR** | Créer des QR codes URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnaliser couleurs, dégradés, formes, logo, cadres et légendes ; créer des QR à texture photographique ; générer des lots depuis un CSV ; lire, vérifier et extraire plusieurs QR depuis une image ou une caméra ; exporter PNG, JPG, SVG, PDF et EPS. |
 | **Calculatrice & conversions** | Effectuer des calculs et convertir des unités. |
 | **Formateur JSON** | Formater, minifier et valider des données JSON. |
 | **Palette de couleurs** | Explorer des couleurs et composer des palettes. |
@@ -32,6 +32,22 @@ Le studio propose une recherche, des filtres par catégorie et un thème clair/s
 
 Les images sont traitées localement dans le navigateur et ne sont pas envoyées à un serveur. La prise en charge des formats dépend du navigateur et de ses encodeurs. La création d’archives ZIP utilise JSZip chargé depuis jsDelivr.
 
+
+## Studio QR
+
+**[Ouvrir le Studio QR](https://dartist-fr.github.io/boite-a-outils/?outil=qr)**
+
+- Création de QR statiques : URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et géolocalisation.
+- Personnalisation : palettes, dégradés, formes de modules et de repères, niveau de correction, logo, marge, cadres et légendes.
+- QR photographiques : la photo est utilisée comme texture dans les modules sombres ; un contrôle de décodage local est proposé avant export.
+- Séries : import CSV, préparation jusqu’à 300 codes, téléchargements PNG individuels, ZIP et planches d’impression A4, A3 ou Letter configurables.
+- Lecture : import d’image, lecture caméra lorsque le navigateur l’autorise, extraction multi-QR avec recherche par zones, copie groupée et export CSV.
+- Contrôle : diagnostic de contraste global et test de décodage local. Ces contrôles ne remplacent pas un essai sur plusieurs téléphones ni une vérification après impression.
+- Exports : PNG, JPG, PDF, SVG vectoriel et EPS vectoriel. L’EPS utilise une couleur unie et n’intègre pas le logo ; le SVG conserve le dégradé et le logo.
+- Thèmes : sauvegarde, import et export dans le stockage local du navigateur.
+
+La génération et l’analyse des QR sont réalisées côté navigateur. Les bibliothèques QR, ZIP et PDF sont chargées depuis des CDN et nécessitent une connexion Internet. Les QR dynamiques, statistiques hébergées, comptes, bibliothèque cloud et collaboration demandent un service serveur et ne sont pas activés dans cette version.
+
 ## Utilisation et compatibilité
 
 1. Ouvre la [boîte à outils](https://dartist-fr.github.io/boite-a-outils/).
@@ -44,7 +60,9 @@ Un navigateur récent est recommandé. Certaines fonctions chargent des biblioth
 
 - **HTML, CSS et JavaScript** pour l’interface et les outils.
 - **GitHub Pages** pour l’hébergement statique.
-- **QR Code Styling** pour la génération et la personnalisation des QR codes.
+- **QR Code Styling** et **qrcode-generator** pour la génération, la matrice et les exports vectoriels des QR codes.
+- **jsQR** et l’API **BarcodeDetector** lorsqu’elle est prise en charge pour la lecture des QR codes.
+- **JSZip** pour les archives ZIP et **jsPDF** pour les exports PDF.
 - **JSZip** pour l’export ZIP du compresseur.
 
 ## Structure du dossier
