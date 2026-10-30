@@ -198,7 +198,8 @@ function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated){
  for(let row=0;row<34;row++)for(let col=0;col<34;col++){
   const cx=14+col*pitch,cy=14+row*pitch;
   if(!ctx.isPointInPath(path,cx,cy))continue;
-  if(cx>=plateRect.x&&cx<=plateRect.x+plateRect.w&&cy>=plateRect.y&&cy<=plateRect.y+plateRect.h)continue;
+  const safe= size/2+3;
+  if(cx>=plateRect.x-safe&&cx<=plateRect.x+plateRect.w+safe&&cy>=plateRect.y-safe&&cy<=plateRect.y+plateRect.h+safe)continue;
   // Motif déterministe, dense et régulier : ces modules décorent la silhouette
   // sans modifier les données du QR principal.
   const hash=(row*73856093)^(col*19349663)^0x5f3759df;
@@ -234,9 +235,14 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
  // La silhouette est composée de modules décoratifs, pas d'une masse pleine.
  const plate=total*qrSilhouetteInnerRatio(shapePath),plateX=(total-plate)/2,plateY=(total-plate)/2;
- ctx.save();ctx.scale(total/1000,total/1000);ctx.clip(shapePath);
- qrSilhouetteDecorativeModules(ctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
- ctx.restore();
+ // Rendu des modules sur une surface normalisée 1000×1000, sans transformation
+ // active : les tests géométriques et les coordonnées de dessin partagent ainsi
+ // exactement le même repère.
+ const decorative=document.createElement('canvas');decorative.width=1000;decorative.height=1000;
+ const dctx=decorative.getContext('2d');
+ dctx.save();dctx.clip(shapePath);
+ qrSilhouetteDecorativeModules(dctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
+ dctx.restore();ctx.drawImage(decorative,0,0,total,total);
  ctx.fillStyle=bg;ctx.fillRect(plateX,plateY,plate,plate);
  const cell=plate/(n+8),matrixSide=cell*n,matrixX=plateX+cell*4,matrixY=plateY+cell*4;
  ctx.fillStyle=fg;
