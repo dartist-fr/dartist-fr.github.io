@@ -44,7 +44,7 @@ Les images sont traitées localement dans le navigateur et ne sont pas envoyées
 - Lecture : import d’image, lecture caméra lorsque le navigateur l’autorise, extraction multi-QR avec recherche par zones, copie groupée et export CSV.
 - Contrôle : diagnostic de contraste global et test de décodage local. Ces contrôles ne remplacent pas un essai sur plusieurs téléphones ni une vérification après impression.
 - Exports : PNG, JPG, PDF, SVG vectoriel et EPS vectoriel. L’EPS utilise une couleur unie et n’intègre pas le logo ; le SVG conserve le dégradé et le logo.
-- Thèmes : sauvegarde, import et export dans le stockage local du navigateur.
+- Interface simplifiée en étapes repliables : contenu, design, puis cadre et marge. Le sélecteur de pictogrammes propose une recherche par catégories ; le symbole est intégré au centre du QR, sans découpe de la matrice extérieure. Thèmes : sauvegarde, import et export dans le stockage local du navigateur.
 
 La génération et l’analyse des QR sont réalisées côté navigateur. Les bibliothèques QR, ZIP et PDF sont chargées depuis des CDN et nécessitent une connexion Internet. Les QR dynamiques, statistiques hébergées, comptes, bibliothèque cloud et collaboration demandent un service serveur et ne sont pas activés dans cette version.
 
