@@ -71,12 +71,35 @@
 (async () => {
 const workarea=document.getElementById('workarea');
 const toolIds=["json","colors","gradient","qr","calculator","playground"];
-const toolFragments=await Promise.all(toolIds.map(async id=>{
-  const response=await fetch('outils/'+id+'.html');
-  if(!response.ok)throw new Error('Impossible de charger l’outil '+id);
-  return response.text();
+const toolResults=await Promise.allSettled(toolIds.map(async id=>{
+  const url=new URL('outils/'+id+'.html',document.baseURI);
+  let response;
+  try{response=await fetch(url.href,{cache:'no-cache'});}
+  catch(firstError){response=await fetch(url.href,{cache:'reload'});}
+  if(!response.ok)throw new Error(id+' (HTTP '+response.status+')');
+  const html=await response.text();
+  if(!html.trim())throw new Error(id+' (fichier vide)');
+  return {id,html};
 }));
+const toolFragments=[];
+const failedTools=[];
+toolResults.forEach((result,index)=>{
+  if(result.status==='fulfilled')toolFragments.push(result.value.html);
+  else failedTools.push({id:toolIds[index],reason:result.reason?.message||'Erreur réseau'});
+});
 workarea.innerHTML=toolFragments.join('\n');
+if(failedTools.length){
+  const notice=document.createElement('p');
+  notice.className='status error';
+  notice.setAttribute('role','alert');
+  notice.textContent='Certains outils ne sont pas disponibles : '+failedTools.map(item=>item.id+' ('+item.reason+')').join(', ')+'. Recharge la page pour réessayer.';
+  workarea.prepend(notice);
+  failedTools.forEach(item=>{
+    const card=document.querySelector('.toolcard[data-tool="'+item.id+'"]');
+    if(card){card.setAttribute('aria-disabled','true');card.title='Outil temporairement indisponible : '+item.reason;}
+  });
+}
+if(!toolFragments.length)throw new Error('Aucun fragment d’outil n’a pu être chargé.');
 const $=id=>document.getElementById(id);
 let activeCategory='all';
 const cards=[...document.querySelectorAll('.toolcard')];
