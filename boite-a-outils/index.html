@@ -420,9 +420,10 @@ function qrBuildSvg(){
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
  if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
-  const envelopeX=x-side*.16,envelopeY=y-side*.16,envelopeSide=side*1.32;
+  const envelopeX=x-quiet-pad*.25,envelopeY=y-quiet-pad*.25,envelopeSide=side+2*quiet+pad*.5;
   output+='<path d="'+qrSilhouettePaths[shapeName]+'" transform="translate('+envelopeX+' '+envelopeY+') scale('+(envelopeSide/1000)+')" fill="'+fg+'"/>';
-  output+='<rect x="'+x+'" y="'+y+'" width="'+side+'" height="'+side+'" fill="'+bg+'"/>'+body;
+  // Zone de silence blanche complète autour de la matrice, indispensable à la détection.
+  output+='<rect x="'+(x-quiet)+'" y="'+(y-quiet)+'" width="'+(side+2*quiet)+'" height="'+(side+2*quiet)+'" fill="'+bg+'"/>'+body;
  }else output+=body;
  if(qrLogoData||qrSilhouetteData){
   const logoData=qrLogoData||qrSilhouetteData;
