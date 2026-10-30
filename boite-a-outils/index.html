@@ -213,13 +213,14 @@ function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated,pit
  }
  ctx.restore();
 }
-function qrSilhouetteDecorativeSvg(plateRect,fg,style,pixelated,pitch){
- let out='';const round=style==='rounded',dots=style==='dots';
+function qrSilhouetteDecorativeSvg(pathD,plateRect,fg,style,pixelated,pitch){
+ let out='';const round=style==='rounded',dots=style==='dots',test=document.createElement('canvas'),tctx=test.getContext('2d'),path=new Path2D(pathD);
  const cols=Math.ceil(1000/pitch)+2,rows=Math.ceil(1000/pitch)+2;
  for(let row=-1;row<rows;row++)for(let col=-1;col<cols;col++){
   const x=plateRect.x+col*pitch,y=plateRect.y+row*pitch,cx=x+pitch/2,cy=y+pitch/2;
   const safe=pitch*.05;
   if(cx>=plateRect.x-safe&&cx<=plateRect.x+plateRect.w+safe&&cy>=plateRect.y-safe&&cy<=plateRect.y+plateRect.h+safe)continue;
+  if(!pixelated&&(!tctx.isPointInPath(path,x+1,y+1)||!tctx.isPointInPath(path,x+pitch-1,y+1)||!tctx.isPointInPath(path,x+1,y+pitch-1)||!tctx.isPointInPath(path,x+pitch-1,y+pitch-1)))continue;
   const s=pitch;
   if(dots)out+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(s*.5)+'" fill="'+fg+'"/>';
   else if(round)out+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="'+(s*.24)+'" fill="'+fg+'"/>';
@@ -463,9 +464,10 @@ function qrBuildSvg(){
  let output='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="qrGradient" x1="'+x1+'%" y1="'+y1+'%" x2="'+x2+'%" y2="'+y2+'%"><stop offset="0%" stop-color="'+fg+'"/><stop offset="100%" stop-color="'+$('qrFg2').value+'"/></linearGradient></defs>';
  if(!$('qrTransparent').checked)output+='<rect width="100%" height="100%" fill="'+bg+'"/>';
  if(isShape){
-  const normalizedPlate=ratio*1000,normalizedStart=(1000-normalizedPlate)/2,style=$('qrBodyShape').value,pitch=normalizedPlate/(count+8),pixelated=$('qrPixelatedEdge')?.checked!==false;
-  const decorative=qrSilhouetteDecorativeSvg({x:normalizedStart,y:normalizedStart,w:normalizedPlate,h:normalizedPlate},fg,style,pixelated,pitch);
-  output+='<defs><clipPath id="qrSilhouetteModules" clipPathUnits="userSpaceOnUse"><path d="'+qrSilhouettePaths[shapeName]+'"/></clipPath></defs><g transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" clip-path="url(#qrSilhouetteModules)">'+decorative+'</g>';
+  const scale=shapeSide/1000,pixelated=$('qrPixelatedEdge')?.checked!==false,style=$('qrBodyShape').value;
+  const pitch=unit/scale,normalizedPlate=(side+8*unit)/scale,normalizedStart=(x-4*unit-shapeX)/scale;
+  const decorative=qrSilhouetteDecorativeSvg(qrSilhouettePaths[shapeName],{x:normalizedStart,y:normalizedStart,w:normalizedPlate,h:normalizedPlate},fg,style,pixelated,pitch);
+  output+='<g transform="translate('+shapeX+' '+shapeY+') scale('+scale+')"'+(pixelated?' clip-path="url(#qrSilhouetteModules)"':'')+'>'+decorative+'</g>';
  }
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
