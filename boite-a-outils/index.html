@@ -152,7 +152,8 @@ function qrPointInSvgShape(name,px,py,moduleCount){
  p.addPath(new Path2D('M0 0 H'+z+' V'+z+' H0 Z'));
  p.addPath(new Path2D('M'+(1000-z)+' 0 H1000 V'+z+' H'+(1000-z)+' Z'));
  p.addPath(new Path2D('M0 '+(1000-z)+' H'+z+' V1000 H0 Z'));
- const test=document.createElement('canvas').getContext('2d');
+ const testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
+ const test=testCanvas.getContext('2d');
  return test.isPointInPath(p,px,py);
 }
 function qrShapePath(name,moduleCount){
@@ -178,8 +179,12 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const fg=$('qrFg').value;ctx.fillStyle=fg;
  if($('qrPixelatedEdge')?.checked!==false){
   const module=1000/n;
+  // isPointInPath utilise le repère du canvas, indépendamment de la transformation
+  // de dessin. On teste donc dans un canvas auxiliaire de 1000 × 1000.
+  const shapeTest=document.createElement('canvas');shapeTest.width=1000;shapeTest.height=1000;
+  const shapeCtx=shapeTest.getContext('2d');
   for(let r=0;r<n;r++)for(let col=0;col<n;col++){
-   if(code.isDark(r,col)&&ctx.isPointInPath(path,(col+.5)*module,(r+.5)*module))ctx.fillRect(col*module,r*module,module+.15,module+.15);
+   if(code.isDark(r,col)&&shapeCtx.isPointInPath(path,(col+.5)*module,(r+.5)*module))ctx.fillRect(col*module,r*module,module+.15,module+.15);
   }
  }else{
   ctx.clip(path);
