@@ -89,7 +89,7 @@ $('qrMultiImage')?.addEventListener('change',async e=>{
   const scale=Math.min(1,2600/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);
   const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);
   if('BarcodeDetector'in window){
-   try{const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);multiResults=codes.map(c=>({data:c.rawValue,x:c.boundingBox?.x||0,y:c.boundingBox?.y||0})).filter(c=>c.data).slice(0,30)}catch{}
+   try{const detector=new BarcodeDetector({formats:['qr_code']});const codes=await detector.detect(canvas);multiResults=codes.map(c=>({data:c.rawValue,x:(c.boundingBox?.x||0)+(c.boundingBox?.width||0)/2,y:(c.boundingBox?.y||0)+(c.boundingBox?.height||0)/2})).filter(c=>c.data).slice(0,30)}catch{}
   }
   if(window.jsQR){
    const tiled=scanQrTiles(canvas);
