@@ -202,7 +202,7 @@ $('qrScanFile').addEventListener('change',async()=>{
   const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight)),canvas=document.createElement('canvas');canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),code=jsQR(pixels.data,pixels.width,pixels.height,{inversionAttempts:'attemptBoth'});
   if(code){$('qrScanResult').value=code.data;status('qrScanStatus','QR code détecté et décodé. Vérifie le contenu avant de l’ouvrir.');$('qrScanCopy').disabled=false;$('qrScanOpen').disabled=!/^https?:\/\//i.test(code.data)}
   else{$('qrScanResult').value='';status('qrScanStatus','Aucun QR code lisible détecté dans cette image.',true);$('qrScanCopy').disabled=true;$('qrScanOpen').disabled=true}
-  URL.revokeObjectURL(qrScanObjectUrl);qrScanObjectUrl=null;
+  // L’URL reste active pour conserver l’aperçu affiché ; elle sera libérée au prochain import.
  };img.onerror=()=>status('qrScanStatus','Impossible de lire cette image.',true);img.src=qrScanObjectUrl;
 });
 $('qrScanCopy').addEventListener('click',()=>copyText($('qrScanResult').value,'qrScanStatus'));
