@@ -50,16 +50,14 @@
       </details><details class="qr-section qr-group" open><summary>Design <small>Thème, silhouette, formes et couleurs</small></summary>
         <div class="field"><label for="qrPreset">Theme</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option><option value="rounded">Arrondi · doux</option><option value="social">Réseaux sociaux</option><option value="professional">Professionnel</option><option value="event">Événementiel</option><option value="print">Impression</option><option value="inverted">Inversé · fond sombre</option></select></div>
         <div class="qr-silhouette-field">
-          <div class="qr-field-heading"><label for="qrSilhouetteShape">Silhouette du QR</label><span class="hint">La matrice épouse la forme</span></div>
-          <select id="qrSilhouetteShape" class="control">
-            <option value="square">QR classique</option><option value="fish">Poisson</option><option value="heart">Cœur</option><option value="star">Étoile</option><option value="cat">Chat</option><option value="dog">Chien</option><option value="butterfly">Papillon</option><option value="house">Maison</option><option value="football">Ballon de football</option><option value="circle">Cercle</option>
-          </select>
+          <div class="qr-field-heading"><label>Silhouette</label><span class="hint" id="qrSilhouetteName">QR classique</span></div>
+          <input type="hidden" id="qrSilhouetteShape" value="square">
+          <div id="qrSilhouetteGrid" class="qr-silhouette-grid" role="group" aria-label="Choisir une silhouette"></div>
           <div class="qr-silhouette-controls">
-            <div id="qrSilhouettePreview" class="qr-silhouette-preview" aria-live="polite">▦</div>
-            <button class="btn" id="qrEmojiOpen" type="button">😀 Ajouter un pictogramme central</button>
-            <button class="btn small" id="qrEmojiClear" type="button" disabled>Retirer le pictogramme</button>
+            <button class="btn" id="qrEmojiOpen" type="button">😀 Parcourir les 579 formes emoji…</button>
+            <button class="btn small" id="qrEmojiClear" type="button" disabled>Retirer le pictogramme central</button>
           </div>
-          <p class="hint">Le QR est dessiné dans la silhouette choisie. La lecture est testée automatiquement ; si la forme altère les données, le QR carré est conservé.</p>
+          <p class="hint">Choisis une forme : les modules du QR sont dessinés dans son contour. Vérifie toujours le scan avant impression ou diffusion.</p>
         </div>
 
         <div class="split"><div class="field"><label for="qrFg">Couleur du QR</label><input id="qrFg" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrBg">Fond</label><input id="qrBg" type="color" class="control color-control" value="#ffffff"></div></div>
