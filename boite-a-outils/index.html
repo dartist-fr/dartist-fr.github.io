@@ -165,6 +165,19 @@ function qrFramePreview(){
 }
 let qrArtPhotoImage=null,qrArtCanvas=null;
 function qrArtSetStatus(message,error=false){const el=$('qrArtStatus');if(el){el.textContent=message;el.classList.toggle('error',!!error)}}
+function qrValidationMessage(){
+ const value=qrContent();
+ if(!value)return '';
+ if(typeof qrcode!=='function')return '';
+ try{
+  const matrix=qrcode(0,$('qrEcc')?.value||'M');
+  matrix.addData(value,'Byte');
+  matrix.make();
+  return '';
+ }catch(error){
+  return 'Contenu trop long pour un QR code avec le niveau de correction choisi. Réduis le texte ou choisis un niveau de correction inférieur.';
+ }
+}
 function qrArtDraw(){
  const value=qrContent(),validation=qrValidationMessage();
  if(validation){qrArtSetStatus(validation,true);return null}
