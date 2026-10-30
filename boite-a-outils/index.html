@@ -178,7 +178,7 @@ async function qrExport(format){
   if(frame==='plain'||frame==='rounded'){ctx.strokeStyle=fg;ctx.lineWidth=4;if(frame==='rounded'&&ctx.roundRect){ctx.beginPath();ctx.roundRect(2,2,w-4,h-4,18);ctx.stroke()}else ctx.strokeRect(2,2,w-4,h-4)}
   if(frame==='viewfinder'){ctx.strokeStyle=fg;ctx.lineWidth=4;ctx.setLineDash([10,7]);ctx.strokeRect(2,2,w-4,h-4);ctx.setLineDash([])}
   const imageY=pad+edge+(topCaption?capH:0);ctx.drawImage(canvas,pad+edge,imageY,size,size);
-  if(caption){ctx.font='700 '+Math.max(12,Math.round(size*.035))+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';const cy=topCaption?pad+capH/2:imageY+size+capH/2;if(frame==='banner-top'||frame==='banner-bottom'){ctx.fillStyle=fg;ctx.fillRect(0,topCaption?0:h-capH,w,capH);ctx.fillStyle='#ffffff'}else if(frame==='label'){ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(w*.2,h-capH*.8,w*.6,capH*.6,20);ctx.fill();ctx.fillStyle=bg}else ctx.fillStyle=fg;ctx.fillText(caption,w/2,cy)}
+  if(caption){ctx.font='700 '+Math.max(12,Math.round(size*.035))+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';const cy=topCaption?pad+capH/2:imageY+size+pad+capH/2;if(frame==='banner-top'||frame==='banner-bottom'){ctx.fillStyle=fg;ctx.fillRect(0,topCaption?0:h-capH,w,capH);ctx.fillStyle='#ffffff'}else if(frame==='label'){ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(w*.2,h-capH*.8,w*.6,capH*.6,20);ctx.fill();ctx.fillStyle=bg}else ctx.fillStyle=fg;ctx.fillText(caption,w/2,cy)}
   if(format==='pdf'){
    if(!window.jspdf)throw Error('Le module PDF est indisponible');const {jsPDF}=window.jspdf,doc=new jsPDF({orientation:w>=h?'landscape':'portrait',unit:'px',format:[w,h]});doc.addImage(out.toDataURL('image/png'),'PNG',0,0,w,h);doc.save('dartist-qr-code.pdf');
   }else{
