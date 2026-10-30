@@ -467,7 +467,7 @@ function qrBuildSvg(){
   const scale=shapeSide/1000,pixelated=$('qrPixelatedEdge')?.checked!==false,style=$('qrBodyShape').value;
   const pitch=unit/scale,normalizedPlate=(side+8*unit)/scale,normalizedStart=(x-4*unit-shapeX)/scale;
   const decorative=qrSilhouetteDecorativeSvg(qrSilhouettePaths[shapeName],{x:normalizedStart,y:normalizedStart,w:normalizedPlate,h:normalizedPlate},fg,style,pixelated,pitch);
-  output+='<g transform="translate('+shapeX+' '+shapeY+') scale('+scale+')"'+(pixelated?' clip-path="url(#qrSilhouetteModules)"':'')+'>'+decorative+'</g>';
+  output+='<defs><clipPath id="qrSilhouetteModules" clipPathUnits="userSpaceOnUse"><path d="'+qrSilhouettePaths[shapeName]+'"/></clipPath></defs><g transform="translate('+shapeX+' '+shapeY+') scale('+scale+')"'+(pixelated?' clip-path="url(#qrSilhouetteModules)"':'')+'>'+decorative+'</g>';
  }
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
