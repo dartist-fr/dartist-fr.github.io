@@ -276,6 +276,7 @@ function qrBuildEps(){
  if(!$('qrTransparent').checked)ps.push(background.join(' ')+' setrgbcolor 0 0 '+w+' '+h+' rectfill');
  if(frame==='plain'||frame==='rounded'||frame==='viewfinder')ps.push(color.join(' ')+' setrgbcolor 2 2 '+(w-4)+' '+(h-4)+' rectstroke');
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))ps.push(color.join(' ')+' setrgbcolor 0 '+(frame==='banner-top'?h-capH:0)+' '+w+' '+capH+' rectfill');
+ if(caption&&frame==='label')ps.push(color.join(' ')+' setrgbcolor '+(w*.2)+' '+pad+' '+(w*.6)+' '+(capH*.6)+' rectfill');
  ps.push(color.join(' ')+' setrgbcolor');
  const circle=$('qrBodyShape').value==='dots';
  for(let r=0;r<count;r++)for(let c=0;c<count;c++)if(code.isDark(r,c)){
