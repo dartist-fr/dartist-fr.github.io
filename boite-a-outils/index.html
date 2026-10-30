@@ -234,7 +234,7 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
  // La silhouette est composée de modules décoratifs, pas d'une masse pleine.
  const plate=total*qrSilhouetteInnerRatio(shapePath),plateX=(total-plate)/2,plateY=(total-plate)/2;
- ctx.save();ctx.scale(total/1000,total/1000);
+ ctx.save();ctx.scale(total/1000,total/1000);ctx.clip(shapePath);
  qrSilhouetteDecorativeModules(ctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
  ctx.restore();
  ctx.fillStyle=bg;ctx.fillRect(plateX,plateY,plate,plate);
@@ -455,7 +455,20 @@ function qrBuildSvg(){
  }
  let output='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="qrGradient" x1="'+x1+'%" y1="'+y1+'%" x2="'+x2+'%" y2="'+y2+'%"><stop offset="0%" stop-color="'+fg+'"/><stop offset="100%" stop-color="'+$('qrFg2').value+'"/></linearGradient></defs>';
  if(!$('qrTransparent').checked)output+='<rect width="100%" height="100%" fill="'+bg+'"/>';
- if(isShape)output+='<path d="'+qrSilhouettePaths[shapeName]+'" transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" fill="'+fg+'"/>';
+ if(isShape){
+  const normalizedPlate=ratio*1000,normalizedStart=(1000-normalizedPlate)/2,style=$('qrBodyShape').value;
+  let decorative='';
+  for(let row=0;row<34;row++)for(let col=0;col<34;col++){
+   const cx=14+col*30,cy=14+row*30;
+   if(cx>=normalizedStart&&cx<=normalizedStart+normalizedPlate&&cy>=normalizedStart&&cy<=normalizedStart+normalizedPlate)continue;
+   const hash=(row*73856093)^(col*19349663)^0x5f3759df;if((hash>>>0)%11===0)continue;
+   const s=22*.88,px=cx-s/2,py=cy-s/2;
+   if(style==='dots')decorative+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(s*.43)+'" fill="'+fg+'"/>';
+   else if(style==='rounded')decorative+='<rect x="'+px+'" y="'+py+'" width="'+s+'" height="'+s+'" rx="'+(s*.24)+'" fill="'+fg+'"/>';
+   else decorative+='<rect x="'+px+'" y="'+py+'" width="'+s+'" height="'+s+'" fill="'+fg+'"/>';
+  }
+  output+='<defs><clipPath id="qrSilhouetteModules"><path d="'+qrSilhouettePaths[shapeName]+'"/></clipPath></defs><g transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" clip-path="url(#qrSilhouetteModules)">'+decorative+'</g>';
+ }
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
