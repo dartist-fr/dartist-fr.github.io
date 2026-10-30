@@ -140,6 +140,51 @@ function qrFramePreview(){
  if(caption&&frame!=='banner-top')wrap.appendChild(cap());
  box.innerHTML='';box.appendChild(wrap);
 }
+let qrArtPhotoImage=null,qrArtCanvas=null;
+function qrArtSetStatus(message,error=false){const el=$('qrArtStatus');if(el){el.textContent=message;el.classList.toggle('error',!!error)}}
+function qrArtDraw(){
+ const value=qrContent(),validation=qrValidationMessage();
+ if(validation){qrArtSetStatus(validation,true);return null}
+ if(!value){qrArtSetStatus('Complète d’abord les champs dans l’onglet Créer.',true);return null}
+ if(typeof qrcode!=='function'){qrArtSetStatus('Le moteur de matrice QR est indisponible.',true);return null}
+ try{
+  const ecc=$('qrEcc')?.value||'H',code=qrcode(0,ecc);code.addData(value,'Byte');code.make();
+  const count=code.getModuleCount(),size=1200,quiet=4,unit=size/(count+quiet*2),offset=quiet*unit;
+  const canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle=$('qrArtBackground').value;ctx.fillRect(0,0,size,size);
+  ctx.save();ctx.beginPath();
+  const shape=$('qrArtCell').value,radius=unit*(shape==='rounded'?.28:shape==='circle'?.5:0);
+  for(let row=0;row<count;row++)for(let col=0;col<count;col++){
+   if(!code.isDark(row,col))continue;
+   const x=offset+col*unit,y=offset+row*unit;
+   if(shape==='circle'){ctx.moveTo(x+unit/2,y+unit/2);ctx.arc(x+unit/2,y+unit/2,radius,0,Math.PI*2)}
+   else if(shape==='rounded'&&ctx.roundRect){ctx.roundRect(x+unit*.04,y+unit*.04,unit*.92,unit*.92,Math.min(radius,unit*.3))}
+   else ctx.rect(x+unit*.035,y+unit*.035,unit*.93,unit*.93);
+  }
+  ctx.clip();
+  if(qrArtPhotoImage)ctx.drawImage(qrArtPhotoImage,offset,offset,count*unit,count*unit);
+  else{ctx.fillStyle=$('qrArtColor').value;ctx.fillRect(offset,offset,count*unit,count*unit)}
+  ctx.globalAlpha=(+$('qrArtOpacity').value||82)/100;
+  ctx.fillStyle=$('qrArtColor').value;ctx.fillRect(offset,offset,count*unit,count*unit);
+  ctx.restore();
+  qrArtCanvas=canvas;
+  const host=$('qrArtPreview');host.innerHTML='';const shown=document.createElement('canvas');shown.width=size;shown.height=size;shown.style.cssText='width:min(100%,420px);height:auto;display:block';shown.getContext('2d').drawImage(canvas,0,0);host.appendChild(shown);
+  $('qrArtTest').disabled=false;$('qrArtDownload').disabled=false;
+  qrArtSetStatus('QR photographique généré ('+count+' × '+count+' modules). Lance un test de lecture.');
+  return canvas;
+ }catch(error){qrArtCanvas=null;$('qrArtTest').disabled=true;$('qrArtDownload').disabled=true;qrArtSetStatus('Génération impossible : '+error.message,true);return null}
+}
+function qrArtTestRead(){
+ if(!qrArtCanvas){qrArtSetStatus('Génère d’abord un QR photographique.',true);return}
+ if(typeof jsQR!=='function'){qrArtSetStatus('Le moteur de lecture est indisponible.',true);return}
+ const ctx=qrArtCanvas.getContext('2d',{willReadFrequently:true}),pixels=ctx.getImageData(0,0,qrArtCanvas.width,qrArtCanvas.height);
+ const decoded=jsQR(pixels.data,pixels.width,pixels.height,{inversionAttempts:'attemptBoth'});
+ const expected=qrContent();
+ if(decoded&&decoded.data===expected)qrArtSetStatus('Test réussi : le QR photographique est décodable et son contenu correspond.');
+ else if(decoded)qrArtSetStatus('Un QR est détecté, mais son contenu ne correspond pas exactement au contenu attendu.',true);
+ else qrArtSetStatus('Test non concluant : le QR n’est pas décodable avec le lecteur local. Augmente le renforcement, choisis des modules carrés ou simplifie le contenu.',true);
+}
 function generateQR(){
  const value=qrContent(),box=$('qrBox'),validation=qrValidationMessage();if(validation){box.innerHTML='<span class="qr-placeholder">'+validation+'</span>';qrStyling=null;qrSetStatus(validation,true);return}if(!value){box.innerHTML='<span class="qr-placeholder">Complète les champs nécessaires pour créer ton QR code.</span>';qrStyling=null;qrSetStatus('Contenu manquant ou invalide.',true);return}
  if(typeof QRCodeStyling==='undefined'){qrStyling=null;qrSetStatus('La bibliothèque QR est indisponible. Vérifie ta connexion.',true);return}
@@ -236,6 +281,18 @@ $('qrScanFile').addEventListener('change',async()=>{
 });
 $('qrScanCopy').addEventListener('click',()=>copyText($('qrScanResult').value,'qrScanStatus'));
 $('qrScanOpen').addEventListener('click',()=>{const v=$('qrScanResult').value;if(/^https?:\/\//i.test(v))window.open(v,'_blank','noopener,noreferrer')});
+
+$('qrArtPhoto').addEventListener('change',async()=>{
+ const file=$('qrArtPhoto').files?.[0];qrArtPhotoImage=null;qrArtCanvas=null;$('qrArtTest').disabled=true;$('qrArtDownload').disabled=true;
+ if(!file){qrArtSetStatus('Aucune photo sélectionnée.');return}
+ if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>15*1024*1024){$('qrArtPhoto').value='';qrArtSetStatus('Choisis une image PNG, JPG ou WebP de moins de 15 Mo.',true);return}
+ const url=URL.createObjectURL(file);try{const image=new Image();image.src=url;await image.decode();qrArtPhotoImage=image;qrArtSetStatus('Photo chargée. Clique sur Créer le QR photographique.')}catch(error){qrArtSetStatus('Image illisible : '+error.message,true)}finally{URL.revokeObjectURL(url)}
+});
+$('qrArtOpacity').addEventListener('input',()=>{$('qrArtOpacityValue').textContent=$('qrArtOpacity').value+' %'});
+$('qrArtGenerate').addEventListener('click',()=>{if(!qrArtPhotoImage){qrArtSetStatus('Ajoute une photo ou texture avant de générer.',true);return}if(qrArtDraw())qrArtTestRead()});
+$('qrArtTest').addEventListener('click',qrArtTestRead);
+$('qrArtDownload').addEventListener('click',()=>{if(!qrArtCanvas)return;qrArtCanvas.toBlob(blob=>{if(!blob){qrArtSetStatus('Impossible de créer le fichier PNG.',true);return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-qr-photographique.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200)},'image/png')});
+
 generateQR();
 const unitSets={length:{mm:.001,cm:.01,m:1,km:1000,in:0.0254,ft:.3048,yd:.9144,mi:1609.344},weight:{mg:.000001,g:.001,kg:1,t:1000,oz:.028349523125,lb:.45359237},data:{B:1,KB:1000,MB:1e6,GB:1e9,KiB:1024,MiB:1048576,GiB:1073741824}};
 const unitLabels={length:{mm:'Millimètres (mm)',cm:'Centimètres (cm)',m:'Mètres (m)',km:'Kilomètres (km)',in:'Pouces (in)',ft:'Pieds (ft)',yd:'Yards (yd)',mi:'Miles (mi)'},weight:{mg:'Milligrammes (mg)',g:'Grammes (g)',kg:'Kilogrammes (kg)',t:'Tonnes (t)',oz:'Onces (oz)',lb:'Livres (lb)'},data:{B:'Octets (B)',KB:'Kilooctets (KB)',MB:'Mégaoctets (MB)',GB:'Gigaoctets (GB)',KiB:'Kibioctets (KiB)',MiB:'Mebioctets (MiB)',GiB:'Gibioctets (GiB)'}};
