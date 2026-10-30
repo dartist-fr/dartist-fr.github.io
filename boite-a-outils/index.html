@@ -190,7 +190,7 @@ function qrSilhouetteInnerRatio(shapePath){
   }
   if(inside)low=half*2;else high=half*2;
  }
- return Math.max(.22,Math.min(.82,low*.88));
+ return Math.max(.22,Math.min(.82,low*.95));
 }
 function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated){
  const pitch=30,size=22,round=style==='rounded',dots=style==='dots';
@@ -198,7 +198,8 @@ function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated){
  for(let row=0;row<34;row++)for(let col=0;col<34;col++){
   const cx=14+col*pitch,cy=14+row*pitch;
   if(!ctx.isPointInPath(path,cx,cy))continue;
-  if(cx>=plateRect.x&&cx<=plateRect.x+plateRect.w&&cy>=plateRect.y&&cy<=plateRect.y+plateRect.h)continue;
+  const safe= size/2+3;
+  if(cx>=plateRect.x-safe&&cx<=plateRect.x+plateRect.w+safe&&cy>=plateRect.y-safe&&cy<=plateRect.y+plateRect.h+safe)continue;
   // Motif déterministe, dense et régulier : ces modules décorent la silhouette
   // sans modifier les données du QR principal.
   const hash=(row*73856093)^(col*19349663)^0x5f3759df;
@@ -234,9 +235,14 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
  // La silhouette est composée de modules décoratifs, pas d'une masse pleine.
  const plate=total*qrSilhouetteInnerRatio(shapePath),plateX=(total-plate)/2,plateY=(total-plate)/2;
- ctx.save();ctx.scale(total/1000,total/1000);ctx.clip(shapePath);
- qrSilhouetteDecorativeModules(ctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
- ctx.restore();
+ // Rendu des modules sur une surface normalisée 1000×1000, sans transformation
+ // active : les tests géométriques et les coordonnées de dessin partagent ainsi
+ // exactement le même repère.
+ const decorative=document.createElement('canvas');decorative.width=1000;decorative.height=1000;
+ const dctx=decorative.getContext('2d');
+ dctx.save();dctx.clip(shapePath);
+ qrSilhouetteDecorativeModules(dctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
+ dctx.restore();ctx.drawImage(decorative,0,0,total,total);
  ctx.fillStyle=bg;ctx.fillRect(plateX,plateY,plate,plate);
  const cell=plate/(n+8),matrixSide=cell*n,matrixX=plateX+cell*4,matrixY=plateY+cell*4;
  ctx.fillStyle=fg;
@@ -460,7 +466,8 @@ function qrBuildSvg(){
   let decorative='';
   for(let row=0;row<34;row++)for(let col=0;col<34;col++){
    const cx=14+col*30,cy=14+row*30;
-   if(cx>=normalizedStart&&cx<=normalizedStart+normalizedPlate&&cy>=normalizedStart&&cy<=normalizedStart+normalizedPlate)continue;
+   const safe=22/2+3;
+   if(cx>=normalizedStart-safe&&cx<=normalizedStart+normalizedPlate+safe&&cy>=normalizedStart-safe&&cy<=normalizedStart+normalizedPlate+safe)continue;
    const hash=(row*73856093)^(col*19349663)^0x5f3759df;if((hash>>>0)%11===0)continue;
    const s=22*.88,px=cx-s/2,py=cy-s/2;
    if(style==='dots')decorative+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(s*.43)+'" fill="'+fg+'"/>';
