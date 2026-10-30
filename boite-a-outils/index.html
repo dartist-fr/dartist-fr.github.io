@@ -190,7 +190,7 @@ function qrSilhouetteInnerRatio(shapePath){
   }
   if(inside)low=half*2;else high=half*2;
  }
- return Math.max(.22,Math.min(.82,low*.88));
+ return Math.max(.22,Math.min(.82,low*.95));
 }
 function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated){
  const pitch=30,size=22,round=style==='rounded',dots=style==='dots';
