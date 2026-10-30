@@ -51,7 +51,7 @@ $('qrCameraStart')?.addEventListener('click',async()=>{
 window.addEventListener('pagehide',stopCamera);
 async function loadImageFile(file){
   if(!file||!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>15*1024*1024)throw Error('Choisis une image PNG, JPG ou WebP de moins de 15 Mo.');
-  const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();return img}catch(e){URL.revokeObjectURL(url);throw e}
+  const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();URL.revokeObjectURL(url);return img}catch(e){URL.revokeObjectURL(url);throw e}
 }
 $('qrMultiImage')?.addEventListener('change',async e=>{
  const host=$('qrMultiResults');try{const img=await loadImageFile(e.target.files?.[0]);const canvas=document.createElement('canvas');const scale=Math.min(1,2200/Math.max(img.naturalWidth,img.naturalHeight));canvas.width=Math.round(img.naturalWidth*scale);canvas.height=Math.round(img.naturalHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,canvas.width,canvas.height);let values=[];
