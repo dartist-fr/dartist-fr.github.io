@@ -8,7 +8,7 @@
       <button class="qr-tab" type="button" data-qr-tab="scan" role="tab" aria-selected="false">Scanner</button>
       <button class="qr-tab" type="button" data-qr-tab="art" role="tab" aria-selected="false">Photo</button>
       <button class="qr-tab" type="button" data-qr-tab="manage" role="tab" aria-selected="false">Plus</button>
-      <button class="qr-tab" type="button" data-qr-tab="help" role="tab" aria-selected="false">Aide & caméra</button>
+      
     </div>
     <section class="qr-pane active" data-qr-pane="create">
       <details class="qr-section qr-group" open><summary>Contenu <small>Choisis ce que ton QR code doit partager</small></summary>
@@ -55,7 +55,7 @@
           </div>
           <p class="hint">Le symbole est intégré au centre. Le niveau de correction passe automatiquement à H. Vérifie toujours la lecture avant impression.</p>
         </div>
-        <div class="field"><label for="qrPreset">Theme / modèle de style</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option><option value="rounded">Arrondi · doux</option><option value="social">Réseaux sociaux</option><option value="professional">Professionnel</option><option value="event">Événementiel</option><option value="print">Impression</option><option value="inverted">Inversé · fond sombre</option></select></div>
+        <div class="field"><label for="qrPreset">Theme / styles prêts à l’emploi</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option><option value="rounded">Arrondi · doux</option><option value="social">Réseaux sociaux</option><option value="professional">Professionnel</option><option value="event">Événementiel</option><option value="print">Impression</option><option value="inverted">Inversé · fond sombre</option></select></div>
       </div>
       </details><details class="qr-section qr-group" open><summary>Design <small>Thème, silhouette, formes et couleurs</small></summary>
         <div class="split"><div class="field"><label for="qrFg">Couleur du QR</label><input id="qrFg" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrBg">Fond</label><input id="qrBg" type="color" class="control color-control" value="#ffffff"></div></div>
@@ -70,7 +70,7 @@
       </details><details class="qr-section qr-group"><summary>Frame &amp; margin <small>Logo, cadre, légende et marges</small></summary>
         <div class="field"><label for="qrLogo">Logo central (PNG, JPG, WebP ou SVG · 2 Mo max.)</label><input id="qrLogo" class="control" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p class="hint">Le fichier reste sur ton appareil.</p></div>
         <div class="field"><label for="qrLogoSize">Taille du logo : <output id="qrLogoSizeValue">18%</output></label><input id="qrLogoSize" type="range" class="control" min="10" max="24" value="18"></div>
-        <div class="split"><div class="field"><label for="qrSize">Résolution</label><select id="qrSize" class="control"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option><option value="1600">1600 px</option></select></div><div class="field"><label for="qrMargin">Marge (%)</label><input id="qrMargin" type="range" class="control" min="2" max="10" value="4"><output id="qrMarginValue">4%</output></div></div>
+        <div class="split"><div class="field"><label for="qrSize">Résolution</label><select id="qrSize" class="control"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option><option value="1600">1600 px</option></select></div><div class="field"><label for="qrMargin">Marge de silence (%)</label><input id="qrMargin" type="range" class="control" min="0" max="25" value="4"><output id="qrMarginValue">4%</output></div></div>
         <div class="field"><label for="qrFrame">Cadre</label><select id="qrFrame" class="control"><option value="none">Aucun</option><option value="plain">Cadre simple</option><option value="rounded">Cadre arrondi</option><option value="banner-top">Bannière supérieure</option><option value="banner-bottom">Bannière inférieure</option><option value="label">Étiquette</option><option value="viewfinder">Viseur</option></select></div>
         <label class="checkline"><input id="qrCaption" type="checkbox"> Ajouter une légende</label>
         <div id="qrCaptionField" class="field hidden"><label for="qrCaptionText">Texte de la légende</label><input id="qrCaptionText" class="control" value="SCAN ME"></div>
