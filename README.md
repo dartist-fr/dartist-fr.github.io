@@ -17,7 +17,7 @@ Un hub personnel qui rassemble mes projets web, jeux jouables dans le navigateur
 La boîte à outils fonctionne directement dans le navigateur, sans installation. Elle propose notamment :
 
 - **Compresseur d’images** — compression, conversion, redimensionnement et export des résultats, avec téléchargement ZIP.
-- **QR codes personnalisés** — réglages du contenu, des formes, des couleurs et du logo, avec export PNG ou SVG.
+- **Studio QR** — création multi-contenus, personnalisation avancée, QR photographiques, génération en série depuis CSV, lecture et extraction multiple, exports PNG/JPG/PDF/SVG/EPS.
 - **Formateur JSON**, **palette de couleurs** et **générateur de dégradés CSS**.
 - **Calculatrice & conversions** et **lab HTML/CSS**.
 
