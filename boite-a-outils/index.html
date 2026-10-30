@@ -167,35 +167,54 @@ function qrShapePath(name,moduleCount){
  p.addPath(new Path2D('M0 '+(1000-zone)+' H'+zone+' V1000 H0 Z'));
  return p;
 }
+function qrHexBlend(fg,bg,strength){
+ const parse=h=>{const v=String(h||'#ffffff').replace('#','');return[parseInt(v.slice(0,2),16)||0,parseInt(v.slice(2,4),16)||0,parseInt(v.slice(4,6),16)||0]};
+ const a=parse(fg),b=parse(bg);return '#'+a.map((v,i)=>Math.round(b[i]+(v-b[i])*strength).toString(16).padStart(2,'0')).join('');
+}
+function qrShapeCoverage(ctx,path,x,y,module,pixelated){
+ if(pixelated)return ctx.isPointInPath(path,x+module/2,y+module/2)?1:0;
+ let inside=0,total=0;
+ for(let sy of [.2,.5,.8])for(let sx of [.2,.5,.8]){total++;if(ctx.isPointInPath(path,x+module*sx,y+module*sy))inside++}
+ return inside/total;
+}
 function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const value=valueOverride||qrContent();if(!value||typeof qrcode!=='function')return null;
  const ecc=$('qrEcc').value,code=qrcode(0,ecc);code.addData(value,'Byte');code.make();
  const n=code.getModuleCount(),size=sizeOverride||+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape,n);
  if(!path)return null;
  const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
- const ctx=canvas.getContext('2d',{willReadFrequently:true}),bg=$('qrTransparent').checked?'rgba(255,255,255,0)':$('qrBg').value;
- ctx.fillStyle=bg;ctx.fillRect(0,0,total,total);
- ctx.save();ctx.translate(margin,margin);ctx.scale(size/1000,size/1000);
- const fg=$('qrFg').value;ctx.fillStyle=fg;
- if($('qrPixelatedEdge')?.checked!==false){
-  const module=1000/n;
-  // isPointInPath utilise le repère du canvas, indépendamment de la transformation
-  // de dessin. On teste donc dans un canvas auxiliaire de 1000 × 1000.
-  const shapeTest=document.createElement('canvas');shapeTest.width=1000;shapeTest.height=1000;
-  const shapeCtx=shapeTest.getContext('2d');
-  for(let r=0;r<n;r++)for(let col=0;col<n;col++){
-   if(code.isDark(r,col)&&shapeCtx.isPointInPath(path,(col+.5)*module,(r+.5)*module))ctx.fillRect(col*module,r*module,module+.15,module+.15);
+ const ctx=canvas.getContext('2d',{willReadFrequently:true}),transparent=$('qrTransparent').checked,bg=transparent?'#ffffff':$('qrBg').value,fg=$('qrFg').value;
+ const pixelated=$('qrPixelatedEdge')?.checked!==false,soft=qrHexBlend(fg,bg,.48);
+ const draw=(silhouette)=>{
+  ctx.clearRect(0,0,total,total);
+  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
+  const testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
+  const test=testCanvas.getContext('2d');
+  const module=1000/n,cell=size/n;
+  for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col)){
+   let strength=1;
+   if(silhouette){
+    const coverage=qrShapeCoverage(test,path,col*module,r*module,module,pixelated);
+    // Les modules hors silhouette restent présents, avec un contraste atténué :
+    // les données QR ne sont jamais effacées par le masque décoratif.
+    strength=.48+.52*coverage;
+   }
+   ctx.fillStyle=strength>=.999?fg:qrHexBlend(fg,bg,strength);
+   ctx.fillRect(margin+col*cell,margin+r*cell,Math.ceil(cell+.2),Math.ceil(cell+.2));
   }
- }else{
-  ctx.clip(path);
-  for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col))ctx.fillRect(col*1000/n,r*1000/n,1000/n+.15,1000/n+.15);
- }
- ctx.restore();
+ };
+ draw(true);
  let decoded=null;
  if(typeof jsQR==='function'){
   try{const image=ctx.getImageData(0,0,total,total);decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'})}catch(e){}
+  if(!decoded||decoded.data!==value){
+   // Priorité à la lecture : si le rendu artistique échoue, on livre le QR complet.
+   draw(false);
+   try{const image=ctx.getImageData(0,0,total,total);decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'})}catch(e){decoded=null}
+   canvas.qrFallback=true;
+  }
  }
- canvas.qrDecodeValid=!!decoded&&decoded.data===value;
+ canvas.qrDecodeValid=typeof jsQR==='function'?(!!decoded&&decoded.data===value):null;
  canvas.qrShapeName=shape;
  return canvas;
 }
@@ -301,7 +320,7 @@ function generateQR(){
  try{
   if($('qrSilhouetteShape')?.value&&$('qrSilhouetteShape').value!=='square'){
    const shaped=qrBuildSilhouetteCanvas();
-   if(shaped){qrStyling={};box.innerHTML='';shaped.style.cssText='width:min(100%,512px);height:auto;display:block';box.appendChild(shaped);$('qrPreviewMeta').textContent=$('qrSize').value+' px · '+(qrShapeLabels[$('qrSilhouetteShape').value]||'Silhouette');qrSetStatus(shaped.qrDecodeValid?'Silhouette lisible par le lecteur local.':'Silhouette artistique affichée. Cette forme ne passe pas le test de lecture automatique : utilise un QR carré si le scan est indispensable.',!shaped.qrDecodeValid);return}
+   if(shaped){qrStyling={};box.innerHTML='';shaped.style.cssText='width:min(100%,512px);height:auto;display:block';box.appendChild(shaped);$('qrPreviewMeta').textContent=$('qrSize').value+' px · '+(qrShapeLabels[$('qrSilhouetteShape').value]||'Silhouette');qrSetStatus(shaped.qrFallback?'La silhouette ne passe pas le contrôle de lecture : QR carré de secours affiché.':shaped.qrDecodeValid===true?'Silhouette lisible par le lecteur local.':shaped.qrDecodeValid===null?'QR généré ; test automatique indisponible.':'Le scan automatique a échoué : vérifie le QR avant diffusion.',!!shaped.qrFallback||shaped.qrDecodeValid===false);return}
    qrStyling=null;box.innerHTML='<span class="qr-placeholder">Impossible de dessiner cette silhouette.</span>';qrSetStatus('Silhouette indisponible.',true);return;
   }
   qrStyling=new QRCodeStyling(qrOptions());box.innerHTML='';qrStyling.append(box);setTimeout(qrFramePreview,60);$('qrPreviewMeta').textContent=$('qrSize').value+' × '+$('qrSize').value+' px';qrSetStatus('QR code généré. Scanne-le avant de le diffuser.')
