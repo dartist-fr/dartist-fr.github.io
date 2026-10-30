@@ -80,3 +80,8 @@ boite-a-outils/
 ```
 
 Le studio principal est intégré dans `index.html`. Le compresseur d’images dispose de sa propre page dans `outils/compresseur.html`.
+
+
+### Silhouettes QR
+
+Le Studio QR propose désormais des formes de matrice (poisson, cœur, étoile, chat, chien, papillon, maison, ballon et cercle). Le moteur teste le QR généré avec le lecteur local avant de valider une silhouette ; si le contenu ne peut pas être relu, il signale que cette forme n'est pas adaptée et ne la présente pas comme un QR validé. Le mode QR carré reste disponible à tout moment. Les pictogrammes centraux restent une option distincte.
