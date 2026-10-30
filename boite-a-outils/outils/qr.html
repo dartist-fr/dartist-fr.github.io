@@ -97,8 +97,21 @@
     <section class="qr-pane hidden" data-qr-pane="art">
       <div class="qr-section"><h3>QR artistiques & silhouettes</h3>
         <p class="hint">Les formes proposées habillent le QR sans modifier ses modules. Les QR illustrés construits à partir d'une photo demandent un moteur dédié et des tests de lecture : ils ne sont pas simulés.</p>
-        <div class="qr-scan-preview"><div><strong>Bibliothèque de silhouettes</strong><p class="hint">Les modules décoratifs, les formes arrondies et les coins personnalisés sont disponibles dans « Créer ». Les silhouettes de cœur, étoile ou feuille qui reconstruisent réellement la matrice QR demandent un algorithme dédié : cette fonction n'est pas encore activée.</p></div></div>
-        <div class="qr-section"><h3>QR illustré à partir d'une photo</h3><p class="hint">Moteur spécialisé non intégré à cette version. La fonction reste désactivée plutôt que de produire une image décorative non fiable.</p><button class="btn" type="button" disabled>Génération illustrée — indisponible</button></div>
+        <div class="qr-section"><h3>QR à texture photographique</h3>
+          <p class="hint">Ta photo apparaît uniquement dans les modules sombres du QR. Un voile de couleur conserve le contraste. Le contenu est celui défini dans l’onglet « Créer ».</p>
+          <div class="field"><label for="qrArtPhoto">Photo ou texture</label><input id="qrArtPhoto" class="control" type="file" accept="image/png,image/jpeg,image/webp"></div>
+          <div class="split">
+            <div class="field"><label for="qrArtColor">Couleur de sécurité</label><input id="qrArtColor" class="control color-control" type="color" value="#101820"></div>
+            <div class="field"><label for="qrArtBackground">Fond</label><input id="qrArtBackground" class="control color-control" type="color" value="#ffffff"></div>
+          </div>
+          <div class="field"><label for="qrArtOpacity">Renforcement des modules : <output id="qrArtOpacityValue">82 %</output></label><input id="qrArtOpacity" class="control" type="range" min="55" max="100" value="82"></div>
+          <div class="field"><label for="qrArtCell">Forme des modules</label><select id="qrArtCell" class="control"><option value="square">Carrés</option><option value="rounded">Arrondis</option><option value="circle">Points</option></select></div>
+          <div class="actions"><button class="btn primary" type="button" id="qrArtGenerate">Créer le QR photographique</button><button class="btn" type="button" id="qrArtTest" disabled>Tester la lecture</button><button class="btn" type="button" id="qrArtDownload" disabled>Télécharger PNG</button></div>
+          <div id="qrArtPreview" class="qr-scan-preview"><span class="hint">Le QR photographique apparaîtra ici.</span></div>
+          <p id="qrArtStatus" class="status" role="status"></p>
+          <p class="hint">Le générateur teste automatiquement le décodage local lorsque tu lances un test. Pour un usage important, vérifie aussi le QR imprimé avec plusieurs téléphones.</p>
+        </div>
+        <div class="qr-section"><h3>Autres silhouettes</h3><p class="hint">Les modules ronds et arrondis sont disponibles ci-dessus. Les silhouettes complexes (cœur, étoile, logo découpé) demandent un moteur vectoriel dédié et restent à développer.</p></div>
       </div>
     </section>
     <section class="qr-pane hidden" data-qr-pane="manage">
