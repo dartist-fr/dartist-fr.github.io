@@ -418,7 +418,7 @@ function qrBuildSvg(){
   else if(shape==='rounded')body+='<rect x="'+(px+.25)+'" y="'+(py+.25)+'" width="'+(unit-.5)+'" height="'+(unit-.5)+'" rx="'+(unit*.28)+'" fill="'+fill+'"/>';
   else body+='<rect x="'+px+'" y="'+py+'" width="'+unit+'" height="'+unit+'" fill="'+fill+'"/>';
  }
- const shapeName=$('qrSilhouetteShape')?.value||'square';
+ const previewCanvas=$('qrBox')?.querySelector('canvas'),shapeName=previewCanvas?.qrFallback?'square':($('qrSilhouetteShape')?.value||'square');
  let defs='<defs><linearGradient id="qrGradient" x1="'+x1+'%" y1="'+y1+'%" x2="'+x2+'%" y2="'+y2+'%"><stop offset="0%" stop-color="'+fg+'"/><stop offset="100%" stop-color="'+$('qrFg2').value+'"/></linearGradient>';
  if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
   const z=8.5/count,transform='translate('+x+' '+y+') scale('+(side/1000)+')';
