@@ -102,27 +102,27 @@ $('baseColor').addEventListener('input',palette);$('baseHex').addEventListener('
 $('paletteGenerate').addEventListener('click',palette);$('paletteRandom').addEventListener('click',()=>{$('baseColor').value=rgbHex([Math.random()*255,Math.random()*255,Math.random()*255]);palette()});$('paletteCss').addEventListener('click',()=>{const css=[...document.querySelectorAll('[data-hex]')].map((b,i)=>'  --color-'+(i+1)+': '+b.dataset.hex+';').join('\n');copyText(':root {\n'+css+'\n}','paletteStatus')});palette();
 function updateGradient(){const a=$('gradA').value,b=$('gradB').value,ang=$('gradAngle').value;const css='linear-gradient('+ang+'deg, '+a+', '+b+')';$('gradAngleValue').textContent=ang+'°';$('gradientPreview').style.background=css;$('gradCss').value='background: '+css+';'}['gradA','gradB','gradAngle'].forEach(id=>$(id).addEventListener('input',updateGradient));$('gradCopy').addEventListener('click',()=>copyText($('gradCss').value,'gradStatus'));updateGradient();
 let qrStyling=null,qrLogoData=null,qrBatchItems=[];
-const qrIds=['qrType','qrInput','qrSsid','qrWifiPassword','qrEncryption','qrFirstName','qrLastName','qrOrg','qrVcardPhone','qrVcardEmail','qrWebsite','qrWaPhone','qrWaMessage','qrEmail','qrSubject','qrEmailBody','qrPhone','qrSmsPhone','qrSmsMessage','qrLatitude','qrLongitude','qrFg','qrBg','qrFg2','qrGradientType','qrEye','qrEyeCenter','qrBodyShape','qrEyeFrameShape','qrEyeCenterShape','qrEcc','qrTransparent','qrFrame','qrSize','qrMargin','qrLogoSize','qrCaption','qrCaptionText'];
+const qrIds=['qrType','qrInput','qrSsid','qrWifiPassword','qrEncryption','qrFirstName','qrLastName','qrOrg','qrVcardTitle','qrVcardAddress','qrVcardPhone','qrVcardEmail','qrWebsite','qrWaPhone','qrWaCountry','qrWaMessage','qrEmail','qrSubject','qrEmailBody','qrPhone','qrSmsPhone','qrSmsMessage','qrLatitude','qrLongitude','qrLocationName','qrLocationLink','qrGradientAngle','qrFg','qrBg','qrFg2','qrGradientType','qrEye','qrEyeCenter','qrBodyShape','qrEyeFrameShape','qrEyeCenterShape','qrEcc','qrTransparent','qrFrame','qrSize','qrMargin','qrLogoSize','qrCaption','qrCaptionText'];
 function qrEsc(v){return String(v||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/:/g,'\\:').replace(/"/g,'\\"');}
 function qrContent(){
  const type=$('qrType').value,val=$('qrInput').value.trim();
  switch(type){
   case'url':return val&&!/^https?:\/\//i.test(val)?'https://'+val:val;
   case'text':return val;
-  case'wifi':{const s=$('qrSsid').value.trim(),e=$('qrEncryption').value,p=$('qrWifiPassword').value;return s?'WIFI:T:'+e+';S:'+qrEsc(s)+';'+(e==='nopass'?'':'P:'+qrEsc(p)+';')+';':''}
-  case'vcard':{const fn=$('qrFirstName').value.trim(),ln=$('qrLastName').value.trim();if(!fn&&!ln)return'';return ['BEGIN:VCARD','VERSION:3.0','N:'+qrEsc(ln)+';'+qrEsc(fn),'FN:'+qrEsc((fn+' '+ln).trim()),$('qrOrg').value.trim()?'ORG:'+qrEsc($('qrOrg').value):'',$('qrVcardPhone').value.trim()?'TEL;TYPE=CELL:'+qrEsc($('qrVcardPhone').value):'',$('qrVcardEmail').value.trim()?'EMAIL:'+qrEsc($('qrVcardEmail').value):'',$('qrWebsite').value.trim()?'URL:'+qrEsc($('qrWebsite').value):'','END:VCARD'].filter(Boolean).join('\n')}
-  case'whatsapp':{const p=$('qrWaPhone').value.replace(/\D/g,'');return p?'https://wa.me/'+p+($('qrWaMessage').value.trim()?'?text='+encodeURIComponent($('qrWaMessage').value.trim()):''):''}
+  case'wifi':{const s=$('qrSsid').value.trim(),e=$('qrEncryption').value,p=$('qrWifiPassword').value;return s?'WIFI:T:'+e+';S:'+qrEsc(s)+';'+(e==='nopass'?'':'P:'+qrEsc(p)+';')+($('qrWifiHidden')?.checked?'H:true;':'')+';':''}
+  case'vcard':{const fn=$('qrFirstName').value.trim(),ln=$('qrLastName').value.trim();if(!fn&&!ln)return'';return ['BEGIN:VCARD','VERSION:3.0','N:'+qrEsc(ln)+';'+qrEsc(fn),'FN:'+qrEsc((fn+' '+ln).trim()),$('qrOrg').value.trim()?'ORG:'+qrEsc($('qrOrg').value):'',$('qrVcardTitle')?.value.trim()?'TITLE:'+qrEsc($('qrVcardTitle').value):'',$('qrVcardAddress')?.value.trim()?'ADR;TYPE=WORK:;;'+qrEsc($('qrVcardAddress').value)+';;;;':'',$('qrVcardPhone').value.trim()?'TEL;TYPE=CELL:'+qrEsc($('qrVcardPhone').value):'',$('qrVcardEmail').value.trim()?'EMAIL:'+qrEsc($('qrVcardEmail').value):'',$('qrWebsite').value.trim()?'URL:'+qrEsc($('qrWebsite').value):'','END:VCARD'].filter(Boolean).join('\n')}
+  case'whatsapp':{let raw=$('qrWaPhone').value.trim(),p=raw.replace(/\D/g,'');if(raw.startsWith('+')||raw.startsWith('00'))p=raw.replace(/\D/g,'').replace(/^00/,'');else{p=p.replace(/^0+/,'');p=$('qrWaCountry').value+p}return p?'https://wa.me/'+p+($('qrWaMessage').value.trim()?'?text='+encodeURIComponent($('qrWaMessage').value.trim()):''):''}
   case'email':{const e=$('qrEmail').value.trim();if(!e)return'';const q=new URLSearchParams();if($('qrSubject').value.trim())q.set('subject',$('qrSubject').value.trim());if($('qrEmailBody').value.trim())q.set('body',$('qrEmailBody').value.trim());return'mailto:'+e+(q.toString()?'?'+q.toString():'')}
   case'phone':return $('qrPhone').value.trim()?'tel:'+ $('qrPhone').value.trim():'';
   case'sms':{const p=$('qrSmsPhone').value.trim();return p?'SMSTO:'+p+':'+$('qrSmsMessage').value:''}
-  case'location':{const a=$('qrLatitude').value,b=$('qrLongitude').value;if(a===''||b===''||!Number.isFinite(+a)||!Number.isFinite(+b)||Math.abs(+a)>90||Math.abs(+b)>180)return'';return'geo:'+a+','+b}
+  case'location':{let a=$('qrLatitude').value,b=$('qrLongitude').value;const link=$('qrLocationLink')?.value.trim()||'';if((a===''||b==='')&&link){const m=link.match(/(?:@|q=|!3d)(-?\d+(?:\.\d+)?)[,/]\s*(-?\d+(?:\.\d+)?)/);if(m){a=m[1];b=m[2]}}if(a===''||b===''||!Number.isFinite(+a)||!Number.isFinite(+b)||Math.abs(+a)>90||Math.abs(+b)>180)return'';const name=$('qrLocationName')?.value.trim();return'geo:'+a+','+b+(name?'?q='+encodeURIComponent(name):'')}
   default:return val;
  }
 }
 function qrOptions(size){
  const n=size||+$('qrSize').value,fg=$('qrFg').value,fg2=$('qrFg2').value,bg=$('qrTransparent').checked?'rgba(255,255,255,0)':$('qrBg').value,useGradient=$('qrGradient').checked;
  const dotsOptions={type:$('qrBodyShape').value,color:fg};
- if(useGradient)dotsOptions.gradient={type:$('qrGradientType').value==='radial'?'radial':'linear',rotation:0,colorStops:[{offset:0,color:fg},{offset:1,color:fg2}]};
+ if(useGradient)dotsOptions.gradient={type:$('qrGradientType').value==='radial'?'radial':'linear',rotation:+$('qrGradientAngle')?.value||0,colorStops:[{offset:0,color:fg},{offset:1,color:fg2}]};
  return{width:n,height:n,type:'canvas',data:qrContent(),margin:Math.round(n*(+$('qrMargin').value/100)),qrOptions:{errorCorrectionLevel:$('qrEcc').value},dotsOptions,cornersSquareOptions:{type:$('qrEyeFrameShape').value,color:$('qrEye').value},cornersDotOptions:{type:$('qrEyeCenterShape').value,color:$('qrEyeCenter').value},backgroundOptions:{color:bg},image:qrLogoData||undefined,imageOptions:{hideBackgroundDots:true,imageSize:+$('qrLogoSize').value/100,margin:Math.max(4,Math.round(n*.012)),crossOrigin:'anonymous'}};
 }
 function qrSetStatus(msg,error=false){status('qrStatus',msg,error);['qrDownload','qrDownloadJpg','qrDownloadSvg','qrDownloadPdf'].forEach(id=>$(id).disabled=!qrStyling)}
@@ -133,8 +133,19 @@ function qrFramePreview(){
  const wrap=document.createElement('div');wrap.className='qr-export-frame';wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px;max-width:100%;border:'+(frame==='none'?'0':'2px solid '+$('qrFg').value)+';border-radius:'+(frame==='rounded'?'18px':'0');
  box.innerHTML='';wrap.appendChild(canvas);if(caption){const cap=document.createElement('div');cap.textContent=caption;cap.style.cssText='font:700 '+Math.max(12,Math.round(+$('qrSize').value*.035))+'px Arial,sans-serif;letter-spacing:.08em;color:'+ $('qrFg').value;wrap.appendChild(cap)}box.appendChild(wrap);
 }
+function qrValidationMessage(){
+ const type=$('qrType').value;
+ if(type==='url'){const raw=$('qrInput').value.trim();if(!raw)return'Ajoute une adresse web.';try{const u=new URL(/^https?:\/\//i.test(raw)?raw:'https://'+raw);if(!['http:','https:'].includes(u.protocol))return'Utilise une adresse HTTP ou HTTPS.'}catch{return'Adresse web invalide.'}}
+ if(type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('qrEmail').value.trim()))return'Adresse e-mail invalide.';
+ if(type==='wifi'&&$('qrEncryption').value!=='nopass'&&!$('qrWifiPassword').value)return'Ajoute le mot de passe du réseau Wi-Fi ou sélectionne Réseau ouvert.';
+ if(type==='whatsapp'&&$('qrWaPhone').value.replace(/\D/g,'').length<6)return'Numéro WhatsApp trop court.';
+ if(type==='phone'&&$('qrPhone').value.replace(/\D/g,'').length<6)return'Numéro de téléphone invalide.';
+ if(type==='sms'&&$('qrSmsPhone').value.replace(/\D/g,'').length<6)return'Numéro SMS invalide.';
+ if(type==='location'){const a=$('qrLatitude').value,b=$('qrLongitude').value;if(a===''||b===''||Math.abs(+a)>90||Math.abs(+b)>180)return'Coordonnées GPS invalides.'}
+ return'';
+}
 function generateQR(){
- const value=qrContent(),box=$('qrBox');if(!value){box.innerHTML='<span class="qr-placeholder">Complète les champs nécessaires pour créer ton QR code.</span>';qrStyling=null;qrSetStatus('Contenu manquant ou invalide.',true);return}
+ const value=qrContent(),box=$('qrBox'),validation=qrValidationMessage();if(validation){box.innerHTML='<span class="qr-placeholder">'+validation+'</span>';qrStyling=null;qrSetStatus(validation,true);return}if(!value){box.innerHTML='<span class="qr-placeholder">Complète les champs nécessaires pour créer ton QR code.</span>';qrStyling=null;qrSetStatus('Contenu manquant ou invalide.',true);return}
  if(typeof QRCodeStyling==='undefined'){qrStyling=null;qrSetStatus('La bibliothèque QR est indisponible. Vérifie ta connexion.',true);return}
  try{qrStyling=new QRCodeStyling(qrOptions());box.innerHTML='';qrStyling.append(box);setTimeout(qrFramePreview,60);$('qrPreviewMeta').textContent=$('qrSize').value+' × '+$('qrSize').value+' px';qrSetStatus('QR code généré. Scanne-le avant de le diffuser.')}
  catch(e){qrStyling=null;box.innerHTML='<span class="qr-placeholder">Génération impossible.</span>';qrSetStatus('Erreur : '+e.message,true)}
@@ -143,7 +154,7 @@ function qrApplyPreset(name){
  const presets={midnight:['#172238','#ffffff','#6f91d8'],forest:['#174b38','#ffffff','#8ebc8b'],sunset:['#9a3f2d','#fff8ed','#e4a34b'],minimal:['#000000','#ffffff','#555555']};
  if(!presets[name])return;[$('qrFg').value,$('qrBg').value,$('qrFg2').value]=presets[name];$('qrGradient').checked=name==='sunset';$('qrGradientFields').classList.toggle('hidden',!$('qrGradient').checked);generateQR();
 }
-$('qrType').addEventListener('change',qrTypeFields);
+$('qrType').addEventListener('change',qrTypeFields);$('qrWifiShowPassword')?.addEventListener('change',()=>{$('qrWifiPassword').type=$('qrWifiShowPassword').checked?'text':'password'});$('qrGradientAngle')?.addEventListener('input',()=>{const o=$('qrGradientAngleValue');if(o)o.textContent=$('qrGradientAngle').value+'°';generateQR()});
 qrIds.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',()=>{if(id==='qrLogoSize')$('qrLogoSizeValue').textContent=el.value+'%';if(id==='qrMargin')$('qrMarginValue').textContent=el.value+'%';generateQR()});el.addEventListener('change',generateQR)}});
 $('qrPreset').addEventListener('change',()=>qrApplyPreset($('qrPreset').value));
 $('qrGradient').addEventListener('change',()=>{$('qrGradientFields').classList.toggle('hidden',!$('qrGradient').checked);generateQR()});
