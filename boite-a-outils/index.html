@@ -138,12 +138,12 @@ const qrSilhouettePaths={
  football:'M500 70 C760 70 930 260 930 500 C930 740 760 930 500 930 C240 930 70 740 70 500 C70 260 240 70 500 70 Z',
  circle:'M500 70 A430 430 0 1 1 499 70 Z'
 };
-function qrShapePath(name){
+function qrShapePath(name,moduleCount){
  const d=qrSilhouettePaths[name];if(!d)return null;
  const p=new Path2D(d);
  // Les trois repères QR restent intégralement visibles, même près du bord de la forme.
- const count=qrcode(0,$('qrEcc').value);count.addData(qrContent(),'Byte');count.make();
- const n=count.getModuleCount(),s=1000/n,zone=s*8.5;
+ let n=moduleCount;if(!n){const count=qrcode(0,$('qrEcc').value);count.addData(qrContent(),'Byte');count.make();n=count.getModuleCount()}
+ const s=1000/n,zone=s*8.5;
  p.addPath(new Path2D('M0 0 H'+zone+' V'+zone+' H0 Z'));
  p.addPath(new Path2D('M'+(1000-zone)+' 0 H1000 V'+zone+' H'+(1000-zone)+' Z'));
  p.addPath(new Path2D('M0 '+(1000-zone)+' H'+zone+' V1000 H0 Z'));
@@ -152,7 +152,7 @@ function qrShapePath(name){
 function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const value=valueOverride||qrContent();if(!value||typeof qrcode!=='function')return null;
  const ecc=$('qrEcc').value,code=qrcode(0,ecc);code.addData(value,'Byte');code.make();
- const n=code.getModuleCount(),size=sizeOverride||+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape);
+ const n=code.getModuleCount(),size=sizeOverride||+$('qrSize').value,margin=Math.round(size*(+$('qrMargin').value/100)),total=size+margin*2,shape=$('qrSilhouetteShape').value,path=qrShapePath(shape,n);
  if(!path)return null;
  const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),bg=$('qrTransparent').checked?'rgba(255,255,255,0)':$('qrBg').value;
