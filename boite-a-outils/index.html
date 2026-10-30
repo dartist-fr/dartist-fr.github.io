@@ -184,37 +184,24 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  if(!path)return null;
  const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),transparent=$('qrTransparent').checked,bg=transparent?'#ffffff':$('qrBg').value,fg=$('qrFg').value;
- const pixelated=$('qrPixelatedEdge')?.checked!==false,soft=qrHexBlend(fg,bg,.48);
- const draw=(silhouette)=>{
-  ctx.clearRect(0,0,total,total);
-  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
-  const testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
-  const test=testCanvas.getContext('2d');
-  const module=1000/n,cell=size/n;
-  for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col)){
-   let strength=1;
-   if(silhouette){
-    const coverage=qrShapeCoverage(test,path,col*module,r*module,module,pixelated);
-    // Les modules hors silhouette restent présents, avec un contraste atténué :
-    // les données QR ne sont jamais effacées par le masque décoratif.
-    strength=.48+.52*coverage;
-   }
-   ctx.fillStyle=strength>=.999?fg:qrHexBlend(fg,bg,strength);
-   ctx.fillRect(margin+col*cell,margin+r*cell,Math.ceil(cell+.2),Math.ceil(cell+.2));
-  }
- };
- draw(true);
+ if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
+ const pixelated=$('qrPixelatedEdge')?.checked!==false,module=1000/n,cell=size/n;
+ const testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
+ const test=testCanvas.getContext('2d');
+ ctx.save();ctx.translate(margin,margin);ctx.scale(size/1000,size/1000);
+ if(!pixelated)ctx.clip(path);
+ ctx.fillStyle=fg;
+ for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(code.isDark(r,col)){
+  if(pixelated&&!test.isPointInPath(path,(col+.5)*module,(r+.5)*module))continue;
+  ctx.fillRect(col*module,r*module,module+.15,module+.15);
+ }
+ ctx.restore();
  let decoded=null;
  if(typeof jsQR==='function'){
   try{const image=ctx.getImageData(0,0,total,total);decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'})}catch(e){}
-  if(!decoded||decoded.data!==value){
-   // Priorité à la lecture : si le rendu artistique échoue, on livre le QR complet.
-   draw(false);
-   try{const image=ctx.getImageData(0,0,total,total);decoded=jsQR(image.data,total,total,{inversionAttempts:'attemptBoth'})}catch(e){decoded=null}
-   canvas.qrFallback=true;
-  }
  }
  canvas.qrDecodeValid=typeof jsQR==='function'?(!!decoded&&decoded.data===value):null;
+ canvas.qrFallback=false;
  canvas.qrShapeName=shape;
  return canvas;
 }
@@ -432,12 +419,11 @@ function qrBuildSvg(){
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
  if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
   const module=side/count,testCanvas=document.createElement('canvas');testCanvas.width=1000;testCanvas.height=1000;
-  const test=testCanvas.getContext('2d'),path=qrShapePath(shapeName,count),pixelated=$('qrPixelatedEdge')?.checked!==false,soft=qrHexBlend(fg,bg,.48);
-  for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)){
-   const coverage=qrShapeCoverage(test,path,col*1000/count,r*1000/count,1000/count,pixelated);
-   const moduleFill=coverage>=.999?fill:qrHexBlend(fg,bg,.48+.52*coverage);
-   output+='<rect x="'+(x+col*module)+'" y="'+(y+r*module)+'" width="'+(module+.15)+'" height="'+(module+.15)+'" fill="'+(coverage>=.999?fill:moduleFill)+'"/>';
-  }
+  const test=testCanvas.getContext('2d'),path=qrShapePath(shapeName,count),pixelated=$('qrPixelatedEdge')?.checked!==false;
+  if(pixelated){
+   for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)&&test.isPointInPath(path,(col+.5)*1000/count,(r+.5)*1000/count))
+    output+='<rect x="'+(x+col*module)+'" y="'+(y+r*module)+'" width="'+(module+.15)+'" height="'+(module+.15)+'" fill="'+fill+'"/>';
+  }else output+='<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';
  }else output+=body;
  if(qrLogoData||qrSilhouetteData){
   const logoData=qrLogoData||qrSilhouetteData;
