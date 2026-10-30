@@ -4,14 +4,14 @@
   <div class="qr-controls">
     <div class="qr-tabs" role="tablist" aria-label="Fonctions QR Code">
       <button class="qr-tab active" type="button" data-qr-tab="create" role="tab" aria-selected="true">Créer</button>
-      <button class="qr-tab" type="button" data-qr-tab="batch" role="tab" aria-selected="false">En série</button>
-      <button class="qr-tab" type="button" data-qr-tab="scan" role="tab" aria-selected="false">Lire & vérifier</button>
-      <button class="qr-tab" type="button" data-qr-tab="art" role="tab" aria-selected="false">QR artistiques</button>
-      <button class="qr-tab" type="button" data-qr-tab="manage" role="tab" aria-selected="false">Gestion avancée</button>
+      <button class="qr-tab" type="button" data-qr-tab="batch" role="tab" aria-selected="false">Séries</button>
+      <button class="qr-tab" type="button" data-qr-tab="scan" role="tab" aria-selected="false">Scanner</button>
+      <button class="qr-tab" type="button" data-qr-tab="art" role="tab" aria-selected="false">Photo</button>
+      <button class="qr-tab" type="button" data-qr-tab="manage" role="tab" aria-selected="false">Plus</button>
       <button class="qr-tab" type="button" data-qr-tab="help" role="tab" aria-selected="false">Aide & caméra</button>
     </div>
     <section class="qr-pane active" data-qr-pane="create">
-      <div class="qr-section"><h3>1. Contenu</h3>
+      <details class="qr-section qr-group" open><summary>Contenu <small>Choisis ce que ton QR code doit partager</small></summary>
         <div class="field"><label for="qrType">Type de QR code</label><select id="qrType" class="control">
           <option value="url">Lien web</option><option value="text">Texte libre</option><option value="wifi">Connexion Wi-Fi</option><option value="vcard">Contact (vCard)</option><option value="whatsapp">WhatsApp</option><option value="email">E-mail prérempli</option><option value="phone">Numéro de téléphone</option><option value="sms">SMS prérempli</option><option value="location">Localisation GPS</option>
         </select></div>
@@ -46,9 +46,18 @@
           <div class="field"><label for="qrLocationLink">Coller un lien cartographique (facultatif)</label><input id="qrLocationLink" class="control" placeholder="https://maps.google.com/..."></div><div class="field"><label for="qrLocationName">Nom du lieu (facultatif)</label><input id="qrLocationName" class="control" placeholder="Stade, salle, adresse…"></div><div class="split"><div class="field"><label for="qrLatitude">Latitude</label><input id="qrLatitude" class="control" type="number" step="any" placeholder="43.2965"></div><div class="field"><label for="qrLongitude">Longitude</label><input id="qrLongitude" class="control" type="number" step="any" placeholder="5.3698"></div></div>
           <p class="hint">Saisis les coordonnées GPS du lieu à partager.</p>
         </div>
-        <div class="field"><label for="qrPreset">Modèle de style</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option><option value="rounded">Arrondi · doux</option><option value="social">Réseaux sociaux</option><option value="professional">Professionnel</option><option value="event">Événementiel</option><option value="print">Impression</option><option value="inverted">Inversé · fond sombre</option></select></div>
+        <div class="qr-silhouette-field">
+          <div class="qr-field-heading"><label>Silhouette</label><span class="hint">Ajoute un symbole au centre du QR</span></div>
+          <div class="qr-silhouette-controls">
+            <div id="qrSilhouettePreview" class="qr-silhouette-preview" aria-live="polite"><span>Aucun</span></div>
+            <button class="btn" id="qrEmojiOpen" type="button">😀 Choisir une silhouette</button>
+            <button class="btn small" id="qrEmojiClear" type="button" disabled>Retirer</button>
+          </div>
+          <p class="hint">Le symbole est intégré au centre. Le niveau de correction passe automatiquement à H. Vérifie toujours la lecture avant impression.</p>
+        </div>
+        <div class="field"><label for="qrPreset">Theme / modèle de style</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option><option value="rounded">Arrondi · doux</option><option value="social">Réseaux sociaux</option><option value="professional">Professionnel</option><option value="event">Événementiel</option><option value="print">Impression</option><option value="inverted">Inversé · fond sombre</option></select></div>
       </div>
-      <div class="qr-section"><h3>2. Apparence</h3>
+      </details><details class="qr-section qr-group" open><summary>Design <small>Thème, silhouette, formes et couleurs</small></summary>
         <div class="split"><div class="field"><label for="qrFg">Couleur du QR</label><input id="qrFg" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrBg">Fond</label><input id="qrBg" type="color" class="control color-control" value="#ffffff"></div></div>
         <label class="checkline"><input id="qrGradient" type="checkbox"> Dégradé</label>
         <div id="qrGradientFields" class="split hidden"><div class="field"><label for="qrFg2">Couleur de fin</label><input id="qrFg2" type="color" class="control color-control" value="#b8853c"></div><div class="field"><label for="qrGradientType">Type</label><select id="qrGradientType" class="control"><option value="linear">Linéaire</option><option value="radial">Radial</option></select></div></div><div class="field"><label for="qrGradientAngle">Angle du dégradé : <output id="qrGradientAngleValue">0°</output></label><input id="qrGradientAngle" type="range" class="control" min="0" max="360" value="0"></div>
@@ -58,16 +67,22 @@
         <div class="split"><div class="field"><label for="qrEyeFrameShape">Contour des repères</label><select id="qrEyeFrameShape" class="control"><option value="square">Carré</option><option value="dot">Rond</option><option value="extra-rounded">Arrondi</option></select></div><div class="field"><label for="qrEyeCenterShape">Centre des repères</label><select id="qrEyeCenterShape" class="control"><option value="square">Carré</option><option value="dot">Rond</option></select></div></div>
         <div class="field"><label for="qrEcc">Correction d'erreur</label><select id="qrEcc" class="control"><option value="H">H · élevée (logo)</option><option value="Q">Q · bonne</option><option value="M" selected>M · moyenne</option><option value="L">L · faible</option></select></div>
       </div>
-      <div class="qr-section"><h3>3. Logo, cadre et export</h3>
+      </details><details class="qr-section qr-group"><summary>Frame &amp; margin <small>Logo, cadre, légende et marges</small></summary>
         <div class="field"><label for="qrLogo">Logo central (PNG, JPG, WebP ou SVG · 2 Mo max.)</label><input id="qrLogo" class="control" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p class="hint">Le fichier reste sur ton appareil.</p></div>
         <div class="field"><label for="qrLogoSize">Taille du logo : <output id="qrLogoSizeValue">18%</output></label><input id="qrLogoSize" type="range" class="control" min="10" max="24" value="18"></div>
         <div class="split"><div class="field"><label for="qrSize">Résolution</label><select id="qrSize" class="control"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option><option value="1600">1600 px</option></select></div><div class="field"><label for="qrMargin">Marge (%)</label><input id="qrMargin" type="range" class="control" min="2" max="10" value="4"><output id="qrMarginValue">4%</output></div></div>
         <div class="field"><label for="qrFrame">Cadre</label><select id="qrFrame" class="control"><option value="none">Aucun</option><option value="plain">Cadre simple</option><option value="rounded">Cadre arrondi</option><option value="banner-top">Bannière supérieure</option><option value="banner-bottom">Bannière inférieure</option><option value="label">Étiquette</option><option value="viewfinder">Viseur</option></select></div>
         <label class="checkline"><input id="qrCaption" type="checkbox"> Ajouter une légende</label>
         <div id="qrCaptionField" class="field hidden"><label for="qrCaptionText">Texte de la légende</label><input id="qrCaptionText" class="control" value="SCAN ME"></div>
-      </div>
+      </details>
       <div class="actions"><button class="btn primary" id="qrGenerate" type="button">Actualiser le QR</button><button class="btn" id="qrReset" type="button">Réinitialiser le style</button></div>
     </section>
+    <dialog class="qr-emoji-dialog" id="qrEmojiDialog" aria-labelledby="qrEmojiTitle">
+      <div class="qr-emoji-head"><div><h3 id="qrEmojiTitle">Choisir une silhouette</h3><p>Recherche un symbole ou explore les catégories.</p></div><button class="btn small" id="qrEmojiClose" type="button" aria-label="Fermer">✕</button></div>
+      <div class="qr-emoji-tools"><input id="qrEmojiSearch" class="control" type="search" placeholder="Rechercher : cœur, sport, étoile…" aria-label="Rechercher une silhouette"><select id="qrEmojiCategory" class="control" aria-label="Catégorie"><option value="all">Toutes les catégories</option><option value="sport">Sport</option><option value="symbols">Symboles</option><option value="nature">Nature</option><option value="food">Objets &amp; loisirs</option></select></div>
+      <div id="qrEmojiGrid" class="qr-emoji-grid" role="listbox" aria-label="Silhouettes disponibles"></div>
+      <p class="hint" id="qrEmojiCount" role="status"></p>
+    </dialog>
     <section class="qr-pane hidden" data-qr-pane="batch">
       <div class="qr-section"><h3>Génération en série</h3><p class="hint">Un QR code par ligne. Format : libellé;contenu. Pour un CSV, la première colonne devient le nom du fichier et la seconde son contenu.</p>
         <div class="field"><label for="qrBatchInput">Liste de contenus</label><textarea id="qrBatchInput" class="control" rows="8" placeholder="Site;https://dartist-fr.github.io/&#10;Portfolio;https://dartist-fr.github.io/portfolio/"></textarea></div>
@@ -133,7 +148,7 @@
         <div class="qr-batch-item"><div><strong>Collaboration & sauvegarde</strong><small>Serveur requis · non activé</small></div></div>
       </div></div>
     </section>
-    <section class="qr-pane hidden" data-qr-pane="help">
+    <section class="qr-pane hidden" data-qr-pane="manage">
       <div class="qr-section"><h3>Scanner avec la caméra</h3><p class="hint">Fonctionne sur HTTPS avec autorisation caméra. La détection multiple dépend du navigateur.</p>
         <div class="actions"><button class="btn primary" type="button" id="qrCameraStart">Démarrer</button><button class="btn" type="button" id="qrCameraStop" disabled>Arrêter</button></div>
         <video id="qrCameraVideo" playsinline muted class="previewframe hidden" aria-label="Flux caméra"></video><p id="qrCameraStatus" class="status" role="status"></p>
