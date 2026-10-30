@@ -146,6 +146,15 @@ const qrSilhouettePaths={
  paw:'M250 450 C130 450 90 300 170 210 C260 120 350 250 330 360 C430 300 570 300 670 360 C650 250 740 120 830 210 C910 300 870 450 750 450 C850 540 850 750 680 790 H320 C150 750 150 540 250 450 Z',
  moon:'M650 80 C300 80 100 320 150 600 C210 900 600 980 830 760 C550 800 330 600 330 400 C330 220 460 100 650 80 Z'
 };
+function qrPointInSvgShape(name,px,py,moduleCount){
+ const d=qrSilhouettePaths[name];if(!d)return false;
+ const p=new Path2D(d),n=moduleCount,s=1000/n,z=s*8.5;
+ p.addPath(new Path2D('M0 0 H'+z+' V'+z+' H0 Z'));
+ p.addPath(new Path2D('M'+(1000-z)+' 0 H1000 V'+z+' H'+(1000-z)+' Z'));
+ p.addPath(new Path2D('M0 '+(1000-z)+' H'+z+' V1000 H0 Z'));
+ const test=document.createElement('canvas').getContext('2d');
+ return test.isPointInPath(p,px,py);
+}
 function qrShapePath(name,moduleCount){
  const d=qrSilhouettePaths[name];if(!d)return null;
  const p=new Path2D(d);
@@ -397,7 +406,13 @@ function qrBuildSvg(){
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
  if(caption&&(frame==='banner-top'||frame==='banner-bottom'))output+='<rect x="0" y="'+(frame==='banner-top'?0:h-capH)+'" width="'+w+'" height="'+capH+'" fill="'+fg+'"/>';
- if(shapeName!=='square'&&qrSilhouettePaths[shapeName])output+='<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';else output+=body;
+ if(shapeName!=='square'&&qrSilhouettePaths[shapeName]){
+  if($('qrPixelatedEdge')?.checked!==false){
+   const module=side/count;let pixelBody='';
+   for(let r=0;r<count;r++)for(let col=0;col<count;col++)if(code.isDark(r,col)&&qrPointInSvgShape(shapeName,(col+.5)*1000/count,(r+.5)*1000/count,count))pixelBody+='<rect x="'+(x+col*module)+'" y="'+(y+r*module)+'" width="'+(module+.15)+'" height="'+(module+.15)+'" fill="'+fill+'"/>';
+   output+=pixelBody;
+  }else output+='<g clip-path="url(#qrSilhouetteClip)">'+body+'</g>';
+ }else output+=body;
  if(qrLogoData||qrSilhouetteData){
   const logoData=qrLogoData||qrSilhouetteData;
   const logoSide=side*(+$('qrLogoSize').value/100),lx=x+(side-logoSide)/2,ly=y+(side-logoSide)/2;
