@@ -71,7 +71,11 @@ Un navigateur récent est recommandé. Certaines fonctions chargent des biblioth
 boite-a-outils/
 ├── index.html
 ├── README.md
+├── assets/
+│   └── js/
+│       └── qr-atelier.js
 └── outils/
+    ├── qr.html
     └── compresseur.html
 ```
 
