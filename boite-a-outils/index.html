@@ -467,7 +467,7 @@ function qrBuildSvg(){
    else if(style==='rounded')decorative+='<rect x="'+px+'" y="'+py+'" width="'+s+'" height="'+s+'" rx="'+(s*.24)+'" fill="'+fg+'"/>';
    else decorative+='<rect x="'+px+'" y="'+py+'" width="'+s+'" height="'+s+'" fill="'+fg+'"/>';
   }
-  output+='<defs><clipPath id="qrSilhouetteModules"><path d="'+qrSilhouettePaths[shapeName]+'"/></clipPath></defs><g transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" clip-path="url(#qrSilhouetteModules)">'+decorative+'</g>';
+  output+='<defs><clipPath id="qrSilhouetteModules" clipPathUnits="userSpaceOnUse"><path d="'+qrSilhouettePaths[shapeName]+'"/></clipPath></defs><g transform="translate('+shapeX+' '+shapeY+') scale('+(shapeSide/1000)+')" clip-path="url(#qrSilhouetteModules)">'+decorative+'</g>';
  }
  if(frame==='plain'||frame==='rounded')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" rx="'+(frame==='rounded'?18:0)+'" fill="none" stroke="'+fg+'" stroke-width="4"/>';
  if(frame==='viewfinder')output+='<rect x="2" y="2" width="'+(w-4)+'" height="'+(h-4)+'" fill="none" stroke="'+fg+'" stroke-width="4" stroke-dasharray="10 7"/>';
