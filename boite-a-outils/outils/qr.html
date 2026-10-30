@@ -1,26 +1,93 @@
-<article class="toolview" id="view-qr"><div class="toolhead"><div><h2>QR code personnalisé</h2><p>Compose un QR code à ton image : couleurs, dégradé, logo, marge et résolution. Garde un contraste suffisant et teste toujours le code avec ton téléphone.</p></div><button class="btn small" data-back>← Tous les outils</button></div>
-<div class="qr-layout"><div class="qr-controls">
-<div class="field"><label for="qrType">Type de contenu</label><select id="qrType" class="control"><option value="url">Lien web</option><option value="text">Texte libre</option><option value="email">E-mail prérempli</option><option value="wifi">Connexion Wi-Fi</option><option value="phone">Numéro de téléphone</option><option value="sms">SMS prérempli</option></select></div>
-<div class="field" id="qrMainField"><label for="qrInput">URL ou contenu</label><textarea id="qrInput" placeholder="https://dartist-fr.github.io/" style="min-height:90px">https://dartist-fr.github.io/</textarea></div>
-<div id="qrTypedFields" class="hidden">
-<div class="field hidden" data-qr-type="email"><label for="qrEmail">Adresse e-mail</label><input id="qrEmail" class="control" type="email" placeholder="bonjour@example.com"></div>
-<div class="field hidden" data-qr-type="email"><label for="qrSubject">Objet (facultatif)</label><input id="qrSubject" class="control" placeholder="Bonjour !"></div>
-<div class="field hidden" data-qr-type="wifi"><label for="qrSsid">Nom du réseau Wi-Fi</label><input id="qrSsid" class="control" placeholder="Mon Wi-Fi"></div>
-<div class="field hidden" data-qr-type="wifi"><label for="qrWifiPassword">Mot de passe Wi-Fi</label><input id="qrWifiPassword" class="control" type="password" placeholder="Mot de passe"></div>
-<div class="field hidden" data-qr-type="wifi"><label for="qrEncryption">Sécurité</label><select id="qrEncryption" class="control"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">Aucun mot de passe</option></select></div>
-<div class="field hidden" data-qr-type="phone"><label for="qrPhone">Numéro</label><input id="qrPhone" class="control" type="tel" placeholder="+33 6 12 34 56 78"></div>
-<div class="field hidden" data-qr-type="sms"><label for="qrSmsPhone">Numéro</label><input id="qrSmsPhone" class="control" type="tel" placeholder="+33 6 12 34 56 78"></div>
-<div class="field hidden" data-qr-type="sms"><label for="qrSmsMessage">Message (facultatif)</label><textarea id="qrSmsMessage" style="min-height:70px"></textarea></div></div>
-<div class="qr-setting-group"><h3>Couleurs</h3><div class="split"><div class="field"><label for="qrFg">Couleur principale</label><input id="qrFg" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrBg">Arrière-plan</label><input id="qrBg" type="color" class="control color-control" value="#ffffff"></div></div>
-<label class="checkline"><input id="qrGradient" type="checkbox"> Dégradé de couleurs</label><div id="qrGradientFields" class="split hidden"><div class="field"><label for="qrFg2">Couleur de fin</label><input id="qrFg2" type="color" class="control color-control" value="#b8853c"></div><div class="field"><label for="qrGradientType">Type de dégradé</label><select id="qrGradientType" class="control"><option value="linear">Linéaire</option><option value="radial">Radial</option></select></div></div>
-<div class="split"><div class="field"><label for="qrEye">Couleur du contour des repères</label><input id="qrEye" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrEyeCenter">Couleur du centre des repères</label><input id="qrEyeCenter" type="color" class="control color-control" value="#172238"></div></div><label class="checkline"><input id="qrTransparent" type="checkbox"> Fond transparent</label><div class="field"><label for="qrFrame">Cadre extérieur</label><select id="qrFrame" class="control"><option value="none">Aucun</option><option value="plain">Fin</option><option value="rounded">Arrondi</option></select></div></div></div>
-<div class="qr-setting-group"><h3>Formes du QR code</h3>
-<div class="field"><label>Forme du corps</label><div class="qr-visual-options" role="group" aria-label="Forme du corps"><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="square" aria-pressed="true"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="square" aria-hidden="true"></div><span>Carré</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="dots" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="dots" aria-hidden="true"></div><span>Points</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="rounded" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="rounded" aria-hidden="true"></div><span>Arrondi</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="extra-rounded" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="extra-rounded" aria-hidden="true"></div><span>Très arrondi</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="classy" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="classy" aria-hidden="true"></div><span>Élégant</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrBodyShape" data-value="classy-rounded" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrBodyShape" data-value="classy-rounded" aria-hidden="true"></div><span>Élégant arrondi</span></button></div><select id="qrBodyShape" class="control hidden" aria-label="Forme du corps"><option value="square">Carré</option><option value="dots">Points</option><option value="rounded">Arrondi</option><option value="extra-rounded">Très arrondi</option><option value="classy">Élégant</option><option value="classy-rounded">Élégant arrondi</option></select></div>
-<div class="field"><label>Forme du contour des marqueurs</label><div class="qr-visual-options" role="group" aria-label="Forme du contour des marqueurs"><button type="button" class="qr-visual-option" data-qr-choice="qrEyeFrameShape" data-value="square" aria-pressed="true"><div class="qr-mini-preview" data-qr-preview="qrEyeFrameShape" data-value="square" aria-hidden="true"></div><span>Carré</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrEyeFrameShape" data-value="dot" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrEyeFrameShape" data-value="dot" aria-hidden="true"></div><span>Rond</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrEyeFrameShape" data-value="extra-rounded" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrEyeFrameShape" data-value="extra-rounded" aria-hidden="true"></div><span>Arrondi</span></button></div><select id="qrEyeFrameShape" class="control hidden" aria-label="Forme du contour des marqueurs"><option value="square">Carré</option><option value="dot">Rond</option><option value="extra-rounded">Arrondi</option></select></div>
-<div class="field"><label>Forme du centre des marqueurs</label><div class="qr-visual-options" role="group" aria-label="Forme du centre des marqueurs"><button type="button" class="qr-visual-option" data-qr-choice="qrEyeCenterShape" data-value="square" aria-pressed="true"><div class="qr-mini-preview" data-qr-preview="qrEyeCenterShape" data-value="square" aria-hidden="true"></div><span>Carré</span></button><button type="button" class="qr-visual-option" data-qr-choice="qrEyeCenterShape" data-value="dot" aria-pressed="false"><div class="qr-mini-preview" data-qr-preview="qrEyeCenterShape" data-value="dot" aria-hidden="true"></div><span>Rond</span></button></div><select id="qrEyeCenterShape" class="control hidden" aria-label="Forme du centre des marqueurs"><option value="square">Carré</option><option value="dot">Rond</option></select></div>
-<div class="field"><label for="qrEcc">Correction d’erreur</label><select id="qrEcc" class="control"><option value="H" selected>Élevée (recommandée avec un logo)</option><option value="Q">Bonne</option><option value="M">Moyenne</option><option value="L">Faible</option></select></div>
+<article class="toolview" id="view-qr">
+<div class="toolhead"><div><h2>Studio QR Code</h2><p>Crée, personnalise, vérifie et exporte des QR codes. Les traitements sont réalisés dans ton navigateur : aucun compte ni envoi de tes contenus.</p></div><button class="btn small" data-back>← Tous les outils</button></div>
+<div class="qr-workspace">
+  <div class="qr-controls">
+    <div class="qr-tabs" role="tablist" aria-label="Fonctions QR Code">
+      <button class="qr-tab active" type="button" data-qr-tab="create" role="tab" aria-selected="true">Créer</button>
+      <button class="qr-tab" type="button" data-qr-tab="batch" role="tab" aria-selected="false">En série</button>
+      <button class="qr-tab" type="button" data-qr-tab="scan" role="tab" aria-selected="false">Lire & vérifier</button>
+    </div>
+    <section class="qr-pane active" data-qr-pane="create">
+      <div class="qr-section"><h3>1. Contenu</h3>
+        <div class="field"><label for="qrType">Type de QR code</label><select id="qrType" class="control">
+          <option value="url">Lien web</option><option value="text">Texte libre</option><option value="wifi">Connexion Wi-Fi</option><option value="vcard">Contact (vCard)</option><option value="whatsapp">WhatsApp</option><option value="email">E-mail prérempli</option><option value="phone">Numéro de téléphone</option><option value="sms">SMS prérempli</option><option value="location">Localisation GPS</option>
+        </select></div>
+        <div class="field" data-qr-fields="url text"><label for="qrInput">URL ou texte</label><textarea id="qrInput" class="control" rows="3" placeholder="https://dartist-fr.github.io/">https://dartist-fr.github.io/</textarea></div>
+        <div class="qr-fields hidden" data-qr-fields="wifi">
+          <div class="field"><label for="qrSsid">Nom du réseau</label><input id="qrSsid" class="control" placeholder="Mon Wi-Fi"></div>
+          <div class="field"><label for="qrWifiPassword">Mot de passe</label><input id="qrWifiPassword" class="control" type="password" placeholder="Mot de passe Wi-Fi"></div>
+          <div class="field"><label for="qrEncryption">Sécurité</label><select id="qrEncryption" class="control"><option value="WPA">WPA / WPA2</option><option value="WEP">WEP</option><option value="nopass">Aucune</option></select></div>
+        </div>
+        <div class="qr-fields hidden" data-qr-fields="vcard">
+          <div class="split"><div class="field"><label for="qrFirstName">Prénom</label><input id="qrFirstName" class="control"></div><div class="field"><label for="qrLastName">Nom</label><input id="qrLastName" class="control"></div></div>
+          <div class="field"><label for="qrOrg">Organisation</label><input id="qrOrg" class="control"></div>
+          <div class="field"><label for="qrVcardPhone">Téléphone</label><input id="qrVcardPhone" class="control" type="tel"></div>
+          <div class="field"><label for="qrVcardEmail">E-mail</label><input id="qrVcardEmail" class="control" type="email"></div>
+          <div class="field"><label for="qrWebsite">Site web</label><input id="qrWebsite" class="control" placeholder="https://"></div>
+        </div>
+        <div class="qr-fields hidden" data-qr-fields="whatsapp">
+          <div class="field"><label for="qrWaPhone">Téléphone avec indicatif international</label><input id="qrWaPhone" class="control" type="tel" placeholder="33612345678"></div>
+          <div class="field"><label for="qrWaMessage">Message prérempli (facultatif)</label><textarea id="qrWaMessage" class="control" rows="2"></textarea></div>
+        </div>
+        <div class="qr-fields hidden" data-qr-fields="email">
+          <div class="field"><label for="qrEmail">Adresse e-mail</label><input id="qrEmail" class="control" type="email" placeholder="bonjour@example.com"></div>
+          <div class="field"><label for="qrSubject">Objet</label><input id="qrSubject" class="control"></div>
+          <div class="field"><label for="qrEmailBody">Message</label><textarea id="qrEmailBody" class="control" rows="2"></textarea></div>
+        </div>
+        <div class="qr-fields hidden" data-qr-fields="phone"><div class="field"><label for="qrPhone">Numéro</label><input id="qrPhone" class="control" type="tel" placeholder="+33612345678"></div></div>
+        <div class="qr-fields hidden" data-qr-fields="sms">
+          <div class="field"><label for="qrSmsPhone">Numéro</label><input id="qrSmsPhone" class="control" type="tel" placeholder="+33612345678"></div>
+          <div class="field"><label for="qrSmsMessage">Message</label><textarea id="qrSmsMessage" class="control" rows="2"></textarea></div>
+        </div>
+        <div class="qr-fields hidden" data-qr-fields="location">
+          <div class="split"><div class="field"><label for="qrLatitude">Latitude</label><input id="qrLatitude" class="control" type="number" step="any" placeholder="43.2965"></div><div class="field"><label for="qrLongitude">Longitude</label><input id="qrLongitude" class="control" type="number" step="any" placeholder="5.3698"></div></div>
+          <p class="hint">Saisis les coordonnées GPS du lieu à partager.</p>
+        </div>
+        <div class="field"><label for="qrPreset">Modèle de style</label><select id="qrPreset" class="control"><option value="custom">Personnalisation libre</option><option value="midnight">Midnight · bleu nuit</option><option value="forest">Forest · vert</option><option value="sunset">Sunset · chaud</option><option value="minimal">Minimal · noir et blanc</option></select></div>
+      </div>
+      <div class="qr-section"><h3>2. Apparence</h3>
+        <div class="split"><div class="field"><label for="qrFg">Couleur du QR</label><input id="qrFg" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrBg">Fond</label><input id="qrBg" type="color" class="control color-control" value="#ffffff"></div></div>
+        <label class="checkline"><input id="qrGradient" type="checkbox"> Dégradé</label>
+        <div id="qrGradientFields" class="split hidden"><div class="field"><label for="qrFg2">Couleur de fin</label><input id="qrFg2" type="color" class="control color-control" value="#b8853c"></div><div class="field"><label for="qrGradientType">Type</label><select id="qrGradientType" class="control"><option value="linear">Linéaire</option><option value="radial">Radial</option></select></div></div>
+        <div class="split"><div class="field"><label for="qrEye">Contour des repères</label><input id="qrEye" type="color" class="control color-control" value="#172238"></div><div class="field"><label for="qrEyeCenter">Centre des repères</label><input id="qrEyeCenter" type="color" class="control color-control" value="#172238"></div></div>
+        <label class="checkline"><input id="qrTransparent" type="checkbox"> Fond transparent (PNG/SVG)</label>
+        <div class="field"><label for="qrBodyShape">Forme des modules</label><select id="qrBodyShape" class="control"><option value="square">Carré</option><option value="dots">Points</option><option value="rounded">Arrondi</option><option value="extra-rounded">Très arrondi</option><option value="classy">Élégant</option><option value="classy-rounded">Élégant arrondi</option></select></div>
+        <div class="split"><div class="field"><label for="qrEyeFrameShape">Contour des repères</label><select id="qrEyeFrameShape" class="control"><option value="square">Carré</option><option value="dot">Rond</option><option value="extra-rounded">Arrondi</option></select></div><div class="field"><label for="qrEyeCenterShape">Centre des repères</label><select id="qrEyeCenterShape" class="control"><option value="square">Carré</option><option value="dot">Rond</option></select></div></div>
+        <div class="field"><label for="qrEcc">Correction d'erreur</label><select id="qrEcc" class="control"><option value="H">H · élevée (logo)</option><option value="Q">Q · bonne</option><option value="M" selected>M · moyenne</option><option value="L">L · faible</option></select></div>
+      </div>
+      <div class="qr-section"><h3>3. Logo, cadre et export</h3>
+        <div class="field"><label for="qrLogo">Logo central (PNG, JPG, WebP ou SVG · 2 Mo max.)</label><input id="qrLogo" class="control" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p class="hint">Le fichier reste sur ton appareil.</p></div>
+        <div class="field"><label for="qrLogoSize">Taille du logo : <output id="qrLogoSizeValue">18%</output></label><input id="qrLogoSize" type="range" class="control" min="10" max="24" value="18"></div>
+        <div class="split"><div class="field"><label for="qrSize">Résolution</label><select id="qrSize" class="control"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px</option><option value="1600">1600 px</option></select></div><div class="field"><label for="qrMargin">Marge (%)</label><input id="qrMargin" type="range" class="control" min="2" max="10" value="4"><output id="qrMarginValue">4%</output></div></div>
+        <div class="field"><label for="qrFrame">Cadre</label><select id="qrFrame" class="control"><option value="none">Aucun</option><option value="plain">Fin</option><option value="rounded">Arrondi</option></select></div>
+        <label class="checkline"><input id="qrCaption" type="checkbox"> Ajouter une légende</label>
+        <div id="qrCaptionField" class="field hidden"><label for="qrCaptionText">Texte de la légende</label><input id="qrCaptionText" class="control" value="SCAN ME"></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="qrGenerate" type="button">Actualiser le QR</button><button class="btn" id="qrReset" type="button">Réinitialiser le style</button></div>
+    </section>
+    <section class="qr-pane hidden" data-qr-pane="batch">
+      <div class="qr-section"><h3>Génération en série</h3><p class="hint">Un QR code par ligne. Format : libellé;contenu. Pour un CSV, la première colonne devient le nom du fichier et la seconde son contenu.</p>
+        <div class="field"><label for="qrBatchInput">Liste de contenus</label><textarea id="qrBatchInput" class="control" rows="8" placeholder="Site;https://dartist-fr.github.io/&#10;Portfolio;https://dartist-fr.github.io/portfolio/"></textarea></div>
+        <div class="actions"><label class="btn" for="qrCsvFile">Importer CSV</label><input id="qrCsvFile" type="file" accept=".csv,text/csv" class="hidden"><button class="btn primary" id="qrBatchGenerate" type="button">Préparer les QR codes</button></div>
+        <p id="qrBatchStatus" class="status" role="status"></p><div id="qrBatchList" class="qr-batch-list"></div>
+        <div class="actions"><button class="btn primary" id="qrBatchZip" type="button" disabled>Télécharger le ZIP PNG</button><button class="btn" id="qrBatchPrint" type="button" disabled>Planche d'impression</button></div>
+      </div>
+    </section>
+    <section class="qr-pane hidden" data-qr-pane="scan">
+      <div class="qr-section"><h3>Lire et vérifier un QR code</h3><p class="hint">Importe une image contenant un QR code. Le décodage est effectué localement dans ton navigateur.</p>
+        <div class="field"><label for="qrScanFile">Image à analyser</label><input id="qrScanFile" class="control" type="file" accept="image/*"></div>
+        <div id="qrScanPreview" class="qr-scan-preview"><span class="hint">L'aperçu de l'image apparaîtra ici.</span></div>
+        <p id="qrScanStatus" class="status" role="status"></p>
+        <div class="field"><label for="qrScanResult">Contenu détecté</label><textarea id="qrScanResult" class="control" rows="4" readonly placeholder="Aucun contenu détecté pour le moment."></textarea></div>
+        <div class="actions"><button class="btn" id="qrScanCopy" type="button" disabled>Copier le contenu</button><button class="btn" id="qrScanOpen" type="button" disabled>Ouvrir le lien</button></div>
+      </div>
+    </section>
+  </div>
+  <aside class="qr-preview-panel"><div class="qr-preview-sticky"><div class="qr-preview-heading"><span class="label">Aperçu en direct</span><span id="qrPreviewMeta" class="hint">512 × 512 px</span></div>
+    <div id="qrBox" class="qrbox"><span class="qr-placeholder">Ton QR code apparaîtra ici.</span></div>
+    <p id="qrStatus" class="status" role="status" aria-live="polite"></p>
+    <div class="qr-export-actions"><button class="btn primary" id="qrDownload" type="button" disabled>PNG</button><button class="btn" id="qrDownloadJpg" type="button" disabled>JPG</button><button class="btn" id="qrDownloadSvg" type="button" disabled>SVG</button><button class="btn" id="qrDownloadPdf" type="button" disabled>PDF</button></div>
+    <p class="hint">Conseil : conserve un contraste élevé, évite un logo trop grand et teste le QR avec plusieurs téléphones avant impression.</p>
+  </div></aside>
 </div>
-<div class="qr-setting-group"><h3>Logo et rendu</h3><div class="field"><label for="qrLogo">Logo central (PNG, JPG, WebP ou SVG · 2 Mo max.)</label><input id="qrLogo" class="control" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><p class="hint">Le logo est intégré localement dans l’image générée.</p></div><div class="field"><label for="qrLogoSize">Taille du logo : <output id="qrLogoSizeValue">18%</output></label><input id="qrLogoSize" class="control" type="range" min="10" max="24" value="18"></div><div class="field"><label for="qrSize">Résolution de sortie</label><select id="qrSize" class="control"><option value="256">256 px · écran</option><option value="512" selected>512 px · standard</option><option value="1024">1024 px · haute qualité</option><option value="1600">1600 px · impression</option></select></div><div class="field"><label for="qrMargin">Marge de sécurité : <output id="qrMarginValue">4%</output></label><input id="qrMargin" class="control" type="range" min="2" max="8" value="4"></div>
-<label class="checkline"><input id="qrCaption" type="checkbox"> Ajouter une légende « Scan me »</label><div class="field hidden" id="qrCaptionField"><label for="qrCaptionText">Texte de la légende</label><input id="qrCaptionText" class="control" value="SCAN ME"></div></div>
-<div class="actions"><button class="btn primary" id="qrGenerate">Générer / actualiser</button><button class="btn" id="qrReset">Réinitialiser le style</button></div><p class="hint">Le rendu est généré dans ton navigateur. Les exports PNG/JPG intègrent le cadre et la légende ; le SVG conserve le QR vectoriel natif.</p></div>
-<div class="qr-preview-panel"><label class="label">Aperçu en direct</label><div id="qrBox" class="qrbox"><span class="hint">Ton QR code apparaîtra ici.</span></div><p id="qrStatus" class="status" role="status"></p><div class="actions"><button class="btn primary" id="qrDownload">Télécharger PNG</button><button class="btn" id="qrDownloadJpg">Télécharger JPG</button><button class="btn" id="qrDownloadSvg">Exporter SVG</button></div><p class="hint">Le SVG exporté contient l’image PNG intégrée : pratique pour partager, mais pas un tracé vectoriel natif.</p></div></div></article>
+</article>
