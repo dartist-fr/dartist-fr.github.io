@@ -240,6 +240,14 @@ function qrApplyPreset(name){
  if(name==='inverted')$('qrEcc').value='H';
  generateQR();
 }
+const qrEmojiItems=[['🏈','Football américain','sport'],['⚽','Football','sport'],['🏀','Basketball','sport'],['🎾','Tennis','sport'],['🏆','Trophée','sport'],['❤️','Cœur','symbols'],['⭐','Étoile','symbols'],['🔥','Flamme','symbols'],['📍','Localisation','symbols'],['🌸','Fleur','nature'],['🌴','Palmier','nature'],['🐾','Empreintes','nature'],['🎨','Palette','food'],['🎮','Jeux vidéo','food'],['📷','Photo','food'],['🍔','Burger','food'],['🚀','Fusée','food'],['✈️','Avion','food']];
+function qrEmojiImage(emoji){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,256,256);x.font='184px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(emoji,128,132);return c.toDataURL('image/png')}
+function qrRenderEmojiPicker(){const host=$('qrEmojiGrid'),term=$('qrEmojiSearch').value.toLowerCase(),cat=$('qrEmojiCategory').value;host.textContent='';const list=qrEmojiItems.filter(x=>(cat==='all'||cat===x[2])&&(!term||(x[1]+' '+x[0]).toLowerCase().includes(term)));list.forEach(([emoji,label])=>{const b=document.createElement('button');b.type='button';b.className='qr-emoji-option';const icon=document.createElement('span'),name=document.createElement('small');icon.textContent=emoji;name.textContent=label;b.append(icon,name);b.addEventListener('click',()=>{qrSilhouetteData=qrEmojiImage(emoji);$('qrSilhouettePreview').textContent=emoji;$('qrEmojiClear').disabled=false;$('qrEcc').value='H';$('qrLogoSize').value=20;$('qrLogoSizeValue').textContent='20%';$('qrEmojiDialog').close();generateQR()});host.appendChild(b)});$('qrEmojiCount').textContent=list.length+' silhouettes affichées.'}
+$('qrEmojiOpen').addEventListener('click',()=>{$('qrEmojiDialog').showModal();qrRenderEmojiPicker()});
+$('qrEmojiClose').addEventListener('click',()=>$('qrEmojiDialog').close());
+$('qrEmojiSearch').addEventListener('input',qrRenderEmojiPicker);
+$('qrEmojiCategory').addEventListener('change',qrRenderEmojiPicker);
+$('qrEmojiClear').addEventListener('click',()=>{qrSilhouetteData=null;$('qrSilhouettePreview').textContent='Aucun';$('qrEmojiClear').disabled=true;generateQR()});
 $('qrType').addEventListener('change',qrTypeFields);$('qrWifiShowPassword')?.addEventListener('change',()=>{$('qrWifiPassword').type=$('qrWifiShowPassword').checked?'text':'password'});$('qrGradientAngle')?.addEventListener('input',()=>{const o=$('qrGradientAngleValue');if(o)o.textContent=$('qrGradientAngle').value+'°';generateQR()});
 qrIds.forEach(id=>{const el=$(id);if(el){el.addEventListener('input',()=>{if(id==='qrLogoSize')$('qrLogoSizeValue').textContent=el.value+'%';if(id==='qrMargin')$('qrMarginValue').textContent=el.value+'%';generateQR()});el.addEventListener('change',generateQR)}});
 $('qrPreset').addEventListener('change',()=>qrApplyPreset($('qrPreset').value));
