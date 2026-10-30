@@ -283,7 +283,7 @@ function qrBuildEps(){
   ps.push(circle?(px+unit/2)+' '+(py+unit/2)+' '+(unit*.44)+' 0 360 arc fill':px+' '+py+' '+unit+' '+unit+' rectfill');
  }
  if(caption){
-  const ascii=caption.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,'?').replace(/[\\()]/g,'\\$('qrDownloadSvg').addEventListener('click',async()=>{if(!qrStyling){qrSetStatus('Génère d’abord un QR code.',true);return}try{await qrStyling.download({name:'dartist-qr-code',extension:'svg'});qrSetStatus('SVG vectoriel téléchargé. Le cadre et la légende sont inclus dans les exports PNG/JPG/PDF.')}catch(e){qrSetStatus('Export SVG impossible : '+e.message,true)}});');
+  const ascii=caption.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7E]/g,'?').replace(/[()\\]/g,ch=>'\\'+ch);
   const tx=frame==='banner-top'||frame==='banner-bottom'||frame==='label'?'1 1 1':color.join(' ');
   ps.push(tx+' setrgbcolor /Helvetica-Bold findfont 16 scalefont setfont '+(w/2)+' '+(top?h-capH/2:pad+capH/2)+' moveto ('+ascii+') dup stringwidth pop 2 div neg 0 rmoveto show');
  }
