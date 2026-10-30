@@ -192,6 +192,38 @@ function qrSilhouetteInnerRatio(shapePath){
  }
  return Math.max(.22,Math.min(.82,low*.88));
 }
+function qrSilhouetteDecorativeModules(ctx,path,plateRect,fg,style,pixelated){
+ const pitch=30,size=22,round=style==='rounded',dots=style==='dots';
+ ctx.save();ctx.fillStyle=fg;
+ for(let row=0;row<34;row++)for(let col=0;col<34;col++){
+  const cx=14+col*pitch,cy=14+row*pitch;
+  if(!ctx.isPointInPath(path,cx,cy))continue;
+  if(cx>=plateRect.x&&cx<=plateRect.x+plateRect.w&&cy>=plateRect.y&&cy<=plateRect.y+plateRect.h)continue;
+  // Motif déterministe, dense et régulier : ces modules décorent la silhouette
+  // sans modifier les données du QR principal.
+  const hash=(row*73856093)^(col*19349663)^0x5f3759df;
+  if((hash>>>0)%11===0)continue;
+  const s=size*(pixelated?1:.88),x=cx-s/2,y=cy-s/2;
+  if(dots){ctx.beginPath();ctx.arc(cx,cy,s*.43,0,Math.PI*2);ctx.fill()}
+  else if(round){ctx.beginPath();ctx.roundRect(x,y,s,s,s*.24);ctx.fill()}
+  else ctx.fillRect(x,y,s,s);
+ }
+ ctx.restore();
+}
+function qrSilhouetteDecorativeSvg(pathD,plateRect,fg,style){
+ let out='';const pitch=30,size=22,round=style==='rounded',dots=style==='dots';
+ for(let row=0;row<34;row++)for(let col=0;col<34;col++){
+  const cx=14+col*pitch,cy=14+row*pitch;
+  // isPointInPath est évalué sur la même géométrie normalisée que le canvas.
+  if(cx>=plateRect.x&&cx<=plateRect.x+plateRect.w&&cy>=plateRect.y&&cy<=plateRect.y+plateRect.h)continue;
+  const hash=(row*73856093)^(col*19349663)^0x5f3759df;if((hash>>>0)%11===0)continue;
+  const s=size*.88,x=cx-s/2,y=cy-s/2;
+  if(dots)out+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(s*.43)+'" fill="'+fg+'"/>';
+  else if(round)out+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" rx="'+(s*.24)+'" fill="'+fg+'"/>';
+  else out+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" fill="'+fg+'"/>';
+ }
+ return '<g transform="translate(0 0) scale(1)">'+out+'</g>';
+}
 function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const value=valueOverride||qrContent();if(!value||typeof qrcode!=='function')return null;
  const code=qrcode(0,$('qrEcc').value);code.addData(value,'Byte');code.make();
@@ -200,15 +232,11 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const canvas=document.createElement('canvas');canvas.width=total;canvas.height=total;
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),transparent=$('qrTransparent').checked,bg=transparent?'#ffffff':$('qrBg').value,fg=$('qrFg').value,shapePath=new Path2D(qrSilhouettePaths[shape]);
  if(!transparent){ctx.fillStyle=bg;ctx.fillRect(0,0,total,total)}
- // La silhouette est une enveloppe autour d'une matrice QR carrée intacte.
- if($('qrPixelatedEdge')?.checked!==false){
-  const edge=document.createElement('canvas');edge.width=128;edge.height=128;
-  const edgeCtx=edge.getContext('2d');edgeCtx.scale(128/1000,128/1000);edgeCtx.fillStyle=fg;edgeCtx.fill(shapePath);
-  ctx.imageSmoothingEnabled=false;ctx.drawImage(edge,0,0,total,total);
- }else{
-  ctx.save();ctx.scale(total/1000,total/1000);ctx.fillStyle=fg;ctx.fill(shapePath);ctx.restore();
- }
+ // La silhouette est composée de modules décoratifs, pas d'une masse pleine.
  const plate=total*qrSilhouetteInnerRatio(shapePath),plateX=(total-plate)/2,plateY=(total-plate)/2;
+ ctx.save();ctx.scale(total/1000,total/1000);
+ qrSilhouetteDecorativeModules(ctx,shapePath,{x:plateX*1000/total,y:plateY*1000/total,w:plate*1000/total,h:plate*1000/total},fg,$('qrBodyShape').value,$('qrPixelatedEdge')?.checked!==false);
+ ctx.restore();
  ctx.fillStyle=bg;ctx.fillRect(plateX,plateY,plate,plate);
  const cell=plate/(n+8),matrixSide=cell*n,matrixX=plateX+cell*4,matrixY=plateY+cell*4;
  ctx.fillStyle=fg;
