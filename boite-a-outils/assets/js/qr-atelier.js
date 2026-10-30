@@ -20,6 +20,12 @@ function renderThemes(){
   if(!items.length){host.textContent='Aucun thème enregistré pour le moment.';return}
   items.forEach((item,index)=>{const row=document.createElement('div');row.className='qr-batch-item';const info=document.createElement('div'),title=document.createElement('strong'),sub=document.createElement('small'),actions=document.createElement('div'),use=document.createElement('button'),del=document.createElement('button');title.textContent=item.name;sub.textContent='Thème local';info.append(title,sub);use.className='btn small';use.textContent='Appliquer';use.addEventListener('click',()=>applyQrTheme(item.settings));del.className='btn small';del.textContent='Supprimer';del.addEventListener('click',()=>{const next=loadThemes();next.splice(index,1);saveThemes(next);renderThemes()});actions.append(use,del);row.append(info,actions);host.append(row)});
 }
+const init = () => {
+ if (!$('qrThemeSave')) {
+   const observer = new MutationObserver(() => { if ($('qrThemeSave')) { observer.disconnect(); init(); } });
+   observer.observe(document.body, { childList: true, subtree: true });
+   return;
+ }
 $('qrThemeSave')?.addEventListener('click',()=>{const name=$('qrThemeName').value.trim();if(!name){$('qrThemeStatus').textContent='Donne un nom à ton thème.';return}const items=loadThemes();items.push({name,settings:readQrTheme()});saveThemes(items);$('qrThemeStatus').textContent='Thème enregistré sur cet appareil.';renderThemes()});
 $('qrThemeExport')?.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(loadThemes(),null,2)],{type:'application/json'});downloadBlob(blob,'dartist-qr-themes.json')});
 $('qrThemeImportFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data)||data.some(x=>!x.name||!x.settings||typeof x.settings!=='object'))throw Error('Structure de fichier incorrecte');saveThemes([...loadThemes(),...data.slice(0,100)]);$('qrThemeStatus').textContent=data.length+' thème(s) importé(s).';renderThemes()}catch(err){$('qrThemeStatus').textContent='Import impossible : '+err.message}e.target.value=''});
@@ -64,4 +70,6 @@ $('qrAuditImage')?.addEventListener('change',async e=>{
  }catch(err){host.textContent=err.message}finally{e.target.value=''}
 });
 renderThemes();
+};
+init();
 })();
