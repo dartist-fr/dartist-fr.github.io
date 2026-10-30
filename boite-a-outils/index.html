@@ -177,6 +177,21 @@ function qrShapeCoverage(ctx,path,x,y,module,pixelated){
  for(let sy of [.2,.5,.8])for(let sx of [.2,.5,.8]){total++;if(ctx.isPointInPath(path,x+module*sx,y+module*sy))inside++}
  return inside/total;
 }
+function qrSilhouetteInnerRatio(shapePath){
+ const probe=document.createElement('canvas'),ctx=probe.getContext('2d');
+ let low=0,high=1;
+ // Recherche le plus grand carré centré entièrement dans la silhouette.
+ for(let k=0;k<18;k++){
+  const half=(low+high)/4+.000001,step=half*2/12;let inside=true;
+  for(let y=500-half*1000;y<=500+half*1000&&inside;y+=step*1000){
+   for(let x=500-half*1000;x<=500+half*1000;x+=step*1000){
+    if(!ctx.isPointInPath(shapePath,x,y)){inside=false;break}
+   }
+  }
+  if(inside)low=half*2;else high=half*2;
+ }
+ return Math.max(.22,Math.min(.82,low*.88));
+}
 function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  const value=valueOverride||qrContent();if(!value||typeof qrcode!=='function')return null;
  const code=qrcode(0,$('qrEcc').value);code.addData(value,'Byte');code.make();
@@ -193,7 +208,7 @@ function qrBuildSilhouetteCanvas(valueOverride,sizeOverride){
  }else{
   ctx.save();ctx.scale(total/1000,total/1000);ctx.fillStyle=fg;ctx.fill(shapePath);ctx.restore();
  }
- const plate=total*.76,plateX=(total-plate)/2,plateY=(total-plate)/2;
+ const plate=total*qrSilhouetteInnerRatio(shapePath),plateX=(total-plate)/2,plateY=(total-plate)/2;
  ctx.fillStyle=bg;ctx.fillRect(plateX,plateY,plate,plate);
  const cell=plate/(n+8),matrixSide=cell*n,matrixX=plateX+cell*4,matrixY=plateY+cell*4;
  ctx.fillStyle=fg;
