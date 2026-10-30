@@ -71,6 +71,14 @@
     <section class="qr-pane hidden" data-qr-pane="batch">
       <div class="qr-section"><h3>Génération en série</h3><p class="hint">Un QR code par ligne. Format : libellé;contenu. Pour un CSV, la première colonne devient le nom du fichier et la seconde son contenu.</p>
         <div class="field"><label for="qrBatchInput">Liste de contenus</label><textarea id="qrBatchInput" class="control" rows="8" placeholder="Site;https://dartist-fr.github.io/&#10;Portfolio;https://dartist-fr.github.io/portfolio/"></textarea></div>
+        <div class="split">
+          <div class="field"><label for="qrBatchPaper">Format de planche</label><select id="qrBatchPaper" class="control"><option value="A4">A4</option><option value="A3">A3</option><option value="Letter">Letter</option></select></div>
+          <div class="field"><label for="qrBatchColumns">Colonnes</label><select id="qrBatchColumns" class="control"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></div>
+        </div>
+        <div class="split">
+          <div class="field"><label for="qrBatchSize">Taille du QR sur la planche</label><select id="qrBatchSize" class="control"><option value="30">30 mm</option><option value="38" selected>38 mm</option><option value="45">45 mm</option><option value="55">55 mm</option></select></div>
+          <div class="field"><label for="qrBatchMargin">Marge de page</label><select id="qrBatchMargin" class="control"><option value="8">8 mm</option><option value="12" selected>12 mm</option><option value="16">16 mm</option></select></div>
+        </div>
         <div class="actions"><label class="btn" for="qrCsvFile">Importer CSV</label><input id="qrCsvFile" type="file" accept=".csv,text/csv" class="hidden"><button class="btn primary" id="qrBatchGenerate" type="button">Préparer les QR codes</button></div>
         <p id="qrBatchStatus" class="status" role="status"></p><div id="qrBatchList" class="qr-batch-list"></div>
         <div class="actions"><button class="btn primary" id="qrBatchZip" type="button" disabled>Télécharger le ZIP PNG</button><button class="btn" id="qrBatchPrint" type="button" disabled>Planche d'impression</button></div>
