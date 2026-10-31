@@ -52,7 +52,7 @@
 <button class="daybtn" data-day="4"><span class="daynum">06</span><span class="daylabel">Vendredi · Retour</span></button>
 </nav>
 <section class="workspace">
-<div class="panel"><div class="panelhead"><div><h2>Explorer la carte</h2><p id="mapsub">Les étapes de votre arrivée</p></div><span class="badge" id="count">4 lieux</span></div><div class="mapfilters"><label for="mapday">Journée <select id="mapday"><option value="all">Toutes les journées</option><option value="0">Lun. 2 nov.</option><option value="1">Mar. 3 nov.</option><option value="2">Mer. 4 nov.</option><option value="3">Jeu. 5 nov.</option><option value="4">Ven. 6 nov.</option></select></label></div><div id="map" aria-label="Carte interactive de Palerme"></div><div class="mapfoot"><span id="routeStatus">Tracé piéton sur les rues · OpenStreetMap</span><a class="btn" id="route" target="_blank" rel="noopener">Itinéraire ↗</a></div></div>
+<div class="panel"><div class="panelhead"><div><h2>Explorer la carte</h2><p id="mapsub">Les étapes de votre arrivée</p></div><span class="badge" id="count">4 lieux</span></div><div class="mapfilters"><label for="mapday">Journée <select id="mapday"><option value="all">Toutes les journées</option><option value="0">Lun. 2 nov.</option><option value="1">Mar. 3 nov.</option><option value="2">Mer. 4 nov.</option><option value="3">Jeu. 5 nov.</option><option value="4">Ven. 6 nov.</option><option value="extra">Autres lieux &amp; excursions</option></select></label></div><div id="map" aria-label="Carte interactive de Palerme"></div><div class="mapfoot"><span id="routeStatus">Tracé piéton sur les rues · OpenStreetMap</span><a class="btn" id="route" target="_blank" rel="noopener">Itinéraire ↗</a></div></div>
 <article class="panel"><div class="panelhead"><div><h2 id="panelday">Lundi 2 novembre</h2><p id="panelsub">Arrivée et première découverte</p></div><span class="badge" id="tag">Arrivée</span></div><div class="planbody"><div class="kicker" id="kicker">LUNDI · 2 NOVEMBRE</div><h2 class="daytitle" id="title">Un premier aperçu de Palerme.</h2><p class="description" id="description"></p><div id="activities"></div><div class="note" id="note"></div></div><div class="planfoot"><a class="btn" id="route2" target="_blank" rel="noopener">Ouvrir l’itinéraire ↗</a></div></article>
 </section>
 <section class="lower" id="conseils"><article><h2>Avant de partir</h2><p>Vérifiez les horaires et les jours d’ouverture des monuments et musées pour vos dates exactes. Le mercredi, prévoyez du temps pour stationner à Monreale. Le vendredi, anticipez la restitution éventuelle de la voiture et le transfert à l’aéroport.</p></article><article><h2>Manger bien sans se ruiner</h2><p>Privilégiez les arancine, panelle et crocchè, les marchés de Ballarò et du Capo, les boulangeries et les trattorias avec menu du jour. Comptez environ 5–10 € pour un repas de street-food et 10–15 € dans une adresse simple, selon les choix et les prix sur place.</p></article><article><h2>En cas de pluie</h2><p>Privilégiez les visites intérieures et gardez les promenades flexibles. L’escape game du jeudi est une suggestion à réserver et à confirmer pour deux joueurs, notamment pour la langue du jeu. Les horaires proposés restent indicatifs.</p></article></section>
@@ -70,9 +70,20 @@ const days=[
 let map,layer,routingLayer,markers=[],activeDay=0;
 const routeColors=["#d94646","#2878c8","#8b5cf6","#e28b27","#159b76"];
 const routeCache=new Map();
+const extraPlaces=[
+ ["Via Vincenzo Errante, 3 · adresse","Adresse à repérer",38.10832,13.36580,"Point bleu demandé pour retrouver l’adresse dans le quartier Oreto, près de la gare centrale."],
+ ["Catacombes des Capucins","Palermo",38.1128,13.3395,"Visite à l’ouest du centre historique. À intégrer selon les horaires et votre envie."],
+ ["Église Santissimo Salvatore","Palermo",38.1152,13.3591,"Église du centre historique, à proximité des autres monuments."],
+ ["Palais de la Zisa","Palermo",38.1179,13.3421,"Palais arabo-normand, à l’ouest du centre."],
+ ["Cappadonia Gelati","Pause gourmande",38.1165,13.3594,"Adresse de glacier à vérifier selon la boutique choisie."],
+ ["Teatro Massimo","Palermo",38.1200,13.3540,"Théâtre historique de Palerme."],
+ ["Bagheria","Excursion",38.0789,13.5123,"Ville à l’est de Palerme, excursion distincte du centre."],
+ ["Borgo Parrini","Excursion",38.0748,13.0558,"Petit hameau près de Partinico, à l’ouest de Palerme."],
+ ["Temple dorique de Ségeste","Excursion",37.9414,12.8328,"Site archéologique près de Calatafimi-Segesta, excursion à prévoir en voiture. Vérifiez l’accès et les horaires."]
+];
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function icon(n){return L.divIcon({className:"",html:'<div class="map-pin"><span>'+n+'</span></div>',iconSize:[31,31],iconAnchor:[15,30],popupAnchor:[0,-28]});}
+function icon(n,blue=false){return L.divIcon({className:"",html:'<div class="map-pin" style="background:'+(blue?"#2476d2":"var(--accent)")+'"><span>'+n+'</span></div>',iconSize:[31,31],iconAnchor:[15,30],popupAnchor:[0,-28]});}
 function searchUrl(p){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p[2]+","+p[3]);}
 function category(p){
  const s=(p[0]+" "+p[4]).toLowerCase();
@@ -119,7 +130,7 @@ async function drawRoutes(){
  if(!routingLayer)return;
  routingLayer.clearLayers();
  const selected=$("mapday").value;
- const dayIndexes=selected==="all"?days.map((_,i)=>i):[Number(selected)];
+ const dayIndexes=selected==="all"?days.map((_,i)=>i):(selected==="extra"?[]:[Number(selected)]);
  $("routeStatus").textContent="Calcul des tracés piétons…";
  let drawn=0,failed=0;
  await Promise.all(dayIndexes.map(async di=>{
@@ -141,11 +152,17 @@ function drawMap(){
  layer.clearLayers();markers=[];
  const dayFilter=$("mapday").value;let bounds=[],count=0;
  days.forEach((d,di)=>d.places.forEach((p,pi)=>{
-  if(dayFilter!=="all"&&Number(dayFilter)!==di)return;
+  if(dayFilter==="extra"||(dayFilter!=="all"&&Number(dayFilter)!==di))return;
   count++;const m=L.marker([p[2],p[3]],{icon:icon(count)}).addTo(layer);
   m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(d.date)+' · '+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="'+searchUrl(p)+'">Ouvrir dans Google Maps ↗</a>');
   markers.push({marker:m,day:di,place:pi});bounds.push([p[2],p[3]]);
  }));
+ if(dayFilter==="all"||dayFilter==="extra")extraPlaces.forEach((p,pi)=>{
+  count++;const m=L.marker([p[2],p[3]],{icon:icon(count,pi===0)}).addTo(layer);
+  const q=encodeURIComponent(p[0]+", Sicilia");
+  m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+q+'">Ouvrir dans Google Maps ↗</a>');
+  markers.push({marker:m,day:"extra",place:pi});bounds.push([p[2],p[3]]);
+ });
  $("count").textContent=count+" lieux";
  if(bounds.length===1)map.setView(bounds[0],14);else if(bounds.length)map.fitBounds(bounds,{padding:[30,30],maxZoom:13});else map.setView([38.116,13.358],13);
  requestAnimationFrame(()=>map.invalidateSize());
