@@ -157,7 +157,7 @@ function drawMap(){
   m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(d.date)+' · '+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="'+searchUrl(p)+'">Ouvrir dans Google Maps ↗</a>');
   markers.push({marker:m,day:di,place:pi});bounds.push([p[2],p[3]]);
  }));
- if(dayFilter==="all"||dayFilter==="extra")extraPlaces.forEach((p,pi)=>{
+ if(dayFilter==="extra")extraPlaces.forEach((p,pi)=>{
   count++;const m=L.marker([p[2],p[3]],{icon:icon(count,pi===0)}).addTo(layer);
   const q=encodeURIComponent(p[0]+", Sicilia");
   m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+q+'">Ouvrir dans Google Maps ↗</a>');
@@ -178,7 +178,7 @@ function render(i){
  drawMap();
 }
 document.querySelectorAll(".daybtn").forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.day);$("mapday").value=String(i);render(i);}));
-$("mapday").addEventListener("change",()=>{if($("mapday").value!=="all")render(Number($("mapday").value));drawMap();});
+$("mapday").addEventListener("change",()=>{const v=$("mapday").value;if(v!=="all"&&v!=="extra")render(Number(v));drawMap();});
 $("theme").addEventListener("click",()=>{let n=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=n;try{localStorage.setItem("theme",n)}catch(e){}});
 if(typeof L!=="undefined"){map=L.map("map",{scrollWheelZoom:false}).setView([38.116,13.358],13);L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Tiles © Esri"}).addTo(map);layer=L.featureGroup().addTo(map);routingLayer=L.featureGroup().addTo(map);render(0);addEventListener("resize",()=>map.invalidateSize());}else{$("map").innerHTML="<p style='padding:20px'>La carte ne peut pas être chargée. Vérifiez votre connexion Internet et rechargez la page.</p>";}
 </script>
