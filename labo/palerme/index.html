@@ -61,30 +61,32 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const days=[
-{date:"Lundi 2 novembre",kicker:"LUNDI · 2 NOVEMBRE",subtitle:"Arrivée et première découverte",tag:"Arrivée",title:"Un premier aperçu de Palerme.",description:"Votre vol arrive à 14 h 50. Prévoyez le transfert et l’installation avant une petite balade dans le centre si le temps le permet.",note:"En cas de pluie : réduisez la balade et privilégiez un café ou un dîner au sec. Le programme dépend du transfert et de l’installation.",route:"https://www.google.com/maps/dir/Quattro+Canti,+Palermo/Piazza+Pretoria,+Palermo/",maptext:"Les étapes de votre arrivée",places:[["Aéroport de Palerme","14 h 50 · Arrivée",38.186,13.1067,"Atterrissage prévu à 14 h 50. Prévoyez le temps pour les bagages et le transfert."],["Quattro Canti","Fin d’après-midi · Si possible",38.1157,13.3615,"Carrefour baroque au cœur du centre historique."],["Piazza Pretoria","Fin d’après-midi",38.1152,13.361,"Place monumentale et célèbre fontaine."],["Street-food sicilienne","Soirée",38.116,13.3595,"Pour un dîner économique, cherchez arancine, panelle, sfincione ou une petite rosticceria. Prix à vérifier sur place."]]},
-{date:"Mardi 3 novembre",kicker:"MARDI · 3 NOVEMBRE",subtitle:"Les incontournables de Palerme",tag:"Patrimoine",title:"L’histoire au cœur de la ville.",description:"Une journée consacrée aux grands monuments de Palerme, avec une pause déjeuner et du temps pour flâner dans les rues du centre.",note:"En cas de pluie : conservez les visites intérieures. Vérifiez les horaires du palais, de la chapelle et de la cathédrale.",route:"https://www.google.com/maps/dir/Palazzo+dei+Normanni,+Palermo/Cattedrale+di+Palermo/Via+Maqueda,+Palermo/",maptext:"Monuments et rues du centre historique",places:[["Palais des Normands","09 h 30",38.1113,13.3538,"Ensemble historique majeur. Prévoyez environ 1 h 45 à 2 h pour le palais et la chapelle Palatine."],["Chapelle Palatine","Pendant la visite",38.1114,13.354,"Célèbre pour ses mosaïques et son décor byzantin. Vérifiez les modalités d’accès."],["Déjeuner dans le centre","12 h 00–13 h 15",38.1142,13.358,"Choisissez une trattoria proche des visites."],["Cathédrale de Palerme","13 h 30",38.1142,13.356,"Visitez la cathédrale et les espaces supplémentaires si l’accès est disponible."],["Via Maqueda et Quattro Canti","15 h 00–16 h 00",38.1153,13.361,"Rue commerçante, façades baroques et belles perspectives pour les photos. Faites une pause granita ou pâtisserie selon votre budget."],["Marché de Ballarò","16 h 00–17 h 00 · selon énergie",38.1105,13.3617,"Marché populaire pour découvrir les produits locaux et goûter à la street-food. Vérifiez l’activité du marché à l’heure de votre passage."]]},
-{date:"Mercredi 4 novembre",kicker:"MERCREDI · 4 NOVEMBRE",subtitle:"Excursion à Monreale",tag:"En voiture",title:"Les mosaïques de Monreale.",description:"Départ de Palerme vers 9 h 15. Comptez environ 25 à 40 minutes de route selon la circulation et le stationnement. Retour prévu dans l’après-midi.",note:"En cas de pluie : concentrez-vous sur la cathédrale. Vérifiez l’accès au cloître et les conditions de visite avant le départ.",route:"https://www.google.com/maps/dir/Palermo,+Italy/Monreale+Cathedral,+Monreale/Palermo,+Italy/",maptext:"Trajet en voiture vers Monreale",places:[["Départ de Palerme","09 h 15",38.1157,13.3615,"Départ en voiture. Le temps de trajet varie selon la circulation."],["Cathédrale de Monreale","10 h 00–12 h 00",38.0815,13.2894,"Cathédrale célèbre pour ses mosaïques. Vérifiez les horaires d’ouverture."],["Cloître de Monreale","Pendant la visite · Selon ouverture",38.0812,13.29,"À ajouter si l’accès est ouvert et si le temps le permet."],["Déjeuner à Monreale","12 h 30",38.0818,13.289,"Pause déjeuner dans le village avant de reprendre la route."],["Retour à Palerme","Vers 14 h 00–15 h 00",38.1157,13.3615,"Retour prévu dans l’après-midi, selon la circulation."]]},
-{date:"Jeudi 5 novembre",kicker:"JEUDI · 5 NOVEMBRE",subtitle:"Musées et activité à deux",tag:"Culture",title:"Une journée flexible, même sous la pluie.",description:"Combinez une visite culturelle avec une activité intérieure. L’escape game est une suggestion à confirmer et à réserver selon les disponibilités.",note:"Confirmez que l’escape game accepte deux joueurs et dans quelle langue le jeu se déroule. Vérifiez également le jour d’ouverture du musée.",route:"https://www.google.com/maps/dir/Museo+Archeologico+Regionale+Antonio+Salinas,+Palermo/Palermo,+Italy/",maptext:"Culture et activité intérieure",places:[["Musée archéologique Salinas","10 h 00–12 h 00",38.1203,13.3585,"Collections antiques et histoire de la Sicile. Horaires à vérifier."],["Déjeuner dans le centre","12 h 15–13 h 30",38.119,13.358,"Déjeuner à proximité pour éviter les longs déplacements."],["Escape game · à confirmer","14 h 00–16 h 00",38.119,13.357,"Point indicatif dans le centre-ville, pas l’adresse d’un établissement réservé. Choisissez un lieu et confirmez les créneaux."],["Boutiques et balade photo","Fin d’après-midi",38.116,13.36,"Flânez dans les ruelles du centre, repérez les petites boutiques et les façades patinées. Gardez cette étape flexible selon la météo."],["Marché du Capo · option","Matin ou début d’après-midi",38.1202,13.3562,"Une alternative pour l’ambiance de marché et les produits siciliens. Vérifiez les horaires et l’activité du marché avant d’y aller."]]},
-{date:"Vendredi 6 novembre",kicker:"VENDREDI · 6 NOVEMBRE",subtitle:"Dernières visites et retour",tag:"Vol retour",title:"Profiter des dernières heures.",description:"Gardez la journée flexible pour ne pas courir avant votre vol retour à 21 h 45. Pensez aux bagages et à la restitution éventuelle de la voiture.",note:"Visez une arrivée à l’aéroport vers 19 h 00–19 h 15, à ajuster selon les consignes de la compagnie et les modalités de restitution du véhicule.",route:"https://www.google.com/maps/dir/Palermo,+Italy/Palermo+Airport,+Punta+Raisi/",maptext:"Dernières étapes avant le vol retour",places:[["Musée international des marionnettes","09 h 30–11 h 30 · Option",38.1172,13.3694,"Visite optionnelle. Confirmez l’ouverture du musée avant de vous déplacer."],["Déjeuner et dernière balade","12 h 00–14 h 00",38.116,13.36,"Dernier repas et balade, en gardant une marge pour récupérer les bagages."],["Aéroport de Palerme","Vers 19 h 00–19 h 15",38.186,13.1067,"Vol FR 6786 à 21 h 45. Prévoyez la restitution du véhicule et le transfert vers le terminal si nécessaire."]]}
+{date:"Lundi 2 novembre",kicker:"LUNDI · 2 NOVEMBRE",subtitle:"Arrivée et première découverte",tag:"Arrivée",title:"Un premier aperçu de Palerme.",description:"Votre vol arrive à 14 h 50. Prévoyez le transfert et l’installation avant une courte balade dans le centre si le temps le permet.",note:"En cas de pluie : réduisez la balade et privilégiez un café ou un dîner au sec. Les places et monuments extérieurs restent accessibles librement.",route:"https://www.google.com/maps/dir/?api=1&origin=Aeroporto+di+Palermo+Falcone+Borsellino&destination=Quattro+Canti,+Palermo&waypoints=Fontana+Pretoria,+Palermo",maptext:"Aéroport, centre historique et première promenade",places:[["Aéroport de Palerme – Falcone Borsellino","14 h 50 · Arrivée",38.175958,13.091019,"Atterrissage prévu à 14 h 50. Prévoir le temps pour les bagages et le transfert.","Aeroporto di Palermo Falcone Borsellino, Terminal Passeggeri, Punta Raisi"],["Quattro Canti","Fin d’après-midi · si le temps le permet",38.11569,13.36146,"Carrefour baroque au cœur du centre historique.","Quattro Canti, Piazza Villena, Palermo"],["Piazza Pretoria · Fontana Pretoria","Fin d’après-midi",38.11549,13.36204,"Place monumentale et célèbre fontaine Renaissance.","Fontana Pretoria, Piazza Pretoria, Palermo"],["Dîner sicilien dans le centre","Soirée",null,null,"Suggestion libre : arancine, panelle, sfincione ou petite rosticceria. Aucun restaurant précis n’est réservé."]]},
+{date:"Mardi 3 novembre",kicker:"MARDI · 3 NOVEMBRE",subtitle:"Cathédrale, Piazza Bellini et marchés",tag:"Patrimoine",title:"Le cœur monumental de Palerme.",description:"Commencez par la cathédrale et ses espaces monumentaux avant leur fermeture hivernale, puis découvrez les églises de Piazza Bellini, les rues du centre et un marché historique.",note:"L’espace monumental de la cathédrale ferme à 14 h en novembre : commencez la visite à 9 h 30. La place Bellini est libre d’accès ; les visites intérieures de La Martorana et San Cataldo sont facultatives.",route:"https://www.google.com/maps/dir/?api=1&origin=Cattedrale+di+Palermo&destination=Mercato+di+Ballaro,+Palermo&waypoints=Piazza+Bellini,+Palermo|Quattro+Canti,+Palermo",maptext:"Cathédrale, Piazza Bellini, centre historique et Ballarò",places:[["Cathédrale de Palerme · espace monumental","09 h 30–11 h 00",38.11432,13.35603,"Visitez la cathédrale et, si vous le souhaitez, les espaces monumentaux (toits, trésor, crypte). En horaires d’hiver, cette partie ferme à 14 h.","Cattedrale di Palermo, Via Vittorio Emanuele 490, Palermo"],["Piazza Bellini · La Martorana et San Cataldo","11 h 15–12 h 15",38.11474,13.36289,"Place emblématique. La Martorana est annoncée ouverte de 10 h à 18 h ; San Cataldo ouvre le matin et reprend à 14 h 30. Les visites intérieures restent facultatives.","Piazza Bellini, Palermo"],["Déjeuner dans le centre historique","12 h 30–14 h 00",null,null,"Pause libre à proximité de Piazza Bellini et de Via Maqueda. Choisissez une trattoria ou une adresse de street-food selon votre budget."],["Via Maqueda et Quattro Canti","14 h 00–15 h 30",38.11569,13.36146,"Promenade dans l’axe historique, boutiques, façades baroques et points de vue pour les photos.","Via Maqueda, Quattro Canti, Palermo"],["Marché de Ballarò","16 h 00–17 h 00",38.11136,13.36158,"Marché populaire pour découvrir les produits locaux et goûter à la street-food. L’activité des étals peut diminuer avant l’horaire de fermeture annoncé.","Mercato di Ballarò, Piazza Ballarò, Palermo"]]},
+{date:"Mercredi 4 novembre",kicker:"MERCREDI · 4 NOVEMBRE",subtitle:"Excursion à Monreale",tag:"En voiture",title:"Les mosaïques de Monreale.",description:"Départ de Palerme vers 9 h 15. Comptez environ 25 à 40 minutes de route selon la circulation et le stationnement. Le programme est organisé pour visiter la cathédrale le matin, puis le cloître.",note:"En novembre, la cathédrale est ouverte le matin jusqu’à 12 h 45, puis de 14 h 30 à 16 h 30. Le cloître ouvre de 9 h à 19 h. La voiture n’étant pas confirmée, gardez l’option du bus 389 depuis Piazza Indipendenza.",route:"https://www.google.com/maps/dir/?api=1&origin=Quattro+Canti,+Palermo&destination=Chiostro+di+Monreale,+Monreale&waypoints=Cattedrale+di+Monreale,+Monreale&travelmode=driving",maptext:"Excursion routière à Monreale",places:[["Départ de Palerme · repère centre-ville","09 h 15",38.11569,13.36146,"Point de départ indicatif au centre de Palerme ; remplacez-le par l’adresse du logement pour un trajet exact.","Quattro Canti, Piazza Villena, Palermo"],["Cathédrale de Monreale","10 h 00–11 h 15",38.08203,13.29228,"Cathédrale célèbre pour ses mosaïques. En novembre, ouverture le matin de 8 h 30 à 12 h 45.","Cattedrale di Monreale, Piazza Guglielmo II, Monreale"],["Cloître des Bénédictins","11 h 15–12 h 15",38.08158,13.29228,"Visitez le cloître après la cathédrale. Ouvert du lundi au samedi de 9 h à 19 h, dernière entrée à 18 h 30.","Chiostro dei Benedettini, Piazza Guglielmo il Buono, Monreale"],["Déjeuner à Monreale","12 h 30",null,null,"Pause déjeuner dans le village avant de reprendre la route."],["Retour à Palerme","Vers 14 h 00–15 h 00",38.11569,13.36146,"Retour vers le centre de Palerme, selon la circulation. Point de fin indicatif : ajustez-le à votre logement.","Quattro Canti, Piazza Villena, Palermo"]]},
+{date:"Jeudi 5 novembre",kicker:"JEUDI · 5 NOVEMBRE",subtitle:"Palais royal, musée et escape game",tag:"Culture",title:"Une journée culturelle suivie d’un défi à deux.",description:"Le palais des Normands est placé le jeudi pour profiter du circuit des appartements royaux, indisponibles le mardi et le mercredi. Le musée Salinas est ensuite visité avant l’ouverture de l’escape game à 16 h.",note:"Escape Room Palermo, Via Mario Rapisardi 13, ouvre le jeudi à 16 h. La partie dure environ 60 minutes et nécessite au minimum deux joueurs. Réservation et langue de jeu à confirmer directement auprès de l’établissement.",route:"https://www.google.com/maps/dir/?api=1&origin=Palazzo+dei+Normanni,+Palermo&destination=Escape+Room+Palermo,+Via+Mario+Rapisardi+13,+Palermo&waypoints=Museo+Archeologico+Regionale+Antonino+Salinas,+Palermo&travelmode=walking",maptext:"Palais des Normands, musée Salinas et escape game",places:[["Palais des Normands et Chapelle Palatine","08 h 45–10 h 45",38.11134,13.35344,"Le jeudi permet de visiter le circuit comprenant les appartements royaux, sous réserve d’éventuelles restrictions institutionnelles de dernière minute. La chapelle Palatine fait partie de la visite.","Palazzo dei Normanni e Cappella Palatina, Piazza del Parlamento 1, Palermo"],["Musée archéologique régional Salinas","11 h 00–13 h 00",38.1208,13.3605,"Ouvert du mardi au samedi. Le créneau de fin de matinée est compatible avec les horaires publiés.","Museo Archeologico Regionale Antonino Salinas, Piazza Olivella 1, Palermo"],["Déjeuner dans le centre","13 h 00–14 h 30",null,null,"Pause libre près du centre historique avant l’activité de l’après-midi."],["Escape Room Palermo · réservation nécessaire","16 h 00–17 h 00",38.13559,13.34695,"Adresse : Via Mario Rapisardi 13. Ouverture le jeudi à partir de 16 h ; durée d’une partie : environ 60 minutes. Créneau, tarif et langue à confirmer.","Escape Room Palermo, Via Mario Rapisardi 13, 90144 Palermo"],["Marché du Capo · option","17 h 15–18 h 00",38.11862,13.35407,"Option de promenade après l’escape game, selon votre énergie et l’activité des étals en fin de journée.","Mercato del Capo, Via Porta Carini, Palermo"]]},
+{date:"Vendredi 6 novembre",kicker:"VENDREDI · 6 NOVEMBRE",subtitle:"Dernières visites et retour",tag:"Vol retour",title:"Profiter des dernières heures sans courir.",description:"Le musée des marionnettes ouvre à 10 h : la visite est décalée à cette heure. Gardez ensuite la journée libre pour déjeuner, récupérer les bagages et rejoindre l’aéroport avant le vol de 21 h 45.",note:"Visez une arrivée à l’aéroport vers 19 h 00–19 h 15, à ajuster selon les consignes de la compagnie et les modalités de restitution du véhicule.",route:"https://www.google.com/maps/dir/?api=1&origin=Palermo+Centro&destination=Aeroporto+di+Palermo+Falcone+Borsellino&travelmode=driving",maptext:"Musée des marionnettes et transfert vers l’aéroport",places:[["Musée international des marionnettes Antonio Pasqualino","10 h 00–11 h 30",38.11854,13.370556,"Le musée ouvre à 10 h du mardi au samedi : le créneau est donc compatible.","Museo internazionale delle marionette Antonio Pasqualino, Piazzetta Antonio Pasqualino 5, Palermo"],["Déjeuner et dernières heures libres","12 h 00–14 h 00",null,null,"Dernier repas et balade selon vos envies, en gardant une marge pour récupérer les bagages."],["Aéroport de Palerme – Falcone Borsellino","Vers 19 h 00–19 h 15",38.175958,13.091019,"Vol retour prévu à 21 h 45. Prévoyez la restitution du véhicule et le transfert vers le terminal si nécessaire.","Aeroporto di Palermo Falcone Borsellino, Terminal Passeggeri, Punta Raisi"]]}
+];
 ];
 let map,layer,routingLayer,markers=[],activeDay=0;
 const routeColors=["#d94646","#2878c8","#8b5cf6","#e28b27","#159b76"];
 const routeCache=new Map();
 const extraPlaces=[
- ["Via Vincenzo Errante, 3 · adresse","Adresse à repérer",38.10832,13.36580,"Point bleu demandé pour retrouver l’adresse dans le quartier Oreto, près de la gare centrale."],
- ["Catacombes des Capucins","Palermo",38.1128,13.3395,"Visite à l’ouest du centre historique. À intégrer selon les horaires et votre envie."],
- ["Église Santissimo Salvatore","Palermo",38.1152,13.3591,"Église du centre historique, à proximité des autres monuments."],
- ["Palais de la Zisa","Palermo",38.1179,13.3421,"Palais arabo-normand, à l’ouest du centre."],
- ["Cappadonia Gelati","Pause gourmande",38.1165,13.3594,"Adresse de glacier à vérifier selon la boutique choisie."],
- ["Teatro Massimo","Palermo",38.1200,13.3540,"Théâtre historique de Palerme."],
- ["Bagheria","Excursion",38.0789,13.5123,"Ville à l’est de Palerme, excursion distincte du centre."],
- ["Borgo Parrini","Excursion",38.0748,13.0558,"Petit hameau près de Partinico, à l’ouest de Palerme."],
- ["Temple dorique de Ségeste","Excursion",37.9414,12.8328,"Site archéologique près de Calatafimi-Segesta, excursion à prévoir en voiture. Vérifiez l’accès et les horaires."]
+ ["Via Vincenzo Errante, 3 · adresse","Adresse à repérer",38.10832,13.36580,"Point bleu demandé pour retrouver l’adresse dans le quartier Oreto, près de la gare centrale.","Via Vincenzo Errante 3, Palermo"],
+ ["Catacombes des Capucins","Piazza Cappuccini, Palermo",38.11183,13.33925,"Visite à l’ouest du centre historique. Ouvertes chaque jour de 9 h à 12 h 30 et de 15 h à 17 h 30 ; dernières entrées 12 h 10 et 17 h 10.","Catacombe dei Cappuccini, Piazza Cappuccini 1, Palermo"],
+ ["Église Santissimo Salvatore","Via Vittorio Emanuele, Palermo",38.1152,13.3591,"Église du centre historique avec dôme panoramique. Horaires à reconfirmer auprès du site avant la visite.","Chiesa del Santissimo Salvatore, Via Vittorio Emanuele 395, Palermo"],
+ ["Palais de la Zisa","Piazza Zisa, Palermo",38.11677,13.34106,"Palais arabo-normand. Ouvert du mardi au samedi de 9 h à 18 h 30 ; fermé le lundi.","Palazzo della Zisa, Piazza Zisa, Palermo"],
+ ["Cappadonia Gelati","Via Vittorio Emanuele 401, Palermo",38.1165,13.3594,"Glacier artisanal ; adresse retenue : Via Vittorio Emanuele 401. Une seconde boutique existe Piazzetta Francesco Bagnasco 29.","Cappadonia Gelati, Via Vittorio Emanuele 401, Palermo"],
+ ["Teatro Massimo","Piazza Giuseppe Verdi, Palermo",38.12016,13.35712,"Visites guidées annoncées tous les jours de 9 h 30 à 19 h, dernière visite à 18 h 20. Vérifiez les éventuelles contraintes liées aux représentations.","Teatro Massimo, Piazza Giuseppe Verdi, Palermo"],
+ ["Bagheria · Villa Palagonia","Piazza Garibaldi 3, Bagheria",38.07973,13.51143,"Point placé sur la Villa Palagonia, une visite concrète à Bagheria. En novembre, ouverte tous les jours de 9 h à 13 h et de 15 h 30 à 17 h 30 ; dernière entrée 30 minutes avant fermeture.","Villa Palagonia, Piazza Garibaldi 3, Bagheria"],
+ ["Borgo Parrini","Partinico, Palermo",38.07381,13.10828,"Petit hameau près de Partinico. Repère replacé sur le hameau ; promenade extérieure sans horaire général de visite.","Borgo Parrini, Partinico, Sicilia"],
+ ["Temple dorique de Ségeste","Contrada Barbaro, Calatafimi Segesta",37.94149,12.83272,"Site archéologique ouvert du 25 octobre au 31 décembre de 9 h à 15 h 30 ; fermeture du parc à 17 h 30.","Tempio di Segesta, Contrada Barbaro, Calatafimi Segesta"]
+];
 ];
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function icon(n,blue=false){return L.divIcon({className:"",html:'<div class="map-pin" style="background:'+(blue?"#2476d2":"var(--accent)")+'"><span>'+n+'</span></div>',iconSize:[31,31],iconAnchor:[15,30],popupAnchor:[0,-28]});}
-function searchUrl(p){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p[2]+","+p[3]);}
+function searchUrl(p){const query=p[5]||((p[0]||"")+", Palermo, Italia");return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query);}
 function category(p){
  const s=(p[0]+" "+p[4]).toLowerCase();
  if(/aéroport|départ de palerme|retour à palerme/.test(s))return "transport";
@@ -108,20 +110,23 @@ function decodeRouteShape(encoded, precision=6){
 }
 async function getPedestrianRoute(dayIndex){
  if(routeCache.has(dayIndex))return routeCache.get(dayIndex);
- const places=days[dayIndex].places;
  const promise=(async()=>{
-  const locations=places.map(p=>({lat:p[2],lon:p[3]}));
+  const stops=days[dayIndex].places.filter(p=>typeof p[2]==="number"&&typeof p[3]==="number");
+  const unique=stops.filter((p,i)=>i===0||Math.abs(p[2]-stops[i-1][2])+Math.abs(p[3]-stops[i-1][3])>0.00015);
+  if(unique.length<2)return [];
+  const locations=unique.map(p=>({lat:p[2],lon:p[3]}));
   const payload={locations,costing:"pedestrian",units:"kilometers",shape_format:"geojson"};
   const url="https://valhalla1.openstreetmap.de/route?json="+encodeURIComponent(JSON.stringify(payload));
   const response=await fetch(url);
   if(!response.ok)throw new Error("Service de calcul d’itinéraire indisponible");
   const data=await response.json();
   if(!data.trip||!Array.isArray(data.trip.legs))throw new Error("Aucun tracé piéton retourné");
-  return data.trip.legs.map(leg=>{
-   if(leg.shape&&Array.isArray(leg.shape.coordinates))return leg.shape.coordinates.map(pair=>[pair[1],pair[0]]);
-   if(typeof leg.shape==="string")return decodeRouteShape(leg.shape);
-   return [];
-  }).filter(points=>points.length>1);
+  return data.trip.legs.map((leg,i)=>{
+   let points=[];
+   if(leg.shape&&Array.isArray(leg.shape.coordinates))points=leg.shape.coordinates.map(pair=>[pair[1],pair[0]]);
+   else if(typeof leg.shape==="string")points=decodeRouteShape(leg.shape);
+   return {points,from:unique[i],to:unique[i+1]};
+  }).filter(leg=>leg.points.length>1);
  })();
  routeCache.set(dayIndex,promise);
  try{return await promise;}catch(error){routeCache.delete(dayIndex);throw error;}
@@ -130,20 +135,29 @@ async function drawRoutes(){
  if(!routingLayer)return;
  routingLayer.clearLayers();
  const selected=$("mapday").value;
- const dayIndexes=selected==="all"?days.map((_,i)=>i):(selected==="extra"?[]:[Number(selected)]);
+ if(selected==="extra"){
+  $("routeStatus").textContent="Repères complémentaires · aucun tracé piéton prévu";
+  return;
+ }
+ const walkable=[1,3];
+ const dayIndexes=selected==="all"?walkable:(walkable.includes(Number(selected))?[Number(selected)]:[]);
+ if(dayIndexes.length===0){
+  $("routeStatus").textContent=selected==="2"?"Excursion à Monreale · trajet routier, pas de tracé piéton":"Transfert ou temps libre · aucun tracé piéton";
+  return;
+ }
  $("routeStatus").textContent="Calcul des tracés piétons…";
  let drawn=0,failed=0;
  await Promise.all(dayIndexes.map(async di=>{
   try{
    const legs=await getPedestrianRoute(di);
-   legs.forEach((points,legIndex)=>{
-    L.polyline(points,{color:routeColors[di],weight:5,opacity:.9,className:"route-line"}).addTo(routingLayer)
-     .bindPopup("<strong>"+esc(days[di].places[legIndex][0])+" → "+esc(days[di].places[legIndex+1][0])+"</strong><br>Itinéraire piéton estimé, suivant les rues et chemins cartographiés.");
+   legs.forEach(leg=>{
+    L.polyline(leg.points,{color:routeColors[di],weight:5,opacity:.9,className:"route-line"}).addTo(routingLayer)
+     .bindPopup("<strong>"+esc(leg.from[0])+" → "+esc(leg.to[0])+"</strong><br>Itinéraire piéton estimé, suivant les rues et chemins cartographiés.");
    });
    drawn+=legs.length;
   }catch(error){failed++;}
  }));
- if(failed===0)$("routeStatus").textContent="Tracés piétons sur les rues · OpenStreetMap";
+ if(failed===0)$("routeStatus").textContent="Tracés piétons des journées en ville · OpenStreetMap";
  else if(drawn>0)$("routeStatus").textContent="Tracés piétons partiels · certains segments indisponibles";
  else $("routeStatus").textContent="Tracé indisponible pour le moment · réessayez plus tard";
 }
@@ -153,14 +167,15 @@ function drawMap(){
  const dayFilter=$("mapday").value;let bounds=[],count=0;
  days.forEach((d,di)=>d.places.forEach((p,pi)=>{
   if(dayFilter==="extra"||(dayFilter!=="all"&&Number(dayFilter)!==di))return;
+  if(typeof p[2]!=="number"||typeof p[3]!=="number")return;
   count++;const m=L.marker([p[2],p[3]],{icon:icon(count)}).addTo(layer);
   m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(d.date)+' · '+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="'+searchUrl(p)+'">Ouvrir dans Google Maps ↗</a>');
   markers.push({marker:m,day:di,place:pi});bounds.push([p[2],p[3]]);
  }));
  if(dayFilter==="extra")extraPlaces.forEach((p,pi)=>{
   count++;const m=L.marker([p[2],p[3]],{icon:icon(count,pi===0)}).addTo(layer);
-  const q=encodeURIComponent(p[0]+", Sicilia");
-  m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+q+'">Ouvrir dans Google Maps ↗</a>');
+  const q=encodeURIComponent(p[5]||p[0]+", Sicilia");
+  m.bindPopup('<div class="pop-title">'+esc(p[0])+'</div><div>'+esc(p[1])+'</div><p>'+esc(p[4])+'</p><a class="pop-link" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+q+'">Ouvrir le lieu dans Google Maps ↗</a>');
   markers.push({marker:m,day:"extra",place:pi});bounds.push([p[2],p[3]]);
  });
  $("count").textContent=count+" lieux";
@@ -173,7 +188,7 @@ function render(i){
  const d=days[i];
  document.querySelectorAll(".daybtn").forEach(b=>b.classList.toggle("active",Number(b.dataset.day)===i));
  $("mapsub").textContent=d.maptext;$("count").textContent=d.places.length+" lieux";$("panelday").textContent=d.date;$("panelsub").textContent=d.subtitle;$("tag").textContent=d.tag;$("kicker").textContent=d.kicker;$("title").textContent=d.title;$("description").textContent=d.description;$("note").innerHTML="<strong>À savoir :</strong> "+esc(d.note);$("route").href=d.route;$("route2").href=d.route;
- $("activities").innerHTML=d.places.map((p,j)=>'<div class="activity"><div class="time">'+esc(p[1])+'</div><div class="detail"><h3>'+esc(p[0])+'</h3><p>'+esc(p[4])+'</p><a class="locate" href="#map" data-day="'+i+'" data-place="'+j+'">Voir sur la carte ↗</a></div></div>').join("");
+ $("activities").innerHTML=d.places.map((p,j)=>'<div class="activity"><div class="time">'+esc(p[1])+'</div><div class="detail"><h3>'+esc(p[0])+'</h3><p>'+esc(p[4])+'</p>'+(typeof p[2]==="number"&&typeof p[3]==="number"?'<a class="locate" href="#map" data-day="'+i+'" data-place="'+j+'">Voir sur la carte ↗</a>':'')+'</div></div>').join("");
  $("activities").querySelectorAll("[data-place]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();let entry=markers.find(x=>x.day===Number(a.dataset.day)&&x.place===Number(a.dataset.place));let m=entry&&entry.marker;if(m){$("mapday").value=String(entry.day);drawMap();entry=markers.find(x=>x.day===Number(a.dataset.day)&&x.place===Number(a.dataset.place));m=entry&&entry.marker;if(m){map.setView(m.getLatLng(),16,{animate:true});m.openPopup();if(innerWidth<700)$("map").scrollIntoView({behavior:"smooth"});}}}));
  drawMap();
 }
