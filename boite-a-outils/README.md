@@ -1,69 +1,86 @@
 # Boîte à outils dartist
 
-Une collection d’outils web gratuits, réunis dans un studio simple et responsive. Aucun compte ni aucune installation : ouvre la page et utilise les outils directement dans ton navigateur.
+Un studio d’outils web gratuits, réunis dans une interface responsive. Aucun compte ni aucune installation : ouvre la page et utilise les outils directement dans un navigateur récent.
 
-**[Ouvrir la boîte à outils](https://dartist-fr.github.io/boite-a-outils/)**
+**[Ouvrir la Boîte à outils](https://dartist-fr.github.io/boite-a-outils/)**
 
-## Les outils disponibles
+## Outils disponibles
 
-Depuis la page d’accueil, tu peux accéder aux outils suivants :
-
-| Outil | Fonctionnalités |
+| Outil | Fonctionnalités principales |
 | --- | --- |
-| **Compresseur d’images** | Compresser, convertir et redimensionner des images, comparer leur poids et télécharger les résultats individuellement ou en ZIP. |
-| **Lab HTML / CSS** | Écrire du HTML et du CSS, ajuster l’espace de travail et visualiser le résultat dans un aperçu isolé. |
-| **Studio QR** | Créer des QR codes URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnaliser couleurs, dégradés, formes, logo, cadres et légendes ; créer des QR à texture photographique ; générer des lots depuis un CSV ; lire, vérifier et extraire plusieurs QR depuis une image ou une caméra ; exporter PNG, JPG, SVG, PDF et EPS. |
-| **Calculatrice & conversions** | Effectuer des calculs et convertir des unités. |
-| **Formateur JSON** | Formater, minifier et valider des données JSON. |
-| **Palette de couleurs** | Explorer des couleurs et composer des palettes. |
-| **Générateur de dégradés CSS** | Composer des dégradés et récupérer le code CSS correspondant. |
+| **Compresseur d’images** | Import multiple, compression, conversion, redimensionnement, comparaison du poids et export individuel ou ZIP. |
+| **Visualiseur HTML / CSS / JS** | Trois éditeurs indépendants, aperçu fusionné en direct, exécution JavaScript isolée, panneaux redimensionnables et ouverture du résultat dans un nouvel onglet. |
+| **Studio QR** | QR URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnalisation graphique, QR photographiques, lots CSV, lecture et exports. |
+| **Calculatrice & conversions** | Calculs et conversions d’unités. |
+| **Formateur JSON** | Formatage, minification et validation de JSON. |
+| **Palette de couleurs** | Exploration et composition de palettes. |
+| **Générateur de dégradés CSS** | Création de dégradés et récupération du code CSS. |
 
-Le studio propose une recherche, des filtres par catégorie et un thème clair/sombre. Son interface s’adapte aux écrans d’ordinateur, de tablette et de téléphone.
+La page d’accueil comprend une recherche, des filtres par catégorie et un thème clair/sombre. L’interface s’adapte aux écrans d’ordinateur, de tablette et de téléphone.
+
+## Visualiseur HTML / CSS / JS
+
+Le Visualiseur réunit les trois langages dans **un seul rendu** :
+
+1. Colle ou écris la structure de la page dans l’éditeur HTML.
+2. Ajoute les styles dans l’éditeur CSS.
+3. Ajoute les interactions dans l’éditeur JavaScript.
+4. Clique sur **Actualiser** pour reconstruire l’aperçu avec les trois contenus.
+
+L’aperçu est rendu dans une iframe avec l’attribut `sandbox="allow-scripts"`. Le JavaScript fourni peut donc s’exécuter dans ce cadre, sans accès direct au document parent. L’outil propose également :
+
+- des onglets pour passer de HTML à CSS et JavaScript ;
+- un aperçu actualisable ;
+- un séparateur horizontal pour ajuster la largeur éditeur/aperçu ;
+- un réglage de largeur et un séparateur pour ajuster la hauteur de l’espace de travail ;
+- les commandes **Réinitialiser** et **Tout effacer** ;
+- l’ouverture du rendu dans un nouvel onglet.
+
+Le bac à sable n’est pas un environnement d’hébergement ni un serveur de développement. Les API navigateur, ressources externes et comportements dépendant d’un serveur peuvent avoir des limites. N’exécute que du code auquel tu fais confiance.
 
 ## Compresseur d’images
 
 **[Ouvrir le compresseur](https://dartist-fr.github.io/boite-a-outils/outils/compresseur.html)**
 
 - Import de plusieurs images et glisser-déposer.
-- Conversion vers les formats pris en charge par le navigateur, notamment JPEG, PNG et WebP, ainsi qu’AVIF lorsque disponible.
+- Conversion vers les formats pris en charge par le navigateur, notamment JPEG, PNG et WebP ; AVIF lorsque l’encodeur du navigateur le permet.
 - Réglage de la qualité et redimensionnement.
 - Comparaison du poids avant/après.
 - Téléchargement individuel ou regroupement des résultats dans une archive ZIP.
 
-Les images sont traitées localement dans le navigateur et ne sont pas envoyées à un serveur. La prise en charge des formats dépend du navigateur et de ses encodeurs. La création d’archives ZIP utilise JSZip chargé depuis jsDelivr.
-
+Les images sont traitées localement dans le navigateur et ne sont pas envoyées à un serveur par le compresseur. La prise en charge des formats dépend du navigateur et de ses encodeurs. La création d’archives ZIP utilise JSZip chargé depuis un CDN.
 
 ## Studio QR
 
 **[Ouvrir le Studio QR](https://dartist-fr.github.io/boite-a-outils/?outil=qr)**
 
-- Création de QR statiques : URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et géolocalisation.
-- Personnalisation : palettes, dégradés, formes de modules et de repères, niveau de correction, logo, marge, cadres et légendes.
-- QR photographiques : la photo est utilisée comme texture dans les modules sombres ; un contrôle de décodage local est proposé avant export.
-- Séries : import CSV, préparation jusqu’à 300 codes, téléchargements PNG individuels, ZIP et planches d’impression A4, A3 ou Letter configurables.
-- Lecture : import d’image, lecture caméra lorsque le navigateur l’autorise, extraction multi-QR avec recherche par zones, copie groupée et export CSV.
-- Contrôle : diagnostic de contraste global et test de décodage local. Ces contrôles ne remplacent pas un essai sur plusieurs téléphones ni une vérification après impression.
-- Exports : PNG, JPG, PDF, SVG vectoriel et EPS vectoriel. L’EPS utilise une couleur unie et n’intègre pas le logo ; le SVG conserve le dégradé et le logo.
-- Interface simplifiée en étapes repliables : contenu, design, puis cadre et marge. Le sélecteur de pictogrammes propose une recherche par catégories ; le symbole est intégré au centre du QR, sans découpe de la matrice extérieure. Thèmes : sauvegarde, import et export dans le stockage local du navigateur.
+- **Contenus :** URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et géolocalisation.
+- **Personnalisation :** couleurs, dégradés, formes des modules et repères, niveau de correction, logo, marge, cadres et légendes.
+- **QR photographiques :** utilisation d’une photo comme texture dans les modules sombres, avec contrôle de décodage local proposé avant export.
+- **Séries :** import CSV, préparation de lots, téléchargements PNG individuels, ZIP et planches d’impression configurables.
+- **Lecture :** import d’image, caméra lorsque le navigateur l’autorise, extraction de plusieurs QR, copie groupée et export CSV.
+- **Contrôle :** diagnostic de contraste et test de décodage local. Ces contrôles ne remplacent pas un essai sur plusieurs téléphones ni une vérification après impression.
+- **Exports :** PNG, JPG, PDF, SVG et EPS. Certaines caractéristiques graphiques peuvent varier selon le format ; les limites affichées dans l’outil font foi.
+- **Préférences :** sauvegarde, import et export des thèmes dans le stockage local du navigateur.
 
-La génération et l’analyse des QR sont réalisées côté navigateur. Les bibliothèques QR, ZIP et PDF sont chargées depuis des CDN et nécessitent une connexion Internet. Les QR dynamiques, statistiques hébergées, comptes, bibliothèque cloud et collaboration demandent un service serveur et ne sont pas activés dans cette version.
+La génération et l’analyse sont effectuées côté navigateur. Les bibliothèques QR, ZIP et PDF sont chargées depuis des CDN et nécessitent une connexion Internet. Les QR dynamiques hébergés, statistiques distantes, comptes, bibliothèque cloud et collaboration ne sont pas fournis par cette version statique.
 
 ## Utilisation et compatibilité
 
-1. Ouvre la [boîte à outils](https://dartist-fr.github.io/boite-a-outils/).
+1. Ouvre la [Boîte à outils](https://dartist-fr.github.io/boite-a-outils/).
 2. Recherche un outil ou parcours les catégories.
-3. Utilise les réglages proposés et récupère le résultat.
+3. Utilise les réglages proposés puis récupère le résultat.
 
-Un navigateur récent est recommandé. Certaines fonctions chargent des bibliothèques depuis un CDN et nécessitent donc une connexion Internet. Le lab HTML/CSS affiche le code dans un cadre isolé.
+Un navigateur récent est recommandé. Certaines fonctions chargent des bibliothèques depuis un CDN et nécessitent donc une connexion Internet. L’accès à la caméra dépend du navigateur, des permissions et généralement d’un contexte sécurisé HTTPS.
 
 ## Technologies
 
 - **HTML, CSS et JavaScript** pour l’interface et les outils.
 - **GitHub Pages** pour l’hébergement statique.
-- **QR Code Styling** et **qrcode-generator** pour la génération, la matrice et les exports vectoriels des QR codes.
-- **jsQR** et l’API **BarcodeDetector** lorsqu’elle est prise en charge pour la lecture des QR codes.
-- **JSZip** pour les archives ZIP et **jsPDF** pour les exports PDF.
-- **JSZip** pour l’export ZIP du compresseur.
+- **QR Code Styling** et **qrcode-generator** pour la génération des QR codes.
+- **jsQR** et l’API **BarcodeDetector** lorsqu’elle est prise en charge pour la lecture.
+- **JSZip** pour les archives ZIP.
+- **jsPDF** pour les exports PDF.
 
 ## Structure du dossier
 
@@ -75,13 +92,17 @@ boite-a-outils/
 │   └── js/
 │       └── qr-atelier.js
 └── outils/
-    ├── qr.html
-    └── compresseur.html
+    ├── calculator.html
+    ├── colors.html
+    ├── compresseur.html
+    ├── gradient.html
+    ├── json.html
+    ├── playground.html
+    └── qr.html
 ```
 
-Le studio principal est intégré dans `index.html`. Le compresseur d’images dispose de sa propre page dans `outils/compresseur.html`.
+Le studio et ses vues sont pilotés depuis `index.html`. Les pages dédiées des outils sont regroupées dans `outils/`. Les scripts et styles partagés sont rangés dans `assets/`.
 
+---
 
-### Silhouettes QR
-
-Une silhouette n'est pas une forme pleine : son intérieur est rempli de petits modules décoratifs (carrés, ronds ou carrés arrondis selon le style de modules choisi). Ces modules sont contenus dans le contour du poisson, du chat, du cœur, etc. et laissent une réserve centrale propre pour le QR principal. Le QR central reste une matrice complète, avec ses trois repères de position et sa zone de silence ; les modules décoratifs autour ne modifient pas ses données. L'option **Pixelated edge** ajuste le rendu des modules au bord de la silhouette. Les exports PNG, JPG, PDF et SVG reprennent la composition ; EPS reste limité au QR carré.
+*Ce README décrit les fonctions présentes dans la version du dépôt. Les fonctions nécessitant un service distant ne sont pas promises par cette version statique.*
