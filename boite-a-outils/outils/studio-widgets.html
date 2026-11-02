@@ -217,6 +217,52 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 @media(max-width:430px){h1{font-size:42px}.library,.center,.editor{padding:12px}.grid{gap:7px}.widget-card{padding:7px}.mini{height:83px}.phone-screen{height:425px}.phone{width:250px}.stage{padding:12px}.widget{padding:17px}.preview-top{align-items:flex-start;flex-direction:column}.mode-switch{align-self:flex-start}.top-actions a{display:none}footer{flex-direction:column}}
 @media(prefers-reduced-transparency:reduce){.phone-widget,.extra-widget,.widget{backdrop-filter:none;-webkit-backdrop-filter:none;background:#27313d}.panel{background:#11151d}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Glass Widgets-inspired folder catalogue and visible clock style previews */
+.folder-directory{display:grid;grid-template-columns:1fr;gap:13px}
+.folder-card{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:12px;align-items:center;width:100%;min-height:136px;padding:17px 16px;border:1px solid #15171c;border-radius:23px;background:#020305;color:#f5f6f8;text-align:left;cursor:pointer;isolation:isolate;transition:transform .18s,border-color .18s}
+.folder-card:hover,.folder-card:focus-visible{transform:translateY(-2px);border-color:var(--folder-accent)}
+.folder-copy{position:relative;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:100px}
+.folder-copy .folder-echo{position:absolute;left:0;top:0;z-index:-1;font:500 12px/1.04 var(--mono);letter-spacing:.04em;color:#ffffff25;pointer-events:none}
+.folder-copy>strong{font:500 13px var(--mono);letter-spacing:.04em;color:#fff;margin-bottom:8px}
+.folder-copy>small{font-size:10px;color:#a3a6ac;max-width:220px}
+.folder-copy>em{font:9px var(--mono);font-style:normal;color:var(--folder-accent);margin-top:10px;letter-spacing:.05em;text-transform:uppercase}
+.folder-preview{height:105px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.folder-preview .mini{width:100%;height:96px;border-radius:19px;background:linear-gradient(145deg,#ffffff38,#ffffff0c),#303236;border:1px solid #ffffff40;box-shadow:inset 0 1px #ffffff66,0 9px 28px #0006;padding:12px}
+.folder-preview .mini-inner{transform:scale(.9);transform-origin:center}
+.folder-preview .mini-time{font-size:25px}
+.folder-ribbon{position:absolute;right:-27px;top:11px;width:100px;transform:rotate(43deg);background:#f4d000;color:#050505;text-align:center;padding:5px 0;font:700 9px var(--mono);letter-spacing:.08em}
+.folder-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0 13px}
+.folder-toolbar>div{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.folder-toolbar strong{font:600 18px var(--display)}
+.back-folder{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#ffffff08;color:var(--ink);font-size:10px;cursor:pointer}
+[hidden]{display:none!important}
+.font-gallery-wrap{margin:14px 0}
+.clock-font-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:280px;overflow:auto;padding:3px 3px 6px;scrollbar-width:thin}
+.clock-font-card{min-width:0;min-height:69px;border:1px solid var(--line);border-radius:11px;background:#090c12;color:var(--ink);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:8px 9px;cursor:pointer;transition:border-color .15s,background .15s}
+.clock-font-card:hover{border-color:rgba(var(--accent-rgb),.6)}
+.clock-font-card.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.2)}
+.clock-font-sample{font:500 24px/1 var(--sample-font),sans-serif;letter-spacing:-1px;white-space:nowrap}
+.clock-font-name{margin-top:6px;font-size:9px;color:#e5eaf2}
+.clock-font-card small{font:7px var(--mono);color:var(--faint);letter-spacing:.09em;margin-top:2px}
+.variant-section{margin-top:12px}
+.format-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.format-card{min-width:0;border:1px solid var(--line);border-radius:10px;background:#090c12;color:var(--muted);padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.format-card.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.12);color:var(--ink)}
+.format-art{display:flex;align-items:center;justify-content:center;max-width:100%;overflow:hidden;border:1px solid #ffffff38;border-radius:7px;background:linear-gradient(140deg,#ffffff32,#ffffff08),#34373d;color:white;font:500 10px var(--time-font,'Orbitron'),sans-serif}
+.format-art.square{width:32px;height:28px}
+.format-art.wide{width:48px;height:23px}
+.format-art.portrait{width:22px;height:38px;font-size:8px}
+.format-art.large{width:39px;height:36px}
+.format-card strong{font:9px var(--mono);color:var(--ink)}
+.format-card small{font-size:8px;color:var(--faint)}
+.native-add{width:100%;margin-top:8px;border-color:rgba(var(--accent-rgb),.46);background:rgba(var(--accent-rgb),.09);color:var(--accent)}
+.widget.format-4x2{min-height:120px}
+.widget.format-2x4{min-height:225px}
+.widget.format-4x4{min-height:220px}
+@media(max-width:760px){.folder-card{grid-template-columns:minmax(0,1fr) 126px;min-height:126px;padding:14px;border-radius:21px}.folder-preview .mini{height:88px}.folder-copy>strong{font-size:12px}.folder-toolbar{position:sticky;top:0;z-index:3;background:#11151d;padding:9px 0}.clock-font-grid{max-height:none}.format-cards{gap:5px}.library{order:1}.center{order:2}.editor{order:3}}
+@media(max-width:390px){.folder-card{grid-template-columns:minmax(0,1fr) 108px}.folder-copy>small{font-size:9px}.format-card{padding:6px 2px}}
+
 </style>
 </head>
 <body>
@@ -243,7 +289,9 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 <button class="filter" data-filter="device">Appareils</button>
 <button class="filter" data-filter="smart">Raccourcis</button>
 </div>
-<div class="grid" id="grid"></div>
+<div class="folder-directory" id="folderDirectory"></div>
+<div class="folder-toolbar" id="folderToolbar" hidden><button class="back-folder" id="backFolders">← Tous les dossiers</button><div><strong id="folderTitle">Dossier</strong><span id="folderCount" class="subtle"></span></div></div>
+<div class="grid" id="grid" hidden></div>
 </section>
 <section class="panel center">
 <div class="preview-top"><div><span class="subtle">Rendu en situation</span><h2>Aperçu de l’écran</h2></div><div class="mode-switch" role="group" aria-label="Mode d’aperçu"><button class="mode-btn active" data-mode="home">Accueil</button><button class="mode-btn" data-mode="lock">Verrouillage</button></div></div>
@@ -255,9 +303,10 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 <div class="dock" id="dock"><i>⌂</i><i>◉</i><i>♫</i><i>▦</i></div>
 </div></div></div>
 <div class="preview-caption"><span id="previewModeLabel">ÉCRAN D’ACCUEIL · APERÇU SIMULÉ</span><span>ANDROID / GLASS STYLE</span></div>
-<div class="selected-preview"><div class="selected-preview-head"><strong id="selectedTitle">Widget sélectionné</strong><span>APERÇU INDIVIDUEL</span></div><div class="stage" id="stage"></div></div>
+<div class="selected-preview"><div class="selected-preview-head"><strong id="selectedTitle">Widget sélectionné</strong><span>APERÇU INDIVIDUEL</span></div><div class="stage" id="stage"></div><div class="variant-section"><div class="setting-label">Format du widget</div><div class="format-cards" id="widgetFormats"></div></div></div>
 <div class="actions"><button class="btn primary" id="export">Exporter l’aperçu PNG</button><button class="btn" id="save">Sauvegarder le style</button></div>
-<p class="note" style="margin-top:0">Le téléchargement PNG est une image de prévisualisation, pas un widget installable. Pour ajouter un widget interactif à l’écran d’accueil Android, il faudra une version native de l’application.</p>
+<button class="btn native-add" id="addToAndroid">＋ Ajouter ce widget sur mon Android</button>
+<p class="note" style="margin-top:0">La configuration sera partagée à l’application Android compagnon. Android demandera confirmation avant de placer le widget sur l’écran d’accueil.</p>
 </section>
 <aside class="panel editor">
 <div class="editor-head"><h2>Personnaliser</h2><span class="live">LIVE PREVIEW</span></div>
@@ -292,25 +341,7 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 <div class="field"><label for="font">Typographie générale</label><select id="font">
 <option value="Space Grotesk">Space Grotesk</option><option value="DM Sans">DM Sans</option><option value="IBM Plex Mono">IBM Plex Mono</option><option value="Sora">Sora</option><option value="Outfit">Outfit</option><option value="Manrope">Manrope</option><option value="Plus Jakarta Sans">Plus Jakarta Sans</option><option value="Playfair Display">Playfair Display</option>
 </select></div>
-<div class="field"><label for="timeFont">Typographie des heures</label><select id="timeFont">
-<option value="Space Grotesk">Space Grotesk · Moderne</option>
-<option value="Orbitron">Orbitron · Futuriste</option>
-<option value="Rajdhani">Rajdhani · Sport</option>
-<option value="Oxanium">Oxanium · Techno</option>
-<option value="Share Tech Mono">Share Tech Mono · Digital</option>
-<option value="Audiowide">Audiowide · Arcade</option>
-<option value="Michroma">Michroma · Géométrique</option>
-<option value="Chakra Petch">Chakra Petch · Angulaire</option>
-<option value="Bebas Neue">Bebas Neue · Condensée</option>
-<option value="Exo 2">Exo 2 · Technique</option>
-<option value="IBM Plex Mono">IBM Plex Mono · Monospace</option>
-<option value="DM Sans">DM Sans · Sobre</option>
-<option value="Sora">Sora · Minimal</option>
-<option value="Outfit">Outfit · Arrondie</option>
-<option value="Manrope">Manrope · Élégante</option>
-<option value="Plus Jakarta Sans">Plus Jakarta Sans · Douce</option>
-<option value="Playfair Display">Playfair Display · Classique</option>
-</select></div>
+<div class="font-gallery-wrap"><div class="setting-label">Styles d’heures</div><p class="font-gallery-help">Compare les chiffres directement et touche celui que tu préfères.</p><div class="clock-font-grid" id="clockFonts"></div></div>
 <div class="field"><label for="showDate"><span>Afficher les détails</span><input id="showDate" type="checkbox" checked></label></div>
 <hr class="divider">
 <p class="setting-label">Styles sauvegardés</p><div class="saved-list" id="savedList"></div><p class="saved-empty" id="savedEmpty">Tes styles sont conservés dans ce navigateur.</p>
@@ -797,9 +828,12 @@ const extraModels=[
   }
 ];
 models.push(...extraModels);
+models.push({id:'calculator',name:'Calculatrice',desc:'Calculatrice compacte',cat:'smart',group:'RACCOURCIS',label:'CALCULATOR',kind:'calculator'});
+const folders=[{"id":"new","title":"NEWLY ADDED","sub":"Les dernières compositions","accent":"#f5ce19","badge":"NEW","ids":[]},{"id":"apps","title":"APPS","sub":"Raccourcis et applications","accent":"#d9d9d9","ids":["shortcuts","app-grid","quick","quick-toggles","contacts","qr-widget"]},{"id":"battery","title":"BATTERY","sub":"Batteries, écouteurs et montres","accent":"#bfc5cd","ids":["battery","battery-ring","battery-saver","earbuds","earbuds-case","earbuds-charges","watch"]},{"id":"custom","title":"CUSTOM APPS","sub":"Tes accès rapides favoris","accent":"#d9d9d9","ids":["contacts","app-grid","shortcuts","quick-toggles","qr-widget"]},{"id":"calendar","title":"CALENDAR","sub":"Calendriers, dates et agenda","accent":"#e9c62e","ids":["calendar","calendar-week","agenda","date-large","birthdays"]},{"id":"calculator","title":"CALCULATOR","sub":"Calculatrice compacte","accent":"#e7e7e7","ids":["calculator"]},{"id":"quickview","title":"QUICKVIEW","sub":"Les informations essentielles","accent":"#dfc51d","ids":["clock","weather","battery","calendar","steps","notes"]},{"id":"analog","title":"ANALOG CLOCK","sub":"Cadrans et aiguilles","accent":"#c5c9cf","ids":["analog"]},{"id":"digital","title":"DIGITAL CLOCK","sub":"Styles numériques et typographies","accent":"#c5c9cf","ids":["clock","clock-neon","clock-minimal","clock-flip","clock-seconds","date-large"]},{"id":"alarm","title":"ALARM CLOCK","sub":"Alarmes, minuteurs et chronomètres","accent":"#c5c9cf","ids":["alarm","interval-timer","stopwatch","countdown"]},{"id":"world","title":"WORLD CLOCK","sub":"Plusieurs fuseaux horaires","accent":"#e7c51d","ids":["dual-time","world-clock"]},{"id":"weather","title":"WEATHER","sub":"Météo et conditions","accent":"#a7d7eb","ids":["weather","weather-week","air-quality","humidity","sunrise","moon-phase"]},{"id":"sport","title":"SPORT & HEALTH","sub":"Activité et objectifs","accent":"#9ee3c7","ids":["steps","steps-ring","calories","heart-rate","distance","running","training-week","workout"]},{"id":"music","title":"MUSIC","sub":"Lecture et commandes audio","accent":"#bd9cff","ids":["music","music-cover","music-equalizer","music-controls"]},{"id":"personal","title":"PERSONAL","sub":"Notes, photos et citations","accent":"#e4a5b9","ids":["notes","notes-grid","journal","photo","photo-portrait","photo-stack","quote","quote-daily","motivation","mood"]}];
+folders[0].ids=extraModels.map(m=>m.id);
 const palettes=['#55dfb6','#8a7bff','#ff9a62','#62b7ff','#f06b92','#f0c66a'];
 let active='clock',filter='all',mode='home',wallpaper='default',saved=[];
-let settings={title:'MY SPACE',accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};
+let settings={title:'MY SPACE',accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',format:'2x2',theme:'dark',showDate:true};
 const $=id=>document.getElementById(id);
 function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function setAccent(hex){settings.accent=hex;$('accent').value=hex;document.documentElement.style.setProperty('--accent',hex);const n=parseInt(hex.slice(1),16);document.documentElement.style.setProperty('--accent-rgb',(n>>16)+','+((n>>8)&255)+','+(n&255));$('palette').querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.color.toLowerCase()===hex.toLowerCase()));render();}
@@ -862,21 +896,48 @@ case'watch':return head+'<div class="mini-time">10:08</div><span class="mini-sub
 case'music':return head+'<div class="mini-row" style="margin-top:10px"><div class="mini-cover"></div><div class="mini-lines"><i></i><i></i></div></div><div class="mini-controls"><i>Ⅱ</i><i>▶</i><i>»</i></div></div>';
 case'shortcuts':case'quick':return head+'<div class="mini-controls"><i>⌂</i><i>◉</i><i>♫</i><i>✦</i></div><div class="mini-controls"><i>⌁</i><i>◌</i><i>◍</i><i>⌕</i></div></div>';
 case'qr':return head+'<div style="width:48px;height:48px;margin:4px auto;background:repeating-conic-gradient(#fff 0 25%,transparent 0 50%) 0/8px 8px;border:4px solid #fff"></div></div>';
+case'calculator':return head+'<div style="margin-top:8px;padding:8px;border-radius:7px;background:#222"><div style="height:15px;text-align:right;color:#fff">0</div><div class="mini-days" style="grid-template-columns:repeat(4,1fr)"><b>7</b><b>8</b><b>9</b><b>÷</b><b>4</b><b>5</b><b>6</b><b>×</b></div></div></div>';
 default:return head+'<div class="mini-time">09:41</div><span class="mini-sub">WIDGET PREVIEW</span></div>';
 }
 }
 
+
+let activeFolder=null;
+function folderPreview(folder){
+const model=models.find(m=>folder.ids.includes(m.id))||models[0];
+return '<div class="folder-preview"><div class="mini">'+miniPreview(model)+'</div></div>';
+}
+function drawFolderDirectory(query=''){
+const visible=folders.filter(f=>(f.title+' '+f.sub).toLowerCase().includes(query)||f.ids.some(id=>{const m=models.find(x=>x.id===id);return m&&(m.name+' '+m.desc).toLowerCase().includes(query);}));
+$('folderDirectory').innerHTML=visible.map(f=>{
+const n=f.id==='new'?extraModels.length:f.ids.length;
+return '<button class="folder-card" data-folder="'+f.id+'" style="--folder-accent:'+f.accent+'"><span class="folder-copy"><span class="folder-echo">'+Array(6).fill(f.title).join('<br>')+'</span><strong>'+f.title+'</strong><small>'+f.sub+'</small><em>'+n+' widgets</em></span>'+folderPreview(f)+(f.badge?'<span class="folder-ribbon">'+f.badge+'</span>':'')+'</button>';
+}).join('');
+$('folderDirectory').querySelectorAll('[data-folder]').forEach(b=>b.addEventListener('click',()=>{activeFolder=b.dataset.folder;filter='all';$('search').value='';drawGrid();}));
+}
 function drawGrid(){
 const q=$('search').value.trim().toLowerCase();
-const visible=models.filter(m=>(filter==='all'||m.cat===filter)&&(m.name+' '+m.desc+' '+m.group).toLowerCase().includes(q));
+if(!activeFolder&&filter==='all'&&!q){
+$('folderDirectory').hidden=false;$('folderToolbar').hidden=true;$('grid').hidden=true;
+$('folderDirectory').style.display='grid';$('grid').innerHTML='';
+drawFolderDirectory();return;
+}
+$('folderDirectory').hidden=true;$('folderDirectory').style.display='none';$('folderToolbar').hidden=false;$('grid').hidden=false;
+const chosen=activeFolder?folders.find(f=>f.id===activeFolder):null;
+let ids=chosen?chosen.ids:(filter==='all'?models.map(m=>m.id):models.filter(m=>m.cat===filter).map(m=>m.id));
+let visible=[...new Set(ids)].map(id=>models.find(m=>m.id===id)).filter(Boolean);
+if(q)visible=visible.filter(m=>(m.name+' '+m.desc+' '+m.group).toLowerCase().includes(q));
+$('folderTitle').textContent=q?'Résultats de recherche':chosen?chosen.title:'Widgets';
+$('folderCount').textContent=visible.length+' widgets';
+$('backFolders').textContent=chosen?'← Tous les dossiers':'← Collections';
 const groups=[...new Set(visible.map(m=>m.group))];
 $('grid').innerHTML=groups.length?groups.map(g=>{
 const items=visible.filter(m=>m.group===g);
 return '<div class="folder-heading">'+g+' <span class="folder-count">'+String(items.length).padStart(2,'0')+'</span></div>'+items.map(m=>'<button class="widget-card '+(active===m.id?'active':'')+'" data-id="'+m.id+'"><span class="mini">'+miniPreview(m)+'</span><span class="card-foot"><strong>'+m.name+'</strong><span>APERÇU</span></span></button>').join('');
 }).join(''):'<div class="empty">Aucun widget ne correspond à cette recherche.</div>';
-$('count').textContent=models.length;
 $('grid').querySelectorAll('[data-id]').forEach(b=>b.addEventListener('click',()=>selectModel(b.dataset.id)));
 }
+
 function selectModel(id){
 active=id;settings.title=models.find(m=>m.id===id).label;$('title').value=settings.title;
 drawGrid();render();
@@ -924,6 +985,7 @@ case'watch':return title+'<div class="w-clock">10:08</div><div class="w-date">8 
 case'music':return title+row('<div style="width:78px;height:78px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#4c4d77);display:grid;place-items:center;font-size:30px">♫</div>','<div><div class="w-big" style="font-size:21px">Midnight City</div><div class="w-date">M83 · Album</div><div class="w-controls"><span class="w-control">Ⅱ</span><span class="w-control">▶</span><span class="w-control">»</span></div></div>');
 case'shortcuts':case'quick':return title+'<div class="w-controls">'+['⌂','◉','♫','✦'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div><div class="w-controls">'+['⌁','◌','◍','⌕'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div>';
 case'qr':return title+'<div style="width:118px;height:118px;margin:10px auto;background:repeating-conic-gradient(#fff 0 25%,transparent 0 50%) 0/12px 12px;border:8px solid #fff"></div><div class="w-date" style="text-align:center">Zone de QR décorative</div>';
+case'calculator':return title+'<div style="margin-top:10px;padding:12px;border-radius:14px;background:#20232b"><div style="text-align:right;font:24px var(--time-font);padding:8px">0</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'+['C','±','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','⌫','='].map(x=>'<span style="border-radius:50%;background:#ffffff20;display:grid;place-items:center;aspect-ratio:1;font-size:12px">'+x+'</span>').join('')+'</div></div>';
 default:return title+'<div class="w-clock">09:41</div>'+detail;
 }
 }
@@ -954,41 +1016,69 @@ case'quick':return '<div class="w-label">'+safe(settings.title)+'</div><div clas
 case'contacts':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-controls">'+['A','M','S','J'].map(x=>'<span class="w-control" style="width:42px;height:42px;font-size:15px">'+x+'</span>').join('')+'</div><div class="w-date" style="margin-top:10px">Appeler rapidement tes favoris</div>';
 default:return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-controls">'+['⌂','◉','♫','✦'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div><div class="w-date">Raccourcis personnalisés</div>';
 }}
+
+const clockFontOptions=[['Space Grotesk','MODERNE'],['Orbitron','FUTURISTE'],['Rajdhani','SPORT'],['Oxanium','TECHNO'],['Share Tech Mono','DIGITAL'],['Audiowide','ARCADE'],['Michroma','GÉOMÉTRIQUE'],['Chakra Petch','ANGULAIRE'],['Bebas Neue','CONDENSÉE'],['Exo 2','TECHNIQUE'],['IBM Plex Mono','MONOSPACE'],['DM Sans','SOBRE'],['Sora','MINIMAL'],['Outfit','ARRONDIE'],['Manrope','ÉLÉGANTE'],['Plus Jakarta Sans','DOUCE'],['Playfair Display','CLASSIQUE']];
+function drawClockFonts(){
+$('clockFonts').innerHTML=clockFontOptions.map(([font,tag])=>'<button type="button" class="clock-font-card '+(settings.timeFont===font?'active':'')+'" data-font="'+font+'" style="--sample-font:\''+font+'\'"><span class="clock-font-sample">09:41</span><span class="clock-font-name">'+font+'</span><small>'+tag+'</small></button>').join('');
+$('clockFonts').querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{settings.timeFont=b.dataset.font;drawClockFonts();render();}));
+}
+
+
+function drawFormats(){
+$('widgetFormats').innerHTML='<button type="button" class="format-card" data-format="2x2"><span class="format-art square">09:41</span><strong>2 × 2</strong><small>Carré</small></button><button type="button" class="format-card" data-format="4x2"><span class="format-art wide">09:41</span><strong>4 × 2</strong><small>Horizontal</small></button><button type="button" class="format-card" data-format="2x4"><span class="format-art portrait">09<br>41</span><strong>2 × 4</strong><small>Vertical</small></button><button type="button" class="format-card" data-format="4x4"><span class="format-art large">09:41</span><strong>4 × 4</strong><small>Grand</small></button>';
+$('widgetFormats').querySelectorAll('[data-format]').forEach(b=>b.addEventListener('click',()=>{settings.format=b.dataset.format;drawFormats();render();}));
+$('widgetFormats').querySelectorAll('[data-format]').forEach(b=>b.classList.toggle('active',b.dataset.format===(settings.format||'2x2')));
+}
+
 function wallpaperClass(){return wallpaper==='default'?'':wallpaper==='light'?'wallpaper-light':'wallpaper-'+wallpaper;}
 function render(){
 const model=models.find(m=>m.id===active);$('selectedLabel').textContent=model.name.toUpperCase();$('selectedTitle').textContent=model.name;
 const el=document.createElement('div');el.className='widget'+(settings.layout==='solid'?' solid':settings.layout==='outline'?' outline':'')+(settings.theme==='light'?' theme-light':'');
-el.style.setProperty('--accent',settings.accent);el.style.setProperty('--time-font',"'"+settings.timeFont+"'");el.style.borderRadius=settings.radius+'px';el.style.width='min(100%,'+(360*settings.size/100)+'px)';el.style.fontFamily="'"+settings.font+"',sans-serif";
+el.style.setProperty('--accent',settings.accent);el.style.setProperty('--time-font',"'"+settings.timeFont+"'");el.style.borderRadius=settings.radius+'px';el.classList.add('format-'+(settings.format||'2x2'));el.style.width=(settings.format==='2x4'?'min(100%,220px)':'min(100%,'+((settings.format==='4x2'||settings.format==='4x4'?520:360)*settings.size/100)+'px)');el.style.fontFamily="'"+settings.font+"',sans-serif";
 if(settings.layout==='glass')el.style.background='linear-gradient(145deg,rgba(255,255,255,'+(settings.opacity/100+.12)+'),rgba(255,255,255,'+(settings.opacity/100*.42)+'))';
 if(settings.layout==='solid')el.style.background=settings.accent;
 if(settings.layout==='outline')el.style.background='rgba(255,255,255,.025)';
 el.innerHTML=widgetContent();$('stage').replaceChildren(el);
 const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();screen.style.setProperty('--time-font',"'"+settings.timeFont+"'");
 $('statusTime').textContent=clockText();$('screenTime').textContent=clockText();$('screenDate').textContent=dateText();
-const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.setProperty('--time-font',"'"+settings.timeFont+"'");phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
+const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.setProperty('--time-font',"'"+settings.timeFont+"'");phoneWidget.classList.add('format-'+(settings.format||'2x2'));phoneWidget.style.width=settings.format==='2x4'?'72%':'100%';phoneWidget.style.minHeight=settings.format==='4x4'?'155px':settings.format==='2x4'?'205px':'115px';phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
 const extras=$('phoneExtras'),dock=$('dock'),time=$('screenTime'),date=$('screenDate');
 if(mode==='lock'){time.style.display='block';date.style.display='block';extras.style.display='none';dock.style.display='none';phoneWidget.style.marginTop='auto';phoneWidget.style.marginBottom='auto';$('previewModeLabel').textContent='ÉCRAN DE VERROUILLAGE · APERÇU SIMULÉ';}
 else{time.style.display='none';date.style.display='none';extras.style.display='grid';dock.style.display='flex';phoneWidget.style.marginTop='12px';phoneWidget.style.marginBottom='0';$('previewModeLabel').textContent='ÉCRAN D’ACCUEIL · APERÇU SIMULÉ';}
 $('opacityOut').textContent=settings.opacity+'%';$('radiusOut').textContent=settings.radius+' px';$('sizeOut').textContent=settings.size+'%';
 }
 function sync(){
-settings.title=$('title').value;settings.accent=$('accent').value;settings.opacity=+$('opacity').value;settings.radius=+$('radius').value;settings.size=+$('size').value;settings.layout=$('layout').value;settings.font=$('font').value;settings.timeFont=$('timeFont').value;settings.theme=$('theme').value;settings.showDate=$('showDate').checked;
+settings.title=$('title').value;settings.accent=$('accent').value;settings.opacity=+$('opacity').value;settings.radius=+$('radius').value;settings.size=+$('size').value;settings.layout=$('layout').value;settings.font=$('font').value;settings.theme=$('theme').value;settings.showDate=$('showDate').checked;
 setAccent(settings.accent);render();
 }
 function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));render();}
 function drawSaved(){
 $('savedList').innerHTML=saved.map((s,i)=>'<button class="saved-chip" data-index="'+i+'">'+safe(s.settings.title||s.model)+'</button>').join('');
 $('savedEmpty').style.display=saved.length?'none':'block';
-$('savedList').querySelectorAll('[data-index]').forEach(b=>b.addEventListener('click',()=>{const s=saved[+b.dataset.index];active=s.model;settings={...s.settings};wallpaper=s.wallpaper||'default';mode=s.mode||'home';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=settings.opacity;$('radius').value=settings.radius;$('size').value=settings.size;$('layout').value=settings.layout;$('font').value=settings.font;$('timeFont').value=settings.timeFont||'Orbitron';$('theme').value=settings.theme;$('showDate').checked=settings.showDate;setMode(mode);drawGrid();sync();}));
+$('savedList').querySelectorAll('[data-index]').forEach(b=>b.addEventListener('click',()=>{const s=saved[+b.dataset.index];active=s.model;settings={...s.settings};wallpaper=s.wallpaper||'default';mode=s.mode||'home';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=settings.opacity;$('radius').value=settings.radius;$('size').value=settings.size;$('layout').value=settings.layout;$('font').value=settings.font;$('theme').value=settings.theme;drawClockFonts();drawFormats();$('showDate').checked=settings.showDate;setMode(mode);drawGrid();sync();}));
 }
-$('search').addEventListener('input',drawGrid);
-$('filters').querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));drawGrid();}));
+$('search').addEventListener('input',()=>{if($('search').value.trim())activeFolder=null;drawGrid();});
+$('backFolders').addEventListener('click',()=>{activeFolder=null;filter='all';$('search').value='';drawGrid();});
+$('filters').querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;activeFolder=null;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));drawGrid();}));
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
 $('palette').querySelectorAll('[data-color]').forEach(b=>b.addEventListener('click',()=>setAccent(b.dataset.color)));
 $('wallpapers').querySelectorAll('[data-wallpaper]').forEach(b=>b.addEventListener('click',()=>{wallpaper=b.dataset.wallpaper;document.querySelectorAll('.wallpaper').forEach(x=>x.classList.toggle('active',x===b));render();}));
-['title','accent','opacity','radius','size','layout','font','timeFont','theme','showDate'].forEach(id=>$(id).addEventListener('input',sync));
+['title','accent','opacity','radius','size','layout','font','theme','showDate'].forEach(id=>$(id).addEventListener('input',sync));
+$('addToAndroid').addEventListener('click',async()=>{
+const model=models.find(m=>m.id===active);
+const payload={schema:"dartist-widget-v1",model:{id:model.id,name:model.name,kind:model.kind||model.id},settings:{...settings},wallpaper,mode,createdAt:new Date().toISOString()};
+const file=new File([JSON.stringify(payload,null,2)],'dartist-widget.json',{type:'application/json'});
+try{
+if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+await navigator.share({title:'Ajouter '+model.name+' sur Android',text:'Configuration du widget Dartist',files:[file]});
+}else{
+const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-widget.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
+alert("Le partage de fichiers n'est pas disponible dans ce navigateur. La configuration JSON a été téléchargée.");
+}
+}catch(err){if(err.name!=='AbortError')alert("Impossible d'ouvrir le partage Android sur ce navigateur.");}
+});
 $('save').addEventListener('click',()=>{saved.push({model:active,settings:{...settings},wallpaper,mode});try{localStorage.setItem('dartist-glass-widgets',JSON.stringify(saved));}catch(e){}drawSaved();});
-$('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;$('timeFont').value=settings.timeFont;$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
+$('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;drawClockFonts();drawFormats();$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
 function makePng(el){
 return new Promise((resolve,reject)=>{
 const clone=el.cloneNode(true);
@@ -1010,7 +1100,7 @@ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 $('export').addEventListener('click',async()=>{const el=$('stage').querySelector('.widget');if(!el)return;try{const blob=await makePng(el),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-glass-widget-'+active+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){alert('L’export PNG n’est pas pris en charge par ce navigateur.');}});
 try{saved=JSON.parse(localStorage.getItem('dartist-glass-widgets')||'[]');if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
-drawGrid();drawSaved();setAccent(settings.accent);setMode('home');render();
+drawGrid();drawSaved();drawClockFonts();drawFormats();setAccent(settings.accent);setMode('home');render();
 setInterval(()=>{if(active==='clock'||active==='analog'||active==='clock-seconds'){const el=$('stage').querySelector('.widget');if(el)el.innerHTML=widgetContent();$('phoneWidget').innerHTML=widgetContent();$('statusTime').textContent=clockText();$('screenTime').textContent=clockText();}},15000);
 </script>
 </body>
