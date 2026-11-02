@@ -8,7 +8,7 @@ Un studio d’outils web gratuits, réunis dans une interface responsive. Aucun 
 
 | Outil | Fonctionnalités principales |
 | --- | --- |
-| **Compresseur d’images** | Import multiple, compression, conversion, redimensionnement, comparaison du poids et export individuel ou ZIP. |
+| **Studio Widgets** | Bibliothèque de 12 modèles (horloge, calendrier, tâches, notes, citation, photo, sport, batterie démo, météo démo), éditeur live, personnalisation du verre, couleur, taille, typographie, sauvegardes locales et export PNG. |\n| **Compresseur d’images** | Import multiple, compression, conversion, redimensionnement, comparaison du poids et export individuel ou ZIP. |
 | **Visualiseur HTML / CSS / JS** | Trois éditeurs indépendants, aperçu fusionné en direct, exécution JavaScript isolée, panneaux redimensionnables et ouverture du résultat dans un nouvel onglet. |
 | **Studio QR** | QR URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnalisation graphique, QR photographiques, lots CSV, lecture et exports. |
 | **Text Match Cut Studio** | Animation typographique newspaper cut avec mot ancré, formats vidéo 9:16/1:1/16:9/4:5, styles presse, réglages de durée/rythme et export WebM ou MP4 selon la prise en charge du navigateur. |
@@ -19,7 +19,7 @@ Un studio d’outils web gratuits, réunis dans une interface responsive. Aucun 
 
 La page d’accueil comprend une recherche, des filtres par catégorie et un thème clair/sombre. L’interface s’adapte aux écrans d’ordinateur, de tablette et de téléphone.
 
-## Visualiseur HTML / CSS / JS
+\n## Studio Widgets\n\n**[Ouvrir le Studio Widgets](https://dartist-fr.github.io/boite-a-outils/outils/studio-widgets.html)**\n\nUne bibliothèque de modèles web inspirés d’Automa, avec prévisualisation en direct et personnalisation de la couleur d’accent, du fond, de la transparence, des arrondis, de la taille, de la typographie et du style (verre, solide, contour). Les créations peuvent être sauvegardées dans le stockage local du navigateur et exportées en PNG.\n\nLes widgets d’horloge, calendrier et tâches sont des maquettes web. La météo, les niveaux de batterie et les objectifs sportifs sont illustratifs : les données réelles du téléphone, de Health Connect, d’une montre ou des écouteurs nécessitent une application Android et des autorisations adaptées.\n\n## Visualiseur HTML / CSS / JS
 
 Le Visualiseur réunit les trois langages dans **un seul rendu** :
 
