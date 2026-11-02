@@ -9,7 +9,7 @@
 <title>Studio Widgets — dartist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Oxanium:wght@400;500;600;700&family=Share+Tech+Mono&family=Audiowide&family=Michroma&family=Chakra+Petch:wght@400;500;600;700&family=Bebas+Neue&family=Exo+2:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Oxanium:wght@400;500;600;700&family=Share+Tech+Mono&family=Audiowide&family=Michroma&family=Chakra+Petch:wght@400;500;600;700&family=Bebas+Neue&family=Exo+2:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Anton&family=Oswald:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Press+Start+2P&family=Cormorant+Garamond:wght@400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--page:#090b10;--panel:#11151d;--panel2:#171d27;--ink:#f4f6fb;--muted:#99a3b4;--faint:#687386;--line:#ffffff17;--accent:#55dfb6;--accent-rgb:85,223,182;--glass:rgba(255,255,255,.11);--radius:20px;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',sans-serif;--mono:'IBM Plex Mono',monospace}
 *{box-sizing:border-box}
@@ -98,17 +98,17 @@ h1 span{color:var(--accent)}
 .statusbar{display:flex;justify-content:space-between;align-items:center;font:8px var(--mono);color:#ffffffd2;padding:0 3px}
 .phone-screen.wallpaper-light .statusbar{color:#17222c}
 .status-icons{letter-spacing:2px}
-.lockscreen-time{text-align:center;font:500 58px/.95 var(--display);letter-spacing:-5px;margin:35px 0 4px;text-shadow:0 3px 20px #0004}
+.lockscreen-time{text-align:center;font:var(--time-weight,500) 58px/.95 var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:var(--time-spacing,-5px);margin:35px 0 4px;text-shadow:0 3px 20px #0004}
 .lockscreen-date{text-align:center;font-size:10px;color:#ffffffbd;margin-bottom:24px}
 .phone-screen.wallpaper-light .lockscreen-date{color:#34404b}
 .phone-widget{position:relative;border:1px solid #ffffff40;border-radius:18px;background:linear-gradient(140deg,#ffffff2a,#ffffff0b 72%);box-shadow:inset 0 1px #ffffff4c,0 10px 28px #0003;backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);padding:13px;overflow:hidden;color:#fff}
 .phone-widget:before{content:"";position:absolute;width:120px;height:120px;border-radius:50%;right:-65px;top:-70px;background:var(--accent);filter:blur(36px);opacity:.32;pointer-events:none}
 .phone-widget>*{position:relative}
 .phone-widget .w-label{font:8px var(--mono);letter-spacing:.11em;color:#ffffffab;text-transform:uppercase}
-.phone-widget .w-clock{font:600 37px/.98 var(--display);letter-spacing:-2.7px;margin:8px 0 4px}
+.phone-widget .w-clock{font:var(--time-weight,600) 37px/.98 var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:var(--time-spacing,-2.7px);margin:8px 0 4px}
 .phone-widget .w-date{font-size:9px;color:#ffffffad}
 .phone-widget .w-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.phone-widget .w-big{font:600 25px var(--display)}
+.phone-widget .w-big{font:var(--time-weight,600) 25px var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:var(--time-spacing,-1px)}
 .phone-widget .w-sub{font-size:8px;color:#ffffffa8}
 .phone-widget .w-progress{height:5px;border-radius:99px;background:#ffffff25;margin:8px 0 2px;overflow:hidden}
 .phone-widget .w-progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
@@ -150,11 +150,11 @@ h1 span{color:var(--accent)}
 .widget:before{content:"";position:absolute;width:190px;height:190px;right:-95px;top:-115px;border-radius:50%;background:var(--accent);filter:blur(48px);opacity:.24;pointer-events:none}
 .widget>*{position:relative}
 .widget .w-label{font:9px var(--mono);letter-spacing:.12em;color:#ffffffa8;text-transform:uppercase}
-.widget .w-clock{font:600 clamp(38px,5vw,52px)/.98 var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:-4px;margin:12px 0 7px}
+.widget .w-clock{font:var(--time-weight,600) clamp(38px,5vw,52px)/.98 var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:var(--time-spacing,-4px);margin:12px 0 7px}
 .widget .w-big,.phone-widget .w-big,.phone-widget .w-clock,.lockscreen-time{font-family:var(--time-font,'Space Grotesk'),sans-serif}
 .widget .w-date{font-size:11px;color:#ffffffb7}
 .widget .w-row{display:flex;justify-content:space-between;align-items:center;gap:14px}
-.widget .w-big{font:600 31px var(--display)}
+.widget .w-big{font:var(--time-weight,600) 31px var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:var(--time-spacing,-1px)}
 .widget .w-sub{font-size:10px;color:#ffffffa8}
 .widget .w-progress{height:6px;border-radius:99px;background:#ffffff27;margin:12px 0;overflow:hidden}
 .widget .w-progress i{display:block;height:100%;border-radius:99px;background:var(--accent)}
@@ -242,7 +242,7 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 .clock-font-card{min-width:0;min-height:69px;border:1px solid var(--line);border-radius:11px;background:#090c12;color:var(--ink);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:8px 9px;cursor:pointer;transition:border-color .15s,background .15s}
 .clock-font-card:hover{border-color:rgba(var(--accent-rgb),.6)}
 .clock-font-card.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.2)}
-.clock-font-sample{font:500 24px/1 var(--sample-font),sans-serif;letter-spacing:-1px;white-space:nowrap}
+.clock-font-sample{font:var(--sample-weight,500) var(--sample-size,25px)/1 var(--sample-font),sans-serif;letter-spacing:var(--sample-spacing,-1px);white-space:nowrap;font-feature-settings:'tnum' 1}
 .clock-font-name{margin-top:6px;font-size:9px;color:#e5eaf2}
 .clock-font-card small{font:7px var(--mono);color:var(--faint);letter-spacing:.09em;margin-top:2px}
 .variant-section{margin-top:12px}
@@ -262,6 +262,37 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 .widget.format-4x4{min-height:220px}
 @media(max-width:760px){.folder-card{grid-template-columns:minmax(0,1fr) 126px;min-height:126px;padding:14px;border-radius:21px}.folder-preview .mini{height:88px}.folder-copy>strong{font-size:12px}.folder-toolbar{position:sticky;top:0;z-index:3;background:#11151d;padding:9px 0}.clock-font-grid{max-height:none}.format-cards{gap:5px}.library{order:1}.center{order:2}.editor{order:3}}
 @media(max-width:390px){.folder-card{grid-template-columns:minmax(0,1fr) 108px}.folder-copy>small{font-size:9px}.format-card{padding:6px 2px}}
+
+
+/* Distinct visual identities for the clock collection */
+.mini-clock{width:100%;min-width:0}
+.mini-clock .mini-time{font-variant-numeric:tabular-nums}
+.mini-clock--standard .mini-time{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-2px}
+.mini-clock--neon .mini-time{font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:-1.5px;color:#8fffe0;text-shadow:0 0 7px #55dfb6,0 0 17px #55dfb680}
+.mini-clock--neon .mini-label{color:#8fffe0}
+.mini-clock--minimal .mini-time{font-family:'DM Sans',sans-serif;font-weight:300;font-size:35px;letter-spacing:-2.8px}
+.mini-clock--minimal .mini-label{letter-spacing:.18em}
+.mini-clock--flip .mini-flip-time{display:flex;align-items:center;gap:3px;margin-top:9px;font:700 22px/.95 'Roboto Mono',monospace}
+.mini-flip-digit{position:relative;display:inline-grid;place-items:center;min-width:34px;padding:7px 3px 6px;border:1px solid #ffffff38;border-radius:5px;background:linear-gradient(#46515e 0 49%,#27313d 50%);box-shadow:0 2px 5px #0006,inset 0 1px #ffffff36}
+.mini-flip-digit:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px solid #080d14a8}
+.mini-flip-colon{color:var(--accent);font-weight:700}
+.mini-clock--seconds .mini-time{font-family:'Share Tech Mono',monospace;font-size:25px;letter-spacing:-1.5px}
+.mini-clock--seconds .mini-seconds{font-size:12px;color:var(--accent);letter-spacing:0;margin-left:1px}
+.mini-clock--date .mini-date-large{font:400 48px/.85 'Bebas Neue',sans-serif;letter-spacing:-1px;margin-top:7px}
+.mini-clock--date .mini-sub{letter-spacing:.08em;text-transform:uppercase}
+.widget.variant-clock-neon .w-clock,.phone-widget.variant-clock-neon .w-clock{color:#9bffe4;text-shadow:0 0 8px var(--accent),0 0 22px rgba(var(--accent-rgb),.7)}
+.widget.variant-clock-neon .w-label,.phone-widget.variant-clock-neon .w-label{color:var(--accent)}
+.widget.variant-clock-minimal .w-clock,.phone-widget.variant-clock-minimal .w-clock{font-weight:var(--time-weight,300);letter-spacing:var(--time-spacing,-.075em)}
+.widget.variant-clock-minimal .w-label,.phone-widget.variant-clock-minimal .w-label{letter-spacing:.2em}
+.clock-flip-time{display:flex;align-items:center;gap:8px;margin:9px 0 7px;font:var(--time-weight,700) clamp(32px,4vw,43px)/1 var(--time-font,'Roboto Mono'),monospace}
+.clock-flip-digit{position:relative;display:inline-grid;place-items:center;min-width:1.18em;padding:.16em .12em .12em;border:1px solid #ffffff4a;border-radius:9px;background:linear-gradient(#46515e 0 49%,#202a35 50%);box-shadow:0 5px 13px #0004,inset 0 1px #ffffff38}
+.clock-flip-digit:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px solid #080d14a8}
+.clock-flip-colon{color:var(--accent);font-weight:700}
+.clock-seconds-line{display:flex;align-items:baseline;gap:3px;white-space:nowrap}
+.clock-seconds-line .clock-seconds{font:500 .43em/1 'Share Tech Mono',monospace;color:var(--accent);letter-spacing:0}
+.widget.variant-clock-seconds .w-clock,.phone-widget.variant-clock-seconds .w-clock{letter-spacing:-.065em}
+.widget.variant-date-large .w-clock,.phone-widget.variant-date-large .w-clock{font-size:clamp(58px,7vw,76px);font-weight:700;line-height:.82;letter-spacing:-.06em}
+.widget.variant-date-large .w-date,.phone-widget.variant-date-large .w-date{text-transform:uppercase;letter-spacing:.12em;font-size:9px}
 
 </style>
 </head>
@@ -841,7 +872,7 @@ function miniPreview(m){
 if(m.kind)return miniForKind(m);
 const lab=safe(m.label);
 switch(m.id){
-case'clock':return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div><span class="mini-sub">Monday, 02 November</span></div>';
+case'clock':return miniClockVariant(m);
 case'analog':return '<div class="mini-inner mini-row"><div><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div></div><span class="mini-icon">◷</span></div>';
 case'calendar':return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-meta"><strong>November 2026</strong><span>02</span></div><div class="mini-days">M T W T F S S <b>2</b> 3 4 5 6 7 8</div></div>';
 case'weather':return '<div class="mini-inner mini-row"><div><span class="mini-label">'+lab+'</span><div class="mini-temp">21°</div><span class="mini-sub">Sunny · Napoli</span></div><span class="mini-icon">☼</span></div>';
@@ -863,7 +894,21 @@ case'contacts':return '<div class="mini-inner"><span class="mini-label">'+lab+'<
 default:return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-controls"><i>⌂</i><i>◉</i><i>♫</i><i>✦</i></div><span class="mini-sub">Quick access</span></div>';
 }}
 
+
+function miniClockVariant(m){
+  const lab=safe(m.label);
+  switch(m.id){
+    case'clock-neon':return '<div class="mini-inner mini-clock mini-clock--neon"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div><span class="mini-sub">LIVE · DIGITAL GLOW</span></div>';
+    case'clock-minimal':return '<div class="mini-inner mini-clock mini-clock--minimal"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div><span class="mini-sub">MONDAY, 02 NOVEMBER</span></div>';
+    case'clock-flip':return '<div class="mini-inner mini-clock mini-clock--flip"><span class="mini-label">'+lab+'</span><div class="mini-flip-time"><span class="mini-flip-digit">09</span><span class="mini-flip-colon">:</span><span class="mini-flip-digit">41</span></div><span class="mini-sub">FLIP DISPLAY</span></div>';
+    case'clock-seconds':return '<div class="mini-inner mini-clock mini-clock--seconds"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41<span class="mini-seconds">:32</span></div><span class="mini-sub">LIVE SECONDS</span></div>';
+    case'date-large':return '<div class="mini-inner mini-clock mini-clock--date"><span class="mini-label">'+lab+'</span><div class="mini-date-large">02</div><span class="mini-sub">MONDAY · NOVEMBER</span></div>';
+    default:return '<div class="mini-inner mini-clock mini-clock--standard"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div><span class="mini-sub">MONDAY · 02 NOVEMBER</span></div>';
+  }
+}
+
 function miniForKind(m){
+if(m.kind==='clock'||m.kind==='seconds'||m.kind==='date')return miniClockVariant(m);
 const lab=safe(m.label);
 const head='<div class="mini-inner"><span class="mini-label">'+lab+'</span>';
 switch(m.kind){
@@ -945,6 +990,23 @@ drawGrid();render();
 function dateText(){return new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(new Date());}
 function clockText(){return new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit'}).format(new Date());}
 
+
+function clockModelContent(m,title,detail){
+  const now=new Date();
+  const hhmm=clockText();
+  const timeWithSeconds=new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(now);
+  const parts=timeWithSeconds.split(':');
+  const dateLong=safe(new Intl.DateTimeFormat('fr-FR',{weekday:'long',month:'long',year:'numeric'}).format(now));
+  switch(m.id){
+    case'clock-neon':return title+'<div class="w-clock">'+hhmm+'</div><div class="w-date">NEON DISPLAY · LIVE</div>';
+    case'clock-minimal':return title+'<div class="w-clock">'+hhmm+'</div><div class="w-date">Monday · 02 November</div>';
+    case'clock-flip':return title+'<div class="clock-flip-time"><span class="clock-flip-digit">'+hhmm.slice(0,2)+'</span><span class="clock-flip-colon">:</span><span class="clock-flip-digit">'+hhmm.slice(-2)+'</span></div><div class="w-date">FLIP CLOCK · SPLIT DIGITS</div>';
+    case'clock-seconds':return title+'<div class="w-clock clock-seconds-line"><span>'+parts.slice(0,2).join(':')+'</span><span class="clock-seconds">:'+parts[2]+'</span></div>'+detail;
+    case'date-large':return title+'<div class="w-clock">'+now.getDate().toString().padStart(2,'0')+'</div><div class="w-date">'+dateLong+'</div>';
+    default:return title+'<div class="w-clock">'+hhmm+'</div>'+detail;
+  }
+}
+
 function extraWidgetContent(m){
 const title='<div class="w-label">'+safe(settings.title)+'</div>';
 const detail=settings.showDate?'<div class="w-date">'+safe(dateText())+'</div>':'';
@@ -953,10 +1015,10 @@ const bar=p=>'<div class="w-progress"><i style="width:'+p+'%"></i></div>';
 const list=(items)=>'<div class="w-list">'+items.map((x,i)=>'<div class="w-task"><span class="w-dot" style="'+(i===0?'opacity:.5':'')+'"></span><span>'+safe(x)+'</span></div>').join('')+'</div>';
 switch(m.kind){
 case'clock':return title+'<div class="w-clock">'+clockText()+'</div>'+detail;
-case'seconds':return title+'<div class="w-clock">'+new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date())+'</div>'+detail;
+case'seconds':return clockModelContent(m,title,detail);
 case'dual':return title+row('<div class="w-big">09:41</div><div class="w-date">Paris · France</div>','<div class="w-big">03:41</div><div class="w-date">New York · USA</div>');
 case'world':return title+['PARIS|09:41','LONDON|08:41','TOKYO|17:41'].map(x=>{const a=x.split('|');return '<div class="w-row" style="margin-top:9px"><span class="w-date">'+a[0]+'</span><strong class="w-big" style="font-size:22px">'+a[1]+'</strong></div>';}).join('');
-case'date':return title+'<div class="w-clock" style="font-size:66px">'+new Date().getDate()+'</div><div class="w-date">'+safe(new Intl.DateTimeFormat('fr-FR',{weekday:'long',month:'long',year:'numeric'}).format(new Date()))+'</div>';
+case'date':return clockModelContent(m,title,detail);
 case'agenda':return title+list(['09:30 · Rendez-vous','13:00 · Déjeuner','18:30 · Entraînement']);
 case'week':return title+'<div class="w-big" style="font-size:24px">Semaine 45</div><div class="w-month">'+['L','M','M','J','V','S','D'].map((x,i)=>'<b class="'+(i===1?'today':'')+'">'+x+'<br>'+(2+i)+'</b>').join('')+'</div>';
 case'stopwatch':return title+'<div class="w-clock">00:24:38</div><div class="w-controls"><span class="w-control">Ⅱ</span><span class="w-control">↻</span></div>';
@@ -995,7 +1057,7 @@ const model=models.find(m=>m.id===active);
 if(model&&model.kind)return extraWidgetContent(model);
 const d=new Date(),detail=settings.showDate?'<div class="w-date">'+safe(dateText())+'</div>':'';
 switch(active){
-case'clock':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-clock">'+clockText()+'</div>'+detail;
+case'clock':return clockModelContent(m,title,detail);
 case'analog':return '<div class="w-row"><div><div class="w-label">'+safe(settings.title)+'</div><div class="w-big">'+clockText()+'</div>'+detail+'</div><div style="font-size:68px;color:var(--accent)">◷</div></div>';
 case'calendar':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-big" style="font-size:26px">'+safe(new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(d))+'</div><div class="w-month">'+['L','M','M','J','V','S','D'].map(x=>'<span>'+x+'</span>').join('')+Array.from({length:35},(_,i)=>{const first=new Date(d.getFullYear(),d.getMonth(),1),start=(first.getDay()+6)%7,day=i-start+1,last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return day>0&&day<=last?'<b class="'+(day===d.getDate()?'today':'')+'">'+day+'</b>':'<span></span>'}).join('')+'</div>';
 case'countdown':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-clock">24 <span style="font-size:18px;letter-spacing:0">DAYS</span></div><div class="w-date">Until the next event</div><div class="w-progress"><i style="width:72%"></i></div>';
@@ -1017,9 +1079,34 @@ case'contacts':return '<div class="w-label">'+safe(settings.title)+'</div><div c
 default:return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-controls">'+['⌂','◉','♫','✦'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div><div class="w-date">Raccourcis personnalisés</div>';
 }}
 
-const clockFontOptions=[['Space Grotesk','MODERNE'],['Orbitron','FUTURISTE'],['Rajdhani','SPORT'],['Oxanium','TECHNO'],['Share Tech Mono','DIGITAL'],['Audiowide','ARCADE'],['Michroma','GÉOMÉTRIQUE'],['Chakra Petch','ANGULAIRE'],['Bebas Neue','CONDENSÉE'],['Exo 2','TECHNIQUE'],['IBM Plex Mono','MONOSPACE'],['DM Sans','SOBRE'],['Sora','MINIMAL'],['Outfit','ARRONDIE'],['Manrope','ÉLÉGANTE'],['Plus Jakarta Sans','DOUCE'],['Playfair Display','CLASSIQUE']];
+const clockFontOptions=[
+{font:'Space Grotesk',tag:'MODERNE',weight:600,spacing:'-.075em',size:'26px'},
+{font:'Orbitron',tag:'FUTURISTE',weight:700,spacing:'.015em',size:'23px'},
+{font:'Rajdhani',tag:'SPORT',weight:700,spacing:'-.035em',size:'29px'},
+{font:'Oxanium',tag:'TECHNO',weight:700,spacing:'-.015em',size:'25px'},
+{font:'Share Tech Mono',tag:'TERMINAL',weight:400,spacing:'-.025em',size:'25px'},
+{font:'Audiowide',tag:'ARCADE',weight:400,spacing:'-.055em',size:'23px'},
+{font:'Michroma',tag:'GÉOMÉTRIQUE',weight:400,spacing:'.035em',size:'18px'},
+{font:'Chakra Petch',tag:'ANGULAIRE',weight:700,spacing:'-.035em',size:'26px'},
+{font:'Bebas Neue',tag:'CONDENSÉE',weight:400,spacing:'.015em',size:'31px'},
+{font:'Exo 2',tag:'TECHNIQUE',weight:700,spacing:'-.06em',size:'26px'},
+{font:'IBM Plex Mono',tag:'MONOSPACE',weight:500,spacing:'-.055em',size:'23px'},
+{font:'DM Sans',tag:'SOBRE',weight:500,spacing:'-.075em',size:'26px'},
+{font:'Sora',tag:'NETTE',weight:700,spacing:'-.065em',size:'25px'},
+{font:'Outfit',tag:'ARRONDIE',weight:600,spacing:'-.07em',size:'26px'},
+{font:'Manrope',tag:'ÉLÉGANTE',weight:500,spacing:'-.065em',size:'26px'},
+{font:'Plus Jakarta Sans',tag:'DOUCE',weight:700,spacing:'-.065em',size:'25px'},
+{font:'Playfair Display',tag:'CLASSIQUE',weight:500,spacing:'-.02em',size:'25px'},
+{font:'Anton',tag:'IMPACT',weight:400,spacing:'.005em',size:'29px'},
+{font:'Oswald',tag:'AFFICHE',weight:600,spacing:'-.025em',size:'28px'},
+{font:'Roboto Mono',tag:'MACHINE',weight:600,spacing:'-.045em',size:'23px'},
+{font:'Space Mono',tag:'PIXEL',weight:700,spacing:'-.045em',size:'22px'},
+{font:'Press Start 2P',tag:'RÉTRO 8-BIT',weight:400,spacing:'-.08em',size:'13px'},
+{font:'Cormorant Garamond',tag:'ÉDITORIAL',weight:600,spacing:'-.015em',size:'29px'},
+{font:'Cinzel',tag:'ROMAIN',weight:600,spacing:'-.025em',size:'23px'}
+];
 function drawClockFonts(){
-$('clockFonts').innerHTML=clockFontOptions.map(([font,tag])=>'<button type="button" class="clock-font-card '+(settings.timeFont===font?'active':'')+'" data-font="'+font+'" style="--sample-font:\''+font+'\'"><span class="clock-font-sample">09:41</span><span class="clock-font-name">'+font+'</span><small>'+tag+'</small></button>').join('');
+$('clockFonts').innerHTML=clockFontOptions.map(o=>'<button type="button" class="clock-font-card '+(settings.timeFont===o.font?'active':'')+'" data-font="'+o.font+'" style="--sample-font:\''+o.font+'\';--sample-weight:'+o.weight+';--sample-spacing:'+o.spacing+';--sample-size:'+o.size+'"><span class="clock-font-sample">09:41</span><span class="clock-font-name">'+o.font+'</span><small>'+o.tag+'</small></button>').join('');
 $('clockFonts').querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{settings.timeFont=b.dataset.font;drawClockFonts();render();}));
 }
 
@@ -1034,14 +1121,17 @@ function wallpaperClass(){return wallpaper==='default'?'':wallpaper==='light'?'w
 function render(){
 const model=models.find(m=>m.id===active);$('selectedLabel').textContent=model.name.toUpperCase();$('selectedTitle').textContent=model.name;
 const el=document.createElement('div');el.className='widget'+(settings.layout==='solid'?' solid':settings.layout==='outline'?' outline':'')+(settings.theme==='light'?' theme-light':'');
-el.style.setProperty('--accent',settings.accent);el.style.setProperty('--time-font',"'"+settings.timeFont+"'");el.style.borderRadius=settings.radius+'px';el.classList.add('format-'+(settings.format||'2x2'));el.style.width=(settings.format==='2x4'?'min(100%,220px)':'min(100%,'+((settings.format==='4x2'||settings.format==='4x4'?520:360)*settings.size/100)+'px)');el.style.fontFamily="'"+settings.font+"',sans-serif";
+const timeProfile=clockFontOptions.find(o=>o.font===settings.timeFont)||clockFontOptions[0];
+const variantClass='variant-'+model.id;
+const applyTimeProfile=node=>{node.style.setProperty('--time-font',"'"+settings.timeFont+"'");node.style.setProperty('--time-weight',timeProfile.weight);node.style.setProperty('--time-spacing',timeProfile.spacing);};
+el.classList.add(variantClass);applyTimeProfile(el);el.style.setProperty('--accent',settings.accent);el.style.borderRadius=settings.radius+'px';el.classList.add('format-'+(settings.format||'2x2'));el.style.width=(settings.format==='2x4'?'min(100%,220px)':'min(100%,'+((settings.format==='4x2'||settings.format==='4x4'?520:360)*settings.size/100)+'px)');el.style.fontFamily="'"+settings.font+"',sans-serif";
 if(settings.layout==='glass')el.style.background='linear-gradient(145deg,rgba(255,255,255,'+(settings.opacity/100+.12)+'),rgba(255,255,255,'+(settings.opacity/100*.42)+'))';
 if(settings.layout==='solid')el.style.background=settings.accent;
 if(settings.layout==='outline')el.style.background='rgba(255,255,255,.025)';
 el.innerHTML=widgetContent();$('stage').replaceChildren(el);
-const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();screen.style.setProperty('--time-font',"'"+settings.timeFont+"'");
+const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();screen.classList.add(variantClass);applyTimeProfile(screen);
 $('statusTime').textContent=clockText();$('screenTime').textContent=clockText();$('screenDate').textContent=dateText();
-const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.setProperty('--time-font',"'"+settings.timeFont+"'");phoneWidget.classList.add('format-'+(settings.format||'2x2'));phoneWidget.style.width=settings.format==='2x4'?'72%':'100%';phoneWidget.style.minHeight=settings.format==='4x4'?'155px':settings.format==='2x4'?'205px':'115px';phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
+const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.classList.add(variantClass);phoneWidget.style.setProperty('--accent',settings.accent);applyTimeProfile(phoneWidget);phoneWidget.classList.add('format-'+(settings.format||'2x2'));phoneWidget.style.width=settings.format==='2x4'?'72%':'100%';phoneWidget.style.minHeight=settings.format==='4x4'?'155px':settings.format==='2x4'?'205px':'115px';phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
 const extras=$('phoneExtras'),dock=$('dock'),time=$('screenTime'),date=$('screenDate');
 if(mode==='lock'){time.style.display='block';date.style.display='block';extras.style.display='none';dock.style.display='none';phoneWidget.style.marginTop='auto';phoneWidget.style.marginBottom='auto';$('previewModeLabel').textContent='ÉCRAN DE VERROUILLAGE · APERÇU SIMULÉ';}
 else{time.style.display='none';date.style.display='none';extras.style.display='grid';dock.style.display='flex';phoneWidget.style.marginTop='12px';phoneWidget.style.marginBottom='0';$('previewModeLabel').textContent='ÉCRAN D’ACCUEIL · APERÇU SIMULÉ';}
@@ -1104,7 +1194,7 @@ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 $('export').addEventListener('click',async()=>{const el=$('stage').querySelector('.widget');if(!el)return;try{const blob=await makePng(el),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-glass-widget-'+active+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){alert('L’export PNG n’est pas pris en charge par ce navigateur.');}});
 try{saved=JSON.parse(localStorage.getItem('dartist-glass-widgets')||'[]');if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
 drawGrid();drawSaved();drawClockFonts();drawFormats();setAccent(settings.accent);setMode('home');render();
-setInterval(()=>{if(active==='clock'||active==='analog'||active==='clock-seconds'){const el=$('stage').querySelector('.widget');if(el)el.innerHTML=widgetContent();$('phoneWidget').innerHTML=widgetContent();$('statusTime').textContent=clockText();$('screenTime').textContent=clockText();}},15000);
+setInterval(()=>{if(['clock','analog','clock-neon','clock-minimal','clock-flip','clock-seconds','date-large'].includes(active)){const el=$('stage').querySelector('.widget');if(el)el.innerHTML=widgetContent();$('phoneWidget').innerHTML=widgetContent();$('statusTime').textContent=clockText();$('screenTime').textContent=clockText();}},1000);
 </script>
 </body>
 </html>
