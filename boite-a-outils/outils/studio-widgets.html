@@ -227,7 +227,7 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 </header>
 <section class="hero">
 <div><div class="eyebrow">Dartist Objects · Widget studio</div><h1>Glass Widgets<span>.</span></h1><p>Compose ton écran comme un véritable launcher Android : choisis un widget, ajuste son verre, ses couleurs et son format, puis visualise le résultat sur un écran d’accueil ou de verrouillage.</p></div>
-<div class="hero-aside"><div class="stat"><strong id="count">70</strong><span>modèles</span></div><div class="stat"><strong>Live</strong><span>aperçu direct</span></div></div>
+<div class="hero-aside"><div class="stat"><strong id="count">70</strong><span>modèles disponibles</span></div><div class="stat"><strong>Live</strong><span>aperçu direct</span></div></div>
 </section>
 <div class="workspace">
 <section class="panel library">
@@ -963,7 +963,7 @@ if(settings.layout==='glass')el.style.background='linear-gradient(145deg,rgba(25
 if(settings.layout==='solid')el.style.background=settings.accent;
 if(settings.layout==='outline')el.style.background='rgba(255,255,255,.025)';
 el.innerHTML=widgetContent();$('stage').replaceChildren(el);
-const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();
+const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();screen.style.setProperty('--time-font',"'"+settings.timeFont+"'");
 $('statusTime').textContent=clockText();$('screenTime').textContent=clockText();$('screenDate').textContent=dateText();
 const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.setProperty('--time-font',"'"+settings.timeFont+"'");phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
 const extras=$('phoneExtras'),dock=$('dock'),time=$('screenTime'),date=$('screenDate');
@@ -1011,7 +1011,7 @@ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 $('export').addEventListener('click',async()=>{const el=$('stage').querySelector('.widget');if(!el)return;try{const blob=await makePng(el),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-glass-widget-'+active+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){alert('L’export PNG n’est pas pris en charge par ce navigateur.');}});
 try{saved=JSON.parse(localStorage.getItem('dartist-glass-widgets')||'[]');if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
 drawGrid();drawSaved();setAccent(settings.accent);setMode('home');render();
-setInterval(()=>{if(active==='clock'||active==='analog'){const el=$('stage').querySelector('.widget');if(el)el.innerHTML=widgetContent();$('phoneWidget').innerHTML=widgetContent();$('statusTime').textContent=clockText();$('screenTime').textContent=clockText();}},15000);
+setInterval(()=>{if(active==='clock'||active==='analog'||active==='clock-seconds'){const el=$('stage').querySelector('.widget');if(el)el.innerHTML=widgetContent();$('phoneWidget').innerHTML=widgetContent();$('statusTime').textContent=clockText();$('screenTime').textContent=clockText();}},15000);
 </script>
 </body>
 </html>
