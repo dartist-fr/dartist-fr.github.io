@@ -1165,23 +1165,31 @@ a.href=url;a.download='dartist-widget.json';
 document.body.appendChild(a);a.click();a.remove();
 setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
+function openDartistCompanion(payload){
+const json=JSON.stringify(payload);
+const bytes=new TextEncoder().encode(json);
+let binary='';
+bytes.forEach(byte=>binary+=String.fromCharCode(byte));
+const encoded=btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const deepLink='dartistwidget://import?data='+encoded;
+let appOpened=false;
+const markOpened=()=>{appOpened=true;};
+document.addEventListener('visibilitychange',markOpened,{once:true});
+window.addEventListener('blur',markOpened,{once:true});
+window.location.href=deepLink;
+setTimeout(()=>{
+document.removeEventListener('visibilitychange',markOpened);
+window.removeEventListener('blur',markOpened);
+if(!appOpened){
+downloadWidgetConfig(payload);
+alert("L’application Dartist Widgets Companion n’a pas été détectée. Le fichier de configuration a été téléchargé. Installe d’abord l’application compagnon, puis réessaie.");
+}
+},1800);
+}
 $('addToAndroid').addEventListener('click',async()=>{
 const model=models.find(m=>m.id===active);
 const payload={schema:"dartist-widget-v1",model:{id:model.id,name:model.name,kind:model.kind||model.id},settings:{...settings},wallpaper,mode,createdAt:new Date().toISOString()};
-const file=new File([JSON.stringify(payload,null,2)],'dartist-widget.json',{type:'application/json'});
-let shared=false;
-try{
-if(typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]})){
-await navigator.share({title:'Ajouter '+model.name+' sur Android',text:'Configuration du widget Dartist',files:[file]});
-shared=true;
-}
-}catch(err){
-if(err&&err.name==='AbortError')return;
-}
-if(!shared){
-downloadWidgetConfig(payload);
-alert("Le partage Android n'est pas disponible dans ce navigateur. Le fichier dartist-widget.json vient d'être téléchargé. Ouvre-le ensuite depuis l'application compagnon si elle propose l'import des configurations.");
-}
+openDartistCompanion(payload);
 });
 $('save').addEventListener('click',()=>{saved.push({model:active,settings:{...settings},wallpaper,mode});try{localStorage.setItem('dartist-glass-widgets',JSON.stringify(saved));}catch(e){}drawSaved();});
 $('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;drawClockFonts();drawFormats();$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
