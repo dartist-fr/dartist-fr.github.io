@@ -80,12 +80,14 @@ ctx.save();ctx.shadowBlur=0;ctx.fillStyle=highlightColor;ctx.translate(-rectW/2,
 }
 if(i===1){
 ctx.shadowBlur=0;ctx.fillStyle=s.ink;ctx.globalAlpha=1;
-const before=words.slice(Math.max(0,s.ix-4),s.ix).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
-const after=words.slice(s.ix+1,s.ix+5).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
-const line=(before+' '+focus+' '+after).trim()||focus;
+const before=words.slice(Math.max(0,s.ix-5),s.ix).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
+const after=words.slice(s.ix+1,s.ix+6).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
 ctx.font=(s.style==='magazine'?'italic ':'')+(isModern?'700':'600')+' '+size+'px '+face;
-const measured=ctx.measureText(line).width,fit=Math.min(W*1.55,measured);
-ctx.fillText(line,W/2,row.y,fit);
+const fw=ctx.measureText(focus).width,edge=W/2;
+ctx.fillText(before,edge-fw/2-size*.1,row.y,Math.min(W*.9,ctx.measureText(before).width));
+ctx.textAlign='center';ctx.fillStyle=s.ink;ctx.fillText(focus,edge,row.y,Math.min(W*.5,fw));
+ctx.textAlign='left';ctx.fillText(after,edge+fw/2+size*.1,row.y,Math.min(W*.9,ctx.measureText(after).width));
+ctx.textAlign='center';
 }else{
 ctx.fillText(row.text.toLowerCase(),W/2,row.y,W*1.55);
 }
