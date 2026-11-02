@@ -51,27 +51,49 @@ function settings(){const words=wordTokens();let ix=Math.max(0,Math.min(words.le
 function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
 function hash(n){seed=(n+1)*2654435761>>>0}
 function fontFamily(s){return s.font==='sans'?'Arial, Helvetica, sans-serif':s.font==='mono'?'"Courier New", monospace':'Georgia, "Times New Roman", serif'}
-function draw(t=0){const s=settings(),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle=s.paper;ctx.fillRect(0,0,W,H);hash(Math.floor(t*s.pace)+Math.floor(seed/11));const serif=fontFamily(s);const pad=W*.075,centerX=W/2,centerY=H*.5;
-if(s.texture&&s.grain){ctx.save();ctx.globalAlpha=s.grain/180;for(let i=0;i<Math.floor(W*H/90);i++){const x=rand()*W,y=rand()*H;ctx.fillStyle=rand()>.5?'#3a3020':'#fff';ctx.fillRect(x,y,rand()*1.7+.3,rand()*1.4+.3)}ctx.restore()}
-const headlines=s.words.filter((_,i)=>i!==s.ix);const shift=Math.floor(t*s.pace)%Math.max(1,headlines.length);const pool=[...headlines.slice(shift),...headlines.slice(0,shift)];
-const all=[s.focus,...pool];const titleFont=s.style==='modern'?'Arial, Helvetica, sans-serif':s.style==='magazine'?'Georgia, serif':serif;
-ctx.fillStyle=s.ink;ctx.textAlign='center';ctx.textBaseline='middle';
-if(s.borders){ctx.strokeStyle=s.ink;ctx.lineWidth=Math.max(1,W*.002);ctx.strokeRect(pad*.55,pad*.55,W-pad*1.1,H-pad*1.1);ctx.beginPath();ctx.moveTo(pad,H*.16);ctx.lineTo(W-pad,H*.16);ctx.moveTo(pad,H*.84);ctx.lineTo(W-pad,H*.84);ctx.stroke()}
-ctx.save();ctx.translate(centerX,centerY);const rot=(rand()-.5)*.012;ctx.rotate(rot);
-const focusFontSize=Math.min(W*.19,H*.105);ctx.font='900 '+focusFontSize+'px '+titleFont;const focusWidth=Math.min(W-pad*1.4,ctx.measureText(s.focus).width+W*.055);const fh=focusFontSize*1.25;
-if(s.highlight==='yellow'||s.highlight==='red'){ctx.fillStyle=s.highlight==='yellow'?'#f3dc54':'#e45a4b';ctx.save();ctx.translate(-focusWidth/2,-fh*.48);ctx.rotate((rand()-.5)*.025);ctx.fillRect(-W*.018,-fh*.08,focusWidth+W*.036,fh*.88);ctx.restore()}
-ctx.fillStyle=s.ink;ctx.font='900 '+focusFontSize+'px '+titleFont;ctx.fillText(s.focus,0,0, W-pad*1.1);
-if(s.highlight==='underline'){ctx.strokeStyle=s.ink;ctx.lineWidth=focusFontSize*.07;ctx.beginPath();ctx.moveTo(-focusWidth/2,fh*.42);ctx.lineTo(focusWidth/2,fh*.42);ctx.stroke()}
-ctx.restore();
-// Surrounding cuttings vary each frame; the focus word remains on the same center baseline.
-const sideWords=pool.length?pool: ['ÉDITION','CRÉATION','IDÉES'];const bandCount=8;
-for(let band=0;band<bandCount;band++){const top=H*.19+band*(H*.62/bandCount),isCenter=top<H*.51&&top+H*.62/bandCount>H*.49;if(isCenter)continue;const idx=(band*3+Math.floor(t*s.pace*1.7))%sideWords.length;const phrase=sideWords.slice(idx,idx+Math.min(5,sideWords.length)).join(' ').toUpperCase()||'NOUVELLES';const size=W*(.045+rand()*.035);ctx.font=(rand()>.45?'bold ':'')+size+'px '+(s.style==='modern'?'Arial':serif);ctx.textAlign='center';ctx.fillStyle=s.ink;ctx.globalAlpha=.78+rand()*.22;ctx.fillText(phrase,centerX,top+H*.025,W-pad*1.4);ctx.globalAlpha=1}
-const kicker=s.style==='noir'?'LE JOURNAL / ÉDITION SPÉCIALE':s.style==='modern'?'THE DAILY · TYPOGRAPHIC STUDY':'JOURNAL CRÉATIF · ÉDITION DU JOUR';
-ctx.font='bold '+W*.027+'px '+(s.font==='mono'?'monospace':'Arial');ctx.fillText(kicker,W/2,H*.105,W-pad*1.5);
-ctx.font='italic '+W*.025+'px Georgia';ctx.fillText('ACTUALITÉS · CULTURE · IDÉES',W/2,H*.895,W-pad*1.5);
-ctx.font='bold '+W*.022+'px monospace';ctx.fillText('DARTIST  /  '+String(Math.floor(t*s.pace)+1).padStart(3,'0'),W/2,H*.94);
-if(s.style==='noir'){ctx.fillStyle='#fff';ctx.globalCompositeOperation='difference';ctx.fillRect(0,0,W,H);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1}
-$('frameinfo').textContent='Composition '+(Math.floor(t*s.pace)+1)+' · « '+s.focus+' » ancré au centre';
+function draw(t=0){
+const s=settings(),W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);ctx.fillStyle=s.paper;ctx.fillRect(0,0,W,H);
+const tick=Math.floor(t*s.pace),words=s.words.length?s.words:['ZEBI','CALLED','IT','UP'];hash(tick+seed%17);
+const serif=fontFamily(s),isModern=s.style==='modern',isNoir=s.style==='noir';
+const face=isModern?'Arial, Helvetica, sans-serif':s.style==='magazine'?'Georgia, "Times New Roman", serif':serif;
+const base=Math.min(W*.145,H*.27),centerY=H*.5,highlightColor=s.highlight==='red'?'#e95a4d':'#ffe84a';
+if(s.texture&&s.grain){ctx.save();ctx.globalAlpha=s.grain/240;for(let i=0;i<Math.floor(W*H/130);i++){ctx.fillStyle=rand()>.5?'#30291f':'#fff';ctx.fillRect(rand()*W,rand()*H,rand()*1.4+.2,rand()*1.2+.2)}ctx.restore()}
+const pick=(n)=>words[((n%words.length)+words.length)%words.length].replace(/[.,!?;:]+$/,'');
+const focus=s.focus||'WORD';
+function phrase(row){
+const offset=tick*(row===0?2:row===2?3:1)+(row*7)+s.ix;
+const count=10;let out=[];
+for(let j=0;j<count;j++){let w=pick(offset+j);if(w.toLowerCase()===focus.toLowerCase())w=pick(offset+j+3);out.push(w)}
+return out.join(' ');
+}
+const rows=[{y:H*.29,text:phrase(0),scale:.88},{y:centerY,text:phrase(1),scale:1.02},{y:H*.72,text:phrase(2),scale:.9}];
+ctx.textAlign='center';ctx.textBaseline='middle';
+rows.forEach((row,i)=>{
+const size=base*row.scale;const italic=(s.style==='magazine'||(!isModern&&!isNoir&&tick%3===2))?'italic ':'';
+const weight=isModern?'700':i===1?'700':'500';
+ctx.font=italic+weight+' '+size+'px '+face;
+ctx.fillStyle=i===1?s.ink:(isNoir?'#777':'#555');ctx.globalAlpha=i===1?1:.72;
+ctx.shadowColor=i===1?'transparent':'rgba(0,0,0,.17)';ctx.shadowBlur=i===1?0:Math.max(2,W*.004);
+if(i===1&&s.highlight==='yellow'||i===1&&s.highlight==='red'){
+const textWidth=ctx.measureText(focus).width;const rectW=textWidth+size*.16,rectH=size*1.03;
+ctx.save();ctx.shadowBlur=0;ctx.fillStyle=highlightColor;ctx.translate(-rectW/2,row.y);ctx.rotate((rand()-.5)*.006);ctx.fillRect(0,-rectH/2,rectW,rectH);ctx.restore();
+}
+if(i===1){
+ctx.shadowBlur=0;ctx.fillStyle=s.ink;ctx.globalAlpha=1;
+const before=words.slice(Math.max(0,s.ix-4),s.ix).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
+const after=words.slice(s.ix+1,s.ix+5).map(w=>w.replace(/[.,!?;:]+$/,'')).join(' ');
+const line=(before+' '+focus+' '+after).trim()||focus;
+ctx.font=(s.style==='magazine'?'italic ':'')+(isModern?'700':'600')+' '+size+'px '+face;
+const measured=ctx.measureText(line).width,fit=Math.min(W*1.55,measured);
+ctx.fillText(line,W/2,row.y,fit);
+}else{
+ctx.fillText(row.text.toLowerCase(),W/2,row.y,W*1.55);
+}
+ctx.globalAlpha=1;ctx.shadowBlur=0;
+});
+if(s.borders){ctx.save();ctx.strokeStyle=s.ink;ctx.globalAlpha=.18;ctx.lineWidth=Math.max(1,W*.0015);ctx.beginPath();ctx.moveTo(0,H*.145);ctx.lineTo(W,H*.145);ctx.moveTo(0,H*.855);ctx.lineTo(W,H*.855);ctx.stroke();ctx.restore()}
+if(s.style==='noir'){ctx.save();ctx.globalAlpha=.08;ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);ctx.restore()}
+$('frameinfo').textContent='Mot « '+focus+' » verrouillé · variations typographiques '+(tick+1);
 }
 function setCanvasFormat(){const [a,b]=formats[$('format').value],base=540;canvas.width=a>=b?base:Math.round(base*a/b);canvas.height=a>=b?Math.round(base*b/a):base;canvas.style.aspectRatio=a+'/'+b;const quality=+$('quality').value;const w=a>=b?quality:Math.round(quality*a/b),h=a>=b?Math.round(quality*b/a):quality;$('previewmeta').textContent=w+' × '+h+' · '+$('format').value;draw(0)}
 function tick(now){if(!playing)return;const t=(now-start)/1000;if(t>=settings().duration){playing=false;draw(settings().duration);$('play').textContent='▶ Prévisualiser';return}draw(t);raf=requestAnimationFrame(tick)}
