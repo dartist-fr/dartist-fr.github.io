@@ -10,7 +10,7 @@ Un studio d’outils web gratuits, réunis dans une interface responsive. Aucun 
 | --- | --- |
 | **Compresseur d’images** | Import multiple, compression, conversion, redimensionnement, comparaison du poids et export individuel ou ZIP. |
 | **Visualiseur HTML / CSS / JS** | Trois éditeurs indépendants, aperçu fusionné en direct, exécution JavaScript isolée, panneaux redimensionnables et ouverture du résultat dans un nouvel onglet. |
-| **Studio QR** | QR URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnalisation graphique, QR photographiques, lots CSV, lecture et exports. |
+| **Studio QR** | QR URL, texte, Wi-Fi, vCard, WhatsApp, e-mail, téléphone, SMS et coordonnées GPS ; personnalisation graphique, QR photographiques, lots CSV, lecture et exports. |\n| **Text Match Cut Studio** | Animation typographique newspaper cut avec mot ancré, formats vidéo 9:16/1:1/16:9/4:5, styles presse, réglages de durée/rythme et export WebM ou MP4 selon la prise en charge du navigateur. |
 | **Calculatrice & conversions** | Calculs et conversions d’unités. |
 | **Formateur JSON** | Formatage, minification et validation de JSON. |
 | **Palette de couleurs** | Exploration et composition de palettes. |
@@ -38,7 +38,7 @@ L’aperçu est rendu dans une iframe avec l’attribut `sandbox="allow-scripts"
 
 Le bac à sable n’est pas un environnement d’hébergement ni un serveur de développement. Les API navigateur, ressources externes et comportements dépendant d’un serveur peuvent avoir des limites. N’exécute que du code auquel tu fais confiance.
 
-## Compresseur d’images
+## Text Match Cut Studio\n\n**[Ouvrir le studio](https://dartist-fr.github.io/boite-a-outils/outils/text-match-cut.html)**\n\n- Texte personnalisé et sélection du mot-clé à maintenir au centre.\n- Formats verticaux, carrés, paysage et portrait.\n- Directions artistiques presse vintage, moderne, magazine et noir & blanc ; choix de police, couleurs, surlignage et grain.\n- Prévisualisation animée, durée et cadence réglables.\n- Export vidéo local via `canvas.captureStream()` et `MediaRecorder` (WebM, ou MP4 lorsque l’encodeur du navigateur le propose) et export PNG d’une image.\n\nL’encodage vidéo est réalisé par le navigateur. Le type de fichier et les performances dépendent de l’appareil et du support des codecs ; un navigateur récent de bureau est recommandé pour les exports Full HD.\n\n## Compresseur d’images
 
 **[Ouvrir le compresseur](https://dartist-fr.github.io/boite-a-outils/outils/compresseur.html)**
 
@@ -80,7 +80,7 @@ Un navigateur récent est recommandé. Certaines fonctions chargent des biblioth
 - **QR Code Styling** et **qrcode-generator** pour la génération des QR codes.
 - **jsQR** et l’API **BarcodeDetector** lorsqu’elle est prise en charge pour la lecture.
 - **JSZip** pour les archives ZIP.
-- **jsPDF** pour les exports PDF.
+- **jsPDF** pour les exports PDF.\n- **Canvas 2D** et **MediaRecorder** pour la prévisualisation et l’encodage des animations vidéo.
 
 ## Structure du dossier
 
