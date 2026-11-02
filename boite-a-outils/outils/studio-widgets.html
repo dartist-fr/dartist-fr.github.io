@@ -999,7 +999,7 @@ function clockModelContent(m,title,detail){
   const dateLong=safe(new Intl.DateTimeFormat('fr-FR',{weekday:'long',month:'long',year:'numeric'}).format(now));
   switch(m.id){
     case'clock-neon':return title+'<div class="w-clock">'+hhmm+'</div><div class="w-date">NEON DISPLAY · LIVE</div>';
-    case'clock-minimal':return title+'<div class="w-clock">'+hhmm+'</div><div class="w-date">Monday · 02 November</div>';
+    case'clock-minimal':return title+'<div class="w-clock">'+hhmm+'</div><div class="w-date">'+safe(dateText())+'</div>';
     case'clock-flip':return title+'<div class="clock-flip-time"><span class="clock-flip-digit">'+hhmm.slice(0,2)+'</span><span class="clock-flip-colon">:</span><span class="clock-flip-digit">'+hhmm.slice(-2)+'</span></div><div class="w-date">FLIP CLOCK · SPLIT DIGITS</div>';
     case'clock-seconds':return title+'<div class="w-clock clock-seconds-line"><span>'+parts.slice(0,2).join(':')+'</span><span class="clock-seconds">:'+parts[2]+'</span></div>'+detail;
     case'date-large':return title+'<div class="w-clock">'+now.getDate().toString().padStart(2,'0')+'</div><div class="w-date">'+dateLong+'</div>';
@@ -1014,7 +1014,7 @@ const row=(a,b)=>'<div class="w-row"><div>'+a+'</div><div>'+b+'</div></div>';
 const bar=p=>'<div class="w-progress"><i style="width:'+p+'%"></i></div>';
 const list=(items)=>'<div class="w-list">'+items.map((x,i)=>'<div class="w-task"><span class="w-dot" style="'+(i===0?'opacity:.5':'')+'"></span><span>'+safe(x)+'</span></div>').join('')+'</div>';
 switch(m.kind){
-case'clock':return title+'<div class="w-clock">'+clockText()+'</div>'+detail;
+case'clock':return clockModelContent(m,title,detail);
 case'seconds':return clockModelContent(m,title,detail);
 case'dual':return title+row('<div class="w-big">09:41</div><div class="w-date">Paris · France</div>','<div class="w-big">03:41</div><div class="w-date">New York · USA</div>');
 case'world':return title+['PARIS|09:41','LONDON|08:41','TOKYO|17:41'].map(x=>{const a=x.split('|');return '<div class="w-row" style="margin-top:9px"><span class="w-date">'+a[0]+'</span><strong class="w-big" style="font-size:22px">'+a[1]+'</strong></div>';}).join('');
@@ -1057,7 +1057,7 @@ const model=models.find(m=>m.id===active);
 if(model&&model.kind)return extraWidgetContent(model);
 const d=new Date(),detail=settings.showDate?'<div class="w-date">'+safe(dateText())+'</div>':'';
 switch(active){
-case'clock':return clockModelContent(m,title,detail);
+case'clock':return clockModelContent(model,'<div class="w-label">'+safe(settings.title)+'</div>',detail);
 case'analog':return '<div class="w-row"><div><div class="w-label">'+safe(settings.title)+'</div><div class="w-big">'+clockText()+'</div>'+detail+'</div><div style="font-size:68px;color:var(--accent)">◷</div></div>';
 case'calendar':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-big" style="font-size:26px">'+safe(new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(d))+'</div><div class="w-month">'+['L','M','M','J','V','S','D'].map(x=>'<span>'+x+'</span>').join('')+Array.from({length:35},(_,i)=>{const first=new Date(d.getFullYear(),d.getMonth(),1),start=(first.getDay()+6)%7,day=i-start+1,last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return day>0&&day<=last?'<b class="'+(day===d.getDate()?'today':'')+'">'+day+'</b>':'<span></span>'}).join('')+'</div>';
 case'countdown':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-clock">24 <span style="font-size:18px;letter-spacing:0">DAYS</span></div><div class="w-date">Until the next event</div><div class="w-progress"><i style="width:72%"></i></div>';
