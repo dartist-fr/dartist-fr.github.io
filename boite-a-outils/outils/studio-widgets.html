@@ -9,7 +9,7 @@
 <title>Studio Widgets — dartist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Oxanium:wght@400;500;600;700&family=Share+Tech+Mono&family=Audiowide&family=Michroma&family=Chakra+Petch:wght@400;500;600;700&family=Bebas+Neue&family=Exo+2:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--page:#090b10;--panel:#11151d;--panel2:#171d27;--ink:#f4f6fb;--muted:#99a3b4;--faint:#687386;--line:#ffffff17;--accent:#55dfb6;--accent-rgb:85,223,182;--glass:rgba(255,255,255,.11);--radius:20px;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',sans-serif;--mono:'IBM Plex Mono',monospace}
 *{box-sizing:border-box}
@@ -150,7 +150,8 @@ h1 span{color:var(--accent)}
 .widget:before{content:"";position:absolute;width:190px;height:190px;right:-95px;top:-115px;border-radius:50%;background:var(--accent);filter:blur(48px);opacity:.24;pointer-events:none}
 .widget>*{position:relative}
 .widget .w-label{font:9px var(--mono);letter-spacing:.12em;color:#ffffffa8;text-transform:uppercase}
-.widget .w-clock{font:600 clamp(38px,5vw,52px)/.98 var(--display);letter-spacing:-4px;margin:12px 0 7px}
+.widget .w-clock{font:600 clamp(38px,5vw,52px)/.98 var(--time-font,'Space Grotesk'),sans-serif;letter-spacing:-4px;margin:12px 0 7px}
+.widget .w-big,.phone-widget .w-big,.phone-widget .w-clock,.lockscreen-time{font-family:var(--time-font,'Space Grotesk'),sans-serif}
 .widget .w-date{font-size:11px;color:#ffffffb7}
 .widget .w-row{display:flex;justify-content:space-between;align-items:center;gap:14px}
 .widget .w-big{font:600 31px var(--display)}
@@ -226,7 +227,7 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 </header>
 <section class="hero">
 <div><div class="eyebrow">Dartist Objects · Widget studio</div><h1>Glass Widgets<span>.</span></h1><p>Compose ton écran comme un véritable launcher Android : choisis un widget, ajuste son verre, ses couleurs et son format, puis visualise le résultat sur un écran d’accueil ou de verrouillage.</p></div>
-<div class="hero-aside"><div class="stat"><strong id="count">20</strong><span>modèles</span></div><div class="stat"><strong>Live</strong><span>aperçu direct</span></div></div>
+<div class="hero-aside"><div class="stat"><strong id="count">70</strong><span>modèles</span></div><div class="stat"><strong>Live</strong><span>aperçu direct</span></div></div>
 </section>
 <div class="workspace">
 <section class="panel library">
@@ -255,7 +256,8 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 </div></div></div>
 <div class="preview-caption"><span id="previewModeLabel">ÉCRAN D’ACCUEIL · APERÇU SIMULÉ</span><span>ANDROID / GLASS STYLE</span></div>
 <div class="selected-preview"><div class="selected-preview-head"><strong id="selectedTitle">Widget sélectionné</strong><span>APERÇU INDIVIDUEL</span></div><div class="stage" id="stage"></div></div>
-<div class="actions"><button class="btn primary" id="export">Exporter en PNG</button><button class="btn" id="save">Sauvegarder le style</button></div>
+<div class="actions"><button class="btn primary" id="export">Exporter l’aperçu PNG</button><button class="btn" id="save">Sauvegarder le style</button></div>
+<p class="note" style="margin-top:0">Le téléchargement PNG est une image de prévisualisation, pas un widget installable. Pour ajouter un widget interactif à l’écran d’accueil Android, il faudra une version native de l’application.</p>
 </section>
 <aside class="panel editor">
 <div class="editor-head"><h2>Personnaliser</h2><span class="live">LIVE PREVIEW</span></div>
@@ -287,12 +289,33 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 <div class="field"><label for="radius">Arrondi <output id="radiusOut">20 px</output></label><input id="radius" type="range" min="8" max="34" value="20"></div>
 <div class="field"><label for="size">Taille <output id="sizeOut">100%</output></label><input id="size" type="range" min="70" max="130" value="100"></div>
 <div class="field"><label for="layout">Finition</label><select id="layout"><option value="glass">Verre dépoli</option><option value="solid">Couleur pleine</option><option value="outline">Contour transparent</option></select></div>
-<div class="field"><label for="font">Typographie</label><select id="font"><option value="Space Grotesk">Space Grotesk</option><option value="DM Sans">DM Sans</option><option value="IBM Plex Mono">IBM Plex Mono</option></select></div>
+<div class="field"><label for="font">Typographie générale</label><select id="font">
+<option value="Space Grotesk">Space Grotesk</option><option value="DM Sans">DM Sans</option><option value="IBM Plex Mono">IBM Plex Mono</option><option value="Sora">Sora</option><option value="Outfit">Outfit</option><option value="Manrope">Manrope</option><option value="Plus Jakarta Sans">Plus Jakarta Sans</option><option value="Playfair Display">Playfair Display</option>
+</select></div>
+<div class="field"><label for="timeFont">Typographie des heures</label><select id="timeFont">
+<option value="Space Grotesk">Space Grotesk · Moderne</option>
+<option value="Orbitron">Orbitron · Futuriste</option>
+<option value="Rajdhani">Rajdhani · Sport</option>
+<option value="Oxanium">Oxanium · Techno</option>
+<option value="Share Tech Mono">Share Tech Mono · Digital</option>
+<option value="Audiowide">Audiowide · Arcade</option>
+<option value="Michroma">Michroma · Géométrique</option>
+<option value="Chakra Petch">Chakra Petch · Angulaire</option>
+<option value="Bebas Neue">Bebas Neue · Condensée</option>
+<option value="Exo 2">Exo 2 · Technique</option>
+<option value="IBM Plex Mono">IBM Plex Mono · Monospace</option>
+<option value="DM Sans">DM Sans · Sobre</option>
+<option value="Sora">Sora · Minimal</option>
+<option value="Outfit">Outfit · Arrondie</option>
+<option value="Manrope">Manrope · Élégante</option>
+<option value="Plus Jakarta Sans">Plus Jakarta Sans · Douce</option>
+<option value="Playfair Display">Playfair Display · Classique</option>
+</select></div>
 <div class="field"><label for="showDate"><span>Afficher les détails</span><input id="showDate" type="checkbox" checked></label></div>
 <hr class="divider">
 <p class="setting-label">Styles sauvegardés</p><div class="saved-list" id="savedList"></div><p class="saved-empty" id="savedEmpty">Tes styles sont conservés dans ce navigateur.</p>
 <button class="btn" id="reset" style="width:100%;margin-top:12px">Réinitialiser les réglages</button>
-<p class="note">Aperçu et export visuel uniquement. Les données affichées (météo, batterie, pas, musique...) sont des exemples : un site web ne peut pas installer de vrais widgets Android ni lire directement les données natives du téléphone.</p>
+<p class="note">Aperçu et export visuels uniquement. Les données de météo, santé, batterie, musique et appareils sont des exemples non connectés. Un site web ne peut pas installer de vrais widgets Android ni lire directement les données natives du téléphone.</p>
 </aside>
 </div>
 <footer><span>© 2026 dartist · Studio Widgets</span><span>Création locale · Aucun compte requis</span></footer>
@@ -320,13 +343,468 @@ const models=[
 {id:'contacts',name:'Contacts favoris',desc:'Accès rapide',cat:'smart',group:'RACCOURCIS',label:'FAVORITES'},
 {id:'shortcuts',name:'Applications',desc:'Raccourcis personnalisés',cat:'smart',group:'RACCOURCIS',label:'APP SHORTCUTS'}
 ];
+
+const extraModels=[
+  {
+    "id": "clock-neon",
+    "name": "Horloge néon",
+    "desc": "Heure lumineuse et compacte",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "NEON TIME",
+    "kind": "clock"
+  },
+  {
+    "id": "clock-minimal",
+    "name": "Horloge minimaliste",
+    "desc": "Heure épurée sans surcharge",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "MINIMAL CLOCK",
+    "kind": "clock"
+  },
+  {
+    "id": "clock-flip",
+    "name": "Horloge flip",
+    "desc": "Affichage numérique à volets",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "FLIP CLOCK",
+    "kind": "clock"
+  },
+  {
+    "id": "clock-seconds",
+    "name": "Horloge avec secondes",
+    "desc": "Heure précise avec secondes",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "SECONDS",
+    "kind": "seconds"
+  },
+  {
+    "id": "dual-time",
+    "name": "Double fuseau horaire",
+    "desc": "Deux villes côte à côte",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "DUAL TIME",
+    "kind": "dual"
+  },
+  {
+    "id": "world-clock",
+    "name": "Horloge mondiale",
+    "desc": "Heures de plusieurs villes",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "WORLD CLOCK",
+    "kind": "world"
+  },
+  {
+    "id": "date-large",
+    "name": "Date grand format",
+    "desc": "Jour et date mis en avant",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "TODAY",
+    "kind": "date"
+  },
+  {
+    "id": "agenda",
+    "name": "Agenda du jour",
+    "desc": "Prochains rendez-vous",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "TODAY AGENDA",
+    "kind": "agenda"
+  },
+  {
+    "id": "calendar-week",
+    "name": "Calendrier hebdomadaire",
+    "desc": "Semaine et jour sélectionné",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "WEEK VIEW",
+    "kind": "week"
+  },
+  {
+    "id": "stopwatch",
+    "name": "Chronomètre",
+    "desc": "Affichage chronomètre",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "STOPWATCH",
+    "kind": "stopwatch"
+  },
+  {
+    "id": "interval-timer",
+    "name": "Minuteur",
+    "desc": "Compte à rebours court",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "TIMER",
+    "kind": "timer"
+  },
+  {
+    "id": "alarm",
+    "name": "Prochaine alarme",
+    "desc": "Heure de réveil et répétition",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "NEXT ALARM",
+    "kind": "alarm"
+  },
+  {
+    "id": "sunrise",
+    "name": "Lever et coucher du soleil",
+    "desc": "Horaires du soleil",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "SUN CYCLE",
+    "kind": "sun"
+  },
+  {
+    "id": "moon-phase",
+    "name": "Phase lunaire",
+    "desc": "Cycle et phase de la lune",
+    "cat": "time",
+    "group": "TEMPS",
+    "label": "MOON PHASE",
+    "kind": "moon"
+  },
+  {
+    "id": "weather-week",
+    "name": "Météo sur 4 jours",
+    "desc": "Prévisions synthétiques",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "4 DAY FORECAST",
+    "kind": "forecast"
+  },
+  {
+    "id": "air-quality",
+    "name": "Qualité de l’air",
+    "desc": "Indice de qualité indicatif",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "AIR QUALITY",
+    "kind": "air"
+  },
+  {
+    "id": "humidity",
+    "name": "Humidité",
+    "desc": "Humidité et confort",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "HUMIDITY",
+    "kind": "humidity"
+  },
+  {
+    "id": "tasks-compact",
+    "name": "Tâches compactes",
+    "desc": "Liste courte à cocher",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "TASKS",
+    "kind": "tasks"
+  },
+  {
+    "id": "tasks-priority",
+    "name": "Priorités du jour",
+    "desc": "Les tâches essentielles",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "TOP PRIORITIES",
+    "kind": "tasks"
+  },
+  {
+    "id": "habit-streak",
+    "name": "Suivi d’habitudes",
+    "desc": "Série et régularité",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "HABIT TRACKER",
+    "kind": "habits"
+  },
+  {
+    "id": "hydration",
+    "name": "Suivi hydratation",
+    "desc": "Objectif de verres d’eau",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "WATER INTAKE",
+    "kind": "goal"
+  },
+  {
+    "id": "shopping-list",
+    "name": "Liste de courses",
+    "desc": "Liste simple à cocher",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "SHOPPING LIST",
+    "kind": "list"
+  },
+  {
+    "id": "pomodoro",
+    "name": "Pomodoro",
+    "desc": "Session de concentration",
+    "cat": "daily",
+    "group": "QUOTIDIEN",
+    "label": "FOCUS SESSION",
+    "kind": "timer"
+  },
+  {
+    "id": "notes-grid",
+    "name": "Bloc-notes quadrillé",
+    "desc": "Note avec lignes de repère",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "GRID NOTES",
+    "kind": "notes"
+  },
+  {
+    "id": "journal",
+    "name": "Journal quotidien",
+    "desc": "Pensée et humeur du jour",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "DAILY JOURNAL",
+    "kind": "journal"
+  },
+  {
+    "id": "photo-portrait",
+    "name": "Cadre photo portrait",
+    "desc": "Format vertical",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "PORTRAIT FRAME",
+    "kind": "photo"
+  },
+  {
+    "id": "photo-stack",
+    "name": "Pile de photos",
+    "desc": "Plusieurs souvenirs empilés",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "PHOTO STACK",
+    "kind": "photo"
+  },
+  {
+    "id": "quote-daily",
+    "name": "Citation du jour",
+    "desc": "Une phrase à afficher",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "QUOTE OF THE DAY",
+    "kind": "quote"
+  },
+  {
+    "id": "motivation",
+    "name": "Motivation",
+    "desc": "Phrase courte et impactante",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "STAY FOCUSED",
+    "kind": "quote"
+  },
+  {
+    "id": "mood",
+    "name": "Humeur du jour",
+    "desc": "Humeur et journal rapide",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "MOOD CHECK",
+    "kind": "mood"
+  },
+  {
+    "id": "birthdays",
+    "name": "Anniversaires",
+    "desc": "Dates à retenir",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "BIRTHDAYS",
+    "kind": "contacts"
+  },
+  {
+    "id": "favorites",
+    "name": "Contacts favoris",
+    "desc": "Accès rapide à quatre favoris",
+    "cat": "personal",
+    "group": "PERSONNEL",
+    "label": "FAVORITE PEOPLE",
+    "kind": "contacts"
+  },
+  {
+    "id": "steps-ring",
+    "name": "Objectif de pas circulaire",
+    "desc": "Progression en anneau",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "STEP GOAL",
+    "kind": "steps"
+  },
+  {
+    "id": "calories",
+    "name": "Calories",
+    "desc": "Suivi calorique quotidien",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "CALORIES",
+    "kind": "metric"
+  },
+  {
+    "id": "heart-rate",
+    "name": "Fréquence cardiaque",
+    "desc": "Vignette de fréquence cardiaque",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "HEART RATE",
+    "kind": "metric"
+  },
+  {
+    "id": "distance",
+    "name": "Distance parcourue",
+    "desc": "Distance de la journée",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "DISTANCE",
+    "kind": "metric"
+  },
+  {
+    "id": "running",
+    "name": "Course à pied",
+    "desc": "Distance, allure et durée",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "RUNNING",
+    "kind": "metric"
+  },
+  {
+    "id": "training-week",
+    "name": "Planning sportif",
+    "desc": "Vue des entraînements",
+    "cat": "sport",
+    "group": "SPORT",
+    "label": "TRAINING WEEK",
+    "kind": "week"
+  },
+  {
+    "id": "battery-ring",
+    "name": "Batterie circulaire",
+    "desc": "Niveau de charge circulaire",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "BATTERY RING",
+    "kind": "battery"
+  },
+  {
+    "id": "battery-saver",
+    "name": "Économie de batterie",
+    "desc": "État et autonomie indicative",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "POWER MODE",
+    "kind": "battery"
+  },
+  {
+    "id": "earbuds-case",
+    "name": "Batterie du boîtier",
+    "desc": "Charge du boîtier et écouteurs",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "EARBUDS CASE",
+    "kind": "earbuds"
+  },
+  {
+    "id": "earbuds-charges",
+    "name": "Écouteurs gauche / droite",
+    "desc": "Deux niveaux de batterie",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "L / R BATTERY",
+    "kind": "earbuds"
+  },
+  {
+    "id": "watch-face",
+    "name": "Cadran de montre",
+    "desc": "Aperçu de montre connectée",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "WATCH FACE",
+    "kind": "watch"
+  },
+  {
+    "id": "storage",
+    "name": "Stockage",
+    "desc": "Espace utilisé et disponible",
+    "cat": "device",
+    "group": "APPAREILS",
+    "label": "STORAGE",
+    "kind": "metric"
+  },
+  {
+    "id": "music-cover",
+    "name": "Musique avec pochette",
+    "desc": "Pochette, titre et artiste",
+    "cat": "media",
+    "group": "MUSIQUE",
+    "label": "MUSIC PLAYER",
+    "kind": "music"
+  },
+  {
+    "id": "music-equalizer",
+    "name": "Égaliseur musical",
+    "desc": "Barres de fréquences décoratives",
+    "cat": "media",
+    "group": "MUSIQUE",
+    "label": "EQUALIZER",
+    "kind": "music"
+  },
+  {
+    "id": "music-controls",
+    "name": "Commandes musicales",
+    "desc": "Contrôles en format compact",
+    "cat": "media",
+    "group": "MUSIQUE",
+    "label": "AUDIO CONTROLS",
+    "kind": "music"
+  },
+  {
+    "id": "app-grid",
+    "name": "Grille d’applications",
+    "desc": "Raccourcis en grille",
+    "cat": "smart",
+    "group": "RACCOURCIS",
+    "label": "APP GRID",
+    "kind": "shortcuts"
+  },
+  {
+    "id": "quick-toggles",
+    "name": "Boutons rapides",
+    "desc": "Wi-Fi, Bluetooth et réglages",
+    "cat": "smart",
+    "group": "RACCOURCIS",
+    "label": "QUICK TOGGLES",
+    "kind": "quick"
+  },
+  {
+    "id": "qr-widget",
+    "name": "Carte QR",
+    "desc": "Emplacement de code QR décoratif",
+    "cat": "smart",
+    "group": "RACCOURCIS",
+    "label": "QR CARD",
+    "kind": "qr"
+  }
+];
+models.push(...extraModels);
 const palettes=['#55dfb6','#8a7bff','#ff9a62','#62b7ff','#f06b92','#f0c66a'];
 let active='clock',filter='all',mode='home',wallpaper='default',saved=[];
-let settings={title:'MY SPACE',accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',theme:'dark',showDate:true};
+let settings={title:'MY SPACE',accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};
 const $=id=>document.getElementById(id);
 function safe(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function setAccent(hex){settings.accent=hex;$('accent').value=hex;document.documentElement.style.setProperty('--accent',hex);const n=parseInt(hex.slice(1),16);document.documentElement.style.setProperty('--accent-rgb',(n>>16)+','+((n>>8)&255)+','+(n&255));$('palette').querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.color.toLowerCase()===hex.toLowerCase()));render();}
 function miniPreview(m){
+if(m.kind)return miniForKind(m);
 const lab=safe(m.label);
 switch(m.id){
 case'clock':return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-time">09:41</div><span class="mini-sub">Monday, 02 November</span></div>';
@@ -350,6 +828,44 @@ case'screentime':return '<div class="mini-inner"><span class="mini-label">'+lab+
 case'contacts':return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-controls"><i>A</i><i>M</i><i>S</i><i>+</i></div></div>';
 default:return '<div class="mini-inner"><span class="mini-label">'+lab+'</span><div class="mini-controls"><i>⌂</i><i>◉</i><i>♫</i><i>✦</i></div><span class="mini-sub">Quick access</span></div>';
 }}
+
+function miniForKind(m){
+const lab=safe(m.label);
+const head='<div class="mini-inner"><span class="mini-label">'+lab+'</span>';
+switch(m.kind){
+case'clock':return head+'<div class="mini-time">09:41</div><span class="mini-sub">Monday · 02 November</span></div>';
+case'seconds':return head+'<div class="mini-time" style="font-size:23px">09:41<span style="font-size:10px">:32</span></div><span class="mini-sub">Live seconds</span></div>';
+case'dual':return head+'<div class="mini-meta"><strong>PARIS</strong><span>09:41</span></div><div class="mini-meta"><strong>NEW YORK</strong><span>03:41</span></div></div>';
+case'world':return head+'<div class="mini-meta"><strong>PARIS</strong><span>09:41</span></div><div class="mini-meta"><strong>LONDON</strong><span>08:41</span></div><div class="mini-meta"><strong>TOKYO</strong><span>17:41</span></div></div>';
+case'date':return head+'<div class="mini-time" style="font-size:34px">02</div><span class="mini-sub">MONDAY · NOVEMBER</span></div>';
+case'agenda':case'list':case'tasks':return head+'<div class="mini-lines" style="margin-top:10px"><i style="width:92%"></i><i style="width:74%"></i><i style="width:58%"></i></div></div>';
+case'week':return head+'<div class="mini-days">M T W T F S S <b>2</b> 3 4 5 6 7</div></div>';
+case'stopwatch':case'timer':return head+'<div class="mini-time">25:00</div><span class="mini-sub">START  ·  PAUSE</span></div>';
+case'alarm':return head+'<div class="mini-time">07:30</div><span class="mini-sub">MON · TUE · WED</span></div>';
+case'sun':return head+'<div class="mini-meta"><strong>☼ 06:48</strong><span>18:12 ☾</span></div><span class="mini-sub">SUNRISE / SUNSET</span></div>';
+case'moon':return head+'<div class="mini-row"><div class="mini-time">◐</div><div><strong>WAXING</strong><span class="mini-sub">Crescent moon</span></div></div></div>';
+case'forecast':return head+'<div class="mini-row" style="margin-top:12px"><strong>☀ 21°</strong><strong>☁ 18°</strong><strong>☂ 16°</strong></div><span class="mini-sub">4 DAY OUTLOOK</span></div>';
+case'air':return head+'<div class="mini-time">24 <span style="font-size:10px">AQI</span></div><span class="mini-sub">GOOD AIR QUALITY</span></div>';
+case'humidity':return head+'<div class="mini-time">58%</div><div class="mini-pill"><i style="width:58%"></i></div></div>';
+case'habits':return head+'<div class="mini-time">07 <span style="font-size:10px">DAYS</span></div><span class="mini-sub">CURRENT STREAK</span></div>';
+case'goal':return head+'<div class="mini-time">5 / 8</div><div class="mini-pill"><i style="width:62%"></i></div></div>';
+case'notes':case'journal':return head+'<div class="mini-lines" style="margin-top:12px"><i style="width:93%"></i><i style="width:82%"></i><i style="width:64%"></i></div></div>';
+case'photo':return '<div class="mini-inner" style="height:73px;border-radius:7px;background:linear-gradient(135deg,#34495c,#c07f67 55%,#e0b992);padding:8px;display:flex;align-items:flex-end"><span class="mini-label">'+lab+'</span></div>';
+case'quote':return head+'<div style="font:500 14px/1.1 var(--display);margin-top:12px">“Make it happen.”</div><span class="mini-sub">A thought for today</span></div>';
+case'mood':return head+'<div class="mini-time">☺</div><span class="mini-sub">FEELING GOOD</span></div>';
+case'contacts':return head+'<div class="mini-controls"><i>A</i><i>M</i><i>S</i><i>+</i></div></div>';
+case'steps':return head+'<div class="mini-time">6,842</div><div class="mini-pill"><i style="width:68%"></i></div></div>';
+case'metric':return head+'<div class="mini-time">72 <span style="font-size:10px">%</span></div><span class="mini-sub">TODAY · SAMPLE DATA</span></div>';
+case'battery':return head+'<div class="mini-time">82%</div><div class="mini-pill"><i style="width:82%"></i></div></div>';
+case'earbuds':return head+'<div class="mini-meta"><strong>LEFT · 96%</strong><span>RIGHT · 92%</span></div><div class="mini-pill"><i style="width:94%"></i></div></div>';
+case'watch':return head+'<div class="mini-time">10:08</div><span class="mini-sub">8,204 STEPS</span></div>';
+case'music':return head+'<div class="mini-row" style="margin-top:10px"><div class="mini-cover"></div><div class="mini-lines"><i></i><i></i></div></div><div class="mini-controls"><i>Ⅱ</i><i>▶</i><i>»</i></div></div>';
+case'shortcuts':case'quick':return head+'<div class="mini-controls"><i>⌂</i><i>◉</i><i>♫</i><i>✦</i></div><div class="mini-controls"><i>⌁</i><i>◌</i><i>◍</i><i>⌕</i></div></div>';
+case'qr':return head+'<div style="width:48px;height:48px;margin:4px auto;background:repeating-conic-gradient(#fff 0 25%,transparent 0 50%) 0/8px 8px;border:4px solid #fff"></div></div>';
+default:return head+'<div class="mini-time">09:41</div><span class="mini-sub">WIDGET PREVIEW</span></div>';
+}
+}
+
 function drawGrid(){
 const q=$('search').value.trim().toLowerCase();
 const visible=models.filter(m=>(filter==='all'||m.cat===filter)&&(m.name+' '+m.desc+' '+m.group).toLowerCase().includes(q));
@@ -367,7 +883,54 @@ drawGrid();render();
 }
 function dateText(){return new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(new Date());}
 function clockText(){return new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit'}).format(new Date());}
+
+function extraWidgetContent(m){
+const title='<div class="w-label">'+safe(settings.title)+'</div>';
+const detail=settings.showDate?'<div class="w-date">'+safe(dateText())+'</div>':'';
+const row=(a,b)=>'<div class="w-row"><div>'+a+'</div><div>'+b+'</div></div>';
+const bar=p=>'<div class="w-progress"><i style="width:'+p+'%"></i></div>';
+const list=(items)=>'<div class="w-list">'+items.map((x,i)=>'<div class="w-task"><span class="w-dot" style="'+(i===0?'opacity:.5':'')+'"></span><span>'+safe(x)+'</span></div>').join('')+'</div>';
+switch(m.kind){
+case'clock':return title+'<div class="w-clock">'+clockText()+'</div>'+detail;
+case'seconds':return title+'<div class="w-clock">'+new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date())+'</div>'+detail;
+case'dual':return title+row('<div class="w-big">09:41</div><div class="w-date">Paris · France</div>','<div class="w-big">03:41</div><div class="w-date">New York · USA</div>');
+case'world':return title+['PARIS|09:41','LONDON|08:41','TOKYO|17:41'].map(x=>{const a=x.split('|');return '<div class="w-row" style="margin-top:9px"><span class="w-date">'+a[0]+'</span><strong class="w-big" style="font-size:22px">'+a[1]+'</strong></div>';}).join('');
+case'date':return title+'<div class="w-clock" style="font-size:66px">'+new Date().getDate()+'</div><div class="w-date">'+safe(new Intl.DateTimeFormat('fr-FR',{weekday:'long',month:'long',year:'numeric'}).format(new Date()))+'</div>';
+case'agenda':return title+list(['09:30 · Rendez-vous','13:00 · Déjeuner','18:30 · Entraînement']);
+case'week':return title+'<div class="w-big" style="font-size:24px">Semaine 45</div><div class="w-month">'+['L','M','M','J','V','S','D'].map((x,i)=>'<b class="'+(i===1?'today':'')+'">'+x+'<br>'+(2+i)+'</b>').join('')+'</div>';
+case'stopwatch':return title+'<div class="w-clock">00:24:38</div><div class="w-controls"><span class="w-control">Ⅱ</span><span class="w-control">↻</span></div>';
+case'timer':return title+'<div class="w-clock">25:00</div><div class="w-date">Minuteur · Démo visuelle</div>'+bar(72);
+case'alarm':return title+'<div class="w-clock">07:30</div><div class="w-date">Prochaine alarme · En semaine</div>';
+case'sun':return title+row('<div class="w-big">☼ 06:48</div><div class="w-date">Lever du soleil</div>','<div class="w-big">☾ 18:12</div><div class="w-date">Coucher du soleil</div>');
+case'moon':return title+'<div class="w-row"><div class="w-clock">◐</div><div><div class="w-big">Premier quartier</div><div class="w-date">Phase lunaire · Démo</div></div></div>';
+case'forecast':return title+row('<div class="w-big">☀ 21°</div><div class="w-date">Aujourd’hui</div>','<div class="w-big">☁ 18°</div><div class="w-date">Demain</div>')+row('<div class="w-big">☂ 16°</div><div class="w-date">J+2</div>','<div class="w-big">☀ 20°</div><div class="w-date">J+3</div>');
+case'air':return title+'<div class="w-clock">24 <span style="font-size:16px">AQI</span></div><div class="w-date">Bonne qualité de l’air · Démo</div>'+bar(24);
+case'humidity':return title+'<div class="w-clock">58%</div><div class="w-date">Humidité relative · Démo</div>'+bar(58);
+case'tasks':return title+list(m.id==='tasks-priority'?['Priorité haute','Finaliser le projet','Préparer demain']:['Répondre aux messages','Faire une pause','Lire 20 minutes']);
+case'habits':return title+'<div class="w-clock">7 jours</div><div class="w-date">Série actuelle · Démo</div>'+bar(70);
+case'goal':return title+'<div class="w-clock">5 / 8</div><div class="w-date">Verres d’eau aujourd’hui</div>'+bar(62);
+case'list':return title+list(['Fruits et légumes','Pain et céréales','Lait et yaourts']);
+case'notes':return title+'<div class="w-big" style="font-size:25px;margin:14px 0">Une idée à noter...</div><div class="w-date">Bloc-notes · Aperçu</div>';
+case'journal':return title+'<div class="w-big" style="font-size:24px;margin:14px 0">Aujourd’hui, je...</div><div class="w-date">Ton journal personnel</div>';
+case'photo':return title+'<div style="height:140px;margin-top:10px;border-radius:13px;background:linear-gradient(145deg,#263d51,#ba7969 55%,#e4c19d);display:flex;align-items:flex-end;padding:12px;font-size:10px">PHOTO PREVIEW</div>';
+case'quote':return title+'<div style="font:500 28px/1.12 var(--display);margin:16px 0">“Fais de chaque jour une création.”</div><div class="w-date">Citation du jour</div>';
+case'mood':return title+'<div class="w-clock">☺</div><div class="w-date">Comment te sens-tu aujourd’hui ?</div>';
+case'contacts':return title+'<div class="w-controls">'+['A','M','S','J'].map(x=>'<span class="w-control" style="width:42px;height:42px">'+x+'</span>').join('')+'</div><div class="w-date" style="margin-top:10px">Contacts favoris · Démo</div>';
+case'steps':return title+'<div class="w-clock">6 842</div><div class="w-date">sur 10 000 pas</div>'+bar(68);
+case'metric':return title+'<div class="w-clock">'+(m.id==='heart-rate'?'72 bpm':m.id==='calories'?'420 kcal':m.id==='distance'?'6,4 km':m.id==='running'?'5,2 km':'72%')+'</div><div class="w-date">Valeur illustrative · Données non connectées</div>'+bar(68);
+case'battery':return title+'<div class="w-clock">82%</div><div class="w-date">'+(m.id==='battery-saver'?'Mode économie · Démo':'Batterie · Démo')+'</div>'+bar(82);
+case'earbuds':return title+row('<div class="w-big">L · 96%</div><div class="w-date">Gauche</div>','<div class="w-big">R · 92%</div><div class="w-date">Droite</div>')+bar(94);
+case'watch':return title+'<div class="w-clock">10:08</div><div class="w-date">8 204 pas · Aperçu cadran</div>';
+case'music':return title+row('<div style="width:78px;height:78px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#4c4d77);display:grid;place-items:center;font-size:30px">♫</div>','<div><div class="w-big" style="font-size:21px">Midnight City</div><div class="w-date">M83 · Album</div><div class="w-controls"><span class="w-control">Ⅱ</span><span class="w-control">▶</span><span class="w-control">»</span></div></div>');
+case'shortcuts':case'quick':return title+'<div class="w-controls">'+['⌂','◉','♫','✦'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div><div class="w-controls">'+['⌁','◌','◍','⌕'].map(x=>'<span class="w-control">'+x+'</span>').join('')+'</div>';
+case'qr':return title+'<div style="width:118px;height:118px;margin:10px auto;background:repeating-conic-gradient(#fff 0 25%,transparent 0 50%) 0/12px 12px;border:8px solid #fff"></div><div class="w-date" style="text-align:center">Zone de QR décorative</div>';
+default:return title+'<div class="w-clock">09:41</div>'+detail;
+}
+}
+
 function widgetContent(){
+const model=models.find(m=>m.id===active);
+if(model&&model.kind)return extraWidgetContent(model);
 const d=new Date(),detail=settings.showDate?'<div class="w-date">'+safe(dateText())+'</div>':'';
 switch(active){
 case'clock':return '<div class="w-label">'+safe(settings.title)+'</div><div class="w-clock">'+clockText()+'</div>'+detail;
@@ -395,37 +958,37 @@ function wallpaperClass(){return wallpaper==='default'?'':wallpaper==='light'?'w
 function render(){
 const model=models.find(m=>m.id===active);$('selectedLabel').textContent=model.name.toUpperCase();$('selectedTitle').textContent=model.name;
 const el=document.createElement('div');el.className='widget'+(settings.layout==='solid'?' solid':settings.layout==='outline'?' outline':'')+(settings.theme==='light'?' theme-light':'');
-el.style.setProperty('--accent',settings.accent);el.style.borderRadius=settings.radius+'px';el.style.width='min(100%,'+(360*settings.size/100)+'px)';el.style.fontFamily="'"+settings.font+"',sans-serif";
+el.style.setProperty('--accent',settings.accent);el.style.setProperty('--time-font',"'"+settings.timeFont+"'");el.style.borderRadius=settings.radius+'px';el.style.width='min(100%,'+(360*settings.size/100)+'px)';el.style.fontFamily="'"+settings.font+"',sans-serif";
 if(settings.layout==='glass')el.style.background='linear-gradient(145deg,rgba(255,255,255,'+(settings.opacity/100+.12)+'),rgba(255,255,255,'+(settings.opacity/100*.42)+'))';
 if(settings.layout==='solid')el.style.background=settings.accent;
 if(settings.layout==='outline')el.style.background='rgba(255,255,255,.025)';
 el.innerHTML=widgetContent();$('stage').replaceChildren(el);
 const screen=$('phoneScreen');screen.className='phone-screen '+wallpaperClass();
 $('statusTime').textContent=clockText();$('screenTime').textContent=clockText();$('screenDate').textContent=dateText();
-const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
+const phoneWidget=$('phoneWidget');phoneWidget.className='phone-widget'+(settings.layout==='solid'?' solid':'')+(settings.theme==='light'?' theme-light':'');phoneWidget.style.setProperty('--accent',settings.accent);phoneWidget.style.setProperty('--time-font',"'"+settings.timeFont+"'");phoneWidget.style.borderRadius=Math.max(12,settings.radius-2)+'px';phoneWidget.style.fontFamily="'"+settings.font+"',sans-serif";phoneWidget.innerHTML=widgetContent();
 const extras=$('phoneExtras'),dock=$('dock'),time=$('screenTime'),date=$('screenDate');
 if(mode==='lock'){time.style.display='block';date.style.display='block';extras.style.display='none';dock.style.display='none';phoneWidget.style.marginTop='auto';phoneWidget.style.marginBottom='auto';$('previewModeLabel').textContent='ÉCRAN DE VERROUILLAGE · APERÇU SIMULÉ';}
 else{time.style.display='none';date.style.display='none';extras.style.display='grid';dock.style.display='flex';phoneWidget.style.marginTop='12px';phoneWidget.style.marginBottom='0';$('previewModeLabel').textContent='ÉCRAN D’ACCUEIL · APERÇU SIMULÉ';}
 $('opacityOut').textContent=settings.opacity+'%';$('radiusOut').textContent=settings.radius+' px';$('sizeOut').textContent=settings.size+'%';
 }
 function sync(){
-settings.title=$('title').value;settings.accent=$('accent').value;settings.opacity=+$('opacity').value;settings.radius=+$('radius').value;settings.size=+$('size').value;settings.layout=$('layout').value;settings.font=$('font').value;settings.theme=$('theme').value;settings.showDate=$('showDate').checked;
+settings.title=$('title').value;settings.accent=$('accent').value;settings.opacity=+$('opacity').value;settings.radius=+$('radius').value;settings.size=+$('size').value;settings.layout=$('layout').value;settings.font=$('font').value;settings.timeFont=$('timeFont').value;settings.theme=$('theme').value;settings.showDate=$('showDate').checked;
 setAccent(settings.accent);render();
 }
 function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));render();}
 function drawSaved(){
 $('savedList').innerHTML=saved.map((s,i)=>'<button class="saved-chip" data-index="'+i+'">'+safe(s.settings.title||s.model)+'</button>').join('');
 $('savedEmpty').style.display=saved.length?'none':'block';
-$('savedList').querySelectorAll('[data-index]').forEach(b=>b.addEventListener('click',()=>{const s=saved[+b.dataset.index];active=s.model;settings={...s.settings};wallpaper=s.wallpaper||'default';mode=s.mode||'home';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=settings.opacity;$('radius').value=settings.radius;$('size').value=settings.size;$('layout').value=settings.layout;$('font').value=settings.font;$('theme').value=settings.theme;$('showDate').checked=settings.showDate;setMode(mode);drawGrid();sync();}));
+$('savedList').querySelectorAll('[data-index]').forEach(b=>b.addEventListener('click',()=>{const s=saved[+b.dataset.index];active=s.model;settings={...s.settings};wallpaper=s.wallpaper||'default';mode=s.mode||'home';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=settings.opacity;$('radius').value=settings.radius;$('size').value=settings.size;$('layout').value=settings.layout;$('font').value=settings.font;$('timeFont').value=settings.timeFont||'Orbitron';$('theme').value=settings.theme;$('showDate').checked=settings.showDate;setMode(mode);drawGrid();sync();}));
 }
 $('search').addEventListener('input',drawGrid);
 $('filters').querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));drawGrid();}));
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
 $('palette').querySelectorAll('[data-color]').forEach(b=>b.addEventListener('click',()=>setAccent(b.dataset.color)));
 $('wallpapers').querySelectorAll('[data-wallpaper]').forEach(b=>b.addEventListener('click',()=>{wallpaper=b.dataset.wallpaper;document.querySelectorAll('.wallpaper').forEach(x=>x.classList.toggle('active',x===b));render();}));
-['title','accent','opacity','radius','size','layout','font','theme','showDate'].forEach(id=>$(id).addEventListener('input',sync));
+['title','accent','opacity','radius','size','layout','font','timeFont','theme','showDate'].forEach(id=>$(id).addEventListener('input',sync));
 $('save').addEventListener('click',()=>{saved.push({model:active,settings:{...settings},wallpaper,mode});try{localStorage.setItem('dartist-glass-widgets',JSON.stringify(saved));}catch(e){}drawSaved();});
-$('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
+$('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;$('timeFont').value=settings.timeFont;$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
 function makePng(el){
 return new Promise((resolve,reject)=>{
 const clone=el.cloneNode(true);
