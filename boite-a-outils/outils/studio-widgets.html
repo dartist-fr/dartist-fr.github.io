@@ -336,8 +336,8 @@ footer{display:flex;justify-content:space-between;gap:12px;border-top:1px solid 
 <div class="preview-caption"><span id="previewModeLabel">ÉCRAN D’ACCUEIL · APERÇU SIMULÉ</span><span>ANDROID / GLASS STYLE</span></div>
 <div class="selected-preview"><div class="selected-preview-head"><strong id="selectedTitle">Widget sélectionné</strong><span>APERÇU INDIVIDUEL</span></div><div class="stage" id="stage"></div><div class="variant-section"><div class="setting-label">Format du widget</div><div class="format-cards" id="widgetFormats"></div></div></div>
 <div class="actions"><button class="btn primary" id="export">Exporter l’aperçu PNG</button><button class="btn" id="save">Sauvegarder le style</button></div>
-<button class="btn native-add" id="addToAndroid">＋ Ajouter ce widget sur mon Android</button>
-<p class="note" style="margin-top:0">La configuration sera partagée à l’application Android compagnon. Android demandera confirmation avant de placer le widget sur l’écran d’accueil.</p>
+<button class="btn native-add" id="addToAndroid">＋ Préparer l’ajout sur Android</button>
+<p class="note" style="margin-top:0">Sur les navigateurs qui autorisent le partage Android, le menu de partage s’ouvrira. Sinon, un fichier de configuration sera téléchargé pour être importé dans l’application compagnon.</p>
 </section>
 <aside class="panel editor">
 <div class="editor-head"><h2>Personnaliser</h2><span class="live">LIVE PREVIEW</span></div>
@@ -1157,18 +1157,31 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',(
 $('palette').querySelectorAll('[data-color]').forEach(b=>b.addEventListener('click',()=>setAccent(b.dataset.color)));
 $('wallpapers').querySelectorAll('[data-wallpaper]').forEach(b=>b.addEventListener('click',()=>{wallpaper=b.dataset.wallpaper;document.querySelectorAll('.wallpaper').forEach(x=>x.classList.toggle('active',x===b));render();}));
 ['title','accent','opacity','radius','size','layout','font','theme','showDate'].forEach(id=>$(id).addEventListener('input',sync));
+function downloadWidgetConfig(payload){
+const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;a.download='dartist-widget.json';
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
 $('addToAndroid').addEventListener('click',async()=>{
 const model=models.find(m=>m.id===active);
 const payload={schema:"dartist-widget-v1",model:{id:model.id,name:model.name,kind:model.kind||model.id},settings:{...settings},wallpaper,mode,createdAt:new Date().toISOString()};
 const file=new File([JSON.stringify(payload,null,2)],'dartist-widget.json',{type:'application/json'});
+let shared=false;
 try{
-if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+if(typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[file]})){
 await navigator.share({title:'Ajouter '+model.name+' sur Android',text:'Configuration du widget Dartist',files:[file]});
-}else{
-const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='dartist-widget.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
-alert("Le partage de fichiers n'est pas disponible dans ce navigateur. La configuration JSON a été téléchargée.");
+shared=true;
 }
-}catch(err){if(err.name!=='AbortError')alert("Impossible d'ouvrir le partage Android sur ce navigateur.");}
+}catch(err){
+if(err&&err.name==='AbortError')return;
+}
+if(!shared){
+downloadWidgetConfig(payload);
+alert("Le partage Android n'est pas disponible dans ce navigateur. Le fichier dartist-widget.json vient d'être téléchargé. Ouvre-le ensuite depuis l'application compagnon si elle propose l'import des configurations.");
+}
 });
 $('save').addEventListener('click',()=>{saved.push({model:active,settings:{...settings},wallpaper,mode});try{localStorage.setItem('dartist-glass-widgets',JSON.stringify(saved));}catch(e){}drawSaved();});
 $('reset').addEventListener('click',()=>{settings={title:models.find(m=>m.id===active).label,accent:'#55dfb6',opacity:18,radius:20,size:100,layout:'glass',font:'Space Grotesk',timeFont:'Orbitron',theme:'dark',showDate:true};wallpaper='default';$('title').value=settings.title;$('accent').value=settings.accent;$('opacity').value=18;$('radius').value=20;$('size').value=100;$('layout').value='glass';$('font').value=settings.font;drawClockFonts();drawFormats();$('theme').value='dark';$('showDate').checked=true;document.querySelectorAll('.wallpaper').forEach(b=>b.classList.toggle('active',b.dataset.wallpaper==='default'));setAccent(settings.accent);render();});
